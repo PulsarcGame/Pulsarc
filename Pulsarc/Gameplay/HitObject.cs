@@ -17,6 +17,8 @@ namespace Pulsarc.Gameplay
         float angle;
         float radius;
 
+        float distanceToCrosshair;
+
         public HitObject(int time, int part, double baseSpeed) : base(Skin.leftArc)
         {
             this.time = time;
@@ -55,25 +57,30 @@ namespace Pulsarc.Gameplay
 
         public void recalcArc(int currentTime, double speed, int crosshairRadius)
         {
-            recalcScale(currentTime, speed, crosshairRadius);
             recalcPos(currentTime, speed, crosshairRadius);
-        }
-
-        public void recalcScale(int currentTime, double speed, int crosshairRadius)
-        {
-            float size = (float)((time - currentTime) * baseSpeed);
-            if (size < 0)
-            {
-                size = 0;
-            }
-            Resize(size);
+            
+            Resize(getSizeFromDistanceToCrosshair());
         }
 
         public void recalcPos(int currentTime, double speed, int crosshairRadius)
         {
             Vector2 screen = Pulsarc.getDimensions();
-            position.X = screen.X/2 + (float)(Math.Cos(angle * (Math.PI / 180)) * ((radius + (time - currentTime)) * baseSpeed));
-            position.Y = screen.Y/2 + (float)(Math.Sin(angle * (Math.PI / 180)) * ((radius + (time - currentTime)) * baseSpeed));
+            //distance.X = (float)(Math.Cos(angle * (Math.PI / 180)) * (time - currentTime) * baseSpeed);
+            //distance.Y = (float)(Math.Sin(angle * (Math.PI / 180)) * (time - currentTime) * baseSpeed);
+            distanceToCrosshair = (float) ((time - currentTime) * baseSpeed);
+
+            if(distanceToCrosshair < -50)
+            {
+                distanceToCrosshair = -50;
+            }
+
+            position.X = (float) (Math.Cos(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI)) + screen.X / 2 + (texture.Width *scale) / 2 + (float)(Math.Cos(angle * (Math.PI / 180)) * distanceToCrosshair);
+            position.Y = (float) (Math.Sin(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI)) + screen.Y / 2 + (texture.Height*scale) / 2 + (float)(Math.Sin(angle * (Math.PI / 180)) * distanceToCrosshair);
+        }
+
+        public int getSizeFromDistanceToCrosshair()
+        {
+            return 90 + (int) (141.5 * (distanceToCrosshair/100));
         }
 
         public bool IsSeen()
