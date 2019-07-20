@@ -51,13 +51,13 @@ namespace Pulsarc.Gameplay
 
         public int getSizeFromDistanceToCrosshair()
         {
-            return 90 + (int) (141.5 * (distanceToCrosshair/100));
+            return (int) (((90 / 1920f) * Pulsarc.getDimensions().X) + (int) (((141.5 / 1920f) * Pulsarc.getDimensions().X) * (distanceToCrosshair/100)));
         }
 
         public float getDistanceToCrosshair(int currentTime, double speed)
         {
             var distanceT = time - currentTime;
-            return (float) Math.Pow(distanceT,1.1);
+            return distanceT;
         }
 
         public bool IsSeen()

@@ -25,9 +25,9 @@ namespace Pulsarc
 
             // Set the game in fullscreen (according to the user monitor)
             // TODO : Read from config file for user preference
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.5f);
+            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 1.5f);
+            //graphics.IsFullScreen = true;
 
             Content.RootDirectory = "Content";
         }
