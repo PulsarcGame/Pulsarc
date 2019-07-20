@@ -27,8 +27,8 @@ namespace Pulsarc.Gameplay
             Vector2 screen = Pulsarc.getDimensions();
             radius = (200f / 1920f) * screen.X;
 
-            origin.X = screen.X / 2;
-            origin.Y = screen.Y * 0.9f;
+            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
 
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
@@ -39,11 +39,11 @@ namespace Pulsarc.Gameplay
         {
             Vector2 screen = Pulsarc.getDimensions();
 
-            distanceToCrosshair = (float) ((time - currentTime) * baseSpeed);
+            distanceToCrosshair = getDistanceToCrosshair(currentTime, baseSpeed);
 
-            if(distanceToCrosshair < 0)
+            if(distanceToCrosshair < crosshairRadius / 2 - crosshairRadius / 10)
             {
-                distanceToCrosshair = 0;
+                distanceToCrosshair = crosshairRadius / 2 - crosshairRadius / 10;
             }
 
             Resize(getSizeFromDistanceToCrosshair());
@@ -52,6 +52,12 @@ namespace Pulsarc.Gameplay
         public int getSizeFromDistanceToCrosshair()
         {
             return 90 + (int) (141.5 * (distanceToCrosshair/100));
+        }
+
+        public float getDistanceToCrosshair(int currentTime, double speed)
+        {
+            var distanceT = time - currentTime;
+            return (float) Math.Pow(distanceT,1.1);
         }
 
         public bool IsSeen()

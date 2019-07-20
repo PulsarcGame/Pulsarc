@@ -53,7 +53,6 @@ namespace Pulsarc.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        Console.WriteLine(i);
                         columns[i].hitObjects.Add(new HitObject(arc.time, i, currentArcsSpeed));
                     }
                 }
@@ -77,8 +76,8 @@ namespace Pulsarc.Gameplay
 
                     if(columns[i].hitObjects[k].time + 150 < getElapsed())
                     {
-                        columns[i].hitObjects.RemoveAt(k);
-                        k--;
+                        //columns[i].hitObjects.RemoveAt(k);
+                        //k--;
                     }
                 }
             }
