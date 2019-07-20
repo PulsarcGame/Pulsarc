@@ -19,40 +19,19 @@ namespace Pulsarc.Gameplay
 
         float distanceToCrosshair;
 
-        public HitObject(int time, int part, double baseSpeed) : base(Skin.leftArc)
+        public HitObject(int time, int part, double baseSpeed) : base(Skin.arcs)
         {
             this.time = time;
             this.baseSpeed = baseSpeed;
 
             Vector2 screen = Pulsarc.getDimensions();
-            radius = (200 / 1080) * screen.X;
-            origin.X = screen.X / 2;
-            origin.Y = screen.Y / 2;
+            radius = (200f / 1920f) * screen.X;
 
-            position.X = origin.X - radius;
-            position.Y = origin.Y - radius;
-            
-            // TODO: get arc texture depending on keycount
-            switch (part)
-            {
-                case 0:
-                    texture = Skin.leftArc;
-                    angle = 180;
-                    break;
-                case 1:
-                    texture = Skin.upArc;
-                    angle = -90;
-                    break;
-                case 2:
-                    texture = Skin.downArc;
-                    angle = 90;
-                    break;
-                case 3:
-                    texture = Skin.rightArc;
-                    angle = 0;
-                    break;
-            }
-            setRotation(45);
+            origin.X = screen.X / 2;
+            origin.Y = screen.Y * 0.9f;
+
+            position.X = screen.X / 2;
+            position.Y = screen.Y / 2;
         }
         
 
@@ -68,15 +47,6 @@ namespace Pulsarc.Gameplay
             }
 
             Resize(getSizeFromDistanceToCrosshair());
-
-            var distanceX = Math.Cos(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI + distanceToCrosshair);
-            var distanceY = Math.Sin(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI + distanceToCrosshair);
-        
-            position.X = (float)(screen.X / 2 + texture.Width  * scale /2 + distanceX);
-            position.Y = (float)(screen.Y / 2 + texture.Height * scale /2 + distanceY);
-            
-
-            Console.WriteLine(texture.Width + ":" + texture.Height + " ("+distanceToCrosshair+")");
         }
 
         public int getSizeFromDistanceToCrosshair()

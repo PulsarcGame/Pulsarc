@@ -18,6 +18,7 @@ namespace Pulsarc.Gameplay
 
         public Drawable(Texture2D texture, Vector2 position, Vector2 size, float aspectRatio = -1)
         {
+            origin = new Vector2(0, 0);
             this.texture = texture;
             this.position = position;
             this.aspectRatio = aspectRatio;

@@ -15,6 +15,7 @@ namespace Pulsarc.Gameplay
         int keys;
 
         Stopwatch time;
+        long timeOffset;
         int currentCrosshairRadius;
 
         double userSpeed;
@@ -71,10 +72,10 @@ namespace Pulsarc.Gameplay
             {
                 for(int k = 0; k < columns[i].hitObjects.Count; k++)
                 {
-                    columns[i].hitObjects[k].recalcPos((int) time.ElapsedMilliseconds, currentSpeedMultiplier, currentCrosshairRadius);
+                    columns[i].hitObjects[k].recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if(columns[i].hitObjects[k].time + 150 < time.ElapsedMilliseconds)
+                    if(columns[i].hitObjects[k].time + 150 < getElapsed())
                     {
                         columns[i].hitObjects.RemoveAt(k);
                         k--;
@@ -86,6 +87,11 @@ namespace Pulsarc.Gameplay
             {
                 Reset();
             }
+        }
+
+        public long getElapsed()
+        {
+            return time.ElapsedMilliseconds + timeOffset;
         }
 
         public void Draw()
@@ -117,6 +123,7 @@ namespace Pulsarc.Gameplay
                 time.Stop();
             }
             time = null;
+            timeOffset = 0;
 
             userSpeed = 1;
             currentSpeedMultiplier = 1;
@@ -126,6 +133,21 @@ namespace Pulsarc.Gameplay
         public bool isActive()
         {
             return active;
+        }
+
+        public void Pause()
+        {
+            time.Stop();
+        }
+
+        public void Continue()
+        {
+            time.Start();
+        }
+
+        public void deltaTime(long delta)
+        {
+            timeOffset += delta;
         }
     }
 }

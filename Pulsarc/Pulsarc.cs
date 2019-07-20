@@ -16,6 +16,8 @@ namespace Pulsarc
         static public SpriteBatch spriteBatch;
         static public GameplayEngine gameplayEngine;
 
+        //temp
+        int previousScrollValue;
 
         public Pulsarc()
         {
@@ -44,6 +46,7 @@ namespace Pulsarc
 
             KeyboardInputManager.StartThread();
             gameplayEngine = new GameplayEngine();
+            previousScrollValue = 0;
         }
 
         /// <summary>
@@ -82,6 +85,24 @@ namespace Pulsarc
 
             if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 gameplayEngine.Reset();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.P))
+                gameplayEngine.Pause();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.O))
+                gameplayEngine.Continue();
+
+            var currentMouseState = Mouse.GetState();
+
+            if (currentMouseState.ScrollWheelValue < previousScrollValue)
+            {
+                gameplayEngine.deltaTime(-15);
+            }
+            else if (currentMouseState.ScrollWheelValue > previousScrollValue)
+            {
+                gameplayEngine.deltaTime(15);
+            }
+            previousScrollValue = currentMouseState.ScrollWheelValue;
 
             if (gameplayEngine.isActive())
             {
