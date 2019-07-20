@@ -54,28 +54,29 @@ namespace Pulsarc.Gameplay
             }
             setRotation(45);
         }
-
-        public void recalcArc(int currentTime, double speed, int crosshairRadius)
-        {
-            recalcPos(currentTime, speed, crosshairRadius);
-            
-            Resize(getSizeFromDistanceToCrosshair());
-        }
+        
 
         public void recalcPos(int currentTime, double speed, int crosshairRadius)
         {
             Vector2 screen = Pulsarc.getDimensions();
-            //distance.X = (float)(Math.Cos(angle * (Math.PI / 180)) * (time - currentTime) * baseSpeed);
-            //distance.Y = (float)(Math.Sin(angle * (Math.PI / 180)) * (time - currentTime) * baseSpeed);
+
             distanceToCrosshair = (float) ((time - currentTime) * baseSpeed);
 
-            if(distanceToCrosshair < -50)
+            if(distanceToCrosshair < 0)
             {
-                distanceToCrosshair = -50;
+                distanceToCrosshair = 0;
             }
 
-            position.X = (float) (Math.Cos(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI)) + screen.X / 2 + (texture.Width *scale) / 2 + (float)(Math.Cos(angle * (Math.PI / 180)) * distanceToCrosshair);
-            position.Y = (float) (Math.Sin(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI)) + screen.Y / 2 + (texture.Height*scale) / 2 + (float)(Math.Sin(angle * (Math.PI / 180)) * distanceToCrosshair);
+            Resize(getSizeFromDistanceToCrosshair());
+
+            var distanceX = Math.Cos(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI + distanceToCrosshair);
+            var distanceY = Math.Sin(angle * (Math.PI / 180)) * (crosshairRadius / Math.PI + distanceToCrosshair);
+        
+            position.X = (float)(screen.X / 2 + texture.Width  * scale /2 + distanceX);
+            position.Y = (float)(screen.Y / 2 + texture.Height * scale /2 + distanceY);
+            
+
+            Console.WriteLine(texture.Width + ":" + texture.Height + " ("+distanceToCrosshair+")");
         }
 
         public int getSizeFromDistanceToCrosshair()

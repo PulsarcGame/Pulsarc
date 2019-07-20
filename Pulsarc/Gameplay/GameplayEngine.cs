@@ -71,7 +71,7 @@ namespace Pulsarc.Gameplay
             {
                 for(int k = 0; k < columns[i].hitObjects.Count; k++)
                 {
-                    columns[i].hitObjects[k].recalcArc((int) time.ElapsedMilliseconds, currentSpeedMultiplier, currentCrosshairRadius);
+                    columns[i].hitObjects[k].recalcPos((int) time.ElapsedMilliseconds, currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
                     if(columns[i].hitObjects[k].time + 150 < time.ElapsedMilliseconds)
