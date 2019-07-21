@@ -119,9 +119,9 @@ namespace Pulsarc
 
             if (gameplayEngine.isActive())
             {
+                gameplayEngine.handleInputs();
                 gameplayEngine.Update();
             }
-
             base.Update(gameTime);
         }
 

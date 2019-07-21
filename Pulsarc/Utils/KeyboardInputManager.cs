@@ -11,11 +11,15 @@ namespace Pulsarc.Utils
     {
         static Thread inputThread;
         static double time;
-        static Queue<KeyValuePair<Double,KeyboardState>> keyboardStates;
+        public static Queue<KeyValuePair<Double, Keys>> keyboardPresses;
+        public static Queue<KeyValuePair<Double, Keys>> keyboardReleases;
+        public static List<Keys> pressedKeys;
 
         static public void StartThread()
         {
-            keyboardStates = new Queue<KeyValuePair<Double, KeyboardState>>();
+            pressedKeys = new List<Keys>();
+            keyboardPresses = new Queue<KeyValuePair<Double, Keys>>();
+            keyboardReleases = new Queue<KeyValuePair<Double, Keys>>();
 
             inputThread = new Thread(new ThreadStart(InputUpdater));
             inputThread.Start();
@@ -40,7 +44,27 @@ namespace Pulsarc.Utils
                     KeyboardState state = Keyboard.GetState();
 
                     if (state.GetPressedKeys().Count() > 0) {
-                        keyboardStates.Enqueue(new KeyValuePair<Double, KeyboardState>(time, state));
+                        foreach(Keys key in state.GetPressedKeys())
+                        {
+                            if (!pressedKeys.Contains(key))
+                            {
+                                keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(time, key));
+                                pressedKeys.Add(key);
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < pressedKeys.Count; i++)
+                    {
+                        Keys key = pressedKeys[i];
+
+                        if (!state.IsKeyDown(key))
+                        {
+                            // Used if LN handling
+                            //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
+                            pressedKeys.RemoveAt(i);
+                            i--;
+                        }
                     }
                 }
             }

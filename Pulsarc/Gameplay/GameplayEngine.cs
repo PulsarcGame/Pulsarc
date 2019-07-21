@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
+using Pulsarc.Utils;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Pulsarc.Gameplay
@@ -39,8 +42,6 @@ namespace Pulsarc.Gameplay
 
             currentBeatmap = BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc");
 
-            Console.WriteLine("Loaded " + currentBeatmap.Title);
-
             for(int i = 1; i <= keys; i++)
             {
                 columns[i - 1] = new Column(i);
@@ -74,10 +75,10 @@ namespace Pulsarc.Gameplay
                     columns[i].hitObjects[k].recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if(columns[i].hitObjects[k].time + 150 < getElapsed())
+                    if(columns[i].hitObjects[k].time + 100 < getElapsed())
                     {
-                        //columns[i].hitObjects.RemoveAt(k);
-                        //k--;
+                        columns[i].hitObjects.RemoveAt(k);
+                        k--;
                     }
                 }
             }
@@ -85,6 +86,53 @@ namespace Pulsarc.Gameplay
             if(!atLeastOne)
             {
                 Reset();
+            }
+        }
+
+        public void handleInputs()
+        {
+            var max = 16;
+            var c300 = 25;
+            var c200 = 40;
+            var c100 = 60;
+            var c50 = 200;
+
+
+            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            {
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                HitObject pressed = null;
+                var column = -1;
+
+                switch(press.Value)
+                {
+                    case Keys.D:
+                        column = 2;
+                        break;
+                    case Keys.F:
+                        column = 3;
+                        break;
+                    case Keys.J:
+                        column = 1;
+                        break;
+                    case Keys.K:
+                        column = 0;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (column >=0 && columns[column].hitObjects.Count > 0)
+                {
+                    pressed = columns[column].hitObjects[0];
+
+                    var error = pressed.time - getElapsed();
+                    
+                    if (!(Math.Abs(error) > c50))
+                    {
+                        columns[column].hitObjects.RemoveAt(0);
+                    }
+                }
             }
         }
 

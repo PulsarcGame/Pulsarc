@@ -73,11 +73,6 @@ namespace Pulsarc.Gameplay
 
             distanceToCrosshair = getDistanceToCrosshair(currentTime, speed);
 
-            if(time - currentTime < 0)
-            {
-                distanceToCrosshair = 0;
-            }
-
             Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
         }
 
@@ -89,7 +84,7 @@ namespace Pulsarc.Gameplay
         public double getDistanceToCrosshair(int currentTime, double speed)
         {
             var distanceT = time - currentTime;
-            return Math.Pow(distanceT,4) / 1e9 * speed;
+            return Math.Pow(distanceT + 562.3413, 4) / 1e9 * speed - 100;
         }
 
         public bool IsSeen()
