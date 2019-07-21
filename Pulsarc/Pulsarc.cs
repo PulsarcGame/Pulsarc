@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using Pulsarc.Gameplay;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using System;
+using System.Diagnostics;
 
 namespace Pulsarc
 {
@@ -16,8 +18,11 @@ namespace Pulsarc
         static public SpriteBatch spriteBatch;
         static public GameplayEngine gameplayEngine;
 
+
         //temp
         int previousScrollValue;
+        Stopwatch fpsWatch;
+        static public int frames;
 
         public Pulsarc()
         {
@@ -25,9 +30,11 @@ namespace Pulsarc
 
             // Set the game in fullscreen (according to the user monitor)
             // TODO : Read from config file for user preference
-            graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.5f);
-            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 1.5f);
+            graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.2f);
+            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 1.2f);
             //graphics.IsFullScreen = true;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            base.IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
         }
@@ -46,7 +53,13 @@ namespace Pulsarc
 
             KeyboardInputManager.StartThread();
             gameplayEngine = new GameplayEngine();
+
+            //////
+
+            fpsWatch = new Stopwatch();
+            fpsWatch.Start();
             previousScrollValue = 0;
+            frames = 0;
         }
 
         /// <summary>
@@ -96,11 +109,11 @@ namespace Pulsarc
 
             if (currentMouseState.ScrollWheelValue < previousScrollValue)
             {
-                gameplayEngine.deltaTime(-15);
+                gameplayEngine.deltaTime(-10);
             }
             else if (currentMouseState.ScrollWheelValue > previousScrollValue)
             {
-                gameplayEngine.deltaTime(15);
+                gameplayEngine.deltaTime(10);
             }
             previousScrollValue = currentMouseState.ScrollWheelValue;
 
@@ -119,11 +132,20 @@ namespace Pulsarc
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
+
             GraphicsDevice.Clear(Color.Black);
 
             if (gameplayEngine.isActive())
             {
+                frames++;
                 gameplayEngine.Draw();
+
+                if(fpsWatch.ElapsedMilliseconds > 1000)
+                {
+                    Console.WriteLine(frames + " fps");
+                    frames = 0;
+                    fpsWatch.Restart();
+                }
             }
 
             base.Draw(gameTime);

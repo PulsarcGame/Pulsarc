@@ -12,17 +12,16 @@ namespace Pulsarc.Gameplay
     class HitObject : Drawable
     {
         public int time;
-        double baseSpeed;
 
-        float angle;
-        float radius;
+        double angle;
+        double radius;
 
-        float distanceToCrosshair;
+        double distanceToCrosshair;
 
-        public HitObject(int time, int part, double baseSpeed) : base(Skin.arcs)
+        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.arcs)
         {
             this.time = time;
-            this.baseSpeed = baseSpeed;
+            this.angle = angle;
 
             Vector2 screen = Pulsarc.getDimensions();
             radius = (200f / 1920f) * screen.X;
@@ -32,6 +31,39 @@ namespace Pulsarc.Gameplay
 
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
+
+            drawnPart.Width = texture.Width / 2;
+            drawnPart.Height = texture.Height / 2;
+
+            switch(angle)
+            {
+                case 0:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.X = texture.Width / 2;
+                    origin.X -= texture.Width / 2;
+                    break;
+                case 270:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    break;
+                case 180:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.Y = texture.Height / 2;
+                    origin.Y -= texture.Height / 2;
+                    break;
+                case 90:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.X = texture.Width / 2;
+                    drawnPart.Y = texture.Height / 2;
+                    origin.X -= texture.Width / 2;
+                    origin.Y -= texture.Height / 2;
+                    break;
+            }
+
+            rotation = (float) (45 * (Math.PI / 180));
         }
         
 
@@ -39,25 +71,25 @@ namespace Pulsarc.Gameplay
         {
             Vector2 screen = Pulsarc.getDimensions();
 
-            distanceToCrosshair = getDistanceToCrosshair(currentTime, baseSpeed);
+            distanceToCrosshair = getDistanceToCrosshair(currentTime, speed);
 
-            if(distanceToCrosshair < crosshairRadius / 2 - crosshairRadius / 10)
+            if(time - currentTime < 0)
             {
-                distanceToCrosshair = crosshairRadius / 2 - crosshairRadius / 10;
+                distanceToCrosshair = 0;
             }
 
-            Resize(getSizeFromDistanceToCrosshair());
+            Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
         }
 
-        public int getSizeFromDistanceToCrosshair()
+        public int getSizeFromDistanceToCrosshair(int crosshairRadius)
         {
-            return (int) (((90 / 1920f) * Pulsarc.getDimensions().X) + (int) (((141.5 / 1920f) * Pulsarc.getDimensions().X) * (distanceToCrosshair/100)));
+            return (int) (((crosshairRadius / 1920f) * Pulsarc.getDimensions().X) + distanceToCrosshair);
         }
 
-        public float getDistanceToCrosshair(int currentTime, double speed)
+        public double getDistanceToCrosshair(int currentTime, double speed)
         {
             var distanceT = time - currentTime;
-            return distanceT;
+            return Math.Pow(distanceT,4) / 1e9 * speed;
         }
 
         public bool IsSeen()

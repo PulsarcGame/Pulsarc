@@ -53,7 +53,7 @@ namespace Pulsarc.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        columns[i].hitObjects.Add(new HitObject(arc.time, i, currentArcsSpeed));
+                        columns[i].hitObjects.Add(new HitObject(arc.time, (int) (i / (float) keys * 360), keys, currentArcsSpeed));
                     }
                 }
             }

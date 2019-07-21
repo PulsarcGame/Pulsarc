@@ -11,6 +11,7 @@ namespace Pulsarc.Gameplay
 
         public Vector2 position;
         public Vector2 origin;
+        public Rectangle drawnPart;
 
         protected float aspectRatio; // Used to force aspect ratio when using Resize
         protected float scale = 1;
@@ -22,6 +23,9 @@ namespace Pulsarc.Gameplay
             this.texture = texture;
             this.position = position;
             this.aspectRatio = aspectRatio;
+
+            drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
+
             Resize(size);
         }
 
@@ -59,7 +63,7 @@ namespace Pulsarc.Gameplay
 
         public void Draw()
         {
-            Pulsarc.spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
+            Pulsarc.spriteBatch.Draw(texture, position, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
         }
     }
 }

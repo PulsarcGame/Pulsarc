@@ -16,9 +16,14 @@ namespace Pulsarc.Gameplay
             Vector2 screen = Pulsarc.getDimensions();
             float radius = 200f / 1920f * screen.X;
 
+
+            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
+            position.X = screen.X / 2;
+            position.Y = screen.Y / 2;
             Resize(radius);
-            position.X = screen.X / 2 - radius/2;
-            position.Y = screen.Y / 2 - radius/2;
+
+            rotation = (float)(45 * (Math.PI / 180));
         }
     }
 }
