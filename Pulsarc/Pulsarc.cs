@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using Pulsarc.Gameplay;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using System;
+using System.Diagnostics;
 
 namespace Pulsarc
 {
@@ -17,15 +19,22 @@ namespace Pulsarc
         static public GameplayEngine gameplayEngine;
 
 
+        //temp
+        int previousScrollValue;
+        Stopwatch fpsWatch;
+        static public int frames;
+
         public Pulsarc()
         {
             graphics = new GraphicsDeviceManager(this);
 
             // Set the game in fullscreen (according to the user monitor)
             // TODO : Read from config file for user preference
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.2f);
+            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 1.2f);
+            //graphics.IsFullScreen = true;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            base.IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
         }
@@ -44,6 +53,13 @@ namespace Pulsarc
 
             KeyboardInputManager.StartThread();
             gameplayEngine = new GameplayEngine();
+
+            //////
+
+            fpsWatch = new Stopwatch();
+            fpsWatch.Start();
+            previousScrollValue = 0;
+            frames = 0;
         }
 
         /// <summary>
@@ -83,11 +99,29 @@ namespace Pulsarc
             if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 gameplayEngine.Reset();
 
+            if (Keyboard.GetState().IsKeyDown(Keys.P))
+                gameplayEngine.Pause();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.O))
+                gameplayEngine.Continue();
+
+            var currentMouseState = Mouse.GetState();
+
+            if (currentMouseState.ScrollWheelValue < previousScrollValue)
+            {
+                gameplayEngine.deltaTime(-10);
+            }
+            else if (currentMouseState.ScrollWheelValue > previousScrollValue)
+            {
+                gameplayEngine.deltaTime(10);
+            }
+            previousScrollValue = currentMouseState.ScrollWheelValue;
+
             if (gameplayEngine.isActive())
             {
+                gameplayEngine.handleInputs();
                 gameplayEngine.Update();
             }
-
             base.Update(gameTime);
         }
 
@@ -98,11 +132,20 @@ namespace Pulsarc
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
+
             GraphicsDevice.Clear(Color.Black);
 
             if (gameplayEngine.isActive())
             {
+                frames++;
                 gameplayEngine.Draw();
+
+                if(fpsWatch.ElapsedMilliseconds > 1000)
+                {
+                    Console.WriteLine(frames + " fps");
+                    frames = 0;
+                    fpsWatch.Restart();
+                }
             }
 
             base.Draw(gameTime);

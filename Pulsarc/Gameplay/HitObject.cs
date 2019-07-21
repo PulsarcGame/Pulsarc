@@ -12,68 +12,79 @@ namespace Pulsarc.Gameplay
     class HitObject : Drawable
     {
         public int time;
-        double baseSpeed;
 
-        float angle;
-        float radius;
+        double angle;
+        double radius;
 
-        public HitObject(int time, int part, double baseSpeed) : base(Skin.leftArc)
+        double distanceToCrosshair;
+
+        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.arcs)
         {
             this.time = time;
-            this.baseSpeed = baseSpeed;
+            this.angle = angle;
 
             Vector2 screen = Pulsarc.getDimensions();
-            radius = (200 / 1080) * screen.X;
-            origin.X = screen.X / 2;
-            origin.Y = screen.Y / 2;
+            radius = (200f / 1920f) * screen.X;
 
-            position.X = origin.X - radius;
-            position.Y = origin.Y - radius;
-            
-            // TODO: get arc texture depending on keycount
-            switch (part)
+            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
+
+            position.X = screen.X / 2;
+            position.Y = screen.Y / 2;
+
+            drawnPart.Width = texture.Width / 2;
+            drawnPart.Height = texture.Height / 2;
+
+            switch(angle)
             {
                 case 0:
-                    texture = Skin.leftArc;
-                    angle = 180;
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.X = texture.Width / 2;
+                    origin.X -= texture.Width / 2;
                     break;
-                case 1:
-                    texture = Skin.upArc;
-                    angle = -90;
+                case 270:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
                     break;
-                case 2:
-                    texture = Skin.downArc;
-                    angle = 90;
+                case 180:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.Y = texture.Height / 2;
+                    origin.Y -= texture.Height / 2;
                     break;
-                case 3:
-                    texture = Skin.rightArc;
-                    angle = 0;
+                case 90:
+                    drawnPart.Width = texture.Width / 2;
+                    drawnPart.Height = texture.Height / 2;
+                    drawnPart.X = texture.Width / 2;
+                    drawnPart.Y = texture.Height / 2;
+                    origin.X -= texture.Width / 2;
+                    origin.Y -= texture.Height / 2;
                     break;
             }
-            setRotation(45);
-        }
 
-        public void recalcArc(int currentTime, double speed, int crosshairRadius)
-        {
-            recalcScale(currentTime, speed, crosshairRadius);
-            recalcPos(currentTime, speed, crosshairRadius);
+            rotation = (float) (45 * (Math.PI / 180));
         }
-
-        public void recalcScale(int currentTime, double speed, int crosshairRadius)
-        {
-            float size = (float)((time - currentTime) * baseSpeed);
-            if (size < 0)
-            {
-                size = 0;
-            }
-            Resize(size);
-        }
+        
 
         public void recalcPos(int currentTime, double speed, int crosshairRadius)
         {
             Vector2 screen = Pulsarc.getDimensions();
-            position.X = screen.X/2 + (float)(Math.Cos(angle * (Math.PI / 180)) * ((radius + (time - currentTime)) * baseSpeed));
-            position.Y = screen.Y/2 + (float)(Math.Sin(angle * (Math.PI / 180)) * ((radius + (time - currentTime)) * baseSpeed));
+
+            distanceToCrosshair = getDistanceToCrosshair(currentTime, speed);
+
+            Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
+        }
+
+        public int getSizeFromDistanceToCrosshair(int crosshairRadius)
+        {
+            return (int) (((crosshairRadius / 1920f) * Pulsarc.getDimensions().X) + distanceToCrosshair);
+        }
+
+        public double getDistanceToCrosshair(int currentTime, double speed)
+        {
+            var distanceT = time - currentTime;
+            return Math.Pow(distanceT + 562.3413, 4) / 1e9 * speed - 100;
         }
 
         public bool IsSeen()

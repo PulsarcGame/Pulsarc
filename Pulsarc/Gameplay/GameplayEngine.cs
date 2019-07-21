@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
+using Pulsarc.Utils;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Pulsarc.Gameplay
@@ -15,6 +18,7 @@ namespace Pulsarc.Gameplay
         int keys;
 
         Stopwatch time;
+        long timeOffset;
         int currentCrosshairRadius;
 
         double userSpeed;
@@ -38,8 +42,6 @@ namespace Pulsarc.Gameplay
 
             currentBeatmap = BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc");
 
-            Console.WriteLine("Loaded " + currentBeatmap.Title);
-
             for(int i = 1; i <= keys; i++)
             {
                 columns[i - 1] = new Column(i);
@@ -52,8 +54,7 @@ namespace Pulsarc.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        Console.WriteLine(i);
-                        columns[i].hitObjects.Add(new HitObject(arc.time, i, currentArcsSpeed));
+                        columns[i].hitObjects.Add(new HitObject(arc.time, (int) (i / (float) keys * 360), keys, currentArcsSpeed));
                     }
                 }
             }
@@ -71,10 +72,10 @@ namespace Pulsarc.Gameplay
             {
                 for(int k = 0; k < columns[i].hitObjects.Count; k++)
                 {
-                    columns[i].hitObjects[k].recalcArc((int) time.ElapsedMilliseconds, currentSpeedMultiplier, currentCrosshairRadius);
+                    columns[i].hitObjects[k].recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if(columns[i].hitObjects[k].time + 150 < time.ElapsedMilliseconds)
+                    if(columns[i].hitObjects[k].time + 100 < getElapsed())
                     {
                         columns[i].hitObjects.RemoveAt(k);
                         k--;
@@ -86,6 +87,58 @@ namespace Pulsarc.Gameplay
             {
                 Reset();
             }
+        }
+
+        public void handleInputs()
+        {
+            var max = 16;
+            var c300 = 25;
+            var c200 = 40;
+            var c100 = 60;
+            var c50 = 200;
+
+
+            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            {
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                HitObject pressed = null;
+                var column = -1;
+
+                switch(press.Value)
+                {
+                    case Keys.D:
+                        column = 2;
+                        break;
+                    case Keys.F:
+                        column = 3;
+                        break;
+                    case Keys.J:
+                        column = 1;
+                        break;
+                    case Keys.K:
+                        column = 0;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (column >=0 && columns[column].hitObjects.Count > 0)
+                {
+                    pressed = columns[column].hitObjects[0];
+
+                    var error = pressed.time - getElapsed();
+                    
+                    if (!(Math.Abs(error) > c50))
+                    {
+                        columns[column].hitObjects.RemoveAt(0);
+                    }
+                }
+            }
+        }
+
+        public long getElapsed()
+        {
+            return time.ElapsedMilliseconds + timeOffset;
         }
 
         public void Draw()
@@ -117,6 +170,7 @@ namespace Pulsarc.Gameplay
                 time.Stop();
             }
             time = null;
+            timeOffset = 0;
 
             userSpeed = 1;
             currentSpeedMultiplier = 1;
@@ -126,6 +180,21 @@ namespace Pulsarc.Gameplay
         public bool isActive()
         {
             return active;
+        }
+
+        public void Pause()
+        {
+            time.Stop();
+        }
+
+        public void Continue()
+        {
+            time.Start();
+        }
+
+        public void deltaTime(long delta)
+        {
+            timeOffset += delta;
         }
     }
 }

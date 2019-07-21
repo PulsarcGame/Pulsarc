@@ -14,14 +14,16 @@ namespace Pulsarc.Gameplay
         public Crosshair() : base(Skin.crosshair)
         {
             Vector2 screen = Pulsarc.getDimensions();
-            float radius = (200 / 1080) * screen.X;
+            float radius = 200f / 1920f * screen.X;
 
-            Resize(new Vector2(radius, radius));
-            origin.X = screen.X / 2;
-            origin.Y = screen.Y / 2;
 
-            position.X = origin.X - radius;
-            position.Y = origin.Y - radius;
+            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
+            position.X = screen.X / 2;
+            position.Y = screen.Y / 2;
+            Resize(radius);
+
+            rotation = (float)(45 * (Math.PI / 180));
         }
     }
 }
