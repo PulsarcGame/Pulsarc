@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Pulsarc.Beatmaps;
 using Pulsarc.Gameplay.UI;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Pulsarc.Gameplay
 {
@@ -18,6 +20,7 @@ namespace Pulsarc.Gameplay
         Accuracy accuracyDisplay;
         Score scoreDisplay;
         Combo comboDisplay;
+        JudgeBox judgeBox;
 
         // Beatmap Elements
 
@@ -26,15 +29,11 @@ namespace Pulsarc.Gameplay
         Crosshair crosshair;
         int keys;
 
-        // Timing Elements
-
-        Stopwatch time;
-        long timeOffset;
-        long keyboardManagerStartTime;
-        int currentCrosshairRadius;
 
         // Gameplay Elements
 
+        long timeOffset;
+        int currentCrosshairRadius;
         double userSpeed;
         double currentSpeedMultiplier;
         double currentArcsSpeed;
@@ -49,15 +48,17 @@ namespace Pulsarc.Gameplay
 
             // Initialize UI
 
-            accuracyDisplay = new Accuracy(new Vector2(Pulsarc.getDimensions().X / 2, 50), centered: true);
             scoreDisplay = new Score(new Vector2(Pulsarc.getDimensions().X / 2, 20), centered: true);
-            comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2), centered: true);
+            accuracyDisplay = new Accuracy(new Vector2(Pulsarc.getDimensions().X / 2, 50), centered: true);
+            comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
+
+            judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
 
             // Initialize default variables, parse beatmap
             keys = 4;
             userSpeed = 1;
             currentCrosshairRadius = 200;
-            keyboardManagerStartTime = KeyboardInputManager.time;
+            timeOffset = 0;
 
             currentSpeedMultiplier = 1;
             currentArcsSpeed = userSpeed;
@@ -71,6 +72,7 @@ namespace Pulsarc.Gameplay
             score = 0;
 
             currentBeatmap = playedBeatmap;
+            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio, UriKind.Absolute));
 
             for (int i = 1; i <= keys; i++)
             {
@@ -89,9 +91,8 @@ namespace Pulsarc.Gameplay
                 }
             }
 
+            AudioManager.Start();
             active = true;
-            time = new Stopwatch();
-            time.Start();
         }
 
         public void Init(string beatmapFolderName, string beatmapVersionName)
@@ -130,8 +131,9 @@ namespace Pulsarc.Gameplay
             accuracyDisplay.Update(errors.Count > 0 ? accuracyTotal / errors.Count : 1);
             scoreDisplay.Update(score);
             comboDisplay.Update(combo);
+            judgeBox.Update(getElapsed());
 
-            if(!atLeastOne)
+            if (!atLeastOne)
             {
                 Reset();
             }
@@ -167,7 +169,7 @@ namespace Pulsarc.Gameplay
                 {
                     pressed = columns[column].hitObjects[0];
 
-                    int error = (int) (pressed.time - (press.Key - keyboardManagerStartTime));
+                    int error = (int) (pressed.time - press.Key);
 
                     KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
 
@@ -175,8 +177,10 @@ namespace Pulsarc.Gameplay
                     {
                         columns[column].hitObjects.RemoveAt(0);
                         errors.Add(judge.Key);
-                        
-                        if(judge.Value > 0)
+                        judgeBox.Add((long) press.Key, judge.Value);
+
+
+                        if (judge.Value > 0)
                         {
                             combo++;
                             score += judge.Value * combo;
@@ -192,7 +196,7 @@ namespace Pulsarc.Gameplay
 
         public long getElapsed()
         {
-            return time.ElapsedMilliseconds + timeOffset;
+            return AudioManager.getTime() + timeOffset;
         }
 
         public void Draw()
@@ -214,21 +218,27 @@ namespace Pulsarc.Gameplay
             accuracyDisplay.Draw();
             scoreDisplay.Draw();
             comboDisplay.Draw();
+            judgeBox.Draw();
+        }
+
+        public void Pause()
+        {
+            AudioManager.Pause();
+        }
+
+        public void Resume()
+        {
+            AudioManager.Resume();
         }
 
         public void Reset()
         {
+            AudioManager.Reset();
             active = false;
 
             currentBeatmap = null;
             columns = null;
             crosshair = null;
-            if (time != null)
-            {
-                time.Stop();
-            }
-            time = null;
-            timeOffset = 0;
 
             userSpeed = 1;
             currentSpeedMultiplier = 1;
@@ -238,16 +248,6 @@ namespace Pulsarc.Gameplay
         public bool isActive()
         {
             return active;
-        }
-
-        public void Pause()
-        {
-            time.Stop();
-        }
-
-        public void Continue()
-        {
-            time.Start();
         }
 
         public void deltaTime(long delta)

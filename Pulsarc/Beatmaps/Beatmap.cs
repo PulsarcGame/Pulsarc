@@ -8,6 +8,9 @@ namespace Pulsarc.Beatmaps
 {
     public class Beatmap
     {
+        public string path;
+
+        // Metadata
         public string FormatVersion { get; set; }
         public string Title { get; set; }
         public string Artist { get; set; }
@@ -15,6 +18,7 @@ namespace Pulsarc.Beatmaps
         public string Version { get; set; }
         public string Audio { get; set; }
 
+        // Gameplay
         public List<SpeedVariation> speedVariations;
         public List<TimingPoint> timingPoints;
         public List<Arc> arcs;

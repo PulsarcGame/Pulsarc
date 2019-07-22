@@ -79,8 +79,7 @@ namespace Pulsarc.Gameplay
 
         public bool IsSeen()
         {
-            // true for testing even with bad performance
-            return true || texture.Width < Pulsarc.getDimensions().X * 2;
+            return distanceToCrosshair < 2000;
         }
     }
 }

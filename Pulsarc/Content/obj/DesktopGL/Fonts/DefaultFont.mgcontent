@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Code/Pulsarc/Pulsarc/Content/Fonts/File.spritefont</SourceFile>
-  <SourceTime>2019-07-22T16:48:18.5536636+02:00</SourceTime>
+  <SourceTime>2019-07-22T19:54:44.2912914+02:00</SourceTime>
   <DestFile>C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/Fonts/DefaultFont.xnb</DestFile>
-  <DestTime>2019-07-22T16:50:13.8745344+02:00</DestTime>
+  <DestTime>2019-07-22T23:49:03.7962274+02:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2018-12-08T17:35:54+01:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

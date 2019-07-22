@@ -4,9 +4,11 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Code/Pulsarc/Pulsarc/Content/default.png</File>
     <File>C:/Code/Pulsarc/Pulsarc/Content/Fonts/File.spritefont</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File>Fonts/DefaultFont.spritefont</File>
   </DestFiles>
 </SourceFileCollection>
