@@ -114,6 +114,9 @@ namespace Pulsarc.Gameplay
                     {
                         columns[i].hitObjects.RemoveAt(k);
                         k--;
+                        combo = 0;
+                        score += Judgement.getMiss().score;
+                        errors.Add(Judgement.getMiss().acc);
                     }
                 }
             }
