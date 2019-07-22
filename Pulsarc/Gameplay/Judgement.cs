@@ -22,7 +22,7 @@ namespace Pulsarc.Gameplay
         static public KeyValuePair<double, int> getErrorJudgement(int error)
         {
             KeyValuePair<double, int> result = new KeyValuePair<double, int>(-1, -1);
-            if (error < judgements.Last().acc)
+            if (error < judgements.Last().judge)
             {
                 bool notJudged = true;
 
@@ -30,9 +30,9 @@ namespace Pulsarc.Gameplay
                 {
                     JudgementValue judgement = judgements[i];
 
-                    if (error < judgement.acc)
+                    if (error < judgement.judge)
                     {
-                        result = new KeyValuePair<double, int>(judgement.acc, judgement.judge);
+                        result = new KeyValuePair<double, int>(judgement.acc, judgement.score);
                         notJudged = false;
                     }
                 }
@@ -56,9 +56,9 @@ namespace Pulsarc.Gameplay
 
         public double acc;
         public int judge;
-        public long score;
+        public int score;
 
-        public JudgementValue(double acc, int judge, long score)
+        public JudgementValue(double acc, int judge, int score)
         {
             this.acc = acc;
             this.judge = judge;

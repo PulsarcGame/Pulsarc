@@ -54,6 +54,7 @@
     <Compile Include="Gameplay\HitObject.cs" />
     <Compile Include="Gameplay\Judgement.cs" />
     <Compile Include="Gameplay\UI\Combo.cs" />
+    <Compile Include="Gameplay\UI\FPS.cs" />
     <Compile Include="Gameplay\UI\Score.cs" />
     <Compile Include="Gameplay\UI\Accuracy.cs" />
     <Compile Include="Gameplay\UI\TextDisplayElement.cs" />
