@@ -1,7 +1,6 @@
 # Pulsarc
+[![Discord](https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)](https://discord.gg/SYfpvfJ)
 >A community-created rhythm game!
-
-[![Discord] (https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)] (https://discord.gg/SYfpvfJ)
 
 ## Compiling
 TBA
