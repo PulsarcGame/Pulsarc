@@ -11,10 +11,10 @@ namespace Pulsarc.Gameplay
 {
     class Crosshair : Drawable
     {
-        public Crosshair() : base(Skin.crosshair)
+        public Crosshair(int currentCrosshairRadius) : base(Skin.crosshair)
         {
             Vector2 screen = Pulsarc.getDimensions();
-            float radius = 200f / 1920f * screen.X;
+            float radius = currentCrosshairRadius / 1920f * screen.X;
 
 
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);

@@ -10,7 +10,7 @@ namespace Pulsarc.Utils
     static class KeyboardInputManager
     {
         static Thread inputThread;
-        static double time;
+        public static long time;
         public static Queue<KeyValuePair<Double, Keys>> keyboardPresses;
         public static Queue<KeyValuePair<Double, Keys>> keyboardReleases;
         public static List<Keys> pressedKeys;

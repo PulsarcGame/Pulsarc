@@ -19,6 +19,7 @@ namespace Pulsarc.Gameplay
 
         Stopwatch time;
         long timeOffset;
+        long keyboardManagerStartTime;
         int currentCrosshairRadius;
 
         double userSpeed;
@@ -33,12 +34,13 @@ namespace Pulsarc.Gameplay
             keys = 4;
             userSpeed = 1;
             currentCrosshairRadius = 200;
+            keyboardManagerStartTime = KeyboardInputManager.time;
 
             currentSpeedMultiplier = 1;
             currentArcsSpeed = userSpeed;
 
             columns = new Column[keys];
-            crosshair = new Crosshair();
+            crosshair = new Crosshair(currentCrosshairRadius);
 
             currentBeatmap = BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc");
 
@@ -126,7 +128,8 @@ namespace Pulsarc.Gameplay
                 {
                     pressed = columns[column].hitObjects[0];
 
-                    var error = pressed.time - getElapsed();
+                    var error = pressed.time - (press.Key - keyboardManagerStartTime);
+                    Console.WriteLine(error+"ms");
                     
                     if (!(Math.Abs(error) > c50))
                     {

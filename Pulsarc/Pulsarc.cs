@@ -140,9 +140,9 @@ namespace Pulsarc
                 frames++;
                 gameplayEngine.Draw();
 
-                if(fpsWatch.ElapsedMilliseconds > 1000)
+                if(fpsWatch.ElapsedMilliseconds > 250)
                 {
-                    Console.WriteLine(frames + " fps");
+                    Console.WriteLine(frames * 4 + " fps"); // x4 because of 250ms resolution
                     frames = 0;
                     fpsWatch.Restart();
                 }
