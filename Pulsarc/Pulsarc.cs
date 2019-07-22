@@ -122,7 +122,14 @@ namespace Pulsarc
                 Beatmap testmap = converter.Convert(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
                 gameplayEngine.Init(testmap);
             }
-                
+
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                IntralismToPulsarc converter = new IntralismToPulsarc();
+
+                converter.Save(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
+            }
+
 
             var currentMouseState = Mouse.GetState();
 
