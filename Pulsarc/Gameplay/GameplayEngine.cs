@@ -169,7 +169,7 @@ namespace Pulsarc.Gameplay
 
                     int error = (int) (pressed.time - (press.Key - keyboardManagerStartTime));
 
-                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(error);
+                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
 
                     if (judge.Value >= 0)
                     {

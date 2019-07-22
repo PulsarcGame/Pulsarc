@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.Gameplay;
+using Pulsarc.Gameplay.UI;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
@@ -24,6 +25,8 @@ namespace Pulsarc
         //temp
         int previousScrollValue;
         Stopwatch fpsWatch;
+        FPS fpsDisplay;
+        int fpsResolution;
         static public int frames;
         static public SpriteFont defaultFont;
 
@@ -59,10 +62,14 @@ namespace Pulsarc
 
             //////
             defaultFont = Content.Load<SpriteFont>("Fonts/DefaultFont");
+
+            fpsDisplay = new FPS(new Vector2());
+            fpsResolution = 10;
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
-            previousScrollValue = 0;
             frames = 0;
+
+            previousScrollValue = 0;
         }
 
         /// <summary>
@@ -149,17 +156,18 @@ namespace Pulsarc
 
             if (gameplayEngine.isActive())
             {
-                frames++;
                 gameplayEngine.Draw();
+            }
+            frames++;
 
-                if(fpsWatch.ElapsedMilliseconds > 250)
-                {
-                    Console.WriteLine(frames * 4 + " fps"); // x4 because of 250ms resolution
-                    frames = 0;
-                    fpsWatch.Restart();
-                }
+            if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)
+            {
+                fpsDisplay.Update(frames * fpsResolution);
+                frames = 0;
+                fpsWatch.Restart();
             }
 
+            fpsDisplay.Draw();
             base.Draw(gameTime);
             spriteBatch.End();
         }
