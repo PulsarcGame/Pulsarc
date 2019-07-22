@@ -35,27 +35,17 @@ namespace Pulsarc.Gameplay
             drawnPart.Width = texture.Width / 2;
             drawnPart.Height = texture.Height / 2;
 
-            switch(angle)
+            switch (angle)
             {
                 case 0:
-                    drawnPart.Width = texture.Width / 2;
-                    drawnPart.Height = texture.Height / 2;
                     drawnPart.X = texture.Width / 2;
                     origin.X -= texture.Width / 2;
                     break;
-                case 270:
-                    drawnPart.Width = texture.Width / 2;
-                    drawnPart.Height = texture.Height / 2;
-                    break;
                 case 180:
-                    drawnPart.Width = texture.Width / 2;
-                    drawnPart.Height = texture.Height / 2;
                     drawnPart.Y = texture.Height / 2;
                     origin.Y -= texture.Height / 2;
                     break;
                 case 90:
-                    drawnPart.Width = texture.Width / 2;
-                    drawnPart.Height = texture.Height / 2;
                     drawnPart.X = texture.Width / 2;
                     drawnPart.Y = texture.Height / 2;
                     origin.X -= texture.Width / 2;

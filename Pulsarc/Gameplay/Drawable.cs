@@ -30,11 +30,14 @@ namespace Pulsarc.Gameplay
         }
 
         public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1)
-            : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio) {}
-        
+            : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio) { }
 
-        public Drawable(Texture2D texture, float aspectRatio = -1) 
+
+        public Drawable(Texture2D texture, float aspectRatio = -1)
             : this(texture, new Vector2(0, 0), new Vector2(texture.Width, texture.Height), aspectRatio) { }
+
+
+        public Drawable() { }
 
         public void Resize(Vector2 size)
         {
@@ -61,7 +64,7 @@ namespace Pulsarc.Gameplay
             }
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             Pulsarc.spriteBatch.Draw(texture, position, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
         }

@@ -52,6 +52,14 @@
     <Compile Include="Gameplay\Drawable.cs" />
     <Compile Include="Gameplay\GameplayEngine.cs" />
     <Compile Include="Gameplay\HitObject.cs" />
+    <Compile Include="Gameplay\Judgement.cs" />
+    <Compile Include="Gameplay\UI\Combo.cs" />
+    <Compile Include="Gameplay\UI\Score.cs" />
+    <Compile Include="Gameplay\UI\Accuracy.cs" />
+    <Compile Include="Gameplay\UI\TextDisplayElement.cs" />
+    <Compile Include="Utils\BeatmapConversion\BeatmapConverter.cs" />
+    <Compile Include="Utils\BeatmapConversion\IntralismBeatmap.cs" />
+    <Compile Include="Utils\BeatmapConversion\IntralismToPulsarc.cs" />
     <Compile Include="Utils\KeyboardInputManager.cs" />
     <Compile Include="Skinning\Skin.cs" />
     <Compile Include="Pulsarc.cs" />

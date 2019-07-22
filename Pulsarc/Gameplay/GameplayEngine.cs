@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
+using Pulsarc.Gameplay.UI;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,49 +13,78 @@ namespace Pulsarc.Gameplay
     {
         bool active = false;
 
+        // UI Elements
+
+        Accuracy accuracyDisplay;
+        Score scoreDisplay;
+        Combo comboDisplay;
+
+        // Beatmap Elements
+
         Beatmap currentBeatmap;
         Column[] columns;
         Crosshair crosshair;
         int keys;
 
+        // Timing Elements
+
         Stopwatch time;
         long timeOffset;
+        long keyboardManagerStartTime;
         int currentCrosshairRadius;
+
+        // Gameplay Elements
 
         double userSpeed;
         double currentSpeedMultiplier;
         double currentArcsSpeed;
+        List<Double> errors;
 
-        public void Init(string beatmapFolderName, string beatmapVersionName)
+        Int64 score;
+        int combo;
+
+        public void Init(Beatmap playedBeatmap)
         {
             Reset();
+
+            // Initialize UI
+
+            accuracyDisplay = new Accuracy(new Vector2(Pulsarc.getDimensions().X / 2, 50), centered: true);
+            scoreDisplay = new Score(new Vector2(Pulsarc.getDimensions().X / 2, 20), centered: true);
+            comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2), centered: true);
 
             // Initialize default variables, parse beatmap
             keys = 4;
             userSpeed = 1;
             currentCrosshairRadius = 200;
+            keyboardManagerStartTime = KeyboardInputManager.time;
 
             currentSpeedMultiplier = 1;
             currentArcsSpeed = userSpeed;
 
+            // Initialize Gameplay variables
             columns = new Column[keys];
-            crosshair = new Crosshair();
+            crosshair = new Crosshair(currentCrosshairRadius);
+            errors = new List<double>();
 
-            currentBeatmap = BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc");
+            combo = 0;
+            score = 0;
 
-            for(int i = 1; i <= keys; i++)
+            currentBeatmap = playedBeatmap;
+
+            for (int i = 1; i <= keys; i++)
             {
                 columns[i - 1] = new Column(i);
             }
 
-            foreach(Arc arc in currentBeatmap.arcs)
+            foreach (Arc arc in currentBeatmap.arcs)
             {
-                for(int i = 0; i < keys; i++)
+                for (int i = 0; i < keys; i++)
                 {
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        columns[i].hitObjects.Add(new HitObject(arc.time, (int) (i / (float) keys * 360), keys, currentArcsSpeed));
+                        columns[i].hitObjects.Add(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
                     }
                 }
             }
@@ -62,6 +92,11 @@ namespace Pulsarc.Gameplay
             active = true;
             time = new Stopwatch();
             time.Start();
+        }
+
+        public void Init(string beatmapFolderName, string beatmapVersionName)
+        {
+            Init(BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc"));
         }
 
         public void Update()
@@ -79,9 +114,22 @@ namespace Pulsarc.Gameplay
                     {
                         columns[i].hitObjects.RemoveAt(k);
                         k--;
+                        combo = 0;
+                        score += Judgement.getMiss().score;
+                        errors.Add(Judgement.getMiss().acc);
                     }
                 }
             }
+
+            double accuracyTotal = 0;
+            foreach(double error in errors)
+            {
+                accuracyTotal += Math.Abs(error);
+            }
+
+            accuracyDisplay.Update(errors.Count > 0 ? accuracyTotal / errors.Count : 1);
+            scoreDisplay.Update(score);
+            comboDisplay.Update(combo);
 
             if(!atLeastOne)
             {
@@ -91,13 +139,6 @@ namespace Pulsarc.Gameplay
 
         public void handleInputs()
         {
-            var max = 16;
-            var c300 = 25;
-            var c200 = 40;
-            var c100 = 60;
-            var c50 = 200;
-
-
             while (KeyboardInputManager.keyboardPresses.Count > 0)
             {
                 KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
@@ -126,11 +167,24 @@ namespace Pulsarc.Gameplay
                 {
                     pressed = columns[column].hitObjects[0];
 
-                    var error = pressed.time - getElapsed();
-                    
-                    if (!(Math.Abs(error) > c50))
+                    int error = (int) (pressed.time - (press.Key - keyboardManagerStartTime));
+
+                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(error);
+
+                    if (judge.Value >= 0)
                     {
                         columns[column].hitObjects.RemoveAt(0);
+                        errors.Add(judge.Key);
+                        
+                        if(judge.Value > 0)
+                        {
+                            combo++;
+                            score += judge.Value * combo;
+                        } else
+                        {
+                            combo = 0;
+                            score += judge.Value;
+                        }
                     }
                 }
             }
@@ -156,6 +210,10 @@ namespace Pulsarc.Gameplay
                     }
                 }
             }
+
+            accuracyDisplay.Draw();
+            scoreDisplay.Draw();
+            comboDisplay.Draw();
         }
 
         public void Reset()

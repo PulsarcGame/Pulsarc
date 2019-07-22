@@ -2,7 +2,7 @@
 
 namespace Pulsarc.Beatmaps
 {
-    class SpeedVariation
+    public class SpeedVariation
     {
         public int time;
         public int type;

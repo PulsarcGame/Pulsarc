@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pulsarc.Beatmaps
 {
-    class Beatmap
+    public class Beatmap
     {
         public string FormatVersion { get; set; }
         public string Title { get; set; }
