@@ -55,7 +55,6 @@ namespace Pulsarc.Utils.BeatmapConversion
                             }
                             int time = (int) Math.Floor(evt.time * 1000);
                             result.arcs.Add(new Arc(time, arc));
-                            Console.WriteLine(time + " : " + arc);
                         }
                     }
                 }
