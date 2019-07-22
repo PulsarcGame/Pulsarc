@@ -12,6 +12,8 @@ namespace Pulsarc.Utils.BeatmapConversion
 {
     class IntralismToPulsarc : BeatmapConverter
     {
+        int msOffset = -80;
+
         public Beatmap Convert(string folder_path)
         {
 
@@ -55,7 +57,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                         break;
                                 }
                             }
-                            int time = (int) Math.Floor(evt.time * 1000);
+                            int time = (int) Math.Floor(evt.time * 1000) + msOffset;
                             result.arcs.Add(new Arc(time, arc));
                         }
                     }
@@ -90,7 +92,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                     }
 
                     File.Copy(audioPath, dirName + "/" + map.Audio);
-                    BeatmapHelper.Save(map, dirName + "/" + map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ")");
+                    BeatmapHelper.Save(map, dirName + "/" + map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ").psc");
                 }
             }
         }

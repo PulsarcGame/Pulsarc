@@ -81,6 +81,8 @@ namespace Pulsarc
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            Skin.defaultTexture = Content.Load<Texture2D>("default");
+
             // TODO : Load all menu images etc
         }
 
@@ -104,18 +106,20 @@ namespace Pulsarc
                 Exit();
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !gameplayEngine.isActive())
-                gameplayEngine.Init("0 - Noone - Test (Adri)", "Noone - Test [test] (Adri)");
+                gameplayEngine.Init("0 - Unknown - siqlo - Vantablack (Intralism)", "Unknown - siqlo - Vantablack [Converted] (Intralism)");
 
             if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 gameplayEngine.Reset();
+
+            /* TEST COMMANDS
 
             if (Keyboard.GetState().IsKeyDown(Keys.P))
                 gameplayEngine.Pause();
 
             if (Keyboard.GetState().IsKeyDown(Keys.O))
-                gameplayEngine.Continue();
+                gameplayEngine.Resume();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            if (Keyboard.GetState().IsKeyDown(Keys.T) && !gameplayEngine.isActive())
             {
                 IntralismToPulsarc converter = new IntralismToPulsarc();
 
@@ -123,13 +127,14 @@ namespace Pulsarc
                 gameplayEngine.Init(testmap);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            if (Keyboard.GetState().IsKeyDown(Keys.S)) // Careful, this will loop as long as you hold the key. This is just for testing.
             {
                 IntralismToPulsarc converter = new IntralismToPulsarc();
 
                 converter.Save(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
             }
 
+            */
 
             var currentMouseState = Mouse.GetState();
 

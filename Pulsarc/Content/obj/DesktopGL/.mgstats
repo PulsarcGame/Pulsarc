@@ -1,2 +1,3 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/Code/Pulsarc/Pulsarc/Content/Fonts/File.spritefont","C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/Fonts/DefaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",2008,267281,0,3480937
+"C:/Code/Pulsarc/Pulsarc/Content/default.png","C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/default.xnb","TextureProcessor","Texture2DContent",1889,10085,0,1765269
+"C:/Code/Pulsarc/Pulsarc/Content/Fonts/File.spritefont","C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/Fonts/DefaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",2068,267281,0,1964508
