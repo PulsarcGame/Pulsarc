@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.Beatmaps;
 using Pulsarc.Gameplay;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Diagnostics;
 
@@ -23,6 +25,7 @@ namespace Pulsarc
         int previousScrollValue;
         Stopwatch fpsWatch;
         static public int frames;
+        static public SpriteFont defaultFont;
 
         public Pulsarc()
         {
@@ -55,7 +58,7 @@ namespace Pulsarc
             gameplayEngine = new GameplayEngine();
 
             //////
-
+            defaultFont = Content.Load<SpriteFont>("Fonts/DefaultFont");
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
             previousScrollValue = 0;
@@ -104,6 +107,15 @@ namespace Pulsarc
 
             if (Keyboard.GetState().IsKeyDown(Keys.O))
                 gameplayEngine.Continue();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            {
+                IntralismToPulsarc converter = new IntralismToPulsarc();
+
+                Beatmap testmap = converter.Convert(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
+                gameplayEngine.Init(testmap);
+            }
+                
 
             var currentMouseState = Mouse.GetState();
 

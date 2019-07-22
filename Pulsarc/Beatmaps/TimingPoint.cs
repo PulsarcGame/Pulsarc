@@ -1,7 +1,7 @@
 ﻿
 namespace Pulsarc.Beatmaps
 {
-    class TimingPoint
+    public class TimingPoint
     {
         public int time;
         public int bpm;

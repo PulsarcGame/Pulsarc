@@ -2,7 +2,7 @@
 
 namespace Pulsarc.Beatmaps
 {
-    class Arc
+    public class Arc
     {
         public int time;
         public int type;
