@@ -2,6 +2,9 @@
 [![Discord](https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)](https://discord.gg/SYfpvfJ)
 >A community-created rhythm game!
 
+## About
+[Read more about this project!](docs/ABOUT.md)
+
 ## Compiling
 TBA
 
