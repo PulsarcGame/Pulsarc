@@ -141,15 +141,27 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
-  <PropertyGroup>
+   <!-- <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)Skins" "$(ProjectDir)$(OutDir)Skins" /e /y /i /r
 xcopy "$(ProjectDir)Songs" "$(ProjectDir)$(OutDir)Songs" /e /y /i /r</PostBuildEvent>
-  </PropertyGroup>
+  </PropertyGroup> -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
+       Other similar extension points exist, see Microsoft.Common.targets. -->
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
+      <ItemGroup>
+        <SkinsSource Include="$(ProjectDir)Skins\**\*.*"/>
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SkinsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Skins\%(RecursiveDir)">
+    </Copy>
+    
+    <ItemGroup>
+        <SongsSource Include="$(ProjectDir)Songs\**\*.*"/>
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)">
+    </Copy>
   </Target>
-  -->
 </Project>
