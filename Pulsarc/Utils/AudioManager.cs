@@ -58,21 +58,30 @@ namespace Pulsarc.Utils
 
         static public void Pause()
         {
-            MediaPlayer.Pause();
-            audioThreadExecTime.Stop();
+            if (active)
+            {
+                MediaPlayer.Pause();
+                audioThreadExecTime.Stop();
+            }
         }
 
         static public void Resume()
         {
-            MediaPlayer.Resume();
-            audioThreadExecTime.Start();
+            if (active)
+            {
+                MediaPlayer.Resume();
+                audioThreadExecTime.Start();
+            }
         }
 
         static public void Stop()
         {
-            Pause();
-            MediaPlayer.Stop();
-            Reset();
+            if (active)
+            {
+                Pause();
+                MediaPlayer.Stop();
+                Reset();
+            }
         }
 
         static public void Reset()

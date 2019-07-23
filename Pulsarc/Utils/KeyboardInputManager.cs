@@ -65,5 +65,10 @@ namespace Pulsarc.Utils
                 }
             }
         }
+
+        static public void Reset()
+        {
+            keyboardPresses.Clear();
+        }
     }
 }

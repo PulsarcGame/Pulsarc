@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Pulsarc.Gameplay.UI
             this.position = position;
             this.centered = centered;
 
-            font = Pulsarc.defaultFont;
+            font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;
             fontScale = fontSize / 64f;
 

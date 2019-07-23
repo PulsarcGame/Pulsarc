@@ -176,6 +176,7 @@ namespace Pulsarc.Gameplay
                     if (columns[i].updateHitObjects[k].Value.time + 100 < getElapsed())
                     {
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
+                        judgeBox.Add(columns[i].updateHitObjects[k].Value.time + 100, Judgement.getMiss().score);
                         columns[i].updateHitObjects.RemoveAt(k);
                         k--;
                         combo = 0;
@@ -302,7 +303,8 @@ namespace Pulsarc.Gameplay
 
         public void Reset()
         {
-            AudioManager.Reset();
+            AudioManager.Stop();
+            KeyboardInputManager.Reset();
             active = false;
 
             currentBeatmap = null;
