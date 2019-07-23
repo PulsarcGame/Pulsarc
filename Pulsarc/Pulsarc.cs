@@ -21,6 +21,12 @@ namespace Pulsarc
         static public SpriteBatch spriteBatch;
         static public GameplayEngine gameplayEngine;
 
+        // for playtesting
+        static public string toPlayFolder = "0 - Between the Buried and Me - The Parallax II_ Future Sequence (XeoStyle)";
+        static public string toPlaydiff = "Between the Buried and Me - The Parallax II_ Future Sequence [Marathon] (XeoStyle)";
+
+        static public string convertFrom = "Mania";
+        static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
         //temp
         int previousScrollValue;
@@ -29,6 +35,7 @@ namespace Pulsarc
         int fpsResolution;
         static public int frames;
         static public SpriteFont defaultFont;
+        bool converting = false;
 
         public Pulsarc()
         {
@@ -106,7 +113,7 @@ namespace Pulsarc
                 Exit();
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !gameplayEngine.isActive())
-                gameplayEngine.Init("0 - Unknown - siqlo - Vantablack (Intralism)", "Unknown - siqlo - Vantablack [Converted] (Intralism)");
+                gameplayEngine.Init(toPlayFolder, toPlaydiff);
 
             if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 gameplayEngine.Reset();
@@ -127,14 +134,29 @@ namespace Pulsarc
                 gameplayEngine.Init(testmap);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) // Careful, this will loop as long as you hold the key. This is just for testing.
-            {
-                IntralismToPulsarc converter = new IntralismToPulsarc();
-
-                converter.Save(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
-            }
-
             */
+
+            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !gameplayEngine.isActive())
+            {
+                converting = true;
+                BeatmapConverter converter;
+
+                switch(convertFrom.ToLower()) 
+                {
+                    case "mania":
+                        converter = new ManiaToPulsarc();
+                        break;
+                    default:
+                        converter = new IntralismToPulsarc();
+                        break;
+                }
+
+                converter.Save(toConvert);
+            }
+            if(Keyboard.GetState().IsKeyUp(Keys.S) && converting)
+            {
+                converting = false;
+            }
 
             var currentMouseState = Mouse.GetState();
 

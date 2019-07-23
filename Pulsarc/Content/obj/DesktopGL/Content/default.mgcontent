@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Code/Pulsarc/Pulsarc/Content/default.png</SourceFile>
-  <SourceTime>2019-07-22T23:48:42.8758535+02:00</SourceTime>
+  <SourceTime>2019-07-23T00:37:39.6650205+02:00</SourceTime>
   <DestFile>C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/Content/default.xnb</DestFile>
-  <DestTime>2019-07-23T00:14:42.0097011+02:00</DestTime>
+  <DestTime>2019-07-23T03:14:00.7193714+02:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2018-12-08T17:35:54+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

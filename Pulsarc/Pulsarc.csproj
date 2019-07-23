@@ -60,7 +60,9 @@
     <Compile Include="Gameplay\UI\Accuracy.cs" />
     <Compile Include="Gameplay\UI\TextDisplayElement.cs" />
     <Compile Include="Utils\BeatmapConversion\BeatmapConverter.cs" />
+    <Compile Include="Utils\BeatmapConversion\ManiaBeatmap.cs" />
     <Compile Include="Utils\BeatmapConversion\IntralismBeatmap.cs" />
+    <Compile Include="Utils\BeatmapConversion\ManiaToPulsarc.cs" />
     <Compile Include="Utils\BeatmapConversion\IntralismToPulsarc.cs" />
     <Compile Include="Utils\AudioManager.cs" />
     <Compile Include="Utils\KeyboardInputManager.cs" />

@@ -42,6 +42,9 @@ namespace Pulsarc.Gameplay
         Int64 score;
         int combo;
 
+        // Performance
+        int msIgnore = 500;
+
         public void Init(Beatmap playedBeatmap)
         {
             Reset();
@@ -72,7 +75,9 @@ namespace Pulsarc.Gameplay
             score = 0;
 
             currentBeatmap = playedBeatmap;
-            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio, UriKind.Absolute));
+
+            string audioPath = Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio;
+            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(audioPath));
 
             for (int i = 1; i <= keys; i++)
             {
@@ -86,9 +91,14 @@ namespace Pulsarc.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        columns[i].hitObjects.Add(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
                     }
                 }
+            }
+
+            foreach(Column col in columns)
+            {
+                col.SortUpdateHitObjects();
             }
 
             AudioManager.Start();
@@ -106,14 +116,21 @@ namespace Pulsarc.Gameplay
             // Update UI and objects positions
             for (int i = 0; i < keys; i++)
             {
-                for(int k = 0; k < columns[i].hitObjects.Count; k++)
+                bool updatedAll = false;
+                for(int k = 0; k < columns[i].updateHitObjects.Count && !updatedAll; k++)
                 {
-                    columns[i].hitObjects[k].recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
+                    columns[i].updateHitObjects[k].Value.recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if(columns[i].hitObjects[k].time + 100 < getElapsed())
+                    if (columns[i].updateHitObjects[k].Key - msIgnore > getElapsed())
                     {
-                        columns[i].hitObjects.RemoveAt(k);
+                        updatedAll = true;
+                    }
+
+                    if (columns[i].updateHitObjects[k].Value.time + 100 < getElapsed())
+                    {
+                        columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
+                        columns[i].updateHitObjects.RemoveAt(k);
                         k--;
                         combo = 0;
                         score += Judgement.getMiss().score;
@@ -206,11 +223,15 @@ namespace Pulsarc.Gameplay
 
             for (int i = 0; i < keys; i++)
             {
-                foreach (HitObject hitObject in columns[i].hitObjects)
+                foreach (KeyValuePair<long,HitObject> pair in columns[i].updateHitObjects)
                 {
-                    if (hitObject.IsSeen())
+                    if (pair.Value.IsSeen())
                     {
-                        hitObject.Draw();
+                        pair.Value.Draw();
+                    }
+                    if(pair.Key - msIgnore > getElapsed())
+                    {
+                        break; // not nice ik
                     }
                 }
             }
