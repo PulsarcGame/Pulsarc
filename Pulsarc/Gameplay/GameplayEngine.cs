@@ -22,6 +22,7 @@ namespace Pulsarc.Gameplay
         Score scoreDisplay;
         Combo comboDisplay;
         JudgeBox judgeBox;
+        AccuracyMeter accMeter;
 
         // Beatmap Elements
 
@@ -57,6 +58,7 @@ namespace Pulsarc.Gameplay
             comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
 
             judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
+            accMeter = new AccuracyMeter(new Vector2(Pulsarc.getDimensions().X / 2 - 100, Pulsarc.getDimensions().Y - 25), new Vector2(200,25));
 
             // Initialize default variables, parse beatmap
             keys = 4;
@@ -173,7 +175,7 @@ namespace Pulsarc.Gameplay
                         updatedAll = true;
                     }
 
-                    if (columns[i].updateHitObjects[k].Value.time + 100 < getElapsed())
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge < getElapsed())
                     {
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
                         judgeBox.Add(columns[i].updateHitObjects[k].Value.time + 100, Judgement.getMiss().score);
@@ -196,6 +198,7 @@ namespace Pulsarc.Gameplay
             scoreDisplay.Update(score);
             comboDisplay.Update(combo);
             judgeBox.Update(getElapsed());
+            accMeter.Update(getElapsed());
 
             if (!atLeastOne)
             {
@@ -229,16 +232,17 @@ namespace Pulsarc.Gameplay
                             break;
                     }
 
-                    if (column >= 0 && columns[column].hitObjects.Count > 0)
-                    {
-                        pressed = columns[column].hitObjects[0];
+                if (column >= 0 && columns[column].hitObjects.Count > 0)
+                {
+                    pressed = columns[column].hitObjects[0];
 
-                        int error = (int)(pressed.time - press.Key);
+                    int error = (int)(pressed.time - press.Key);
 
-                        KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
+                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
 
                     if (judge.Value >= 0)
                     {
+                        accMeter.addError(getElapsed(), error);
                         columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
                         errors.Add(judge.Key);
@@ -289,6 +293,7 @@ namespace Pulsarc.Gameplay
             scoreDisplay.Draw();
             comboDisplay.Draw();
             judgeBox.Draw();
+            accMeter.Draw();
         }
 
         public void Pause()
