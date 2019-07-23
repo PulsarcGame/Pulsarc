@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="625px" height="300px" src="assets/logo.png">
+</p>
+
 # Pulsarc
 [![Discord](https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)](https://discord.gg/SYfpvfJ)
 >A community-created rhythm game!
