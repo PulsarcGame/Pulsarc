@@ -11,6 +11,7 @@ namespace Pulsarc.Beatmaps
         {
 
             Beatmap parsed = new Beatmap();
+            parsed.path = file_path;
 
             var state = "";
 

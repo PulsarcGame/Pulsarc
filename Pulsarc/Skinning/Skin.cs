@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Pulsarc.Skinning
@@ -9,6 +10,8 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
+        static public Texture2D defaultTexture;
+
         static public Texture2D arcs;
         static public Texture2D crosshair;
 
@@ -16,6 +19,8 @@ namespace Pulsarc.Skinning
         static public Texture2D upArc;
         static public Texture2D downArc;
         static public Texture2D rightArc;
+
+        static public Dictionary<int, Texture2D> judges;
 
         static public void LoadSkin(string name)
         {
@@ -35,6 +40,15 @@ namespace Pulsarc.Skinning
                 downArc     = LoadCropFromTexture(arcs, new Vector2(halfW, 0), new Vector2(halfH, 0));
                 rightArc    = LoadCropFromTexture(arcs, new Vector2(halfW, 0), new Vector2(0, halfH));
 
+                judges = new Dictionary<int, Texture2D>();
+
+                judges.Add(320, LoadSkinTexture(skinFolder + "Judgements/", "max.png"));
+                judges.Add(300, LoadSkinTexture(skinFolder + "Judgements/", "perfect.png"));
+                judges.Add(200, LoadSkinTexture(skinFolder + "Judgements/", "great.png"));
+                judges.Add(100, LoadSkinTexture(skinFolder + "Judgements/", "good.png"));
+                judges.Add(50, LoadSkinTexture(skinFolder + "Judgements/", "bad.png"));
+                judges.Add(0, LoadSkinTexture(skinFolder + "Judgements/", "miss.png"));
+
                 loaded = true;
             } else
             {
@@ -51,7 +65,7 @@ namespace Pulsarc.Skinning
             catch
             {
                 Console.Write("Failed to load " + asset + " in " + path);
-                return new Texture2D(Pulsarc.graphics.GraphicsDevice, 1, 1);
+                return defaultTexture;
             }
         }
 

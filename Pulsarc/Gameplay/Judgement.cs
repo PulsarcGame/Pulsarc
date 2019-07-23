@@ -10,12 +10,13 @@ namespace Pulsarc.Gameplay
     {
         static public List<JudgementValue> judgements = new List<JudgementValue>()
         {
-            new JudgementValue(1,       16,     320),       // MAX
-            new JudgementValue(1,       25,     300),       // Perfect
-            new JudgementValue(2/3,     40,     200),       // Great
-            new JudgementValue(1/3,     60,     100),       // Good
-            new JudgementValue(1/6,     100,    50),        // Bad
-            new JudgementValue(0,       130,    0),         // Miss
+            //////////////// Judge equal to Stepmania J4 /////////////
+            new JudgementValue(1,       22,     320),       // MAX
+            new JudgementValue(1,       45,     300),       // Perfect
+            new JudgementValue(2/3,     90,     200),       // Great
+            new JudgementValue(1/3,     135,    100),      // Good
+            new JudgementValue(1/6,     180,    50),        // Bad
+            new JudgementValue(0,       200,    0),         // Miss
         };
     
 

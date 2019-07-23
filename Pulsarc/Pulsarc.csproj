@@ -48,6 +48,7 @@
     <Compile Include="Beatmaps\SpeedVariation.cs" />
     <Compile Include="Beatmaps\TimingPoint.cs" />
     <Compile Include="Gameplay\Column.cs" />
+    <Compile Include="Gameplay\JudgeBox.cs" />
     <Compile Include="Gameplay\Crosshair.cs" />
     <Compile Include="Gameplay\Drawable.cs" />
     <Compile Include="Gameplay\GameplayEngine.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Utils\BeatmapConversion\BeatmapConverter.cs" />
     <Compile Include="Utils\BeatmapConversion\IntralismBeatmap.cs" />
     <Compile Include="Utils\BeatmapConversion\IntralismToPulsarc.cs" />
+    <Compile Include="Utils\AudioManager.cs" />
     <Compile Include="Utils\KeyboardInputManager.cs" />
     <Compile Include="Skinning\Skin.cs" />
     <Compile Include="Pulsarc.cs" />

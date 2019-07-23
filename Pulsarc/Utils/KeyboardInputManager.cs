@@ -10,7 +10,6 @@ namespace Pulsarc.Utils
     static class KeyboardInputManager
     {
         static Thread inputThread;
-        public static long time;
         public static Queue<KeyValuePair<Double, Keys>> keyboardPresses;
         public static Queue<KeyValuePair<Double, Keys>> keyboardReleases;
         public static List<Keys> pressedKeys;
@@ -29,18 +28,15 @@ namespace Pulsarc.Utils
         {
             var running = true;
             var threadLimiterWatch = new Stopwatch();
-            var inputThreadExecTime = new Stopwatch();
 
             threadLimiterWatch.Start();
-            inputThreadExecTime.Start();
 
             while (running)
             {
                 if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                 {
                     threadLimiterWatch.Restart();
-
-                    time = inputThreadExecTime.ElapsedMilliseconds;
+                    
                     KeyboardState state = Keyboard.GetState();
 
                     if (state.GetPressedKeys().Count() > 0) {
@@ -48,7 +44,7 @@ namespace Pulsarc.Utils
                         {
                             if (!pressedKeys.Contains(key))
                             {
-                                keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(time, key));
+                                keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.getTime(), key));
                                 pressedKeys.Add(key);
                             }
                         }
