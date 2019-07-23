@@ -14,6 +14,7 @@ namespace Pulsarc.Gameplay
     public class GameplayEngine
     {
         bool active = false;
+        bool autoPlay = false;
 
         // UI Elements
 
@@ -101,8 +102,47 @@ namespace Pulsarc.Gameplay
                 col.SortUpdateHitObjects();
             }
 
+            if (autoPlay)
+            {
+
+                List<KeyValuePair<long, Keys>> inputs = new List<KeyValuePair<long, Keys>>();
+
+                for (int i = 0; i < keys; i++)
+                {
+                    foreach (HitObject arc in columns[i].hitObjects)
+                    {
+                        Keys press = Keys.D;
+                        switch (i)
+                        {
+                            case 2:
+                                press = Keys.D;
+                                break;
+                            case 3:
+                                press = Keys.F;
+                                break;
+                            case 1:
+                                press = Keys.J;
+                                break;
+                            case 0:
+                                press = Keys.K;
+                                break;
+                        }
+
+                        inputs.Add(new KeyValuePair<long, Keys>(arc.time, press));
+                    }
+                }
+
+                inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
+
+                foreach (KeyValuePair<long, Keys> input in inputs)
+                {
+                    KeyboardInputManager.keyboardPresses.Enqueue(input);
+                }
+            }
+
             AudioManager.Start();
             active = true;
+
         }
 
         public void Init(string beatmapFolderName, string beatmapVersionName)
@@ -164,51 +204,52 @@ namespace Pulsarc.Gameplay
 
         public void handleInputs()
         {
-            while (KeyboardInputManager.keyboardPresses.Count > 0)
-            {
-                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
-                HitObject pressed = null;
-                var column = -1;
-
-                switch(press.Value)
+                while (KeyboardInputManager.keyboardPresses.Count > 0 && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
                 {
-                    case Keys.D:
-                        column = 2;
-                        break;
-                    case Keys.F:
-                        column = 3;
-                        break;
-                    case Keys.J:
-                        column = 1;
-                        break;
-                    case Keys.K:
-                        column = 0;
-                        break;
-                    default:
-                        break;
-                }
+                    KeyValuePair<long, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                    HitObject pressed = null;
+                    var column = -1;
 
-                if (column >=0 && columns[column].hitObjects.Count > 0)
-                {
-                    pressed = columns[column].hitObjects[0];
+                    switch (press.Value)
+                    {
+                        case Keys.D:
+                            column = 2;
+                            break;
+                        case Keys.F:
+                            column = 3;
+                            break;
+                        case Keys.J:
+                            column = 1;
+                            break;
+                        case Keys.K:
+                            column = 0;
+                            break;
+                        default:
+                            break;
+                    }
 
-                    int error = (int) (pressed.time - press.Key);
+                    if (column >= 0 && columns[column].hitObjects.Count > 0)
+                    {
+                        pressed = columns[column].hitObjects[0];
 
-                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
+                        int error = (int)(pressed.time - press.Key);
+
+                        KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
 
                     if (judge.Value >= 0)
                     {
                         columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
                         errors.Add(judge.Key);
-                        judgeBox.Add((long) press.Key, judge.Value);
+                        judgeBox.Add((long)press.Key, judge.Value);
 
 
                         if (judge.Value > 0)
                         {
                             combo++;
                             score += judge.Value * combo;
-                        } else
+                        }
+                        else
                         {
                             combo = 0;
                             score += judge.Value;
