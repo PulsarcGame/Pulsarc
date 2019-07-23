@@ -3,11 +3,11 @@
   <SourceFile>C:/Code/Pulsarc/Pulsarc/Content/default.png</SourceFile>
   <SourceTime>2019-07-23T00:37:39.6650205+02:00</SourceTime>
   <DestFile>C:/Code/Pulsarc/Pulsarc/Content/bin/DesktopGL/Content/default.xnb</DestFile>
-  <DestTime>2019-07-23T03:14:00.7193714+02:00</DestTime>
+  <DestTime>2019-07-23T14:41:02.2847286+02:00</DestTime>
   <Importer>TextureImporter</Importer>
-  <ImporterTime>2018-12-08T17:35:54+01:00</ImporterTime>
+  <ImporterTime>2018-01-13T19:18:24+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
-  <ProcessorTime>2018-12-08T17:35:54+01:00</ProcessorTime>
+  <ProcessorTime>2018-01-13T19:18:24+01:00</ProcessorTime>
   <Parameters>
     <Key>ColorKeyColor</Key>
     <Value>255,0,255,255</Value>

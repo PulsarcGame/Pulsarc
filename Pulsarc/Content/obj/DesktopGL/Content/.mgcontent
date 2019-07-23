@@ -5,10 +5,6 @@
   <Config />
   <SourceFiles>
     <File>C:/Code/Pulsarc/Pulsarc/Content/default.png</File>
-    <File>C:/Code/Pulsarc/Pulsarc/Content/Fonts/File.spritefont</File>
+    <File>C:/Code/Pulsarc/Pulsarc/Content/Fonts/DefaultFont.spritefont</File>
   </SourceFiles>
-  <DestFiles>
-    <File xsi:nil="true" />
-    <File>Fonts/DefaultFont.spritefont</File>
-  </DestFiles>
 </SourceFileCollection>
