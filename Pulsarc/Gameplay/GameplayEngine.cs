@@ -178,7 +178,7 @@ namespace Pulsarc.Gameplay
                     if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge < getElapsed())
                     {
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
-                        judgeBox.Add(columns[i].updateHitObjects[k].Value.time + 100, Judgement.getMiss().score);
+                        judgeBox.Add(columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge, Judgement.getMiss().score);
                         columns[i].updateHitObjects.RemoveAt(k);
                         k--;
                         combo = 0;
