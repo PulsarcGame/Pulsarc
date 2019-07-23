@@ -29,7 +29,7 @@ namespace Pulsarc.Utils.BeatmapConversion
 
         public List<Dictionary<string, string>> unlockConditions;
         public bool hidden;
-        public List<Dictionary<string, string>> checkpoints;
+        public List<double> checkpoints;
 
         public List<Event> events;
     }
