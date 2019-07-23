@@ -14,7 +14,7 @@ namespace Pulsarc.Gameplay
             new JudgementValue(1,       22,     320),       // MAX
             new JudgementValue(1,       45,     300),       // Perfect
             new JudgementValue(2/3,     90,     200),       // Great
-            new JudgementValue(1/3,     135,    100),      // Good
+            new JudgementValue(1/3,     135,    100),       // Good
             new JudgementValue(1/6,     180,    50),        // Bad
             new JudgementValue(0,       200,    0),         // Miss
         };

@@ -74,7 +74,7 @@ namespace Pulsarc.Gameplay
         public double getDistanceToCrosshair(int currentTime, double speed)
         {
             var distanceT = time - currentTime;
-            return Math.Pow(distanceT + 562.3413, 4) / 1e9 * speed - 100;
+            return (Math.Pow(distanceT + 562.3413, 4) / 1e9 - 100) * speed;
         }
 
         public bool IsSeen()

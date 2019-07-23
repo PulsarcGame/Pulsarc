@@ -6,3 +6,9 @@ packages/
 Pulsarc/bin/
 
 Pulsarc/obj/
+
+*.psess
+
+*.vspx
+
+*.mgcontent
