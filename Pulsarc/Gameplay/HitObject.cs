@@ -18,6 +18,8 @@ namespace Pulsarc.Gameplay
 
         double distanceToCrosshair;
 
+        // Optimization
+        public bool erase;
 
         // Distance formula values
         static double exponent = 4; // Do not use decimals
@@ -29,6 +31,7 @@ namespace Pulsarc.Gameplay
         {
             this.time = time;
             this.angle = angle;
+            erase = false;
 
             Vector2 screen = Pulsarc.getDimensions();
             radius = (200f / 1920f) * screen.X;

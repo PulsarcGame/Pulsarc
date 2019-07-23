@@ -119,6 +119,12 @@ namespace Pulsarc.Gameplay
                 bool updatedAll = false;
                 for(int k = 0; k < columns[i].updateHitObjects.Count && !updatedAll; k++)
                 {
+                    if (columns[i].updateHitObjects[k].Value.erase)
+                    {
+                        columns[i].updateHitObjects.RemoveAt(k);
+                        continue;
+                    }
+
                     columns[i].updateHitObjects[k].Value.recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
@@ -192,6 +198,7 @@ namespace Pulsarc.Gameplay
 
                     if (judge.Value >= 0)
                     {
+                        columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
                         errors.Add(judge.Key);
                         judgeBox.Add((long) press.Key, judge.Value);

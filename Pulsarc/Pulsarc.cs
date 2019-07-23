@@ -142,7 +142,7 @@ namespace Pulsarc
                 BeatmapConverter converter;
 
                 switch(convertFrom.ToLower()) 
-                {
+                { 
                     case "mania":
                         converter = new ManiaToPulsarc();
                         break;
