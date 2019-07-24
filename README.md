@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="625px" height="300px" src="assets/logo.png">
+  <img width="626px" height="280px" src="assets/logo.png">
 </p>
 
 # Pulsarc
