@@ -21,7 +21,21 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)Skins&quot; &quot;$(ProjectDir)$(OutDir)Skins&quot; /e /y /i /r&#xD;&#xA;xcopy &quot;$(ProjectDir)Songs&quot; &quot;$(ProjectDir)$(OutDir)Songs&quot; /e /y /i /r" />
-  </Target>
+    <!-- Copy Skins -->
+    <ItemGroup>
+        <SkinsSource Include="$(ProjectDir)Skins\**\*.*"/>
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SkinsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Skins\%(RecursiveDir)">
+    </Copy>
 
+
+    <!-- Copy Songs -->
+    <ItemGroup>
+        <SongsSource Include="$(ProjectDir)Songs\**\*.*"/>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)">
+    </Copy>
+   </Target>
 </Project>
