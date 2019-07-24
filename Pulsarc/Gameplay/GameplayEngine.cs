@@ -8,12 +8,36 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Wobble.Screens;
 
 namespace Pulsarc.Gameplay
 {
-    public class GameplayEngine
+    public class GameplayEngine : Screen
     {
-        bool active = false;
+        public override ScreenView View { get ; protected set; }
+        private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
+
+        public static bool active = false;
+
+
+        public GameplayEngine()
+        {
+            View = new GameplayEngineView(this);
+        }
+
+        public void Init(Beatmap beatmap)
+        {
+            getGameplayView().Init(beatmap);
+        }
+
+        public void Init(string folder, string diff)
+        {
+            getGameplayView().Init(folder, diff);
+        }
+    }
+
+    public class GameplayEngineView : ScreenView
+    {
         bool autoPlay = false;
 
         // UI Elements
@@ -46,6 +70,9 @@ namespace Pulsarc.Gameplay
 
         // Performance
         int msIgnore = 500;
+
+        private GameplayEngine GetGameplayEngine() { return (GameplayEngine) Screen; }
+        public GameplayEngineView(Screen screen) : base(screen) { }
 
         public void Init(Beatmap playedBeatmap)
         {
@@ -142,7 +169,7 @@ namespace Pulsarc.Gameplay
             }
 
             AudioManager.Start();
-            active = true;
+            GameplayEngine.active = true;
 
         }
 
@@ -151,8 +178,21 @@ namespace Pulsarc.Gameplay
             Init(BeatmapHelper.Load("Songs/" + beatmapFolderName + "/" + beatmapVersionName + ".psc"));
         }
 
-        public void Update()
+        public override void Update(GameTime gameTime)
         {
+            handleInputs(); 
+
+            // Gameplay commands
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Delete))
+                Reset();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.P))
+                Pause();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.O))
+                Resume();
+
             bool atLeastOne = false;
             // Update UI and objects positions
             for (int i = 0; i < keys; i++)
@@ -268,7 +308,7 @@ namespace Pulsarc.Gameplay
             return AudioManager.getTime() + timeOffset;
         }
 
-        public void Draw()
+        public override void Draw(GameTime gameTime)
         {
             // Draw everything
             crosshair.Draw();
@@ -309,7 +349,7 @@ namespace Pulsarc.Gameplay
         {
             AudioManager.Stop();
             KeyboardInputManager.Reset();
-            active = false;
+            GameplayEngine.active = false;
 
             currentBeatmap = null;
             columns = null;
@@ -322,12 +362,17 @@ namespace Pulsarc.Gameplay
 
         public bool isActive()
         {
-            return active;
+            return GameplayEngine.active;
         }
 
         public void deltaTime(long delta)
         {
             timeOffset += delta;
+        }
+
+        public override void Destroy()
+        {
+            throw new NotImplementedException();
         }
     }
 }
