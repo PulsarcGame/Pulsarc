@@ -10,15 +10,15 @@ namespace Pulsarc.Utils
     static class KeyboardInputManager
     {
         static Thread inputThread;
-        public static Queue<KeyValuePair<Double, Keys>> keyboardPresses;
-        public static Queue<KeyValuePair<Double, Keys>> keyboardReleases;
+        public static Queue<KeyValuePair<long, Keys>> keyboardPresses;
+        public static Queue<KeyValuePair<long, Keys>> keyboardReleases;
         public static List<Keys> pressedKeys;
 
         static public void StartThread()
         {
             pressedKeys = new List<Keys>();
-            keyboardPresses = new Queue<KeyValuePair<Double, Keys>>();
-            keyboardReleases = new Queue<KeyValuePair<Double, Keys>>();
+            keyboardPresses = new Queue<KeyValuePair<long, Keys>>();
+            keyboardReleases = new Queue<KeyValuePair<long, Keys>>();
 
             inputThread = new Thread(new ThreadStart(InputUpdater));
             inputThread.Start();
@@ -44,7 +44,7 @@ namespace Pulsarc.Utils
                         {
                             if (!pressedKeys.Contains(key))
                             {
-                                keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.getTime(), key));
+                                keyboardPresses.Enqueue(new KeyValuePair<long, Keys>(AudioManager.getTime(), key));
                                 pressedKeys.Add(key);
                             }
                         }
@@ -64,6 +64,11 @@ namespace Pulsarc.Utils
                     }
                 }
             }
+        }
+
+        static public void Reset()
+        {
+            keyboardPresses.Clear();
         }
     }
 }

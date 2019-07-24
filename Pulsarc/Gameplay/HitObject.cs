@@ -18,10 +18,20 @@ namespace Pulsarc.Gameplay
 
         double distanceToCrosshair;
 
+        // Optimization
+        public bool erase;
+
+        // Distance formula values
+        static double exponent = 4; // Do not use decimals
+        static int targetDisappearDistance = 100;
+        static double curveFixing = 1e9;
+        static double disappearDistanceFixing = Math.Pow(curveFixing * targetDisappearDistance, 1/exponent);
+
         public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.arcs)
         {
             this.time = time;
             this.angle = angle;
+            erase = false;
 
             Vector2 screen = Pulsarc.getDimensions();
             radius = (200f / 1920f) * screen.X;
@@ -74,12 +84,17 @@ namespace Pulsarc.Gameplay
         public double getDistanceToCrosshair(int currentTime, double speed)
         {
             var distanceT = time - currentTime;
-            return Math.Pow(distanceT + 562.3413, 4) / 1e9 * speed - 100;
+            return (Math.Pow(distanceT + disappearDistanceFixing, exponent) / curveFixing - targetDisappearDistance) * speed;
+        }
+
+        public int IsSeenAt(double distance, double speed)
+        {
+            return (int) (Math.Pow(curveFixing * (distance + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);
         }
 
         public bool IsSeen()
         {
-            return distanceToCrosshair < 2000;
+            return distanceToCrosshair < 2300;
         }
     }
 }

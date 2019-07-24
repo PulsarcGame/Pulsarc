@@ -9,6 +9,7 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Pulsarc
 {
@@ -21,14 +22,19 @@ namespace Pulsarc
         static public SpriteBatch spriteBatch;
         static public GameplayEngine gameplayEngine;
 
+        // for playtesting
+        static public string toPlayFolder = "0 - Between the Buried and Me - The Parallax II_ Future Sequence (XeoStyle)";
+        static public string toPlaydiff = "Between the Buried and Me - The Parallax II_ Future Sequence [Marathon] (XeoStyle)";
+
+        static public string convertFrom = "Mania";
+        static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
         //temp
-        int previousScrollValue;
         Stopwatch fpsWatch;
         FPS fpsDisplay;
         int fpsResolution;
         static public int frames;
-        static public SpriteFont defaultFont;
+        bool converting = false;
 
         public Pulsarc()
         {
@@ -55,21 +61,15 @@ namespace Pulsarc
         {
             base.Initialize();
 
-            Skin.LoadSkin("DefaultSkin");
-
             KeyboardInputManager.StartThread();
             gameplayEngine = new GameplayEngine();
 
-            //////
-            defaultFont = Content.Load<SpriteFont>("Fonts/DefaultFont");
-
+            // Fps
             fpsDisplay = new FPS(new Vector2());
             fpsResolution = 10;
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
             frames = 0;
-
-            previousScrollValue = 0;
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Pulsarc
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Skin.defaultTexture = Content.Load<Texture2D>("default");
+            AssetsManager.Initialize(Content);
 
             // TODO : Load all menu images etc
         }
@@ -102,16 +102,15 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // Move all this in an input handler
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !gameplayEngine.isActive())
-                gameplayEngine.Init("0 - Unknown - siqlo - Vantablack (Intralism)", "Unknown - siqlo - Vantablack [Converted] (Intralism)");
+                gameplayEngine.Init(toPlayFolder, toPlaydiff);
 
             if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 gameplayEngine.Reset();
-
-            /* TEST COMMANDS
 
             if (Keyboard.GetState().IsKeyDown(Keys.P))
                 gameplayEngine.Pause();
@@ -119,34 +118,27 @@ namespace Pulsarc
             if (Keyboard.GetState().IsKeyDown(Keys.O))
                 gameplayEngine.Resume();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.T) && !gameplayEngine.isActive())
+            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !gameplayEngine.isActive())
             {
-                IntralismToPulsarc converter = new IntralismToPulsarc();
+                converting = true;
+                BeatmapConverter converter;
 
-                Beatmap testmap = converter.Convert(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
-                gameplayEngine.Init(testmap);
+                switch(convertFrom.ToLower()) 
+                { 
+                    case "mania":
+                        converter = new ManiaToPulsarc();
+                        break;
+                    default:
+                        converter = new IntralismToPulsarc();
+                        break;
+                }
+
+                converter.Save(toConvert);
             }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) // Careful, this will loop as long as you hold the key. This is just for testing.
+            if(Keyboard.GetState().IsKeyUp(Keys.S) && converting)
             {
-                IntralismToPulsarc converter = new IntralismToPulsarc();
-
-                converter.Save(@"E:\Steam\steamapps\common\Intralism\Editor\siqlo - Vantablack");
+                converting = false;
             }
-
-            */
-
-            var currentMouseState = Mouse.GetState();
-
-            if (currentMouseState.ScrollWheelValue < previousScrollValue)
-            {
-                gameplayEngine.deltaTime(-10);
-            }
-            else if (currentMouseState.ScrollWheelValue > previousScrollValue)
-            {
-                gameplayEngine.deltaTime(10);
-            }
-            previousScrollValue = currentMouseState.ScrollWheelValue;
 
             if (gameplayEngine.isActive())
             {
@@ -170,6 +162,9 @@ namespace Pulsarc
             {
                 gameplayEngine.Draw();
             }
+
+            // FPS
+
             frames++;
 
             if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)
@@ -180,6 +175,7 @@ namespace Pulsarc
             }
 
             fpsDisplay.Draw();
+
             base.Draw(gameTime);
             spriteBatch.End();
         }

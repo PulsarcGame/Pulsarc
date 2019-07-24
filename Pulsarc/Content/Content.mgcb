@@ -30,5 +30,5 @@
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/File.spritefont;Fonts/DefaultFont.spritefont
+Fonts/DefaultFont.spritefont
 

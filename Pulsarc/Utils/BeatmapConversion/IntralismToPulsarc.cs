@@ -14,9 +14,9 @@ namespace Pulsarc.Utils.BeatmapConversion
     {
         int msOffset = -80;
 
-        public Beatmap Convert(string folder_path)
+        public List<Beatmap> Convert(string folder_path)
         {
-
+            List<Beatmap> results = new List<Beatmap>();
             Beatmap result = new Beatmap();
 
             if(Directory.Exists(folder_path))
@@ -64,35 +64,34 @@ namespace Pulsarc.Utils.BeatmapConversion
                 }
             }
 
-            return result;
+            results.Add(result);
+            return results;
         }
 
         public void Save(string folder_path)
         {
-            Beatmap map = Convert(folder_path);
+            Beatmap map = Convert(folder_path).First();
 
             if(map.Audio != null)
             {
                 string audioPath = folder_path + "/" + map.Audio;
                 if (File.Exists(audioPath))
                 {
-                    bool folderCreated = false;
-                    int id = 0; //new Random().Next(1000000, 9999999); // If we want to never overwrite a beatmap
-                    string dirName = "";
-                    while (!folderCreated)
-                    {
-                        dirName = "Songs/" + id + " - " + map.Artist + " - " + map.Title + " (" + map.Mapper + ")";
+                    int id = 0;
+                    string folderName = string.Join("_", (id + " - " + map.Artist + " - " + map.Title + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
+                    string dirName = "Songs/" + folderName;
 
-                        if (!Directory.Exists(dirName))
-                        {
-                            Directory.CreateDirectory(dirName);
-                            folderCreated = true;
-                        }
-                        id = new Random().Next(1000000, 9999999); // In case we can't overwrite when using 0
+                    if (!Directory.Exists(dirName))
+                    {
+                        Directory.CreateDirectory(dirName);
                     }
 
-                    File.Copy(audioPath, dirName + "/" + map.Audio);
-                    BeatmapHelper.Save(map, dirName + "/" + map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ").psc");
+                    File.Copy(audioPath, dirName + "/" + map.Audio, true);
+                    string difficultyFileName = string.Join("_", (map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
+                    BeatmapHelper.Save(map, dirName + "/" + difficultyFileName + ".psc");
+
+                    Pulsarc.toPlayFolder = folderName;
+                    Pulsarc.toPlaydiff = difficultyFileName;
                 }
             }
         }

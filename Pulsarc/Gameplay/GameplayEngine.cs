@@ -14,6 +14,7 @@ namespace Pulsarc.Gameplay
     public class GameplayEngine
     {
         bool active = false;
+        bool autoPlay = false;
 
         // UI Elements
 
@@ -21,6 +22,7 @@ namespace Pulsarc.Gameplay
         Score scoreDisplay;
         Combo comboDisplay;
         JudgeBox judgeBox;
+        AccuracyMeter accMeter;
 
         // Beatmap Elements
 
@@ -42,6 +44,9 @@ namespace Pulsarc.Gameplay
         Int64 score;
         int combo;
 
+        // Performance
+        int msIgnore = 500;
+
         public void Init(Beatmap playedBeatmap)
         {
             Reset();
@@ -53,6 +58,7 @@ namespace Pulsarc.Gameplay
             comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
 
             judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
+            accMeter = new AccuracyMeter(new Vector2(Pulsarc.getDimensions().X / 2 - 100, Pulsarc.getDimensions().Y - 25), new Vector2(200,25));
 
             // Initialize default variables, parse beatmap
             keys = 4;
@@ -72,7 +78,9 @@ namespace Pulsarc.Gameplay
             score = 0;
 
             currentBeatmap = playedBeatmap;
-            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio, UriKind.Absolute));
+
+            string audioPath = Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio;
+            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(audioPath));
 
             for (int i = 1; i <= keys; i++)
             {
@@ -86,13 +94,57 @@ namespace Pulsarc.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        columns[i].hitObjects.Add(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
                     }
+                }
+            }
+
+            foreach(Column col in columns)
+            {
+                col.SortUpdateHitObjects();
+            }
+
+            if (autoPlay)
+            {
+
+                List<KeyValuePair<long, Keys>> inputs = new List<KeyValuePair<long, Keys>>();
+
+                for (int i = 0; i < keys; i++)
+                {
+                    foreach (HitObject arc in columns[i].hitObjects)
+                    {
+                        Keys press = Keys.D;
+                        switch (i)
+                        {
+                            case 2:
+                                press = Keys.D;
+                                break;
+                            case 3:
+                                press = Keys.F;
+                                break;
+                            case 1:
+                                press = Keys.J;
+                                break;
+                            case 0:
+                                press = Keys.K;
+                                break;
+                        }
+
+                        inputs.Add(new KeyValuePair<long, Keys>(arc.time, press));
+                    }
+                }
+
+                inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
+
+                foreach (KeyValuePair<long, Keys> input in inputs)
+                {
+                    KeyboardInputManager.keyboardPresses.Enqueue(input);
                 }
             }
 
             AudioManager.Start();
             active = true;
+
         }
 
         public void Init(string beatmapFolderName, string beatmapVersionName)
@@ -106,14 +158,28 @@ namespace Pulsarc.Gameplay
             // Update UI and objects positions
             for (int i = 0; i < keys; i++)
             {
-                for(int k = 0; k < columns[i].hitObjects.Count; k++)
+                bool updatedAll = false;
+                for(int k = 0; k < columns[i].updateHitObjects.Count && !updatedAll; k++)
                 {
-                    columns[i].hitObjects[k].recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
+                    if (columns[i].updateHitObjects[k].Value.erase)
+                    {
+                        columns[i].updateHitObjects.RemoveAt(k);
+                        continue;
+                    }
+
+                    columns[i].updateHitObjects[k].Value.recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if(columns[i].hitObjects[k].time + 100 < getElapsed())
+                    if (columns[i].updateHitObjects[k].Key - msIgnore > getElapsed())
                     {
-                        columns[i].hitObjects.RemoveAt(k);
+                        updatedAll = true;
+                    }
+
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge < getElapsed())
+                    {
+                        columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
+                        judgeBox.Add(columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge, Judgement.getMiss().score);
+                        columns[i].updateHitObjects.RemoveAt(k);
                         k--;
                         combo = 0;
                         score += Judgement.getMiss().score;
@@ -132,6 +198,7 @@ namespace Pulsarc.Gameplay
             scoreDisplay.Update(score);
             comboDisplay.Update(combo);
             judgeBox.Update(getElapsed());
+            accMeter.Update(getElapsed());
 
             if (!atLeastOne)
             {
@@ -141,50 +208,53 @@ namespace Pulsarc.Gameplay
 
         public void handleInputs()
         {
-            while (KeyboardInputManager.keyboardPresses.Count > 0)
-            {
-                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
-                HitObject pressed = null;
-                var column = -1;
-
-                switch(press.Value)
+                while (KeyboardInputManager.keyboardPresses.Count > 0 && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
                 {
-                    case Keys.D:
-                        column = 2;
-                        break;
-                    case Keys.F:
-                        column = 3;
-                        break;
-                    case Keys.J:
-                        column = 1;
-                        break;
-                    case Keys.K:
-                        column = 0;
-                        break;
-                    default:
-                        break;
-                }
+                    KeyValuePair<long, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                    HitObject pressed = null;
+                    var column = -1;
 
-                if (column >=0 && columns[column].hitObjects.Count > 0)
+                    switch (press.Value)
+                    {
+                        case Keys.D:
+                            column = 2;
+                            break;
+                        case Keys.F:
+                            column = 3;
+                            break;
+                        case Keys.J:
+                            column = 1;
+                            break;
+                        case Keys.K:
+                            column = 0;
+                            break;
+                        default:
+                            break;
+                    }
+
+                if (column >= 0 && columns[column].hitObjects.Count > 0)
                 {
                     pressed = columns[column].hitObjects[0];
 
-                    int error = (int) (pressed.time - press.Key);
+                    int error = (int)(pressed.time - press.Key);
 
                     KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
 
                     if (judge.Value >= 0)
                     {
+                        accMeter.addError(getElapsed(), error);
+                        columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
                         errors.Add(judge.Key);
-                        judgeBox.Add((long) press.Key, judge.Value);
+                        judgeBox.Add((long)press.Key, judge.Value);
 
 
                         if (judge.Value > 0)
                         {
                             combo++;
                             score += judge.Value * combo;
-                        } else
+                        }
+                        else
                         {
                             combo = 0;
                             score += judge.Value;
@@ -206,11 +276,15 @@ namespace Pulsarc.Gameplay
 
             for (int i = 0; i < keys; i++)
             {
-                foreach (HitObject hitObject in columns[i].hitObjects)
+                foreach (KeyValuePair<long,HitObject> pair in columns[i].updateHitObjects)
                 {
-                    if (hitObject.IsSeen())
+                    if (pair.Value.IsSeen())
                     {
-                        hitObject.Draw();
+                        pair.Value.Draw();
+                    }
+                    if(pair.Key - msIgnore > getElapsed())
+                    {
+                        break; // not nice ik
                     }
                 }
             }
@@ -219,6 +293,7 @@ namespace Pulsarc.Gameplay
             scoreDisplay.Draw();
             comboDisplay.Draw();
             judgeBox.Draw();
+            accMeter.Draw();
         }
 
         public void Pause()
@@ -233,7 +308,8 @@ namespace Pulsarc.Gameplay
 
         public void Reset()
         {
-            AudioManager.Reset();
+            AudioManager.Stop();
+            KeyboardInputManager.Reset();
             active = false;
 
             currentBeatmap = null;

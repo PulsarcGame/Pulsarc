@@ -9,6 +9,7 @@ namespace Pulsarc.Utils.BeatmapConversion
 {
     interface BeatmapConverter
     {
-        Beatmap Convert(string folder_path);
+        List<Beatmap> Convert(string folder_path);
+        void Save(string folder_path);
     }
 }
