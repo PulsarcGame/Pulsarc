@@ -7,4 +7,4 @@ It is clear that the Intralism team does not care for the game nearly as much as
 ## Sounds cool! How can I help out?
 [![Discord](https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)](https://discord.gg/SYfpvfJ)
 
-Come join our discord server! Just being a part of the server is support enough! Anyone on the server can give suggestions, and comment on the current progress.
+Feel free to contribute to the Github, and come join our discord server! Just being a part of the server is support enough! Anyone on the server can give suggestions, and comment on the current progress.
