@@ -78,9 +78,8 @@ namespace Pulsarc.Gameplay
             score = 0;
 
             currentBeatmap = playedBeatmap;
-
-            string audioPath = Directory.GetParent(currentBeatmap.path).FullName + "/" + currentBeatmap.Audio;
-            AudioManager.song = Song.FromUri(currentBeatmap.Audio, new Uri(audioPath));
+            
+            AudioManager.song_path = Directory.GetParent(currentBeatmap.path).FullName + "\\" + currentBeatmap.Audio;
 
             for (int i = 1; i <= keys; i++)
             {

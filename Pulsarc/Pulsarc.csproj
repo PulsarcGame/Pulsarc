@@ -10,7 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.4" />
+    <PackageReference Include="ManagedBass" Version="2.0.4" />
+    <PackageReference Include="ManagedBass.Fx" Version="2.0.1" />
+    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
     <PackageReference Include="MonoGame.Extended" Version="1.1.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
@@ -20,10 +22,19 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Wobble">
+      <HintPath>..\Wobble\Wobble\bin\Release\netstandard2.0\Wobble.dll</HintPath>
+    </Reference>
+    <Reference Include="Wobble.Resources">
+      <HintPath>..\Wobble\Wobble\bin\Release\netstandard2.0\Wobble.Resources.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!-- Copy Skins -->
     <ItemGroup>
-        <SkinsSource Include="$(ProjectDir)Skins\**\*.*"/>
+        <SkinsSource Include="$(ProjectDir)Skins\**\*.*" />
     </ItemGroup>
     
     <Copy SourceFiles="@(SkinsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Skins\%(RecursiveDir)">
@@ -32,10 +43,35 @@
 
     <!-- Copy Songs -->
     <ItemGroup>
-        <SongsSource Include="$(ProjectDir)Songs\**\*.*"/>
+        <SongsSource Include="$(ProjectDir)Songs\**\*.*" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)">
+    </Copy>
+
+
+    <!-- Copy Logs -->
+    <ItemGroup>
+        <LogsSource Include="$(ProjectDir)Logs\*.*" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(LogsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Logs\%(RecursiveDir)">
+    </Copy>
+
+
+    <!-- Copy Required DLLs -->
+    <ItemGroup>
+        <x64Source Include="$(ProjectDir)x64\*.*" />
+        <x86Source Include="$(ProjectDir)x86\*.*" />
+        <dylibSource Include="$(ProjectDir)*.dylib" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)">
+    <Copy SourceFiles="@(x64Source)" DestinationFolder="$(ProjectDir)$(OutDir)x64\%(RecursiveDir)">
+    </Copy>
+    <Copy SourceFiles="@(x86Source)" DestinationFolder="$(ProjectDir)$(OutDir)x86\%(RecursiveDir)">
+    </Copy>
+	
+    <Copy SourceFiles="@(dylibSource)" DestinationFolder="$(ProjectDir)$(OutDir)">
     </Copy>
    </Target>
 </Project>
