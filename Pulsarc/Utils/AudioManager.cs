@@ -1,23 +1,25 @@
-﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Wobble.Audio.Tracks;
 
 namespace Pulsarc.Utils
 {
     static class AudioManager
     {
+        static public bool initialized = false;
         static public bool active = false;
-        static public Song song = null;
-        static public long time;
-        static public long offset = 140;
-
+        static public bool paused = false;
+        static public string song_path = "";
+        static public long offset = 50;
+        
         static Thread audioThread;
-
-        static Stopwatch audioThreadExecTime;
+        static AudioTrack song;
 
         static public void Start()
         {
@@ -27,17 +29,32 @@ namespace Pulsarc.Utils
 
         static public void AudioPlayer()
         {
-            if(song == null)
+            if(song_path == "")
             {
                 return;
             }
+            if (!initialized)
+            {
+                Wobble.Audio.AudioManager.Initialize(null, null);
+                initialized = true;
+            }
+
             var running = true;
             var threadLimiterWatch = new Stopwatch();
-            audioThreadExecTime = new Stopwatch();
+            var threadTime = new Stopwatch();
 
-            MediaPlayer.Play(song);
+
+            song = new AudioTrack(song_path, false)
+            {
+                Rate = 1,
+            };
+
+            song.Play();
+            
             threadLimiterWatch.Start();
-            audioThreadExecTime.Start();
+            threadTime.Start();
+
+            TimeSpan ts;
 
             active = true;
             while (running)
@@ -46,31 +63,38 @@ namespace Pulsarc.Utils
                 {
                     threadLimiterWatch.Restart();
 
-                    time = audioThreadExecTime.ElapsedMilliseconds;
+                    ts = new TimeSpan(threadTime.ElapsedMilliseconds);
+                    Wobble.Audio.AudioManager.Update(new GameTime(ts, ts));
                 }
             }
         }
 
         static public long getTime()
         {
-            return active ? audioThreadExecTime.ElapsedMilliseconds - offset : 0;
+            try
+            {
+                return (long) song.Position - offset;
+            } catch
+            {
+                return 0;
+            }
         }
 
         static public void Pause()
         {
-            if (active)
+            if (active && !paused)
             {
-                MediaPlayer.Pause();
-                audioThreadExecTime.Stop();
+                song.Pause();
+                paused = true;
             }
         }
 
         static public void Resume()
         {
-            if (active)
+            if (active && paused)
             {
-                MediaPlayer.Resume();
-                audioThreadExecTime.Start();
+                song.Play();
+                paused = false;
             }
         }
 
@@ -79,7 +103,8 @@ namespace Pulsarc.Utils
             if (active)
             {
                 Pause();
-                MediaPlayer.Stop();
+                song.Stop();
+                song = null;
                 Reset();
             }
         }
@@ -87,7 +112,8 @@ namespace Pulsarc.Utils
         static public void Reset()
         {
             active = false;
-            song = null;
+            paused = false;
+            song_path = "";
             try
             {
                 audioThread.Abort();

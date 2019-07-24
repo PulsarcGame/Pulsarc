@@ -10,6 +10,8 @@ using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Diagnostics;
 using System.IO;
+using Wobble;
+using Wobble.Platform;
 
 namespace Pulsarc
 {
@@ -38,6 +40,8 @@ namespace Pulsarc
 
         public Pulsarc()
         {
+            NativeAssemblies.Copy();
+
             graphics = new GraphicsDeviceManager(this);
 
             // Set the game in fullscreen (according to the user monitor)
@@ -102,6 +106,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
             // Move all this in an input handler
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
