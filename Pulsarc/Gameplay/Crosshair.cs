@@ -9,7 +9,7 @@ using Pulsarc.Skinning;
 
 namespace Pulsarc.Gameplay
 {
-    class Crosshair : Drawable
+    public class Crosshair : Drawable
     {
         public Crosshair(int currentCrosshairRadius) : base(Skin.crosshair)
         {

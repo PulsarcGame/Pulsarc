@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pulsarc.Gameplay
 {
-    class Column
+    public class Column
     {
         public int side;
         public List<HitObject> hitObjects;

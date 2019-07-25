@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 
-namespace Pulsarc.Gameplay
+namespace Pulsarc.Gameplay.UI
 {
     class JudgeBox : Drawable
     {

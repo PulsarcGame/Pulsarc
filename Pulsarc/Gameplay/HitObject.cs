@@ -9,7 +9,7 @@ using Pulsarc.Skinning;
 
 namespace Pulsarc.Gameplay
 {
-    class HitObject : Drawable
+    public class HitObject : Drawable
     {
         public int time;
 

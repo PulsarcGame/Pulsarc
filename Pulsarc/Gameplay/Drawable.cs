@@ -5,7 +5,7 @@ using System;
 
 namespace Pulsarc.Gameplay
 {
-    class Drawable
+    public class Drawable
     {
         public Texture2D texture;
 
