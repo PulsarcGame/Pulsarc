@@ -18,6 +18,7 @@ namespace Pulsarc
     {
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
+        static public int xBaseRes = 1920;
 
         // for playtesting
         static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";

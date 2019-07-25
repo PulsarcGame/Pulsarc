@@ -31,7 +31,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
 
             judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
-            accMeter = new AccuracyMeter(new Vector2(Pulsarc.getDimensions().X / 2 - 100, Pulsarc.getDimensions().Y - 25), new Vector2(200, 25));
+            accMeter = new AccuracyMeter(new Vector2(960, 1080 - 25), new Vector2(200, 25));
         }
 
         public void addHit(long time, int error, int judge)
@@ -49,9 +49,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
 
             double accuracyTotal = 0;
-            foreach (double error in GetGameplayEngine().errors)
+            foreach (JudgementValue judge in GetGameplayEngine().judgements)
             {
-                accuracyTotal += Math.Abs(error);
+                accuracyTotal += judge.acc;
             }
 
             accuracyDisplay.Update(GetGameplayEngine().errors.Count > 0 ? accuracyTotal / GetGameplayEngine().errors.Count : 1);
@@ -63,6 +63,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override void Draw(GameTime gameTime)
         {
+            if (!GameplayEngine.active) return;
             // Draw everything
             crosshair.Draw();
 

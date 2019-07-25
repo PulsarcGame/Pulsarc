@@ -59,7 +59,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
     }
 
-    class JudgementValue {
+    public class JudgementValue {
 
         public double acc;
         public int judge;
@@ -73,6 +73,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.judge = judge;
             this.score = score;
             this.color = color;
+            this.combo_addition = combo_addition;
         }
     }
 }

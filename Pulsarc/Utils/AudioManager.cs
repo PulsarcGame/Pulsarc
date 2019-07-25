@@ -128,7 +128,7 @@ namespace Pulsarc.Utils
 
         static public bool FinishedPlaying()
         {
-            return !paused && !song.IsPlaying;
+            return !paused && !song.IsPlaying && song.IsStopped;
         }
     }
 }

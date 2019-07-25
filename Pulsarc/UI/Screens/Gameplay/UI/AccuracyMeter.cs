@@ -22,6 +22,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             lastTime = 0;
             errors = new List<KeyValuePair<long, int>>();
             this.size = size;
+            this.position.X -= size.X / 2;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
             foreach(JudgementValue judgement in Judgement.judgements)

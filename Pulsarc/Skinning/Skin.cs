@@ -28,6 +28,20 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "Gameplay/", "arcs");
                 LoadSkinTexture(skinFolder + "Gameplay/", "crosshair");
 
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_replay");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_return");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_scorecard");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_background");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "score_grade_container");
+
+                LoadSkinTexture(skinFolder + "Grades/", "grade_X");
+                LoadSkinTexture(skinFolder + "Grades/", "grade_S");
+                LoadSkinTexture(skinFolder + "Grades/", "grade_A");
+                LoadSkinTexture(skinFolder + "Grades/", "grade_B");
+                LoadSkinTexture(skinFolder + "Grades/", "grade_C");
+                LoadSkinTexture(skinFolder + "Grades/", "grade_D");
+
                 judges = new Dictionary<int, Texture2D>();
 
                 judges.Add(320, LoadTexture(skinFolder + "Judgements/", "max"));
@@ -40,7 +54,7 @@ namespace Pulsarc.Skinning
                 loaded = true;
             } else
             {
-                Console.Write("Could not find the skin " + name);
+                Console.WriteLine("Could not find the skin " + name);
             }
         }
 
@@ -62,7 +76,7 @@ namespace Pulsarc.Skinning
             }
             catch
             {
-                Console.Write("Failed to load " + asset + " in " + path);
+                Console.WriteLine("Failed to load " + asset + " in " + path);
                 return defaultTexture;
             }
         }

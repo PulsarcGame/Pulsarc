@@ -70,7 +70,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             distanceToCrosshair = getDistanceToCrosshair(currentTime, speed * baseSpeed);
 
-            Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
+            Resize(getSizeFromDistanceToCrosshair(crosshairRadius), false);
         }
 
         public int getSizeFromDistanceToCrosshair(int crosshairRadius)
