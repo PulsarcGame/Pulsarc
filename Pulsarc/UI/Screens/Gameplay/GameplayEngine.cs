@@ -4,6 +4,7 @@ using Pulsarc.Beatmaps;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Wobble.Screens;
 
@@ -17,6 +18,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public static bool active = false;
         bool autoPlay = true;
 
+        Stopwatch endWatch;
 
         // Beatmap Elements
 
@@ -38,6 +40,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int score_display;
         public int combo;
         public int combo_multiplier;
+        public float rate;
+
+        public int endDelay = 2000;
 
         // Performance
         public int msIgnore = 500;
@@ -51,13 +56,17 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
 
             // Initialize default variables, parse beatmap
+            endWatch = new Stopwatch();
+            rate = 1f;
             keys = 4;
-            userSpeed = 1;
+            userSpeed = 1 / rate / rate;
             currentCrosshairRadius = 200;
             timeOffset = 0;
 
-            currentSpeedMultiplier = 1;
-            currentArcsSpeed = userSpeed;
+            AudioManager.audioRate = rate;
+
+            currentSpeedMultiplier = userSpeed;
+            currentArcsSpeed = 1;
 
             // Initialize Gameplay variables
             columns = new Column[keys];
@@ -84,7 +93,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     // Use bitwise check to know if the column is concerned by this arc event
                     if (((arc.type >> i) & 1) != 0)
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier);
                         objectCount++;
                     }
                 }
@@ -147,6 +156,11 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override void Update(GameTime gameTime)
         {
+            if (AudioManager.active &&  AudioManager.FinishedPlaying())
+            {
+                ScreenManager.RemoveScreen();
+            }
+
             handleInputs();
 
             // Gameplay commands
@@ -181,7 +195,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                         updatedAll = true;
                     }
 
-                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge < getElapsed())
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < getElapsed())
                     {
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
                         getGameplayView().addJudge(columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge, Judgement.getMiss().score);
@@ -203,7 +217,18 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             if (!atLeastOne)
             {
-                ScreenManager.RemoveScreen();
+                if (!endWatch.IsRunning)
+                {
+                    endWatch.Start();
+                }
+                else
+                {
+                    if (endWatch.ElapsedMilliseconds >= endDelay)
+                    {
+                        ScreenManager.RemoveScreen();
+                    }
+                }
+
             }
         }
 
@@ -271,7 +296,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     pressed = columns[column].hitObjects[0];
 
-                    int error = (int)(pressed.time - press.Key);
+                    int error = (int)((pressed.time - press.Key) / rate);
 
                    JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
 

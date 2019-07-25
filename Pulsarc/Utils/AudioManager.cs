@@ -17,7 +17,9 @@ namespace Pulsarc.Utils
         static public bool paused = false;
         static public string song_path = "";
         static public long offset = 50;
-        
+        static public int startDelayMs = 1000;
+        static public float audioRate = 1;
+
         static Thread audioThread;
         static AudioTrack song;
 
@@ -46,12 +48,16 @@ namespace Pulsarc.Utils
 
             song = new AudioTrack(song_path, false)
             {
-                Rate = 1,
+                Rate = audioRate,
             };
 
-            song.Play();
-            
             threadLimiterWatch.Start();
+
+            while(threadLimiterWatch.ElapsedMilliseconds < startDelayMs) { }
+
+            threadLimiterWatch.Restart();
+
+            song.Play();
             threadTime.Start();
 
             TimeSpan ts;
@@ -82,7 +88,7 @@ namespace Pulsarc.Utils
 
         static public void Pause()
         {
-            if (active && !paused)
+            if (active && !paused && song.IsPlaying)
             {
                 song.Pause();
                 paused = true;
@@ -91,7 +97,7 @@ namespace Pulsarc.Utils
 
         static public void Resume()
         {
-            if (active && paused)
+            if (active && paused && !song.IsPlaying)
             {
                 song.Play();
                 paused = false;
@@ -118,6 +124,11 @@ namespace Pulsarc.Utils
             {
                 audioThread.Abort();
             } catch { }
+        }
+
+        static public bool FinishedPlaying()
+        {
+            return !paused && !song.IsPlaying;
         }
     }
 }

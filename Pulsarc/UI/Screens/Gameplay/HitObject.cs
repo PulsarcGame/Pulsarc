@@ -12,6 +12,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         double radius;
 
         double distanceToCrosshair;
+        double baseSpeed;
 
         // Optimization
         public bool erase;
@@ -26,6 +27,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             this.time = time;
             this.angle = angle;
+            this.baseSpeed = baseSpeed;
             erase = false;
 
             Vector2 screen = Pulsarc.getDimensions();
@@ -66,7 +68,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             Vector2 screen = Pulsarc.getDimensions();
 
-            distanceToCrosshair = getDistanceToCrosshair(currentTime, speed);
+            distanceToCrosshair = getDistanceToCrosshair(currentTime, speed * baseSpeed);
 
             Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
         }
@@ -84,7 +86,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public int IsSeenAt(double distance, double speed)
         {
-            return (int) (Math.Pow(curveFixing * (distance + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);
+            return (int) (Math.Pow(curveFixing * (distance * speed + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);
         }
 
         public bool IsSeen()

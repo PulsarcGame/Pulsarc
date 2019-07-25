@@ -15,10 +15,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             updateHitObjects = new List<KeyValuePair<long, HitObject>>();
         }
 
-        public void AddHitObject(HitObject hitObject)
+        public void AddHitObject(HitObject hitObject, double speed)
         {
             hitObjects.Add(hitObject);
-            updateHitObjects.Add(new KeyValuePair<long,HitObject>(hitObject.IsSeenAt(hitObject.getDistanceToCrosshair(0, 1), 1), hitObject));
+            updateHitObjects.Add(new KeyValuePair<long,HitObject>(hitObject.IsSeenAt(hitObject.getDistanceToCrosshair(0, speed), speed), hitObject));
         }
 
         public void SortUpdateHitObjects()
