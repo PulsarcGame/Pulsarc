@@ -21,7 +21,6 @@ namespace Pulsarc.Utils
             fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/DefaultFont"));
             
             Skin.LoadSkin("DefaultSkin");
-
             Skin.defaultTexture = Content.Load<Texture2D>("default");
         }
 

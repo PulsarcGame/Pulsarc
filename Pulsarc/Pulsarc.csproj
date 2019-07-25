@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="UI\Screens\ResultScreen\" />
   </ItemGroup>
 
   <ItemGroup>

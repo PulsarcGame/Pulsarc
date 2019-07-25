@@ -10,44 +10,32 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
+        static public Dictionary<String, Texture2D> assets { get; set; }
+
         static public Texture2D defaultTexture;
-
-        static public Texture2D arcs;
-        static public Texture2D crosshair;
-
-        static public Texture2D leftArc;
-        static public Texture2D upArc;
-        static public Texture2D downArc;
-        static public Texture2D rightArc;
 
         static public Dictionary<int, Texture2D> judges;
 
         static public void LoadSkin(string name)
         {
+            assets = new Dictionary<string, Texture2D>();
             loaded = false;
 
             string skinFolder = "Skins/" + name + "/";
 
             if (Directory.Exists(skinFolder))
             {
-                arcs        = LoadSkinTexture(skinFolder + "Gameplay/", "arcs.png");
-                crosshair   = LoadSkinTexture(skinFolder + "Gameplay/", "crosshair.png");
-
-                float halfW = arcs.Width / 2;
-                float halfH = arcs.Height / 2;
-                leftArc     = LoadCropFromTexture(arcs, new Vector2(0, halfW), new Vector2(halfH, 0));
-                upArc       = LoadCropFromTexture(arcs, new Vector2(0, halfW), new Vector2(0, halfH));
-                downArc     = LoadCropFromTexture(arcs, new Vector2(halfW, 0), new Vector2(halfH, 0));
-                rightArc    = LoadCropFromTexture(arcs, new Vector2(halfW, 0), new Vector2(0, halfH));
+                LoadSkinTexture(skinFolder + "Gameplay/", "arcs");
+                LoadSkinTexture(skinFolder + "Gameplay/", "crosshair");
 
                 judges = new Dictionary<int, Texture2D>();
 
-                judges.Add(320, LoadSkinTexture(skinFolder + "Judgements/", "max.png"));
-                judges.Add(300, LoadSkinTexture(skinFolder + "Judgements/", "perfect.png"));
-                judges.Add(200, LoadSkinTexture(skinFolder + "Judgements/", "great.png"));
-                judges.Add(100, LoadSkinTexture(skinFolder + "Judgements/", "good.png"));
-                judges.Add(50, LoadSkinTexture(skinFolder + "Judgements/", "bad.png"));
-                judges.Add(0, LoadSkinTexture(skinFolder + "Judgements/", "miss.png"));
+                judges.Add(320, LoadTexture(skinFolder + "Judgements/", "max"));
+                judges.Add(300, LoadTexture(skinFolder + "Judgements/", "perfect"));
+                judges.Add(200, LoadTexture(skinFolder + "Judgements/", "great"));
+                judges.Add(100, LoadTexture(skinFolder + "Judgements/", "good"));
+                judges.Add(50, LoadTexture(skinFolder + "Judgements/", "bad"));
+                judges.Add(0, LoadTexture(skinFolder + "Judgements/", "miss"));
 
                 loaded = true;
             } else
@@ -56,11 +44,21 @@ namespace Pulsarc.Skinning
             }
         }
 
-        static private Texture2D LoadSkinTexture(string path, string asset)
+        static private void LoadSkinTexture(string path, string asset)
+        {
+            assets.Add(asset, LoadTexture(path, asset));
+        }
+
+        static private void LoadCropSkinTexture(string asset, Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical)
+        {
+            assets.Add(asset, LoadCropFromTexture(texture, cropHorizontal, cropVertical));
+        }
+
+        static private Texture2D LoadTexture(string path, string asset)
         {
             try
             {
-                return Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.Open(path + "/" + asset, FileMode.Open));
+                return Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.Open(path + "/" + asset + ".png", FileMode.Open));
             }
             catch
             {

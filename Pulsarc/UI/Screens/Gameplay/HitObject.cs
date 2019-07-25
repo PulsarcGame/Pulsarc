@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         static double curveFixing = 1e9;
         static double disappearDistanceFixing = Math.Pow(curveFixing * targetDisappearDistance, 1/exponent);
 
-        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.arcs)
+        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
             this.time = time;
             this.angle = angle;
