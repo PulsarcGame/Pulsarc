@@ -1,16 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using Pulsarc.Beatmaps;
-using Pulsarc.Gameplay.UI;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Wobble.Screens;
 
-namespace Pulsarc.Gameplay
+namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngine : Screen
     {

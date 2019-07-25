@@ -1,16 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Beatmaps;
-using Pulsarc.Gameplay;
-using Pulsarc.Gameplay.UI;
-using Pulsarc.Skinning;
+using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.UI.Screens.Gameplay.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
-using System;
 using System.Diagnostics;
-using System.IO;
-using Wobble;
 using Wobble.Platform;
 using Wobble.Screens;
 

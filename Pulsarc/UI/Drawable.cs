@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils.Maths;
 using System;
 
-namespace Pulsarc.Gameplay
+namespace Pulsarc.UI
 {
     public class Drawable
     {

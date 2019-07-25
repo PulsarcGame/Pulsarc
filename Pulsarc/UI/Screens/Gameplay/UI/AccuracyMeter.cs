@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 
-namespace Pulsarc.Gameplay.UI
+namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class AccuracyMeter : Drawable
     {

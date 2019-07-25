@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Pulsarc.Gameplay.UI
+namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class Score : TextDisplayElement
     {

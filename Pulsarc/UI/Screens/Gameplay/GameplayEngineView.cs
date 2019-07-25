@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Pulsarc.Gameplay.UI;
+using Pulsarc.UI.Screens.Gameplay.UI;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 
-namespace Pulsarc.Gameplay
+namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngineView : ScreenView
     {

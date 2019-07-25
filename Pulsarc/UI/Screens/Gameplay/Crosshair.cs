@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 
-namespace Pulsarc.Gameplay
+namespace Pulsarc.UI.Screens.Gameplay
 {
     public class Crosshair : Drawable
     {

@@ -1,13 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Pulsarc.Gameplay.UI
+namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class TextDisplayElement : Drawable
     {

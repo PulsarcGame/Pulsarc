@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 
-namespace Pulsarc.Gameplay.UI
+namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class JudgeBox : Drawable
     {
