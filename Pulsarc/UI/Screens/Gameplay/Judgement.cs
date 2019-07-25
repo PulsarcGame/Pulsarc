@@ -17,34 +17,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             new JudgementValue(  0,     200,      0,  -50,  new Color(158,  28,  28)),         // Miss
         };
 
-
-        static public KeyValuePair<double, int> getErrorJudgement(int error)
-        {
-            KeyValuePair<double, int> result = new KeyValuePair<double, int>(-1, -1);
-            if (error < judgements.Last().judge)
-            {
-                bool notJudged = true;
-
-                for (int i = 0; i < judgements.Count && notJudged; i++)
-                {
-                    JudgementValue judgement = judgements[i];
-
-                    if (error < judgement.judge)
-                    {
-                        result = new KeyValuePair<double, int>(judgement.acc, judgement.score);
-                        notJudged = false;
-                    }
-                }
-
-                if (notJudged)
-                {
-                    result = new KeyValuePair<double, int>(0, 0);
-                }
-            }
-
-            return result;
-        }
-
         static public JudgementValue getMiss()
         {
             return judgements.Last();
@@ -52,14 +24,14 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         static public JudgementValue getErrorJudgementValue(int error)
         {
-            JudgementValue result = getMiss();
-            if (error < judgements.Last().judge)
+            JudgementValue result = null;
+            if (error <= judgements.Last().judge)
             {
-                for (int i = 0; i < judgements.Count - 1; i++)
+                for (int i = 0; i < judgements.Count; i++)
                 {
                     JudgementValue judgement = judgements[i];
 
-                    if (error < judgement.judge)
+                    if (error <= judgement.judge)
                     {
                         result = judgement;
                         break;

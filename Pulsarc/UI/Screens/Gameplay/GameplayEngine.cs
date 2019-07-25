@@ -16,7 +16,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         public static bool active = false;
-        bool autoPlay = true;
+        bool autoPlay = false;
 
         Stopwatch endWatch;
 
@@ -300,7 +300,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                    JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
 
-                    if (judge.score >= 0)
+                    if (judge != null)
                     {
                         getGameplayView().addHit(press.Key, error, judge.score);
 
