@@ -20,8 +20,8 @@ namespace Pulsarc
         static public SpriteBatch spriteBatch;
 
         // for playtesting
-        static public string toPlayFolder = "0 - Between the Buried and Me - The Parallax II_ Future Sequence (XeoStyle)";
-        static public string toPlaydiff = "Between the Buried and Me - The Parallax II_ Future Sequence [Marathon] (XeoStyle)";
+        static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";
+        static public string toPlaydiff = "Unknown - siqlo - Vantablack [Converted] (Intralism)";
 
         static public string convertFrom = "Mania";
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";

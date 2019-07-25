@@ -55,7 +55,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             accuracyDisplay.Update(GetGameplayEngine().errors.Count > 0 ? accuracyTotal / GetGameplayEngine().errors.Count : 1);
-            scoreDisplay.Update(GetGameplayEngine().score);
+            scoreDisplay.Update(GetGameplayEngine().score_display);
             comboDisplay.Update(GetGameplayEngine().combo);
             judgeBox.Update(GetGameplayEngine().getElapsed());
             accMeter.Update(GetGameplayEngine().getElapsed());

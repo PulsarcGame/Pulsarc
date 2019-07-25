@@ -15,7 +15,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         public static bool active = false;
-        bool autoPlay = false;
+        bool autoPlay = true;
 
 
         // Beatmap Elements
@@ -33,8 +33,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public double currentArcsSpeed;
         public List<Double> errors;
 
-        public Int64 score;
+        public long max_score;
+        public long score;
+        public int score_display;
         public int combo;
+        public int combo_multiplier;
 
         // Performance
         public int msIgnore = 500;
@@ -61,6 +64,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             errors = new List<double>();
 
             combo = 0;
+            combo_multiplier = Scoring.max_combo_multiplier;
             score = 0;
 
             currentBeatmap = beatmap;
@@ -72,6 +76,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 columns[i - 1] = new Column(i);
             }
 
+            int objectCount = 0;
             foreach (Arc arc in currentBeatmap.arcs)
             {
                 for (int i = 0; i < keys; i++)
@@ -80,9 +85,11 @@ namespace Pulsarc.UI.Screens.Gameplay
                     if (((arc.type >> i) & 1) != 0)
                     {
                         columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed));
+                        objectCount++;
                     }
                 }
             }
+            max_score = Scoring.getMaxScore(objectCount);
 
             foreach (Column col in columns)
             {
@@ -181,18 +188,28 @@ namespace Pulsarc.UI.Screens.Gameplay
                         columns[i].updateHitObjects.RemoveAt(k);
                         k--;
                         combo = 0;
-                        score += Judgement.getMiss().score;
-                        errors.Add(Judgement.getMiss().acc);
+                        JudgementValue miss = Judgement.getMiss();
+
+                        KeyValuePair<long, int> hitResult = Scoring.processHitResults(miss, score, combo_multiplier);
+                        score = hitResult.Key;
+                        combo_multiplier = hitResult.Value;
+                        errors.Add(miss.acc);
                     }
                 }
             }
 
+            updateScoreDisplay();
             View.Update(gameTime);
 
             if (!atLeastOne)
             {
-                Reset();
+                ScreenManager.RemoveScreen();
             }
+        }
+
+        private void updateScoreDisplay()
+        {
+            score_display = (int) (score / (float) max_score * Scoring.max_score);
         }
 
         public void deltaTime(long delta)
@@ -256,25 +273,27 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                     int error = (int)(pressed.time - press.Key);
 
-                    KeyValuePair<double, int> judge = Judgement.getErrorJudgement(Math.Abs(error));
+                   JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
 
-                    if (judge.Value >= 0)
+                    if (judge.score >= 0)
                     {
-                        getGameplayView().addHit(press.Key, error, judge.Value);
+                        getGameplayView().addHit(press.Key, error, judge.score);
 
                         columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
-                        errors.Add(judge.Key);
+                        errors.Add(judge.acc);
 
-                        if (judge.Value > 0)
+                        KeyValuePair<long, int> hitResult = Scoring.processHitResults(judge, score, combo_multiplier);
+                        score = hitResult.Key;
+                        combo_multiplier = hitResult.Value;
+
+                        if (judge.score > 0)
                         {
                             combo++;
-                            score += judge.Value * combo;
                         }
                         else
                         {
                             combo = 0;
-                            score += judge.Value;
                         }
                     }
                 }
