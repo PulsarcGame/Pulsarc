@@ -1,17 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Beatmaps;
-using Pulsarc.Gameplay;
-using Pulsarc.Gameplay.UI;
-using Pulsarc.Skinning;
+using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.UI.Screens.Gameplay.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
-using System;
 using System.Diagnostics;
-using System.IO;
-using Wobble;
 using Wobble.Platform;
+using Wobble.Screens;
 
 namespace Pulsarc
 {
@@ -22,11 +18,10 @@ namespace Pulsarc
     {
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
-        static public GameplayEngine gameplayEngine;
 
         // for playtesting
-        static public string toPlayFolder = "0 - Between the Buried and Me - The Parallax II_ Future Sequence (XeoStyle)";
-        static public string toPlaydiff = "Between the Buried and Me - The Parallax II_ Future Sequence [Marathon] (XeoStyle)";
+        static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";
+        static public string toPlaydiff = "Unknown - siqlo - Vantablack [Converted] (Intralism)";
 
         static public string convertFrom = "Mania";
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
@@ -66,7 +61,6 @@ namespace Pulsarc
             base.Initialize();
 
             KeyboardInputManager.StartThread();
-            gameplayEngine = new GameplayEngine();
 
             // Fps
             fpsDisplay = new FPS(new Vector2());
@@ -111,19 +105,14 @@ namespace Pulsarc
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !gameplayEngine.isActive())
-                gameplayEngine.Init(toPlayFolder, toPlaydiff);
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !GameplayEngine.active)
+            {
+                GameplayEngine gameplay = new GameplayEngine();
+                ScreenManager.AddScreen(gameplay);
+                gameplay.Init(toPlayFolder, toPlaydiff);
+            }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Delete))
-                gameplayEngine.Reset();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.P))
-                gameplayEngine.Pause();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.O))
-                gameplayEngine.Resume();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !gameplayEngine.isActive())
+            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !GameplayEngine.active)
             {
                 converting = true;
                 BeatmapConverter converter;
@@ -145,11 +134,8 @@ namespace Pulsarc
                 converting = false;
             }
 
-            if (gameplayEngine.isActive())
-            {
-                gameplayEngine.handleInputs();
-                gameplayEngine.Update();
-            }
+            ScreenManager.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -163,10 +149,7 @@ namespace Pulsarc
 
             GraphicsDevice.Clear(Color.Black);
 
-            if (gameplayEngine.isActive())
-            {
-                gameplayEngine.Draw();
-            }
+            ScreenManager.Draw(gameTime);
 
             // FPS
 

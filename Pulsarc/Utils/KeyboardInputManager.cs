@@ -13,6 +13,7 @@ namespace Pulsarc.Utils
         public static Queue<KeyValuePair<long, Keys>> keyboardPresses;
         public static Queue<KeyValuePair<long, Keys>> keyboardReleases;
         public static List<Keys> pressedKeys;
+        public static KeyboardState state;
 
         static public void StartThread()
         {
@@ -37,7 +38,7 @@ namespace Pulsarc.Utils
                 {
                     threadLimiterWatch.Restart();
                     
-                    KeyboardState state = Keyboard.GetState();
+                    state = Keyboard.GetState();
 
                     if (state.GetPressedKeys().Count() > 0) {
                         foreach(Keys key in state.GetPressedKeys())
