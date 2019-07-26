@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ namespace Pulsarc.Utils
 
         static Thread audioThread;
         static AudioTrack song;
+        static Stopwatch threadLimiterWatch;
 
         static public void Start()
         {
@@ -42,8 +44,8 @@ namespace Pulsarc.Utils
             }
 
             var running = true;
-            var threadLimiterWatch = new Stopwatch();
             var threadTime = new Stopwatch();
+            threadLimiterWatch = new Stopwatch();
 
 
             song = new AudioTrack(song_path, false)
@@ -55,22 +57,25 @@ namespace Pulsarc.Utils
 
             while(threadLimiterWatch.ElapsedMilliseconds < startDelayMs) { }
 
-            threadLimiterWatch.Restart();
-
-            song.Play();
-            threadTime.Start();
-
-            TimeSpan ts;
-
-            active = true;
-            while (running)
+            if (GameplayEngine.active)
             {
-                if (threadLimiterWatch.ElapsedMilliseconds >= 1)
-                {
-                    threadLimiterWatch.Restart();
+                threadLimiterWatch.Restart();
 
-                    ts = new TimeSpan(threadTime.ElapsedMilliseconds);
-                    Wobble.Audio.AudioManager.Update(new GameTime(ts, ts));
+                song.Play();
+                threadTime.Start();
+
+                TimeSpan ts;
+
+                active = true;
+                while (running)
+                {
+                    if (threadLimiterWatch.ElapsedMilliseconds >= 1)
+                    {
+                        threadLimiterWatch.Restart();
+
+                        ts = new TimeSpan(threadTime.ElapsedMilliseconds);
+                        Wobble.Audio.AudioManager.Update(new GameTime(ts, ts));
+                    }
                 }
             }
         }
@@ -83,6 +88,14 @@ namespace Pulsarc.Utils
             } catch
             {
                 return 0;
+            }
+        }
+
+        static public void deltaTime(long time)
+        {
+            if(active)
+            {
+                song.Seek(song.Position + time);
             }
         }
 
@@ -109,7 +122,10 @@ namespace Pulsarc.Utils
             if (active)
             {
                 Pause();
-                song.Stop();
+                if (song.IsPlaying)
+                {
+                    song.Stop();
+                }
                 song = null;
                 Reset();
             }

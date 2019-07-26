@@ -34,7 +34,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public double userSpeed;
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
-        public List<KeyValuePair<long, Double>> errors;
+        public List<KeyValuePair<long, int>> errors;
         public List<JudgementValue> judgements;
 
         public long max_score;
@@ -73,7 +73,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Initialize Gameplay variables
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
-            errors = new List<KeyValuePair<long, Double>>();
+            errors = new List<KeyValuePair<long, int>>();
 
             combo = 0;
             combo_multiplier = Scoring.max_combo_multiplier;
@@ -134,7 +134,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                                 break;
                         }
 
-                        inputs.Add(new KeyValuePair<long, Keys>(arc.time, press));
+                        inputs.Add(new KeyValuePair<long, Keys>(arc.time + (long) Math.Pow(new Random().Next(80)-40,3)/600, press));
                     }
                 }
 
@@ -247,7 +247,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public void deltaTime(long delta)
         {
-            timeOffset += delta;
+            AudioManager.deltaTime(delta);
         }
 
         public void Pause()
@@ -314,7 +314,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                         columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
-                        errors.Add(new KeyValuePair<long, Double>(press.Key, error));
+                        errors.Add(new KeyValuePair<long, int>(press.Key, error));
                         judgements.Add(judge);
 
                         KeyValuePair<long, int> hitResult = Scoring.processHitResults(judge, score, combo_multiplier);

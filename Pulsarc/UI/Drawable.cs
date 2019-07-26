@@ -64,9 +64,14 @@ namespace Pulsarc.UI
             }
         }
 
+        static public Vector2 getResponsivePosition(Vector2 position)
+        {
+            return new Vector2(position.X / 1920 * Pulsarc.getDimensions().X, position.Y / 1080 * Pulsarc.getDimensions().Y);
+        }
+
         public void changePosition(Vector2 position)
         {
-            this.position = new Vector2(position.X / 1920 * Pulsarc.getDimensions().X, position.Y / 1080 * Pulsarc.getDimensions().Y);
+            this.position = getResponsivePosition(position);
         }
 
         public virtual void Draw()

@@ -11,11 +11,20 @@ namespace Pulsarc.UI.Screens.Result
         public override ScreenView View { get; protected set; }
 
         public List<JudgementValue> judgements;
-        public List<KeyValuePair<long, Double>> hits;
+        public Dictionary<string, int> judges_count;
+        public List<KeyValuePair<long, int>> hits;
         public int display_score;
 
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<long, Double>> hits_, int display_score_)
+        public bool full_combo;
+
+        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<long, int>> hits_, int display_score_)
         {
+            judges_count = new Dictionary<string, int>();
+            foreach(JudgementValue judge in Judgement.judgements)
+            {
+                judges_count.Add(judge.name, 0);
+            }
+
             judgements = judgements_;
             hits = hits_;
             display_score = display_score_;
@@ -23,10 +32,12 @@ namespace Pulsarc.UI.Screens.Result
             double accuracyTotal = 0;
             foreach (JudgementValue judge in judgements)
             {
-                Console.WriteLine(judge.acc);
                 accuracyTotal += judge.acc;
+                judges_count[judge.name]++;
             }
             accuracyTotal /= judgements.Count;
+
+            full_combo = judges_count["miss"] == 0;
 
             string grade = "D";
 

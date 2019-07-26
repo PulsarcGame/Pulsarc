@@ -7,11 +7,19 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
     class JudgeBox : Drawable
     {
         List<KeyValuePair<long, int>> toDraw;
+        Dictionary<int, Judge> judges;
+
         public JudgeBox(Vector2 position) : base(Skin.defaultTexture)
         {
             texture = null;
 
             this.position = position;
+
+            judges = new Dictionary<int, Judge>();
+            foreach (JudgementValue judge in Judgement.judgements)
+            {
+                judges.Add(judge.score,new Judge(judge.score, new Vector2(position.X, position.Y)));
+            }
 
             toDraw = new List<KeyValuePair<long, int>>();
         }
@@ -39,8 +47,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             foreach(KeyValuePair<long,int> judge in toDraw)
             {
-                Vector2 pos = new Vector2(position.X - Skin.judges[judge.Value].Width / 2, position.Y - Skin.judges[judge.Value].Height / 2);
-                Pulsarc.spriteBatch.Draw(Skin.judges[judge.Value], position: pos);
+                judges[judge.Value].Draw();
             }
         }
     }

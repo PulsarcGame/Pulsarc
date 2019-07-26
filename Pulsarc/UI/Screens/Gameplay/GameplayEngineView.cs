@@ -26,12 +26,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Initialize UI
             crosshair = new Crosshair(GetGameplayEngine().currentCrosshairRadius);
 
-            scoreDisplay = new Score(new Vector2(Pulsarc.getDimensions().X / 2, 20), centered: true);
-            accuracyDisplay = new Accuracy(new Vector2(Pulsarc.getDimensions().X / 2, 50), centered: true);
-            comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
+            scoreDisplay = new Score(new Vector2(960, 20), centered: true);
+            accuracyDisplay = new Accuracy(new Vector2(960, 50), centered: true);
+            comboDisplay = new Combo(new Vector2(960, 80), centered: true);
 
-            judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
-            accMeter = new AccuracyMeter(new Vector2(960, 1080 - 25), new Vector2(200, 25));
+            judgeBox = new JudgeBox(new Vector2(960, 540));
+            accMeter = new AccuracyMeter(new Vector2(960, 1080), new Vector2(200, 25));
         }
 
         public void addHit(long time, int error, int judge)
