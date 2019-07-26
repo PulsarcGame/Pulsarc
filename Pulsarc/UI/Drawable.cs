@@ -74,6 +74,16 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
         }
 
+        public void move(Vector2 position)
+        {
+            this.position += getResponsivePosition(position);
+        }
+
+        public bool clicked(Vector2 mousePos)
+        {
+            return mousePos.X >= position.X && mousePos.X <= position.X + texture.Width && mousePos.Y >= position.Y && mousePos.Y <= position.Y + texture.Height;
+        }
+
         public virtual void Draw()
         {
             Pulsarc.spriteBatch.Draw(texture, position, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);

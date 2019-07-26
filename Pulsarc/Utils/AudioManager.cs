@@ -13,6 +13,7 @@ namespace Pulsarc.Utils
 {
     static class AudioManager
     {
+        static public bool running = false;
         static public bool initialized = false;
         static public bool active = false;
         static public bool paused = false;
@@ -33,7 +34,8 @@ namespace Pulsarc.Utils
 
         static public void AudioPlayer()
         {
-            if(song_path == "")
+            threadLimiterWatch = new Stopwatch();
+            if (song_path == "")
             {
                 return;
             }
@@ -43,9 +45,8 @@ namespace Pulsarc.Utils
                 initialized = true;
             }
 
-            var running = true;
+            running = true;
             var threadTime = new Stopwatch();
-            threadLimiterWatch = new Stopwatch();
 
 
             song = new AudioTrack(song_path, false)
@@ -82,12 +83,11 @@ namespace Pulsarc.Utils
 
         static public long getTime()
         {
-            try
-            {
+            if(active && song.StreamLoaded) { 
                 return (long) song.Position - offset;
-            } catch
+            } else
             {
-                return 0;
+                return -startDelayMs + threadLimiterWatch.ElapsedMilliseconds;
             }
         }
 
@@ -135,11 +135,8 @@ namespace Pulsarc.Utils
         {
             active = false;
             paused = false;
+            running = false;
             song_path = "";
-            try
-            {
-                audioThread.Abort();
-            } catch { }
         }
 
         static public bool FinishedPlaying()

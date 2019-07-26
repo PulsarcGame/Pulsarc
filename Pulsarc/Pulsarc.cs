@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System.Diagnostics;
@@ -74,7 +75,11 @@ namespace Pulsarc
             frames = 0;
             
             game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
-            game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2); 
+            game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
+
+            SongSelection firstScreen = new SongSelection();
+            ScreenManager.AddScreen(firstScreen);
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -107,10 +112,6 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-
-            // Move all this in an input handler
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !GameplayEngine.active)
             {

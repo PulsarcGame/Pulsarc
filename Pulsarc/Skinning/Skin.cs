@@ -53,6 +53,8 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "Grades/", "grade_C");
                 LoadSkinTexture(skinFolder + "Grades/", "grade_D");
 
+                LoadSkinTexture(skinFolder + "SongSelect/", "beatmap_card");
+
                 judges = new Dictionary<int, Texture2D>();
 
                 judges.Add(320, LoadTexture(skinFolder + "Judgements/", "max"));
