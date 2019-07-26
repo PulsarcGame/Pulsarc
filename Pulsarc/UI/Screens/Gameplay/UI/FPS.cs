@@ -4,7 +4,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class FPS : TextDisplayElement
     {
-        public FPS(Vector2 position, int fontSize = 10, bool centered = false) : base("", position, fontSize, centered)
+        public FPS(Vector2 position, int fontSize = 14, bool centered = false) : base("", position, fontSize, centered)
         {
         }
 

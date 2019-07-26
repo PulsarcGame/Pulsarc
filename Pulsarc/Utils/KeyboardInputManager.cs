@@ -37,31 +37,38 @@ namespace Pulsarc.Utils
                 if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                 {
                     threadLimiterWatch.Restart();
-                    
-                    state = Keyboard.GetState();
 
-                    if (state.GetPressedKeys().Count() > 0) {
-                        foreach(Keys key in state.GetPressedKeys())
+                    try
+                    {
+                        state = Keyboard.GetState();
+
+                        if (state.GetPressedKeys().Count() > 0)
                         {
-                            if (!pressedKeys.Contains(key))
+                            foreach (Keys key in state.GetPressedKeys())
                             {
-                                keyboardPresses.Enqueue(new KeyValuePair<long, Keys>(AudioManager.getTime(), key));
-                                pressedKeys.Add(key);
+                                if (!pressedKeys.Contains(key))
+                                {
+                                    keyboardPresses.Enqueue(new KeyValuePair<long, Keys>(AudioManager.getTime(), key));
+                                    pressedKeys.Add(key);
+                                }
                             }
                         }
-                    }
 
-                    for (int i = 0; i < pressedKeys.Count; i++)
-                    {
-                        Keys key = pressedKeys[i];
-
-                        if (!state.IsKeyDown(key))
+                        for (int i = 0; i < pressedKeys.Count; i++)
                         {
-                            // Used if LN handling
-                            //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
-                            pressedKeys.RemoveAt(i);
-                            i--;
+                            Keys key = pressedKeys[i];
+
+                            if (!state.IsKeyDown(key))
+                            {
+                                // Used if LN handling
+                                //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
+                                pressedKeys.RemoveAt(i);
+                                i--;
+                            }
                         }
+                    } catch
+                    {
+                        Console.WriteLine("monogame missed a keystroke, sorry not sorry");
                     }
                 }
             }

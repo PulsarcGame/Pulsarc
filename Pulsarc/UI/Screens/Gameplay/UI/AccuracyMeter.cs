@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +22,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             lastTime = 0;
             errors = new List<KeyValuePair<long, int>>();
             this.size = size;
+            this.position.X -= size.X / 2;
+            this.position.Y -= size.Y;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
             foreach(JudgementValue judgement in Judgement.judgements)

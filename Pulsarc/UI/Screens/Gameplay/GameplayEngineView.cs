@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay.UI;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,13 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Initialize UI
             crosshair = new Crosshair(GetGameplayEngine().currentCrosshairRadius);
 
-            scoreDisplay = new Score(new Vector2(Pulsarc.getDimensions().X / 2, 20), centered: true);
-            accuracyDisplay = new Accuracy(new Vector2(Pulsarc.getDimensions().X / 2, 50), centered: true);
-            comboDisplay = new Combo(new Vector2(Pulsarc.getDimensions().X / 2, 80), centered: true);
+            scoreDisplay = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), centered: true);
+            accuracyDisplay = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), centered: true);
+            comboDisplay = new Combo(new Vector2(getSkinnablePosition("ComboX"), getSkinnablePosition("ComboY")), centered: true);
 
-            judgeBox = new JudgeBox(new Vector2(Pulsarc.getDimensions().X / 2, Pulsarc.getDimensions().Y / 2));
-            accMeter = new AccuracyMeter(new Vector2(Pulsarc.getDimensions().X / 2 - 100, Pulsarc.getDimensions().Y - 25), new Vector2(200, 25));
+            judgeBox = new JudgeBox(new Vector2(getSkinnablePosition("JudgesX"), getSkinnablePosition("JudgesY")));
+            accMeter = new AccuracyMeter(new Vector2(getSkinnablePosition("AccMeterX"), getSkinnablePosition("AccMeterY"))
+                                       , new Vector2(getSkinnablePosition("AccMeterWidth"), getSkinnablePosition("AccMeterHeight")));
         }
 
         public void addHit(long time, int error, int judge)
@@ -49,9 +51,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
 
             double accuracyTotal = 0;
-            foreach (double error in GetGameplayEngine().errors)
+            foreach (JudgementValue judge in GetGameplayEngine().judgements)
             {
-                accuracyTotal += Math.Abs(error);
+                accuracyTotal += judge.acc;
             }
 
             accuracyDisplay.Update(GetGameplayEngine().errors.Count > 0 ? accuracyTotal / GetGameplayEngine().errors.Count : 1);
@@ -63,6 +65,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override void Draw(GameTime gameTime)
         {
+            if (!GameplayEngine.active) return;
             // Draw everything
             crosshair.Draw();
 
@@ -86,6 +89,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             comboDisplay.Draw();
             judgeBox.Draw();
             accMeter.Draw();
+        }
+
+        private float getSkinnablePosition(string key)
+        {
+            return Skin.getConfigFloat("gameplay", "Positions", key);
         }
 
         public bool isActive()

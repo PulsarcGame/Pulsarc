@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         static double curveFixing = 1e9;
         static double disappearDistanceFixing = Math.Pow(curveFixing * targetDisappearDistance, 1/exponent);
 
-        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.arcs)
+        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
             this.time = time;
             this.angle = angle;
@@ -70,7 +70,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             distanceToCrosshair = getDistanceToCrosshair(currentTime, speed * baseSpeed);
 
-            Resize(getSizeFromDistanceToCrosshair(crosshairRadius));
+            Resize(getSizeFromDistanceToCrosshair(crosshairRadius), false);
         }
 
         public int getSizeFromDistanceToCrosshair(int crosshairRadius)

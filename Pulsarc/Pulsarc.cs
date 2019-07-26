@@ -18,6 +18,7 @@ namespace Pulsarc
     {
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
+        static public int xBaseRes = 1920;
 
         // for playtesting
         static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";
@@ -26,12 +27,15 @@ namespace Pulsarc
         static public string convertFrom = "Mania";
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
+        Camera game_camera;
+
         //temp
         Stopwatch fpsWatch;
         FPS fpsDisplay;
         int fpsResolution;
         static public int frames;
         bool converting = false;
+        int lastSWvalue = 0;
 
         public Pulsarc()
         {
@@ -42,7 +46,7 @@ namespace Pulsarc
             // Set the game in fullscreen (according to the user monitor)
             // TODO : Read from config file for user preference
             graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.2f);
-            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 1.2f);
+            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width  / 1.2f);
             //graphics.IsFullScreen = true;
             graphics.SynchronizeWithVerticalRetrace = false;
             base.IsFixedTimeStep = false;
@@ -68,6 +72,9 @@ namespace Pulsarc
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
             frames = 0;
+            
+            game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
+            game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2); 
         }
 
         /// <summary>
@@ -112,6 +119,23 @@ namespace Pulsarc
                 gameplay.Init(toPlayFolder, toPlaydiff);
             }
 
+            
+            MouseState ms = Mouse.GetState();
+
+            if (ms.ScrollWheelValue < lastSWvalue)
+            {
+                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(-10);
+                game_camera.Zoom /= 1.05f;
+            }
+            else if (ms.ScrollWheelValue > lastSWvalue)
+            {
+                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(10);
+                game_camera.Zoom *= 1.05f;
+            }
+
+            lastSWvalue = ms.ScrollWheelValue;
+            
+
             if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !GameplayEngine.active)
             {
                 converting = true;
@@ -145,7 +169,9 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred,
+                    null, null, null, null, null,
+                    game_camera.GetTransformation());
 
             GraphicsDevice.Clear(Color.Black);
 

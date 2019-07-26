@@ -21,12 +21,12 @@ namespace Pulsarc.UI
         {
             origin = new Vector2(0, 0);
             this.texture = texture;
-            this.position = position;
             this.aspectRatio = aspectRatio;
 
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
             Resize(size);
+            changePosition(position);
         }
 
         public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1)
@@ -39,7 +39,7 @@ namespace Pulsarc.UI
 
         public Drawable() { }
 
-        public void Resize(Vector2 size)
+        public void Resize(Vector2 size, bool resolutionScale = true)
         {
             float newAspect = size.X / size.Y;
             if (aspectRatio != -1 && newAspect != aspectRatio)
@@ -48,12 +48,12 @@ namespace Pulsarc.UI
                 Console.WriteLine("Invalid aspect ratio : " + size.X + "x" + size.Y + " isn't " + aspect.ToString());
                 return;
             }
-            scale = size.X / texture.Width;
+            scale = size.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
         }
 
-        public void Resize(float size)
+        public void Resize(float size, bool resolutionScale = true)
         {
-            Resize(new Vector2(size, size));
+            Resize(new Vector2(size, size), resolutionScale);
         }
 
         public void setRotation(float degrees)
@@ -62,6 +62,16 @@ namespace Pulsarc.UI
             {
                 rotation = (float) (degrees * (Math.PI / 180));
             }
+        }
+
+        static public Vector2 getResponsivePosition(Vector2 position)
+        {
+            return new Vector2(position.X / 1920 * Pulsarc.getDimensions().X, position.Y / 1080 * Pulsarc.getDimensions().Y);
+        }
+
+        public void changePosition(Vector2 position)
+        {
+            this.position = getResponsivePosition(position);
         }
 
         public virtual void Draw()

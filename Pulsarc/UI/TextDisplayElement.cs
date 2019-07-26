@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
 
-namespace Pulsarc.UI.Screens.Gameplay.UI
+namespace Pulsarc.UI
 {
     class TextDisplayElement : Drawable
     {
@@ -19,15 +19,14 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public TextDisplayElement(string name, Vector2 position, int fontSize = 18, bool centered = false)
         {
             this.name = name;
-            this.position = position;
             this.centered = centered;
 
             font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;
-            fontScale = fontSize / 64f;
-
-            processedPosition = position;
-
+            fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
+            
+            changePosition(position);
+            processedPosition = this.position;
             Update("");
         }
 
@@ -37,8 +36,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             if(centered)
             {
-                processedPosition.X = position.X - (font.MeasureString(text).X * fontScale) / 2;
-                processedPosition.Y = position.Y - (font.MeasureString(text).Y * fontScale) / 2;
+                processedPosition.X = position.X - ((font.MeasureString(text).X * fontScale) / 2) * Pulsarc.getDimensions().X / 1920; 
+                processedPosition.Y = position.Y - ((font.MeasureString(text).Y * fontScale) / 2) * Pulsarc.getDimensions().Y / 1080;
             }
         }
 
