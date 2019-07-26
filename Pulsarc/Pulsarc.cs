@@ -29,8 +29,11 @@ namespace Pulsarc
         static public string convertFrom = "Mania";
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
+        static public bool display_cursor = true;
+
         Camera game_camera;
         Cursor cursor;
+        
 
         //temp
         Stopwatch fpsWatch;
@@ -181,7 +184,9 @@ namespace Pulsarc
 
             base.Draw(gameTime);
 
-            cursor.Draw();
+            if(display_cursor)
+                cursor.Draw();
+
             spriteBatch.End();
         }
 
