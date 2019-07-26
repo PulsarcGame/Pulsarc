@@ -41,7 +41,10 @@ namespace Pulsarc.UI.Screens.SongSelect
             background.Draw();
             foreach (BeatmapCard card in GetSongSelection().cards)
             {
-                card.Draw();
+                if (card.onScreen())
+                {
+                    card.Draw();
+                }
             }
         }
 
