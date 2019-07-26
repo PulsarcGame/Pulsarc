@@ -74,7 +74,7 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
         }
 
-        public void move(Vector2 position)
+        public virtual void move(Vector2 position)
         {
             this.position += getResponsivePosition(position);
         }

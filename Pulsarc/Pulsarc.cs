@@ -119,22 +119,6 @@ namespace Pulsarc
                 ScreenManager.AddScreen(gameplay);
                 gameplay.Init(toPlayFolder, toPlaydiff);
             }
-
-            
-            MouseState ms = Mouse.GetState();
-
-            if (ms.ScrollWheelValue < lastSWvalue)
-            {
-                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(-10);
-                game_camera.Zoom /= 1.05f;
-            }
-            else if (ms.ScrollWheelValue > lastSWvalue)
-            {
-                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(10);
-                game_camera.Zoom *= 1.05f;
-            }
-
-            lastSWvalue = ms.ScrollWheelValue;
             
 
             if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !GameplayEngine.active)

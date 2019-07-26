@@ -17,6 +17,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public List<BeatmapCard> cards;
 
+        int lastScrollValue = 0;
         bool leftClicking = false;
         Vector2 leftClickingPos;
 
@@ -41,6 +42,17 @@ namespace Pulsarc.UI.Screens.SongSelect
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
+            
+            if (ms.ScrollWheelValue < lastScrollValue)
+            {
+                currentFocus--;
+            }
+            else if (ms.ScrollWheelValue > lastScrollValue)
+            {
+                currentFocus++;
+            }
+
+            lastScrollValue = ms.ScrollWheelValue;
 
             if (!leftClicking && ms.LeftButton == ButtonState.Pressed)
             {

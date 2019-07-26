@@ -49,8 +49,10 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0,(cardHeight + cardMargin) * diff));
+                    card.move(new Vector2(0, (cardHeight + cardMargin) *diff / 2.5f));
                 }
+
+                lastFocus = GetSongSelection().currentFocus;
             }
         }
     }

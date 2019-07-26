@@ -49,5 +49,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             ScreenManager.AddScreen(gameplay);
             gameplay.Init(beatmap);
         }
+
+        public override void move(Vector2 delta)
+        {
+            Console.WriteLine("ddd");
+            title.move(delta);
+            artist.move(delta);
+            version.move(delta);
+            mapper.move(delta);
+            base.move(delta);
+        }
     }
 }
