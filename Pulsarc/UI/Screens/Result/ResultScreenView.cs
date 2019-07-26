@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Result.UI;
 using Wobble.Screens;
 
@@ -32,10 +33,10 @@ namespace Pulsarc.UI.Screens.Result
             scorecard = new Scorecard(new Vector2(-100, 190));
             background = new Background();
 
-            this.accuracy = new Accuracy(new Vector2(470, 300), 35);
+            this.accuracy = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), 35);
             this.accuracy.Update(accuracy);
 
-            score = new Score(new Vector2(1000, 300), 35);
+            score = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), 35);
             score.Update(GetResultScreen().display_score);
 
             grade_container = new GradeContainer(new Vector2(-425,115), grade);
@@ -43,7 +44,17 @@ namespace Pulsarc.UI.Screens.Result
             replay_button.updatePosition(new Vector2(1920 - replay_button.texture.Width, 270));
             return_button.updatePosition(new Vector2(1920 - return_button.texture.Width, 550));
 
-            hitErrorGraph = new HitErrorGraph(new Vector2(390, 410), (int)(785 / 1920f * Pulsarc.getDimensions().X), (int) (270 / 1080f * Pulsarc.getDimensions().Y), GetResultScreen().hits);
+            hitErrorGraph = new HitErrorGraph(
+                new Vector2(getSkinnablePosition("HitErrorX")
+                            , getSkinnablePosition("HitErrorY"))
+               , (int)(getSkinnablePosition("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
+               , (int) (getSkinnablePosition("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
+               , GetResultScreen().hits);
+        }
+
+        private float getSkinnablePosition(string key)
+        {
+            return Skin.getConfigFloat("result_screen", "Positions", key);
         }
 
         public override void Destroy()

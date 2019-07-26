@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using IniParser;
+using IniParser.Model;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Pulsarc.Skinning
@@ -10,21 +13,29 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
-        static public Dictionary<String, Texture2D> assets { get; set; }
-
         static public Texture2D defaultTexture;
 
+        static public Dictionary<String, Texture2D> assets { get; set; }
         static public Dictionary<int, Texture2D> judges;
+        static public Dictionary<String, IniData> configs { get; set; }
 
         static public void LoadSkin(string name)
         {
+            FileIniDataParser parser = new FileIniDataParser();
             assets = new Dictionary<string, Texture2D>();
+            configs = new Dictionary<String, IniData>();
             loaded = false;
 
             string skinFolder = "Skins/" + name + "/";
 
             if (Directory.Exists(skinFolder))
             {
+
+                configs.Add("skin", parser.ReadFile(skinFolder + "skin.ini"));
+                configs.Add("gameplay", parser.ReadFile(skinFolder + "Gameplay/gameplay.ini"));
+                configs.Add("judgements", parser.ReadFile(skinFolder + "Judgements/judgements.ini"));
+                configs.Add("result_screen", parser.ReadFile(skinFolder + "UI/ResultScreen/result_screen.ini"));
+
                 LoadSkinTexture(skinFolder + "Gameplay/", "arcs");
                 LoadSkinTexture(skinFolder + "Gameplay/", "crosshair");
 
@@ -97,6 +108,11 @@ namespace Pulsarc.Skinning
             cropped.SetData(data);
 
             return cropped;
+        }
+
+        static public float getConfigFloat(string config, string section, string key)
+        {
+            return float.Parse(configs[config][section][key], CultureInfo.InvariantCulture);
         }
 
         static public bool isLoaded()
