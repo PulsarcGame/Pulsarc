@@ -65,14 +65,16 @@
         <x64Source Include="$(ProjectDir)x64\*.*" />
         <x86Source Include="$(ProjectDir)x86\*.*" />
         <dylibSource Include="$(ProjectDir)*.dylib" />
+        <config Include="$(ProjectDir)config.ini" />
     </ItemGroup>
 
     <Copy SourceFiles="@(x64Source)" DestinationFolder="$(ProjectDir)$(OutDir)x64\%(RecursiveDir)">
     </Copy>
     <Copy SourceFiles="@(x86Source)" DestinationFolder="$(ProjectDir)$(OutDir)x86\%(RecursiveDir)">
-    </Copy>
-	
+    </Copy>	
     <Copy SourceFiles="@(dylibSource)" DestinationFolder="$(ProjectDir)$(OutDir)">
+    </Copy>	
+    <Copy SourceFiles="@(config)" DestinationFolder="$(ProjectDir)$(OutDir)">
     </Copy>
    </Target>
 </Project>

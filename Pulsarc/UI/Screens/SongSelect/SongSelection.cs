@@ -25,6 +25,11 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public SongSelection()
         {
+            RefreshBeatmaps();
+        }
+
+        public void RefreshBeatmaps()
+        {
             List<Beatmap> beatmaps = new List<Beatmap>();
             cards = new List<BeatmapCard>();
 

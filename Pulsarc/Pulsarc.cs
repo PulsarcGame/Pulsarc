@@ -1,3 +1,4 @@
+using IniParser;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -25,9 +26,6 @@ namespace Pulsarc
         // for playtesting
         static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";
         static public string toPlaydiff = "Unknown - siqlo - Vantablack [Converted] (Intralism)";
-
-        static public string convertFrom = "Mania";
-        static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
         static public bool display_cursor = true;
 
@@ -117,14 +115,18 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            cursor.setPos(Mouse.GetState().Position);            
+            cursor.setPos(Mouse.GetState().Position);    
 
-            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && !converting)
+            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
+                FileIniDataParser parser = new FileIniDataParser();
                 converting = true;
                 BeatmapConverter converter;
 
-                switch(convertFrom.ToLower()) 
+                string convertFrom = parser.ReadFile("config.ini")["Converting"]["Game"];
+                string toConvert = parser.ReadFile("config.ini")["Converting"]["Path"];
+
+                switch (convertFrom.ToLower()) 
                 { 
                     case "mania":
                         converter = new ManiaToPulsarc();
@@ -135,6 +137,7 @@ namespace Pulsarc
                 }
 
                 converter.Save(toConvert);
+                ((SongSelection)ScreenManager.Screens.Peek()).RefreshBeatmaps();
             } else if(converting && Keyboard.GetState().IsKeyUp(Keys.S))
             {
                 converting = false;
