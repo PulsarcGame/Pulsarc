@@ -10,7 +10,7 @@ namespace Pulsarc.UI
     {
         public Cursor() : base(Skin.assets["cursor"])
         {
-            Resize(texture.Width / (texture.Width / (32 / (float) 1080 * Pulsarc.getDimensions().X)));
+            Resize(texture.Width / (texture.Width / (48 / (float) 1920 * Pulsarc.getDimensions().X)));
         }
 
         public void setPos(Point position)
