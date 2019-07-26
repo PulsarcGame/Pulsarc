@@ -39,6 +39,8 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "Gameplay/", "arcs");
                 LoadSkinTexture(skinFolder + "Gameplay/", "crosshair");
 
+                LoadSkinTexture(skinFolder + "UI/", "cursor");
+
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button");
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_replay");
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_return");
@@ -54,6 +56,8 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "Grades/", "grade_D");
 
                 LoadSkinTexture(skinFolder + "SongSelect/", "beatmap_card");
+                LoadSkinTexture(skinFolder + "SongSelect/", "select_background");
+
 
                 judges = new Dictionary<int, Texture2D>();
 

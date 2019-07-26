@@ -22,10 +22,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
             this.beatmap = beatmap;
 
-            title = new BeatmapTitle(new Vector2(position.X + 280, position.Y + 30));
-            artist = new BeatmapArtist(new Vector2(position.X + 330, position.Y + 85));
-            version = new BeatmapVersion(new Vector2(position.X + 270, position.Y + 120));
-            mapper = new BeatmapMapper(new Vector2(position.X + 270, position.Y + 200));
+            title = new BeatmapTitle(new Vector2(position.X + 40, position.Y + 20));
+            artist = new BeatmapArtist(new Vector2(position.X + 45, position.Y + 50));
+            version = new BeatmapVersion(new Vector2(position.X + 45, position.Y + 80));
+            mapper = new BeatmapMapper(new Vector2(position.X + 600, position.Y + 130));
 
             title.Update(beatmap.Title);
             artist.Update(beatmap.Artist);
@@ -52,7 +52,6 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public override void move(Vector2 delta)
         {
-            Console.WriteLine("ddd");
             title.move(delta);
             artist.move(delta);
             version.move(delta);

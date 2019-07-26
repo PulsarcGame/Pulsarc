@@ -12,9 +12,10 @@ namespace Pulsarc.UI.Screens.SongSelect
     {
         SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
+        Background background;
 
         int cardWidth = 800;
-        int cardHeight = 250;
+        int cardHeight = 170;
         int cardMargin = 10;
         int lastFocus = 0;
 
@@ -27,6 +28,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                 GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(1920 - cardWidth,(cardHeight + cardMargin) * i), new Vector2(cardWidth, cardHeight)));
                 i++;
             }
+
+            background = new Background();
         }
 
         public override void Destroy()
@@ -35,7 +38,8 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Draw(GameTime gameTime)
         {
-            foreach(BeatmapCard card in GetSongSelection().cards)
+            background.Draw();
+            foreach (BeatmapCard card in GetSongSelection().cards)
             {
                 card.Draw();
             }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Gameplay.UI;
 using Pulsarc.UI.Screens.SongSelect;
@@ -29,6 +30,7 @@ namespace Pulsarc
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
         Camera game_camera;
+        Cursor cursor;
 
         //temp
         Stopwatch fpsWatch;
@@ -79,7 +81,8 @@ namespace Pulsarc
 
             SongSelection firstScreen = new SongSelection();
             ScreenManager.AddScreen(firstScreen);
-            IsMouseVisible = true;
+
+            cursor = new Cursor();
         }
 
         /// <summary>
@@ -112,6 +115,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            cursor.setPos(Mouse.GetState().Position);
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !GameplayEngine.active)
             {
@@ -176,6 +180,8 @@ namespace Pulsarc
             fpsDisplay.Draw();
 
             base.Draw(gameTime);
+
+            cursor.Draw();
             spriteBatch.End();
         }
 
