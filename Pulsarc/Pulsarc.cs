@@ -41,7 +41,6 @@ namespace Pulsarc
         int fpsResolution;
         static public int frames;
         bool converting = false;
-        int lastSWvalue = 0;
 
         public Pulsarc()
         {
@@ -118,17 +117,9 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            cursor.setPos(Mouse.GetState().Position);
+            cursor.setPos(Mouse.GetState().Position);            
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !GameplayEngine.active)
-            {
-                GameplayEngine gameplay = new GameplayEngine();
-                ScreenManager.AddScreen(gameplay);
-                gameplay.Init(toPlayFolder, toPlaydiff);
-            }
-            
-
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !GameplayEngine.active)
+            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && !converting)
             {
                 converting = true;
                 BeatmapConverter converter;
@@ -144,8 +135,7 @@ namespace Pulsarc
                 }
 
                 converter.Save(toConvert);
-            }
-            if(Keyboard.GetState().IsKeyUp(Keys.S) && converting)
+            } else if(converting && Keyboard.GetState().IsKeyUp(Keys.S))
             {
                 converting = false;
             }
