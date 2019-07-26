@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System.Diagnostics;
@@ -27,7 +29,11 @@ namespace Pulsarc
         static public string convertFrom = "Mania";
         static public string toConvert = @"E:\osu!\Songs\682489 Between the Buried and Me - The Parallax II Future Sequence";
 
+        static public bool display_cursor = true;
+
         Camera game_camera;
+        Cursor cursor;
+        
 
         //temp
         Stopwatch fpsWatch;
@@ -35,7 +41,6 @@ namespace Pulsarc
         int fpsResolution;
         static public int frames;
         bool converting = false;
-        int lastSWvalue = 0;
 
         public Pulsarc()
         {
@@ -74,7 +79,12 @@ namespace Pulsarc
             frames = 0;
             
             game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
-            game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2); 
+            game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
+
+            SongSelection firstScreen = new SongSelection();
+            ScreenManager.AddScreen(firstScreen);
+
+            cursor = new Cursor();
         }
 
         /// <summary>
@@ -107,36 +117,9 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            cursor.setPos(Mouse.GetState().Position);            
 
-            // Move all this in an input handler
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !GameplayEngine.active)
-            {
-                GameplayEngine gameplay = new GameplayEngine();
-                ScreenManager.AddScreen(gameplay);
-                gameplay.Init(toPlayFolder, toPlaydiff);
-            }
-
-            
-            MouseState ms = Mouse.GetState();
-
-            if (ms.ScrollWheelValue < lastSWvalue)
-            {
-                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(-10);
-                game_camera.Zoom /= 1.05f;
-            }
-            else if (ms.ScrollWheelValue > lastSWvalue)
-            {
-                //((GameplayEngine)ScreenManager.Screens.Peek()).deltaTime(10);
-                game_camera.Zoom *= 1.05f;
-            }
-
-            lastSWvalue = ms.ScrollWheelValue;
-            
-
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && !converting && !GameplayEngine.active)
+            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && !converting)
             {
                 converting = true;
                 BeatmapConverter converter;
@@ -152,8 +135,7 @@ namespace Pulsarc
                 }
 
                 converter.Save(toConvert);
-            }
-            if(Keyboard.GetState().IsKeyUp(Keys.S) && converting)
+            } else if(converting && Keyboard.GetState().IsKeyUp(Keys.S))
             {
                 converting = false;
             }
@@ -191,6 +173,10 @@ namespace Pulsarc
             fpsDisplay.Draw();
 
             base.Draw(gameTime);
+
+            if(display_cursor)
+                cursor.Draw();
+
             spriteBatch.End();
         }
 

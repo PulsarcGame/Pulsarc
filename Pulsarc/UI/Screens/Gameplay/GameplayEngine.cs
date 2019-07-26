@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.Utils;
@@ -150,6 +150,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             AudioManager.Start();
             GameplayEngine.active = true;
+            Pulsarc.display_cursor = false;
         }
 
         public void Init(string folder, string diff)
@@ -337,6 +338,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void EndGameplay()
         {
             ResultScreen next = new ResultScreen(judgements, errors, score_display);
+            Pulsarc.display_cursor = true;
             Reset();
             ScreenManager.RemoveScreen(true);
             ScreenManager.AddScreen(next);

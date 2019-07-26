@@ -38,7 +38,17 @@ namespace Pulsarc.UI
             {
                 processedPosition.X = position.X - ((font.MeasureString(text).X * fontScale) / 2) * Pulsarc.getDimensions().X / 1920; 
                 processedPosition.Y = position.Y - ((font.MeasureString(text).Y * fontScale) / 2) * Pulsarc.getDimensions().Y / 1080;
+            } else
+            {
+                processedPosition.X = position.X;
+                processedPosition.Y = position.Y;
             }
+        }
+
+        public override void move(Vector2 position)
+        {
+            base.move(position);
+            Update(text);
         }
 
         public override void Draw()

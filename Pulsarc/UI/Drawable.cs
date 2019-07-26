@@ -74,6 +74,21 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
         }
 
+        public virtual void move(Vector2 position)
+        {
+            this.position += getResponsivePosition(position);
+        }
+
+        public bool clicked(Vector2 mousePos)
+        {
+            return mousePos.X >= position.X && mousePos.X <= position.X + texture.Width && mousePos.Y >= position.Y && mousePos.Y <= position.Y + texture.Height;
+        }
+
+        public bool onScreen()
+        {
+            return new Rectangle((int) position.X, (int) position.Y, texture.Width, texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int) Pulsarc.getDimensions().Y));
+        }
+
         public virtual void Draw()
         {
             Pulsarc.spriteBatch.Draw(texture, position, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
