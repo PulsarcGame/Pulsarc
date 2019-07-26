@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         public static bool active = false;
-        bool autoPlay = true;
+        bool autoPlay = false;
 
         Stopwatch endWatch;
 
@@ -59,7 +59,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Initialize default variables, parse beatmap
             endWatch = new Stopwatch();
-            rate = 1.5f;
+            rate = 1f;
             keys = 4;
             userSpeed = 1 / rate / rate;
             currentCrosshairRadius = 200;
