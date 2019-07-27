@@ -12,6 +12,7 @@ namespace Pulsarc.Utils
         static public bool running = false;
         static public bool initialized = false;
         static public bool active = false;
+        static public bool activeThreadLimiterWatch = false;
         static public bool paused = false;
         static public string song_path = "";
         static public double offset = 35;
@@ -31,20 +32,26 @@ namespace Pulsarc.Utils
         static public void AudioPlayer()
         {
             threadLimiterWatch = new Stopwatch();
+            threadLimiterWatch.Start();
+            activeThreadLimiterWatch = true;
+
             if (song_path == "")
             {
                 return;
             }
             if (!initialized)
             {
-                while(!initialized)
-                try
+                while (!initialized)
                 {
-                    Wobble.Audio.AudioManager.Initialize(null, null);
-                    initialized = true;
-                } catch
-                {
+                    try
+                    {
+                        Wobble.Audio.AudioManager.Initialize(null, null);
+                        initialized = true;
+                    }
+                    catch
+                    {
                         Console.WriteLine("BASS failed to initialize, retrying...");
+                    }
                 }
             }
 
@@ -59,7 +66,7 @@ namespace Pulsarc.Utils
 
             threadLimiterWatch.Start();
 
-            while(threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
+            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
 
             if (GameplayEngine.active)
             {
@@ -90,7 +97,7 @@ namespace Pulsarc.Utils
                 return song.Position - offset;
             } else
             {
-                return -startDelayMs + threadLimiterWatch.ElapsedMilliseconds;
+                return -startDelayMs + (activeThreadLimiterWatch ? threadLimiterWatch.ElapsedMilliseconds : 0);
             }
         }
 
