@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         public static bool active = false;
-        bool autoPlay = true;
+        bool autoPlay = false;
 
         Stopwatch endWatch;
 
@@ -36,6 +36,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public double currentArcsSpeed;
         public List<KeyValuePair<double, int>> errors;
         public List<JudgementValue> judgements;
+        public Dictionary<Keys, int> bindings;
 
         public long max_score;
         public long score;
@@ -75,6 +76,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
             errors = new List<KeyValuePair<double, int>>();
+            bindings = new Dictionary<Keys, int>();
 
             combo = 0;
             combo_multiplier = Scoring.max_combo_multiplier;
@@ -108,8 +110,20 @@ namespace Pulsarc.UI.Screens.Gameplay
                 col.SortUpdateHitObjects();
             }
 
+            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Left"]), 2);
+            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Up"]), 3);
+            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Down"]), 1);
+            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Right"]), 0);
+
             if (autoPlay)
             {
+                Keys[] presses =
+                {
+                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Right"]),
+                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Down"]),
+                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Left"]),
+                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Up"]),
+                };
 
                 List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
 
@@ -117,24 +131,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     foreach (HitObject arc in columns[i].hitObjects)
                     {
-                        Keys press = Keys.D;
-                        switch (i)
-                        {
-                            case 2:
-                                press = Keys.D;
-                                break;
-                            case 3:
-                                press = Keys.F;
-                                break;
-                            case 1:
-                                press = Keys.J;
-                                break;
-                            case 0:
-                                press = Keys.K;
-                                break;
-                        }
-
-                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80)-40,3)/600, press));
+                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 600, presses[i]));
                     }
                 }
 
@@ -287,55 +284,39 @@ namespace Pulsarc.UI.Screens.Gameplay
             while (KeyboardInputManager.keyboardPresses.Count > 0 && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
             {
                 KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
-                HitObject pressed = null;
-                var column = -1;
+                if(bindings.ContainsKey(press.Value)) { 
+                    HitObject pressed = null;
+                    var column = bindings[press.Value];
 
-                switch (press.Value)
-                {
-                    case Keys.D:
-                        column = 2;
-                        break;
-                    case Keys.F:
-                        column = 3;
-                        break;
-                    case Keys.J:
-                        column = 1;
-                        break;
-                    case Keys.K:
-                        column = 0;
-                        break;
-                    default:
-                        break;
-                }
-
-                if (column >= 0 && columns[column].hitObjects.Count > 0)
-                {
-                    pressed = columns[column].hitObjects[0];
-
-                    int error = (int)((pressed.time - press.Key) / rate);
-
-                   JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
-
-                    if (judge != null)
+                    if (columns[column].hitObjects.Count > 0)
                     {
-                        getGameplayView().addHit(press.Key, error, judge.score);
+                        pressed = columns[column].hitObjects[0];
 
-                        columns[column].hitObjects[0].erase = true;
-                        columns[column].hitObjects.RemoveAt(0);
-                        errors.Add(new KeyValuePair<double, int>(press.Key, error));
-                        judgements.Add(judge);
+                        int error = (int)((pressed.time - press.Key) / rate);
 
-                        KeyValuePair<long, int> hitResult = Scoring.processHitResults(judge, score, combo_multiplier);
-                        score = hitResult.Key;
-                        combo_multiplier = hitResult.Value;
+                        JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
 
-                        if (judge.score > 0)
+                        if (judge != null)
                         {
-                            combo++;
-                        }
-                        else
-                        {
-                            combo = 0;
+                            getGameplayView().addHit(press.Key, error, judge.score);
+
+                            columns[column].hitObjects[0].erase = true;
+                            columns[column].hitObjects.RemoveAt(0);
+                            errors.Add(new KeyValuePair<double, int>(press.Key, error));
+                            judgements.Add(judge);
+
+                            KeyValuePair<long, int> hitResult = Scoring.processHitResults(judge, score, combo_multiplier);
+                            score = hitResult.Key;
+                            combo_multiplier = hitResult.Value;
+
+                            if (judge.score > 0)
+                            {
+                                combo++;
+                            }
+                            else
+                            {
+                                combo = 0;
+                            }
                         }
                     }
                 }

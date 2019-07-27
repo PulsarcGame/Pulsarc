@@ -37,8 +37,15 @@ namespace Pulsarc.Utils
             }
             if (!initialized)
             {
-                Wobble.Audio.AudioManager.Initialize(null, null);
-                initialized = true;
+                while(!initialized)
+                try
+                {
+                    Wobble.Audio.AudioManager.Initialize(null, null);
+                    initialized = true;
+                } catch
+                {
+                        Console.WriteLine("BASS failed to initialize, retrying...");
+                }
             }
 
             running = true;
