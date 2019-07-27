@@ -13,12 +13,12 @@ namespace Pulsarc.UI.Screens.Result
 
         public List<JudgementValue> judgements;
         public Dictionary<string, int> judges_count;
-        public List<KeyValuePair<long, int>> hits;
+        public List<KeyValuePair<double, int>> hits;
         public int display_score;
 
         public bool full_combo;
 
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<long, int>> hits_, int display_score_)
+        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_)
         {
             judges_count = new Dictionary<string, int>();
             foreach(JudgementValue judge in Judgement.judgements)
@@ -70,7 +70,7 @@ namespace Pulsarc.UI.Screens.Result
         {
             while (KeyboardInputManager.keyboardPresses.Count > 0)
             {
-                KeyValuePair<long, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
 
                 if(press.Value == Keys.Escape || press.Value == Keys.Delete)
                 {

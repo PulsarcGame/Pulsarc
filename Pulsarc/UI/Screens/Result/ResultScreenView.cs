@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Result.UI;
 using Wobble.Screens;

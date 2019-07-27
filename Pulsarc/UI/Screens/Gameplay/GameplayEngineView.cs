@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay.UI;
-using System;
-using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Gameplay
@@ -36,20 +34,19 @@ namespace Pulsarc.UI.Screens.Gameplay
                                        , new Vector2(getSkinnablePosition("AccMeterWidth"), getSkinnablePosition("AccMeterHeight")));
         }
 
-        public void addHit(long time, int error, int judge)
+        public void addHit(double time, int error, int judge)
         {
             accMeter.addError(time, error);
             addJudge(time, judge);
         }
 
-        public void addJudge(long time, int judge)
+        public void addJudge(double time, int judge)
         {
             judgeBox.Add(time, judge);
         }
 
         public override void Update(GameTime gameTime)
         {
-
             double accuracyTotal = 0;
             foreach (JudgementValue judge in GetGameplayEngine().judgements)
             {
@@ -59,25 +56,27 @@ namespace Pulsarc.UI.Screens.Gameplay
             accuracyDisplay.Update(GetGameplayEngine().errors.Count > 0 ? accuracyTotal / GetGameplayEngine().errors.Count : 1);
             scoreDisplay.Update(GetGameplayEngine().score_display);
             comboDisplay.Update(GetGameplayEngine().combo);
-            judgeBox.Update(GetGameplayEngine().getElapsed());
-            accMeter.Update(GetGameplayEngine().getElapsed());
+            judgeBox.Update(GetGameplayEngine().time);
+            accMeter.Update(GetGameplayEngine().time);
         }
 
         public override void Draw(GameTime gameTime)
         {
             if (!GameplayEngine.active) return;
+
             // Draw everything
             crosshair.Draw();
 
             for (int i = 0; i < GetGameplayEngine().keys; i++)
             {
-                foreach (KeyValuePair<long, HitObject> pair in GetGameplayEngine().columns[i].updateHitObjects)
+                for (int k = 0; k< GetGameplayEngine().columns[i].updateHitObjects.Count; k++)
                 {
-                    if (pair.Value.IsSeen())
+                    
+                    if (GetGameplayEngine().columns[i].updateHitObjects[k].Value.IsSeen())
                     {
-                        pair.Value.Draw();
+                        GetGameplayEngine().columns[i].updateHitObjects[k].Value.Draw();
                     }
-                    if (pair.Key - GetGameplayEngine().msIgnore > GetGameplayEngine().getElapsed())
+                    if (GetGameplayEngine().columns[i].updateHitObjects[k].Key - GetGameplayEngine().msIgnore > GetGameplayEngine().time)
                     {
                         break; // not nice ik
                     }

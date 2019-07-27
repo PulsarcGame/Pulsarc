@@ -11,16 +11,16 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         int errorLifetime = 5000;
         int errorBarWidth = 2;
 
-        List<KeyValuePair<long, int>> errors;
+        List<KeyValuePair<double, int>> errors;
         List<KeyValuePair<JudgementValue, Texture2D>> judges;
         Vector2 size;
 
-        long lastTime;
+        double lastTime;
 
         public AccuracyMeter(Vector2 position, Vector2 size) : base(Skin.defaultTexture, position, size)
         {
             lastTime = 0;
-            errors = new List<KeyValuePair<long, int>>();
+            errors = new List<KeyValuePair<double, int>>();
             this.size = size;
             this.position.X -= size.X / 2;
             this.position.Y -= size.Y;
@@ -107,17 +107,17 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             return new Vector2(baseX - errorX, position.Y);
         }
 
-        public void addError(long time, int error)
+        public void addError(double time, int error)
         {
-            errors.Add(new KeyValuePair<long, int>(time, error));
+            errors.Add(new KeyValuePair<double, int>(time, error));
         }
 
-        public float LifeLeft(long time, long currentTime)
+        public double LifeLeft(double time, double currentTime)
         {
-            return (time - currentTime + errorLifetime) / (float) errorLifetime;
+            return (time - currentTime + errorLifetime) / errorLifetime;
         }
 
-        public void Update(long time)
+        public void Update(double time)
         {
             lastTime = time;
             for (int i = 0; i < errors.Count; i++)
@@ -150,11 +150,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             Pulsarc.spriteBatch.Draw(texture, position: position, rotation: rotation, origin: origin, color: Color.White * 0.3f);
 
-            foreach(KeyValuePair<long,int> error in errors)
+            foreach(KeyValuePair<double, int> error in errors)
             {
                 KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.getErrorJudgementValue(Math.Abs(error.Value)));
 
-                Pulsarc.spriteBatch.Draw(judgeBar.Value, position: getErrorPixelPosition(error.Value), rotation: rotation, origin: origin, color: judgeBar.Key.color * LifeLeft(error.Key, lastTime));
+                Pulsarc.spriteBatch.Draw(judgeBar.Value, position: getErrorPixelPosition(error.Value), rotation: rotation, origin: origin, color: judgeBar.Key.color * (float) LifeLeft(error.Key, lastTime));
             }
         }
     }

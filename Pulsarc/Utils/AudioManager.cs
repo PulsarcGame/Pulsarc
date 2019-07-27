@@ -1,11 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using Pulsarc.UI.Screens.Gameplay;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using Wobble.Audio.Tracks;
 
@@ -18,8 +14,8 @@ namespace Pulsarc.Utils
         static public bool active = false;
         static public bool paused = false;
         static public string song_path = "";
-        static public long offset = 50;
-        static public int startDelayMs = 1000;
+        static public double offset = 35;
+        static public double startDelayMs = 1000;
         static public float audioRate = 1;
 
         static Thread audioThread;
@@ -56,7 +52,7 @@ namespace Pulsarc.Utils
 
             threadLimiterWatch.Start();
 
-            while(threadLimiterWatch.ElapsedMilliseconds < startDelayMs) { }
+            while(threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
 
             if (GameplayEngine.active)
             {
@@ -81,10 +77,10 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public long getTime()
+        static public double getTime()
         {
             if(active && song.StreamLoaded) { 
-                return (long) song.Position - offset;
+                return song.Position - offset;
             } else
             {
                 return -startDelayMs + threadLimiterWatch.ElapsedMilliseconds;
@@ -137,6 +133,7 @@ namespace Pulsarc.Utils
             paused = false;
             running = false;
             song_path = "";
+            threadLimiterWatch.Reset();
         }
 
         static public bool FinishedPlaying()

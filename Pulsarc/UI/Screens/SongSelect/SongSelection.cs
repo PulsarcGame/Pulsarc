@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.SongSelect.UI;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect

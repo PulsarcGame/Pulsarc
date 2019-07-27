@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         public static bool active = false;
-        bool autoPlay = false;
+        bool autoPlay = true;
 
         Stopwatch endWatch;
 
@@ -29,12 +29,12 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // Gameplay Elements
 
-        public long timeOffset;
+        public double timeOffset;
         public int currentCrosshairRadius;
         public double userSpeed;
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
-        public List<KeyValuePair<long, int>> errors;
+        public List<KeyValuePair<double, int>> errors;
         public List<JudgementValue> judgements;
 
         public long max_score;
@@ -45,6 +45,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public float rate;
 
         public int endDelay = 2000;
+        public double time => AudioManager.getTime() + timeOffset;
 
         // Performance
         public int msIgnore = 500;
@@ -73,7 +74,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Initialize Gameplay variables
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
-            errors = new List<KeyValuePair<long, int>>();
+            errors = new List<KeyValuePair<double, int>>();
 
             combo = 0;
             combo_multiplier = Scoring.max_combo_multiplier;
@@ -111,7 +112,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (autoPlay)
             {
 
-                List<KeyValuePair<long, Keys>> inputs = new List<KeyValuePair<long, Keys>>();
+                List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
 
                 for (int i = 0; i < keys; i++)
                 {
@@ -134,13 +135,13 @@ namespace Pulsarc.UI.Screens.Gameplay
                                 break;
                         }
 
-                        inputs.Add(new KeyValuePair<long, Keys>(arc.time + (long) Math.Pow(new Random().Next(80)-40,3)/600, press));
+                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80)-40,3)/600, press));
                     }
                 }
 
                 inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
 
-                foreach (KeyValuePair<long, Keys> input in inputs)
+                foreach (KeyValuePair<double, Keys> input in inputs)
                 {
                     KeyboardInputManager.keyboardPresses.Enqueue(input);
                 }
@@ -161,6 +162,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public override void Update(GameTime gameTime)
         {
             if (!active) return;
+
             if (AudioManager.active && AudioManager.FinishedPlaying())
             {
                 EndGameplay();
@@ -196,15 +198,15 @@ namespace Pulsarc.UI.Screens.Gameplay
                         continue;
                     }
 
-                    columns[i].updateHitObjects[k].Value.recalcPos((int) getElapsed(), currentSpeedMultiplier, currentCrosshairRadius);
+                    columns[i].updateHitObjects[k].Value.recalcPos((int)time, currentSpeedMultiplier, currentCrosshairRadius);
                     atLeastOne = true;
 
-                    if (columns[i].updateHitObjects[k].Key - msIgnore > getElapsed())
+                    if (columns[i].updateHitObjects[k].Key - msIgnore > time)
                     {
                         updatedAll = true;
                     }
 
-                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < getElapsed())
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < time)
                     {
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
                         columns[i].updateHitObjects.RemoveAt(k);
@@ -215,7 +217,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                         KeyValuePair<long, int> hitResult = Scoring.processHitResults(miss, score, combo_multiplier);
                         score = hitResult.Key;
                         combo_multiplier = hitResult.Value;
-                        getGameplayView().addJudge(getElapsed(), miss.score);
+                        getGameplayView().addJudge(time, miss.score);
                         judgements.Add(miss);
                     }
                 }
@@ -234,6 +236,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     if (endWatch.ElapsedMilliseconds >= endDelay)
                     {
+                        Console.WriteLine("eed");
                         EndGameplay();
                     }
                 }
@@ -264,6 +267,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Reset()
         {
             active = false;
+
+            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            {
+                KeyboardInputManager.keyboardPresses.Dequeue();
+            }
             AudioManager.Stop();
             KeyboardInputManager.Reset();
 
@@ -279,7 +287,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             while (KeyboardInputManager.keyboardPresses.Count > 0 && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
             {
-                KeyValuePair<long, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
                 HitObject pressed = null;
                 var column = -1;
 
@@ -315,7 +323,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                         columns[column].hitObjects[0].erase = true;
                         columns[column].hitObjects.RemoveAt(0);
-                        errors.Add(new KeyValuePair<long, int>(press.Key, error));
+                        errors.Add(new KeyValuePair<double, int>(press.Key, error));
                         judgements.Add(judge);
 
                         KeyValuePair<long, int> hitResult = Scoring.processHitResults(judge, score, combo_multiplier);
@@ -342,11 +350,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             Reset();
             ScreenManager.RemoveScreen(true);
             ScreenManager.AddScreen(next);
-        }
-
-        public long getElapsed()
-        {
-            return AudioManager.getTime() + timeOffset;
         }
     }
 }

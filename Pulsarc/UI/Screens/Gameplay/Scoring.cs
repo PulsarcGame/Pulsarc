@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
     static class Scoring
     {
         static public int max_score = 1000000;
-        static public int max_combo_multiplier = 50;
+        static public int max_combo_multiplier = 100;
 
         static public int getMaxScore(int objectsCount)
         {

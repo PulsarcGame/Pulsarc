@@ -4,7 +4,6 @@ using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Result.UI
 {
@@ -12,10 +11,10 @@ namespace Pulsarc.UI.Screens.Result.UI
     {
         int width;
         int height;
-        List<KeyValuePair<long, int>> hits;
-        long max_time;
+        List<KeyValuePair<double, int>> hits;
+        double max_time;
 
-        public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<long, int>> hits) : base(Skin.defaultTexture, position)
+        public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<double, int>> hits) : base(Skin.defaultTexture, position)
         {
             this.width = width;
             this.height = height;
@@ -50,7 +49,7 @@ namespace Pulsarc.UI.Screens.Result.UI
             if (hits.Count > 0)
             {
                 max_time = hits[hits.Count - 1].Key;
-                foreach (KeyValuePair<long, int> hit in hits)
+                foreach (KeyValuePair<double, int> hit in hits)
                 {
                     KeyValuePair<Vector2, Color> info = getHitInfo(hit);
                     for (int yp = -1; yp < 2; yp++)
@@ -70,9 +69,9 @@ namespace Pulsarc.UI.Screens.Result.UI
             texture.SetData(graphBG);
         }
 
-        private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<long, int> hit)
+        private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
         {
-            return new KeyValuePair<Vector2, Color>(new Vector2(hit.Key / (float) max_time * width, (hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
+            return new KeyValuePair<Vector2, Color>(new Vector2((float) (hit.Key / max_time * width), (hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
         }
 
         public override void Draw()

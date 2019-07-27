@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Pulsarc.Beatmaps;
-using Newtonsoft.Json;
 using System.IO;
-using System.Globalization;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
