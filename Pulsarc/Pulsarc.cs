@@ -9,6 +9,7 @@ using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System.Diagnostics;
+using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
 
@@ -43,6 +44,8 @@ namespace Pulsarc
         public Pulsarc()
         {
             NativeAssemblies.Copy();
+            Logger.Initialize();
+            PulsarcDiscord.Initialize();
 
             graphics = new GraphicsDeviceManager(this);
 
