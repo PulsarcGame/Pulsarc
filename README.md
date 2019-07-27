@@ -21,8 +21,7 @@ If you want to play now though, you need:
 
 When you have those downloaded and installed, go to the Prototype-branch here: https://github.com/PulsarcGame/Pulsarc/tree/MonoGame-Prototype-Adri. Click the Green "Clone or download" button, then click "Download ZIP" on the bottom right. Extract the .zip into a folder. Open Pulsarc.sln using Visual Studio. When it's done loading click on the little green play icon near the top.
 
-Use the scroll wheel to move the song select up or down. Click on the map you want to play to play it.
-Hit arcs using D - Left, F - Up, J - Down, K - Right. If you want to change the keys, you can edit them starting at line 121 of GameplayEngine.cs, which is found in Pulsarc\UI\Screens\Gameplay.
+Use the scroll wheel to move the song select up or down. Click on the map you want to start playing. Default binds are D - Left, F - Up, J - Down, K - Right.
 
 ## How to Add Maps
 Right now the Pulsarc prototype comes with one map to play. However, the prototype can convert osu!mania or Intralism maps into a pulsarc beatmap, that will be added to the Song Select.
