@@ -10,7 +10,7 @@ namespace Pulsarc.Beatmaps
     class DifficultyCalculation
     {
         const double baseDiff = 1;
-        const double divider = 200;
+        const double divider = 10;
 
         const double kpsFingerSlope = 1.8;
         const double maxKpsDiff = 40;
@@ -48,7 +48,7 @@ namespace Pulsarc.Beatmaps
                     }
                     double stdDiff = StdDeviation.calc(times);
 
-                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000)) + (stdDiff > 0 ? stdDiff : 0), maxKpsDiff) * keyDiff[key];
+                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff) * keyDiff[key];
                     diff += c;
                     diffs.Add(c);
                 }
