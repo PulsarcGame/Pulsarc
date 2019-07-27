@@ -13,10 +13,7 @@
     <PackageReference Include="ini-parser-netstandard" Version="2.5.2" />
     <PackageReference Include="ManagedBass" Version="2.0.4" />
     <PackageReference Include="ManagedBass.Fx" Version="2.0.1" />
-    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
     <PackageReference Include="MonoGame.Extended" Version="1.1.0" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,12 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Wobble">
-      <HintPath>..\Wobble\Wobble\bin\Release\netstandard2.0\Wobble.dll</HintPath>
-    </Reference>
-    <Reference Include="Wobble.Resources">
-      <HintPath>..\Wobble\Wobble\bin\Release\netstandard2.0\Wobble.Resources.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Wobble\Wobble.Resources\Wobble.Resources.csproj" />
+    <ProjectReference Include="..\Wobble\Wobble\Wobble.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
@@ -60,14 +53,17 @@
     </Copy>
 
 
-    <!-- Copy Required DLLs -->
+    <!-- Copy Required DLLs and files -->
     <ItemGroup>
+        <contentSource Include="$(ProjectDir)Content\**" />
         <x64Source Include="$(ProjectDir)x64\*.*" />
         <x86Source Include="$(ProjectDir)x86\*.*" />
         <dylibSource Include="$(ProjectDir)*.dylib" />
         <config Include="$(ProjectDir)config.ini" />
     </ItemGroup>
 
+    <Copy SourceFiles="@(contentSource)" DestinationFolder="$(ProjectDir)$(OutDir)Content\%(RecursiveDir)">
+    </Copy>
     <Copy SourceFiles="@(x64Source)" DestinationFolder="$(ProjectDir)$(OutDir)x64\%(RecursiveDir)">
     </Copy>
     <Copy SourceFiles="@(x86Source)" DestinationFolder="$(ProjectDir)$(OutDir)x86\%(RecursiveDir)">

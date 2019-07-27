@@ -46,6 +46,7 @@ namespace Pulsarc
             NativeAssemblies.Copy();
             Logger.Initialize();
             PulsarcDiscord.Initialize();
+            Config.Initialize();
 
             graphics = new GraphicsDeviceManager(this);
 
@@ -122,12 +123,11 @@ namespace Pulsarc
 
             if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
-                FileIniDataParser parser = new FileIniDataParser();
                 converting = true;
                 BeatmapConverter converter;
 
-                string convertFrom = parser.ReadFile("config.ini")["Converting"]["Game"];
-                string toConvert = parser.ReadFile("config.ini")["Converting"]["Path"];
+                string convertFrom = Config.get["Converting"]["Game"];
+                string toConvert = Config.get["Converting"]["Path"];
 
                 switch (convertFrom.ToLower()) 
                 { 
