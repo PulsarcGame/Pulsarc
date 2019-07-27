@@ -44,6 +44,26 @@ namespace Pulsarc.Beatmaps
                                     Console.WriteLine("Unknown beatmap field : " + type);
                                 }
                                 break;
+                            case "KeyCount":
+                                try
+                                {
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, Int32.Parse(rightPart));
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Unknown beatmap field : " + type);
+                                }
+                                break;
+                            case "Difficulty":
+                                try
+                                {
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, Double.Parse(rightPart, CultureInfo.InvariantCulture));
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Unknown beatmap field : " + type);
+                                }
+                                break;
                             case "TimingPoints":
                             case "SpeedVariations":
                             case "Arcs":
@@ -99,6 +119,11 @@ namespace Pulsarc.Beatmaps
                 }
             }
 
+            if(parsed.Difficulty == 0)
+            {
+                parsed.Difficulty = DifficultyCalculation.GetDifficulty(parsed);
+            }
+
             return parsed;
         }
 
@@ -113,6 +138,10 @@ namespace Pulsarc.Beatmaps
                 writeProperty(file, beatmap, "Mapper");
                 writeProperty(file, beatmap, "Version");
                 writeProperty(file, beatmap, "Audio");
+
+                file.WriteLine("");
+                writeProperty(file, beatmap, "KeyCount");
+                writeProperty(file, beatmap, "Difficulty");
 
                 file.WriteLine("");
                 file.WriteLine("TimingPoints:");
@@ -150,6 +179,11 @@ namespace Pulsarc.Beatmaps
             {
                 Console.WriteLine("Trying to write invalid property " + property);
             }
+        }
+
+        static public bool isColumn(Arc arc, int k)
+        {
+            return ((arc.type >> k) & 1) != 0;
         }
     }
 }

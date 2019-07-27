@@ -11,12 +11,16 @@ namespace Pulsarc.Beatmaps
         public string path;
 
         // Metadata
-        public string FormatVersion { get; set; }
+        public string FormatVersion { get; set; } = "1";
         public string Title { get; set; }
         public string Artist { get; set; }
         public string Mapper { get; set; }
         public string Version { get; set; }
         public string Audio { get; set; }
+
+        // General
+        public int KeyCount { get; set; } = 4;
+        public double Difficulty { get; set; } = 0;
 
         // Gameplay
         public List<SpeedVariation> speedVariations;

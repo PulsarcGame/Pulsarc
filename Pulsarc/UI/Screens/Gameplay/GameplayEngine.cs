@@ -94,8 +94,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             {
                 for (int i = 0; i < keys; i++)
                 {
-                    // Use bitwise check to know if the column is concerned by this arc event
-                    if (((arc.type >> i) & 1) != 0)
+                    if (BeatmapHelper.isColumn(arc, i))
                     {
                         columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier);
                         objectCount++;

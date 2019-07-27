@@ -29,4 +29,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
         }
     }
+    class BeatmapDifficulty : TextDisplayElement
+    {
+        public BeatmapDifficulty(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize, centered)
+        {
+        }
+
+        public void Update(double diff)
+        {
+            Update(string.Format("{0:0.00}", diff));
+        }
+    }
 }

@@ -17,6 +17,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         BeatmapArtist artist;
         BeatmapVersion version;
         BeatmapMapper mapper;
+        BeatmapDifficulty difficulty;
 
         public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size) : base(Skin.assets["beatmap_card"], position, size)
         {
@@ -26,11 +27,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             artist = new BeatmapArtist(new Vector2(position.X + 45, position.Y + 50));
             version = new BeatmapVersion(new Vector2(position.X + 45, position.Y + 80));
             mapper = new BeatmapMapper(new Vector2(position.X + 600, position.Y + 130));
+            difficulty = new BeatmapDifficulty(new Vector2(position.X + 45, position.Y + 120));
 
             title.Update(beatmap.Title);
             artist.Update(beatmap.Artist);
             version.Update(beatmap.Version);
             mapper.Update(beatmap.Mapper);
+            difficulty.Update(beatmap.Difficulty);
         }
 
         public override void Draw()
@@ -41,6 +44,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             artist.Draw();
             version.Draw();
             mapper.Draw();
+            difficulty.Draw();
         }
 
         public void onClick()
@@ -56,6 +60,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             artist.move(delta);
             version.move(delta);
             mapper.move(delta);
+            difficulty.move(delta);
             base.move(delta);
         }
     }
