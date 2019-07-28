@@ -4,9 +4,18 @@ using Pulsarc.Utils;
 
 namespace Pulsarc.UI
 {
+    public enum Anchor
+    {
+        Center = 0,
+        TopRight = 1,
+        CenterRight = 2,
+        BottomRight = 3,
+        CenterLeft = 4,
+        TopLeft = 5,
+    }
     class TextDisplayElement : Drawable
     {
-        bool centered;
+        Anchor anchor;
         string name;
 
         SpriteFont font;
@@ -16,10 +25,10 @@ namespace Pulsarc.UI
 
         Vector2 processedPosition;
 
-        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, bool centered = false)
+        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft)
         {
             this.name = name;
-            this.centered = centered;
+            this.anchor = anchor;
 
             font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;
@@ -34,15 +43,39 @@ namespace Pulsarc.UI
         {
             text = name + value;
 
-            if(centered)
+            float newX = position.X;
+            float newY = position.Y;
+            Vector2 size = font.MeasureString(text) * fontScale;
+            size.X *= Pulsarc.getDimensions().X / 1920;
+            size.Y *= Pulsarc.getDimensions().Y / 1080;
+
+            switch (anchor)
             {
-                processedPosition.X = position.X - ((font.MeasureString(text).X * fontScale) / 2) * Pulsarc.getDimensions().X / 1920; 
-                processedPosition.Y = position.Y - ((font.MeasureString(text).Y * fontScale) / 2) * Pulsarc.getDimensions().Y / 1080;
-            } else
-            {
-                processedPosition.X = position.X;
-                processedPosition.Y = position.Y;
+                case Anchor.Center:
+                    newX  -= size.X / 2;
+                    newY  -= size.Y / 2;
+                    break;
+                case Anchor.TopRight:
+                    newX -= size.X;
+                    break;
+                case Anchor.CenterRight:
+                    newX -= size.X;
+                    newY -= size.Y / 2;
+                    break;
+                case Anchor.BottomRight:
+                    newX -= size.X;
+                    newY -= size.Y;
+                    break;
+                case Anchor.CenterLeft:
+                    newY -= size.Y / 2;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    break;
             }
+
+            processedPosition.X = newX;
+            processedPosition.Y = newY;
         }
 
         public override void move(Vector2 position)

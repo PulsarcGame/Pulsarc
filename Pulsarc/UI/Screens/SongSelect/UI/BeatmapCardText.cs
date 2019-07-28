@@ -7,31 +7,31 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     class BeatmapTitle : TextDisplayElement
     {
-        public BeatmapTitle(Vector2 position, int fontSize = 18, bool centered = false) : base("", position, fontSize, centered)
+        public BeatmapTitle(Vector2 position, int fontSize = 18, bool centered = false) : base("", position, fontSize)
         {
         }
     }
     class BeatmapArtist : TextDisplayElement
     {
-        public BeatmapArtist(Vector2 position, int fontSize = 14, bool centered = false) : base("", position, fontSize, centered)
+        public BeatmapArtist(Vector2 position, int fontSize = 14, bool centered = false) : base("", position, fontSize)
         {
         }
     }
     class BeatmapVersion : TextDisplayElement
     {
-        public BeatmapVersion(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize, centered)
+        public BeatmapVersion(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize)
         {
         }
     }
     class BeatmapMapper : TextDisplayElement
     {
-        public BeatmapMapper(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize, centered)
+        public BeatmapMapper(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize)
         {
         }
     }
     class BeatmapDifficulty : TextDisplayElement
     {
-        public BeatmapDifficulty(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize, centered)
+        public BeatmapDifficulty(Vector2 position, int fontSize = 16, bool centered = false) : base("", position, fontSize)
         {
         }
 

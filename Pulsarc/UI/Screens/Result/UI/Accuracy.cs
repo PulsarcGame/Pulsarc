@@ -5,7 +5,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 {
     class Accuracy : TextDisplayElement
     {
-        public Accuracy(Vector2 position, int fontSize = 20, bool centered = false) : base("", position, fontSize, centered)
+        public Accuracy(Vector2 position, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor)
         {
         }
 

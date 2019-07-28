@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
+using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Result
@@ -9,36 +11,62 @@ namespace Pulsarc.UI.Screens.Result
     {
         ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
 
-        Button replay_button;
-        Button return_button;
+        ButtonRetry button_retry;
+        ButtonBack button_back;
+        ButtonAdvanced button_advanced;
 
         Accuracy accuracy;
         Score score;
+        Combo combo;
 
-        GradeContainer grade_container;
+        Grade grade;
+
         Scorecard scorecard;
         Background background;
+
+        Title title;
+        Artist artist;
+        Version version;
+        Mapper mapper;
+
+        List<KeyValuePair<Judge,JudgeCount>> judgements;
 
         HitErrorGraph hitErrorGraph;
 
         public ResultScreenView(Screen screen, double accuracy, string grade) : base(screen)
         {
-            replay_button = new Button("result_replay", 72);
-            return_button = new Button("result_return", 72);
+            judgements = new List<KeyValuePair<Judge, JudgeCount>>();
 
-            scorecard = new Scorecard(new Vector2(-100, 190));
+            button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
+            button_back = new ButtonBack(new Vector2(0, 1080));
+            button_retry = new ButtonRetry(new Vector2(1920, 1080));
+
+            scorecard = new Scorecard();
             background = new Background();
 
-            this.accuracy = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), 35);
-            this.accuracy.Update(accuracy);
+            this.grade = new Grade(grade, new Vector2(getSkinnablePosition("GradeX"), getSkinnablePosition("GradeY")), getSkinnablePosition("GradeScale"));
 
-            score = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), 35);
+            score = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), getSkinnableInt("ScoreSize"), getSkinnableAnchor("ScoreAnchor"));
+            combo = new Combo(new Vector2(getSkinnablePosition("ComboX"), getSkinnablePosition("ComboY")), getSkinnableInt("ComboSize"), getSkinnableAnchor("ComboAnchor"));
+            this.accuracy = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), getSkinnableInt("AccuracySize"), getSkinnableAnchor("AccuracyAnchor"));
+
+            title = new Title(new Vector2(getSkinnablePosition("TitleX"), getSkinnablePosition("TitleY")), getSkinnableInt("TitleSize"), getSkinnableAnchor("TitleAnchor"));
+            artist = new Artist(new Vector2(getSkinnablePosition("ArtistX"), getSkinnablePosition("ArtistY")), getSkinnableInt("ArtistSize"), getSkinnableAnchor("ArtistAnchor"));
+            version = new Version(new Vector2(getSkinnablePosition("VersionX"), getSkinnablePosition("VersionY")), getSkinnableInt("VersionSize"), getSkinnableAnchor("VersionAnchor"));
+            mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
+
+            button_advanced.move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
+            button_back.move(new Vector2(0, -button_back.texture.Height));
+            button_retry.move(new Vector2(-button_retry.texture.Width, -button_retry.texture.Height));
+
+            this.accuracy.Update(accuracy);
+            combo.Update(GetResultScreen().combo);
             score.Update(GetResultScreen().display_score);
 
-            grade_container = new GradeContainer(new Vector2(-425,115), grade);
-
-            replay_button.updatePosition(new Vector2(1920 - replay_button.texture.Width, 270));
-            return_button.updatePosition(new Vector2(1920 - return_button.texture.Width, 550));
+            title.Update(GetResultScreen().beatmap.Title);
+            artist.Update(GetResultScreen().beatmap.Artist);
+            version.Update(GetResultScreen().beatmap.Version);
+            mapper.Update(GetResultScreen().beatmap.Mapper);
 
             hitErrorGraph = new HitErrorGraph(
                 new Vector2(getSkinnablePosition("HitErrorX")
@@ -46,11 +74,45 @@ namespace Pulsarc.UI.Screens.Result
                , (int)(getSkinnablePosition("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
                , (int) (getSkinnablePosition("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
                , GetResultScreen().hits);
+
+            foreach(JudgementValue judge in Judgement.judgements)
+            {
+                addJudgeInfo(judge.name);
+            }
+            foreach(KeyValuePair<Judge,JudgeCount> judgePair in judgements)
+            {
+                judgePair.Value.Update(GetResultScreen().judges_count[judgePair.Value.name]);
+            }
         }
 
         private float getSkinnablePosition(string key)
         {
             return Skin.getConfigFloat("result_screen", "Positions", key);
+        }
+
+        private int getSkinnableInt(string key)
+        {
+            return Skin.getConfigInt("result_screen", "Positions", key);
+        }
+
+        private Anchor getSkinnableAnchor(string key)
+        {
+            return Skin.getConfigAnchor("result_screen", "Positions", key);
+        }
+
+        private void addJudgeInfo(string name)
+        {
+            string firstUpper = char.ToUpper(name[0]) + name.Substring(1);
+
+            judgements.Add(new KeyValuePair<Judge, JudgeCount>(
+                        new Judge(Judgement.getByName(name).score,
+                            new Vector2(getSkinnableInt(firstUpper + "X"), getSkinnableInt(firstUpper + "Y")),
+                            getSkinnableInt(firstUpper + "Scale")),
+                        new JudgeCount(name, 
+                            new Vector2(getSkinnableInt(firstUpper + "CountX"), getSkinnableInt(firstUpper + "CountY")),
+                            getSkinnableInt(firstUpper + "CountSize"),
+                            getSkinnableAnchor(firstUpper + "CountAnchor"))
+                        ));
         }
 
         public override void Destroy()
@@ -61,12 +123,23 @@ namespace Pulsarc.UI.Screens.Result
         public override void Draw(GameTime gameTime)
         {
             background.Draw();
-            replay_button.Draw();
-            return_button.Draw();
+            button_advanced.Draw();
+            button_back.Draw();
+            button_retry.Draw();
             scorecard.Draw();
-            grade_container.Draw();
             accuracy.Draw();
             score.Draw();
+            combo.Draw();
+            title.Draw();
+            artist.Draw();
+            version.Draw();
+            mapper.Draw();
+            grade.Draw();
+            foreach (KeyValuePair<Judge, JudgeCount> judgePair in judgements)
+            {
+                judgePair.Key.Draw();
+                judgePair.Value.Draw();
+            }
             hitErrorGraph.Draw();
         }
 

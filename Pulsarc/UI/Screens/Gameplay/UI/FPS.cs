@@ -4,7 +4,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class FPS : TextDisplayElementFixedSize
     {
-        public FPS(Vector2 position, int fontSize = 14, bool centered = false) : base("", position, "fps", fontSize, centered)
+        public FPS(Vector2 position, int fontSize = 14, Anchor anchor = Anchor.TopLeft) : base("", position, "fps", fontSize, anchor)
         {
         }
     }

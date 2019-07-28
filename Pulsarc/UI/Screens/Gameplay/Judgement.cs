@@ -22,6 +22,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             return judgements.Last();
         }
 
+        static public JudgementValue getByName(string name)
+        {
+            foreach(JudgementValue j in judgements)
+            {
+                if (j.name == name) return j;
+            }
+            return null;
+        }
+
         static public JudgementValue getErrorJudgementValue(int error)
         {
             JudgementValue result = null;

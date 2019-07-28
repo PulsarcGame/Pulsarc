@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace Pulsarc.UI.Screens.Result
         public Dictionary<string, int> judges_count;
         public List<KeyValuePair<double, int>> hits;
         public int display_score;
+        public int combo;
+        public Beatmap beatmap;
 
         public bool full_combo;
 
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_)
+        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_)
         {
             judges_count = new Dictionary<string, int>();
             foreach(JudgementValue judge in Judgement.judgements)
@@ -29,6 +32,8 @@ namespace Pulsarc.UI.Screens.Result
             judgements = judgements_;
             hits = hits_;
             display_score = display_score_;
+            combo = combo_;
+            beatmap = beatmap_;
 
             double accuracyTotal = 0;
             foreach (JudgementValue judge in judgements)

@@ -13,7 +13,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public double lastValueDouble = -1;
 
         public string append;
-        public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, bool centered = false) : base (name,position, fontSize, centered)
+        public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center) : base (name,position, fontSize, anchor)
         {
             this.append = append;
         }

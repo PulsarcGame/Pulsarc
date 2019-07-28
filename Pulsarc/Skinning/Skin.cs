@@ -2,6 +2,7 @@
 using IniParser.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pulsarc.UI;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,12 +42,11 @@ namespace Pulsarc.Skinning
 
                 LoadSkinTexture(skinFolder + "UI/", "cursor");
 
-                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button");
-                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_replay");
-                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_return");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button_advanced");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button_back");
+                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button_retry");
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_scorecard");
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_background");
-                LoadSkinTexture(skinFolder + "UI/ResultScreen/", "score_grade_container");
 
                 LoadSkinTexture(skinFolder + "Grades/", "grade_X");
                 LoadSkinTexture(skinFolder + "Grades/", "grade_S");
@@ -116,9 +116,19 @@ namespace Pulsarc.Skinning
             return cropped;
         }
 
+        static public int getConfigInt(string config, string section, string key)
+        {
+            return int.Parse(configs[config][section][key]);
+        }
+
         static public float getConfigFloat(string config, string section, string key)
         {
             return float.Parse(configs[config][section][key], CultureInfo.InvariantCulture);
+        }
+
+        static public Anchor getConfigAnchor(string config, string section, string key)
+        {
+            return (Anchor) Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
         }
 
         static public bool isLoaded()

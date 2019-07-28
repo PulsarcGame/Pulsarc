@@ -42,6 +42,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public long score;
         public int score_display;
         public int combo;
+        public int max_combo;
         public int combo_multiplier;
         public float rate;
 
@@ -60,7 +61,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Initialize default variables, parse beatmap
             endWatch = new Stopwatch();
-            rate = 1f;
+            rate = 2f;
             keys = 4;
             userSpeed = 1 / rate / rate;
             currentCrosshairRadius = 200;
@@ -78,6 +79,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             bindings = new Dictionary<Keys, int>();
 
             combo = 0;
+            max_combo = 0;
             combo_multiplier = Scoring.max_combo_multiplier;
             score = 0;
 
@@ -312,6 +314,10 @@ namespace Pulsarc.UI.Screens.Gameplay
                             if (judge.score > 0)
                             {
                                 combo++;
+                                if(combo > max_combo)
+                                {
+                                    max_combo = combo;
+                                }
                             }
                             else
                             {
@@ -325,7 +331,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public void EndGameplay()
         {
-            ResultScreen next = new ResultScreen(judgements, errors, score_display);
+            ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap);
             Pulsarc.display_cursor = true;
             Reset();
             ScreenManager.RemoveScreen(true);
