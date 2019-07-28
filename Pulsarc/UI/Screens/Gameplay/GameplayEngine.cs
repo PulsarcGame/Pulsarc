@@ -58,7 +58,6 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public void Init(Beatmap beatmap)
         {
-
             // Initialize default variables, parse beatmap
             endWatch = new Stopwatch();
             rate = 1f;
@@ -148,6 +147,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             AudioManager.Start();
             GameplayEngine.active = true;
             Pulsarc.display_cursor = false;
+            GC.Collect();
         }
 
         public void Init(string folder, string diff)
@@ -330,6 +330,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Reset();
             ScreenManager.RemoveScreen(true);
             ScreenManager.AddScreen(next);
+            GC.Collect();
         }
     }
 }

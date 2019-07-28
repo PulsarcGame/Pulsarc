@@ -2,15 +2,10 @@
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
 {
-    class Score : TextDisplayElement
+    class Score : TextDisplayElementFixedSize
     {
-        public Score(Vector2 position, int fontSize = 20, bool centered = false) : base("", position, fontSize, centered)
+        public Score(Vector2 position, int fontSize = 20, bool centered = false) : base("", position,"", fontSize, centered)
         {
-        }
-
-        public void Update(long value)
-        {
-            Update(value.ToString());
         }
     }
 }
