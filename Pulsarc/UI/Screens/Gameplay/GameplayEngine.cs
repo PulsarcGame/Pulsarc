@@ -61,7 +61,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Initialize default variables, parse beatmap
             endWatch = new Stopwatch();
-            rate = 2f;
+            rate = 1f;
             keys = 4;
             userSpeed = 1 / rate / rate;
             currentCrosshairRadius = 200;
