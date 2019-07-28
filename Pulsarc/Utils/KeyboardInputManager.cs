@@ -68,7 +68,6 @@ namespace Pulsarc.Utils
                         }
                     } catch
                     {
-                        Console.WriteLine("");
                     }
                 }
             }
