@@ -25,10 +25,17 @@
 /processorParam:TextureFormat=Color
 /build:default.png
 
-#begin Fonts/File.spritefont
+#begin Fonts/DefaultFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-Fonts/DefaultFont.spritefont
+/build:Fonts/DefaultFont.spritefont
+
+#begin Fonts/rawline-600.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/rawline-600.spritefont
 

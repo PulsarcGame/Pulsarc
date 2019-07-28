@@ -111,19 +111,19 @@ namespace Pulsarc.UI.Screens.Gameplay
                 col.SortUpdateHitObjects();
             }
 
-            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Left"]), 2);
-            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Up"]), 3);
-            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Down"]), 1);
-            bindings.Add((Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Right"]), 0);
+            bindings.Add(Config.bindings["Left"], 2);
+            bindings.Add(Config.bindings["Up"], 3);
+            bindings.Add(Config.bindings["Down"], 1);
+            bindings.Add(Config.bindings["Right"], 0);
 
             if (autoPlay)
             {
                 Keys[] presses =
                 {
-                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Right"]),
-                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Down"]),
-                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Left"]),
-                    (Keys)Enum.Parse(Keys.A.GetType(), Config.get["Bindings"]["Up"]),
+                    Config.bindings["Right"],
+                    Config.bindings["Down"],
+                    Config.bindings["Left"],
+                    Config.bindings["Up"],
                 };
 
                 List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
@@ -132,7 +132,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     foreach (HitObject arc in columns[i].hitObjects)
                     {
-                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 600, presses[i]));
+                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1200, presses[i]));
                     }
                 }
 
@@ -177,10 +177,10 @@ namespace Pulsarc.UI.Screens.Gameplay
                 return;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.P))
+            if (Keyboard.GetState().IsKeyDown(Config.bindings["Pause"]))
                 Pause();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.O))
+            if (Keyboard.GetState().IsKeyDown(Config.bindings["Continue"]))
                 Resume();
 
             bool atLeastOne = false;
@@ -283,7 +283,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public void handleInputs()
         {
-            while (KeyboardInputManager.keyboardPresses.Count > 0 && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
+            while (KeyboardInputManager.keyboardPresses.Count > 0)// && KeyboardInputManager.keyboardPresses.Peek().Key <= AudioManager.getTime())
             {
                 KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
                 if(bindings.ContainsKey(press.Value)) { 

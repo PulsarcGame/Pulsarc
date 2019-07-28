@@ -17,7 +17,7 @@ namespace Pulsarc.Utils
 
             fonts = new Dictionary<String, SpriteFont>();
 
-            fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/DefaultFont"));
+            fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600"));
             
             Skin.LoadSkin("DefaultSkin");
             Skin.defaultTexture = Content.Load<Texture2D>("default");

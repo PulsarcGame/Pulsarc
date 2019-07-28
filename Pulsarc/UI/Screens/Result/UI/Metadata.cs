@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.Result.UI
     }
     class Mapper : TextDisplayElement
     {
-        public Mapper(Vector2 position, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor)
+        public Mapper(Vector2 position, Color color, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
     }

@@ -21,14 +21,15 @@ namespace Pulsarc.UI
         SpriteFont font;
         string text;
         float fontScale;
-        Color color;
+        public Color color;
 
         Vector2 processedPosition;
 
-        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft)
+        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft, Color? color = null)
         {
             this.name = name;
             this.anchor = anchor;
+            this.color = color ?? Color.White;
 
             font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;

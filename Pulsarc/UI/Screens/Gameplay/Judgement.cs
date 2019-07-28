@@ -11,10 +11,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             //////////////// Judge equal to Stepmania J4 /////////////
             new JudgementValue("max",       1,      22,    320,    2,  new Color(216,   0, 255)),
             new JudgementValue("perfect",   1,      45,    300,    1,  new Color(240, 198,  35)),
-            new JudgementValue("great",   2/3,      90,    200,    0,  new Color( 52, 237,  92)),
-            new JudgementValue("good",    1/3,     135,    100,   -8,  new Color( 60, 143, 222)),
-            new JudgementValue("bad",     1/6,     180,     50,  -30,  new Color( 98,  97,  97)),
-            new JudgementValue("miss",      0,     200,      0,  -50,  new Color(158,  28,  28)),
+            new JudgementValue("great",   2/3,      90,    200,    -8,  new Color( 52, 237,  92)),
+            new JudgementValue("good",    1/3,     135,    100,   -15,  new Color( 60, 143, 222)),
+            new JudgementValue("bad",     1/6,     180,     50,  -45,  new Color( 98,  97,  97)),
+            new JudgementValue("miss",      0,     200,      0,  -100,  new Color(158,  28,  28)),
         };
 
         static public JudgementValue getMiss()

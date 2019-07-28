@@ -366,3 +366,5 @@ MigrationBackup/
 
 # Ignore JetBrains editor settings
 .idea/
+
+Pulsarc/Content/\.mgstats

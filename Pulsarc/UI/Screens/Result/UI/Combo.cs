@@ -4,7 +4,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 {
     class Combo : TextDisplayElement
     {
-        public Combo(Vector2 position, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor)
+        public Combo(Vector2 position, Color color, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
 

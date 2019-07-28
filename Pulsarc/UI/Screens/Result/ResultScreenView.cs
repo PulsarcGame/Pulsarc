@@ -46,14 +46,14 @@ namespace Pulsarc.UI.Screens.Result
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePosition("GradeX"), getSkinnablePosition("GradeY")), getSkinnablePosition("GradeScale"));
 
-            score = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), getSkinnableInt("ScoreSize"), getSkinnableAnchor("ScoreAnchor"));
-            combo = new Combo(new Vector2(getSkinnablePosition("ComboX"), getSkinnablePosition("ComboY")), getSkinnableInt("ComboSize"), getSkinnableAnchor("ComboAnchor"));
-            this.accuracy = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), getSkinnableInt("AccuracySize"), getSkinnableAnchor("AccuracyAnchor"));
+            score = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), new Color(74,245,254), getSkinnableInt("ScoreSize"), getSkinnableAnchor("ScoreAnchor"));
+            combo = new Combo(new Vector2(getSkinnablePosition("ComboX"), getSkinnablePosition("ComboY")), new Color(74, 245, 254), getSkinnableInt("ComboSize"), getSkinnableAnchor("ComboAnchor"));
+            this.accuracy = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), new Color(74, 245, 254), getSkinnableInt("AccuracySize"), getSkinnableAnchor("AccuracyAnchor"));
 
             title = new Title(new Vector2(getSkinnablePosition("TitleX"), getSkinnablePosition("TitleY")), getSkinnableInt("TitleSize"), getSkinnableAnchor("TitleAnchor"));
             artist = new Artist(new Vector2(getSkinnablePosition("ArtistX"), getSkinnablePosition("ArtistY")), getSkinnableInt("ArtistSize"), getSkinnableAnchor("ArtistAnchor"));
             version = new Version(new Vector2(getSkinnablePosition("VersionX"), getSkinnablePosition("VersionY")), getSkinnableInt("VersionSize"), getSkinnableAnchor("VersionAnchor"));
-            mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
+            mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), new Color(74, 245, 254), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
 
             button_advanced.move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
             button_back.move(new Vector2(0, -button_back.texture.Height));
@@ -103,13 +103,14 @@ namespace Pulsarc.UI.Screens.Result
         private void addJudgeInfo(string name)
         {
             string firstUpper = char.ToUpper(name[0]) + name.Substring(1);
-
+            JudgementValue judgement = Judgement.getByName(name);
             judgements.Add(new KeyValuePair<Judge, JudgeCount>(
-                        new Judge(Judgement.getByName(name).score,
+                        new Judge(judgement.score,
                             new Vector2(getSkinnableInt(firstUpper + "X"), getSkinnableInt(firstUpper + "Y")),
                             getSkinnableInt(firstUpper + "Scale")),
                         new JudgeCount(name, 
                             new Vector2(getSkinnableInt(firstUpper + "CountX"), getSkinnableInt(firstUpper + "CountY")),
+                            judgement.color,
                             getSkinnableInt(firstUpper + "CountSize"),
                             getSkinnableAnchor(firstUpper + "CountAnchor"))
                         ));
