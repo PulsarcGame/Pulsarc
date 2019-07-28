@@ -7,17 +7,20 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class TextDisplayElementFixedSize : TextDisplayElement
     {
-        StringBuilder stringBuilder;
-
-        public TextDisplayElementFixedSize(string name, Vector2 position, int capacity, int fontSize = 18, bool centered = false) : base (name,position, fontSize, centered)
+        public dynamic lastValue;
+        public string append;
+        public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, bool centered = false) : base (name,position, fontSize, centered)
         {
-            stringBuilder = new StringBuilder(capacity);
+            this.append = append;
         }
 
-        public void Update(string value, string append)
+        public void Update(dynamic value)
         {
-            Update(stringBuilder.Append(value).Append(append).ToString());
-            stringBuilder.Clear();
+            if (value != lastValue)
+            {
+                base.Update((string) (value.ToString())+append);
+                lastValue = value;
+            }
         }
     }
 }
