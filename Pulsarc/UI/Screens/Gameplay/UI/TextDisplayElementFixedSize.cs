@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
+using System.Globalization;
 using System.Text;
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
@@ -11,6 +12,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public int lastValueInt = -1;
         public long lastValueLong = -1;
         public double lastValueDouble = -1;
+        public string numberFormat = "#,#0";
 
         public string append;
         public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center) : base (name,position, fontSize, anchor)
@@ -31,7 +33,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             if (value != lastValueInt)
             {
-                base.Update(value.ToString() + append);
+                base.Update(value.ToString(numberFormat) + append);
                 lastValueInt = value;
             }
         }
@@ -40,7 +42,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             if (value != lastValueLong)
             {
-                base.Update(value.ToString() + append);
+                base.Update(value.ToString(numberFormat) + append);
                 lastValueLong = value;
             }
         }
@@ -49,7 +51,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             if (value != lastValueDouble)
             {
-                base.Update(value.ToString() + append);
+                base.Update(value.ToString(numberFormat) + append);
                 lastValueDouble = value;
             }
         }

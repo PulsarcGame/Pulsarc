@@ -34,6 +34,22 @@ namespace Pulsarc.Utils
             addBinding("Continue");
         }
 
+        static public void Reload()
+        {
+            bindings.Clear();
+            get = parser.ReadFile("config.ini");
+
+
+            addBinding("Left");
+            addBinding("Up");
+            addBinding("Down");
+            addBinding("Right");
+
+            addBinding("Pause");
+            addBinding("Continue");
+        }
+
+
         static private void addBinding(string key)
         {
             bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));

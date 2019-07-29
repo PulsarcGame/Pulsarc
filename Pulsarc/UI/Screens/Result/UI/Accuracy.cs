@@ -11,7 +11,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
         public void Update(double value)
         {
-            Update(Math.Round(value * 100,2) + "%");
+            Update(Math.Round(value * 100,2).ToString("#,##.00") + "%");
         }
     }
 }

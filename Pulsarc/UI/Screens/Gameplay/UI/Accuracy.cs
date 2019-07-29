@@ -7,6 +7,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
     {
         public Accuracy(Vector2 position, bool centered = false) : base("", position, "%", 18)
         {
+            numberFormat = "#,##.00";
         }
 
         public new void Update(double value)

@@ -9,6 +9,8 @@ using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
@@ -47,6 +49,8 @@ namespace Pulsarc
             Logger.Initialize();
             PulsarcDiscord.Initialize();
             Config.Initialize();
+
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             graphics = new GraphicsDeviceManager(this);
 
@@ -126,6 +130,7 @@ namespace Pulsarc
                 converting = true;
                 BeatmapConverter converter;
 
+                Config.Reload();
                 string convertFrom = Config.get["Converting"]["Game"];
                 string toConvert = Config.get["Converting"]["Path"];
 

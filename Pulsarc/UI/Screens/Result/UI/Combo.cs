@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
         public void Update(int value)
         {
-            Update(value.ToString() + "x");
+            Update(value.ToString("#,#0") + "x");
         }
     }
 }

@@ -132,7 +132,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     foreach (HitObject arc in columns[i].hitObjects)
                     {
-                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1200, presses[i]));
+                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1300, presses[i]));
                     }
                 }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
+using System;
 
 namespace Pulsarc.UI
 {
@@ -43,6 +44,18 @@ namespace Pulsarc.UI
         public void Update(string value)
         {
             text = name + value;
+            string result = "";
+            foreach(char c in text)
+            {
+                if(font.Characters.Contains(c))
+                {
+                    result = result + c;
+                } else
+                {
+                    Console.WriteLine("'" + c + "' invalid !");
+                }
+            }
+            text = result;
 
             float newX = position.X;
             float newY = position.Y;
