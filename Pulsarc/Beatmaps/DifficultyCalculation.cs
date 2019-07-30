@@ -5,8 +5,6 @@ using System.Text;
 
 namespace Pulsarc.Beatmaps
 {
-
-
     class DifficultyCalculation
     {
         const double baseDiff = 1;

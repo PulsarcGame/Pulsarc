@@ -54,5 +54,10 @@ namespace Pulsarc.Utils
         {
             bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
         }
+
+        static public int getInt(string category, string key)
+        {
+            return int.Parse(get[category][key]);
+        }
     }
 }

@@ -9,6 +9,10 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         List<KeyValuePair<double, int>> toDraw;
         Dictionary<int, Judge> judges;
 
+        /// <summary>
+        ///  Container for displaying the obtained Judges in gameplay
+        /// </summary>
+        /// <param name="position">Where to place the JudgeBox on the screen</param>
         public JudgeBox(Vector2 position) : base(Skin.defaultTexture)
         {
             texture = null;

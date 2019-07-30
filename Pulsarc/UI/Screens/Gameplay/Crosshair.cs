@@ -11,7 +11,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             Vector2 screen = Pulsarc.getDimensions();
             float radius = currentCrosshairRadius;
 
-
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
             origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
             position.X = screen.X / 2;

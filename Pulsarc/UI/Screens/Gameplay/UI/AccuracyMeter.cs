@@ -8,13 +8,17 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class AccuracyMeter : Drawable
     {
+        // Duration (in ms) of each displayed hiterror
         int errorLifetime = 5000;
+
+        // Width (in pixels) of a hiterror bar
         int errorBarWidth = 2;
 
         List<KeyValuePair<double, int>> errors;
         List<KeyValuePair<JudgementValue, Texture2D>> judges;
         Vector2 size;
 
+        // Used for keeping track of the time
         double lastTime;
 
         public AccuracyMeter(Vector2 position, Vector2 size) : base(Skin.defaultTexture, position, size)
@@ -26,6 +30,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             this.position.Y -= size.Y;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
+
+            // Create the HitError textures for each judgements
             foreach(JudgementValue judgement in Judgement.judgements)
             {
                 Texture2D judgeTexture = new Texture2D(Pulsarc.graphics.GraphicsDevice, errorBarWidth, (int) size.Y);
@@ -89,6 +95,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
         private Vector2 getErrorPixelPosition(int error)
         {
+            // Used to determine where to draw each HitError on the bar
+
             JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
             
             int baseX = (int)(position.X + size.X / 2);
@@ -119,6 +127,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
         public void Update(double time)
         {
+            // Clear all expired HitErrors
+
             lastTime = time;
             for (int i = 0; i < errors.Count; i++)
             {

@@ -100,6 +100,9 @@ namespace Pulsarc.Skinning
 
         static private Texture2D LoadCropFromTexture(Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical) 
         {
+            // Create a texture from a subrectangle in another texture
+
+            // Define the subrectangle bounds
             Rectangle bounds = texture.Bounds;
             bounds.X += (int)cropHorizontal.X;
             bounds.Width -= (int)(cropHorizontal.X + cropHorizontal.Y);
@@ -107,9 +110,11 @@ namespace Pulsarc.Skinning
             bounds.Y += (int)cropVertical.X;
             bounds.Height -= (int)(cropVertical.X + cropVertical.Y);
 
+            // Create the new texture receptacle from the subrectangle dimensions
             Texture2D cropped = new Texture2D(Pulsarc.graphics.GraphicsDevice, bounds.Width, bounds.Height);
             Color[] data = new Color[bounds.Width * bounds.Height];
 
+            // Fill the new texture with the contents of the primary texture's subrectangle
             texture.GetData(0, bounds, data, 0, bounds.Width * bounds.Height);
             cropped.SetData(data);
 
@@ -134,6 +139,11 @@ namespace Pulsarc.Skinning
         static public bool isLoaded()
         {
             return loaded;
+        }
+
+        static public void Unload()
+        {
+            // TODO: clear all skin textures
         }
     }
 }

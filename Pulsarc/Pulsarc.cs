@@ -18,25 +18,25 @@ using Wobble.Screens;
 namespace Pulsarc
 {
     /// <summary>
-    /// This is the main type for your game.
+    /// Main game object
     /// </summary>
     public class Pulsarc : Game
     {
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
+
+        // Width used for reference in making the game responsive
         static public int xBaseRes = 1920;
 
-        // for playtesting
-        static public string toPlayFolder = "0 - Unknown - siqlo - Vantablack (Intralism)";
-        static public string toPlaydiff = "Unknown - siqlo - Vantablack [Converted] (Intralism)";
-
+        // Whether or not the in-game cursor is displayed 
         static public bool display_cursor = true;
-
-        Camera game_camera;
         Cursor cursor;
+
+        // The camera controlling the game's viewport
+        Camera game_camera;
         
 
-        //temp
+        // All of these should be brought to other classes
         Stopwatch fpsWatch;
         FPS fpsDisplay;
         int fpsResolution;
@@ -45,36 +45,44 @@ namespace Pulsarc
 
         public Pulsarc()
         {
-            NativeAssemblies.Copy();
-            Logger.Initialize();
-            PulsarcDiscord.Initialize();
+            // Load user config
             Config.Initialize();
 
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
+            // Create the game's application window
             graphics = new GraphicsDeviceManager(this);
 
-            // Set the game in fullscreen (according to the user monitor)
-            // TODO : Read from config file for user preference
-            graphics.PreferredBackBufferHeight =(int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 1.2f);
-            graphics.PreferredBackBufferWidth = (int) (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width  / 1.2f);
-            //graphics.IsFullScreen = true;
-            graphics.SynchronizeWithVerticalRetrace = false;
+            // Set Graphics preferences according to config.ini
+            graphics.PreferredBackBufferHeight = Config.getInt("Graphics","ResolutionWidth");
+            graphics.PreferredBackBufferWidth = Config.getInt("Graphics", "ResolutionHeight");
+            graphics.IsFullScreen = Config.getInt("Graphics", "FullScreen") == 1;
+            graphics.SynchronizeWithVerticalRetrace = Config.getInt("Graphics", "VSync") == 1;
+
+            // Uncap the Update and Draw loop
             base.IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
+        /// Initialize most static objects and dependencies
         /// </summary>
         protected override void Initialize()
         {
             base.Initialize();
 
+            // Copy, if needed, the required assemblies (BASS) for 32 or 64bit CPUs
+            NativeAssemblies.Copy();
+
+            // Initialize the logging tool for troubleshooting
+            Logger.Initialize();
+
+            // Initialize Discord Rich Presence
+            PulsarcDiscord.Initialize();
+
+            // Set the default culture (Font formatting Locals) for this thread
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+            // Start the thread listening for user input
             KeyboardInputManager.StartThread();
 
             // Fps
@@ -84,9 +92,12 @@ namespace Pulsarc
             fpsWatch.Start();
             frames = 0;
             
+            // Initialize the game camera
             game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
             game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
 
+            // Create and display the default game screen
+            // (Currently song select for testing, should be Main menu in the future then an intro when in late releases)
             SongSelection firstScreen = new SongSelection();
             ScreenManager.AddScreen(firstScreen);
 
@@ -94,17 +105,15 @@ namespace Pulsarc
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        /// Initialize and load all game compiled content
         /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Initialize and load all game compiled content
             AssetsManager.Initialize(Content);
-
-            // TODO : Load all menu images etc
         }
 
         /// <summary>
@@ -113,7 +122,7 @@ namespace Pulsarc
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here (Skin)
+            AssetsManager.Unload();
         }
 
         /// <summary>
@@ -125,6 +134,7 @@ namespace Pulsarc
         {            
             cursor.setPos(Mouse.GetState().Position);    
 
+            // Temporary measure for converting intralism or osu!mania beatmaps
             if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
                 converting = true;
@@ -151,6 +161,7 @@ namespace Pulsarc
                 converting = false;
             }
 
+            // Let ScreenManager handle the updating of the current active screen
             ScreenManager.Update(gameTime);
 
             base.Update(gameTime);
@@ -162,12 +173,14 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            // Begin the spritebatch in relation to the camera
             spriteBatch.Begin(SpriteSortMode.Deferred,
                     null, null, null, null, null,
                     game_camera.GetTransformation());
 
             GraphicsDevice.Clear(Color.Black);
 
+            // Let ScreenManager handle the drawing of the current active screen
             ScreenManager.Draw(gameTime);
 
             // FPS
@@ -191,6 +204,9 @@ namespace Pulsarc
             spriteBatch.End();
         }
 
+        /// <summary>
+        /// Used for getting the game's dimensions in a Vector2 object
+        /// </summary>
         static public Vector2 getDimensions()
         {
             return new Vector2(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);

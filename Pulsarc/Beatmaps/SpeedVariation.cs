@@ -17,6 +17,7 @@ namespace Pulsarc.Beatmaps
 
         public string toString()
         {
+            // timestamp,type,intensity_factor -> 432,1,2.5
             return time + "," + type + "," + intensity.ToString("0.000", CultureInfo.InvariantCulture);
         }
     }

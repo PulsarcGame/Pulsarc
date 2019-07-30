@@ -15,6 +15,7 @@ namespace Pulsarc.Beatmaps
 
         public string toString()
         {
+            // timestamp,type -> 432,0110
             return time + "," + Convert.ToString(type, 2).PadLeft(4, '0');
         }
     }

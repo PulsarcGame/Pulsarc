@@ -9,11 +9,16 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         static public int getMaxScore(int objectsCount)
         {
+            // Simple formula due to the combo system starting at max and being capped
+            // Changing it wrongly would require parsing and other stuff
+
             return objectsCount * Judgement.judgements[0].score * max_combo_multiplier;
         }
 
         static public KeyValuePair<long, int> processHitResults(JudgementValue judge, long currentScore, int currentComboMultiplier)
         {
+            // Get the next score from a score and a new hit
+
             long score = currentScore + judge.score * currentComboMultiplier;
             int comboMultiplier = currentComboMultiplier + judge.combo_addition;
 

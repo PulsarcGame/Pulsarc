@@ -25,7 +25,7 @@ namespace Pulsarc.Utils
 
         static public void Unload()
         {
-
+            Skin.Unload();
         }
     }
 }

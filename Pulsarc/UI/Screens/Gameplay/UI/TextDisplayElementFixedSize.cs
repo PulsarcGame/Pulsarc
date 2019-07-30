@@ -15,6 +15,15 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public string numberFormat = "#,#0";
 
         public string append;
+
+        /// <summary>
+        /// TextDisplayElement that will be updated regularily. Improves performances with strings.
+        /// </summary>
+        /// <param name="name">String to be prepended to the displayed value</param>
+        /// <param name="position">Where to display the text element</param>
+        /// <param name="append">String to be appended to the displayed value</param>
+        /// <param name="fontSize">The size to be used for drawing the font</param>
+        /// <param name="anchor">The anchor</param>
         public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center) : base (name,position, fontSize, anchor)
         {
             this.append = append;
