@@ -5,9 +5,11 @@ using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using Pulsarc.UI.Screens.MainMenu;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -27,10 +29,11 @@ namespace Pulsarc
 
         // Width used for reference in making the game responsive
         static public int xBaseRes = 1920;
+        static public float baseRatio = 16/9f;
 
         // Whether or not the in-game cursor is displayed 
         static public bool display_cursor = true;
-        Cursor cursor;
+        static public Cursor cursor;
 
         // The camera controlling the game's viewport
         Camera game_camera;
@@ -52,8 +55,8 @@ namespace Pulsarc
             graphics = new GraphicsDeviceManager(this);
 
             // Set Graphics preferences according to config.ini
-            graphics.PreferredBackBufferHeight = Config.getInt("Graphics","ResolutionWidth");
-            graphics.PreferredBackBufferWidth = Config.getInt("Graphics", "ResolutionHeight");
+            graphics.PreferredBackBufferWidth = Config.getInt("Graphics", "ResolutionWidth");
+            graphics.PreferredBackBufferHeight = Config.getInt("Graphics", "ResolutionHeight");
             graphics.IsFullScreen = Config.getInt("Graphics", "FullScreen") == 1;
             graphics.SynchronizeWithVerticalRetrace = Config.getInt("Graphics", "VSync") == 1;
 
@@ -98,7 +101,7 @@ namespace Pulsarc
 
             // Create and display the default game screen
             // (Currently song select for testing, should be Main menu in the future then an intro when in late releases)
-            SongSelection firstScreen = new SongSelection();
+            Menu firstScreen = new Menu();
             ScreenManager.AddScreen(firstScreen);
 
             cursor = new Cursor();
@@ -132,7 +135,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {            
-            cursor.setPos(Mouse.GetState().Position);    
+            cursor.setPos(Mouse.GetState().Position);
 
             // Temporary measure for converting intralism or osu!mania beatmaps
             if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")

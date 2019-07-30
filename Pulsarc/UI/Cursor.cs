@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pulsarc.UI
 {
-    class Cursor : Drawable
+    public class Cursor : Drawable
     {
         public Cursor() : base(Skin.assets["cursor"])
         {
@@ -15,8 +15,9 @@ namespace Pulsarc.UI
 
         public void setPos(Point position)
         {
-            this.position.X = position.X;
-            this.position.Y = position.Y;
+            this.drawPosition.X = position.X;
+            this.drawPosition.Y = position.Y;
+            this.position = drawPosition;
         }
     }
 }

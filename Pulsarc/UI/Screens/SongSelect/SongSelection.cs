@@ -2,13 +2,15 @@
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.SongSelect.UI;
+using Pulsarc.Utils;
 using System.Collections.Generic;
 using System.IO;
+using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
-    class SongSelection : Screen
+    class SongSelection : PulsarcScreen
     {
 
         public override ScreenView View { get; protected set; }
@@ -22,6 +24,10 @@ namespace Pulsarc.UI.Screens.SongSelect
         public int currentFocus = 0;
 
         public SongSelection()
+        {
+        }
+
+        public override void Init()
         {
             RefreshBeatmaps();
         }
@@ -44,6 +50,16 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Update(GameTime gameTime)
         {
+            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            {
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+
+                if (press.Value == Keys.Escape || press.Value == Keys.Delete)
+                {
+                    ScreenManager.RemoveScreen(true);
+                }
+            }
+
             MouseState ms = Mouse.GetState();
             
             if (ms.ScrollWheelValue < lastScrollValue)
@@ -76,7 +92,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
             else
             {
-                View.Update(gameTime);
+                View?.Update(gameTime);
             }
         }
     }

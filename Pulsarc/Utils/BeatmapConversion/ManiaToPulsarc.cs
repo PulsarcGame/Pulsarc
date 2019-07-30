@@ -79,9 +79,6 @@ namespace Pulsarc.Utils.BeatmapConversion
                         File.Copy(audioPath, dirName + "/" + map.Audio, true);
                         string difficultyFileName = string.Join("_", (map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
                         BeatmapHelper.Save(map, dirName + "/" + difficultyFileName + ".psc");
-
-                        Pulsarc.toPlayFolder = folderName;
-                        Pulsarc.toPlaydiff = difficultyFileName;
                     }
                 }
             }

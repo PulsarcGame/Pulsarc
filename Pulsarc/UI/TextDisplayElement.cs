@@ -16,7 +16,6 @@ namespace Pulsarc.UI
     }
     class TextDisplayElement : Drawable
     {
-        Anchor anchor;
         string name;
 
         SpriteFont font;
@@ -35,9 +34,10 @@ namespace Pulsarc.UI
             font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;
             fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
-            
-            changePosition(position);
+
+            this.position = position;
             processedPosition = this.position;
+            changePosition(position);
             Update("");
         }
 
@@ -60,8 +60,8 @@ namespace Pulsarc.UI
             float newX = position.X;
             float newY = position.Y;
             Vector2 size = font.MeasureString(text) * fontScale;
-            size.X *= Pulsarc.getDimensions().X / 1920;
-            size.Y *= Pulsarc.getDimensions().Y / 1080;
+            size.X *= Pulsarc.getDimensions().X / Pulsarc.xBaseRes;
+            size.Y *= Pulsarc.getDimensions().Y / (Pulsarc.xBaseRes / Pulsarc.baseRatio);
 
             switch (anchor)
             {

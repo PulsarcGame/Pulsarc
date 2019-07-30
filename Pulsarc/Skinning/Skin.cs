@@ -34,6 +34,7 @@ namespace Pulsarc.Skinning
 
                 configs.Add("skin", parser.ReadFile(skinFolder + "skin.ini"));
                 configs.Add("gameplay", parser.ReadFile(skinFolder + "Gameplay/gameplay.ini"));
+                configs.Add("main_menu", parser.ReadFile(skinFolder + "UI/MainMenu/main_menu.ini"));
                 configs.Add("judgements", parser.ReadFile(skinFolder + "Judgements/judgements.ini"));
                 configs.Add("result_screen", parser.ReadFile(skinFolder + "UI/ResultScreen/result_screen.ini"));
 
@@ -41,6 +42,19 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "Gameplay/", "crosshair");
 
                 LoadSkinTexture(skinFolder + "UI/", "cursor");
+
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "menu_background");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "menu_game_icon");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_back_1");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_back_2");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_back_3");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_back_4");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_back_5");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_hover_1");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_hover_2");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_hover_3");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_hover_4");
+                LoadSkinTexture(skinFolder + "UI/MainMenu/", "button_hover_5");
 
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button_advanced");
                 LoadSkinTexture(skinFolder + "UI/ResultScreen/", "result_button_back");

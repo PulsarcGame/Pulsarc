@@ -31,7 +31,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.baseSpeed = baseSpeed;
             erase = false;
 
-            Vector2 screen = Pulsarc.getDimensions();
+            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.xBaseRes / Pulsarc.baseRatio);
             radius = (200f / 1920f) * screen.X;
 
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
@@ -64,6 +64,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             rotation = (float) (45 * (Math.PI / 180));
+            changePosition(position);
         }
         
 
