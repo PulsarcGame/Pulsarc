@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI.Screens.MainMenu.UI;
+using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -23,29 +24,18 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         public override void Update(GameTime gameTime)
         {
-            MouseState ms = Mouse.GetState();
-
-            if (!leftClicking && ms.LeftButton == ButtonState.Pressed)
+            if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                leftClicking = true;
-                leftClickingPos = new Vector2(ms.Position.X, ms.Position.Y);
-            }
-            else if (leftClicking && ms.LeftButton == ButtonState.Released)
-            {
-                leftClicking = false;
-                Vector2 leftReleasePos = new Vector2(ms.Position.X, ms.Position.Y);
                 foreach (NavigationButton button in GetMenuView().navButtons)
                 {
-                    if (button.clicked(leftClickingPos) && button.clicked(leftReleasePos))
+                    if (button.clicked(MouseManager.CurrentState.Position))
                     {
                         button.navigate();
                     }
                 }
             }
-            else
-            {
-                View.Update(gameTime);
-            }
+
+            View.Update(gameTime);
         }
     }
 }

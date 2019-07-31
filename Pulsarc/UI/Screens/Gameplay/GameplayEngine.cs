@@ -348,7 +348,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Clear Input and Audio
             KeyboardInputManager.keyboardPresses.Clear();
             AudioManager.Stop();
-            KeyboardInputManager.Reset();
 
             // Unset attributes to avoid potential conflict with next gameplays
             currentBeatmap = null;

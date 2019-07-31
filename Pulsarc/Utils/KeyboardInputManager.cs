@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Wobble.Input;
 
 namespace Pulsarc.Utils
 {
@@ -40,6 +41,9 @@ namespace Pulsarc.Utils
 
                     try
                     {
+                        MouseManager.Update();
+                        KeyboardManager.Update();
+
                         state = Keyboard.GetState();
 
                         if (state.GetPressedKeys().Count() > 0)
