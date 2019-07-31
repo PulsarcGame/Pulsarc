@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Wobble.Screens;
 
-namespace Pulsarc.UI
+namespace Pulsarc.UI.Buttons
 {
     class NavigationButton : Drawable
     {

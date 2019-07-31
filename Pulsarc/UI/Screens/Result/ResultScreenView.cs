@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Pulsarc.UI.Screens.Result
             button_retry = new ButtonRetry(new Vector2(1920, 1080));
 
             scorecard = new Scorecard();
-            background = new Background();
+            background = new Background("result_background");
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePosition("GradeX"), getSkinnablePosition("GradeY")), getSkinnablePosition("GradeScale"));
 

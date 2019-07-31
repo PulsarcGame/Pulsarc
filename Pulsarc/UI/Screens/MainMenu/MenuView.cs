@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Buttons;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
@@ -22,7 +24,7 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         public MenuView(Screen screen) : base(screen)
         {
-            background = new Background();
+            background = new Background("menu_background");
 
             gameIcon = new GameIcon(new Vector2(getSkinnableInt("IconX"), getSkinnableInt("IconY")));
 
