@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
+using Pulsarc.UI.Screens.Settings;
 using Pulsarc.UI.Screens.SongSelect;
 using Wobble.Screens;
 
@@ -29,7 +30,7 @@ namespace Pulsarc.UI.Screens.MainMenu
             navButtons.Add(new NavigationButton(new SongSelection(), getSkinnableInt("PlayType"), "Play Game", new Vector2(getSkinnableInt("PlayX"), getSkinnableInt("PlayY"))));
             navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("MultiType"), "Multiplayer", new Vector2(getSkinnableInt("MultiX"), getSkinnableInt("MultiY"))));
             navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("EditorType"), "Editor", new Vector2(getSkinnableInt("EditorX"), getSkinnableInt("EditorY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("SettingsType"), "Settings", new Vector2(getSkinnableInt("SettingsX"), getSkinnableInt("SettingsY"))));
+            navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnableInt("SettingsType"), "Settings", new Vector2(getSkinnableInt("SettingsX"), getSkinnableInt("SettingsY"))));
             navButtons.Add(new NavigationButton(new QuitScreen(), getSkinnableInt("QuitType"), "Quit", new Vector2(getSkinnableInt("QuitX"), getSkinnableInt("QuitY"))));
         }
 
