@@ -24,6 +24,7 @@ namespace Pulsarc
     /// </summary>
     public class Pulsarc : Game
     {
+        static public Pulsarc pulsarc;
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
 
@@ -48,6 +49,8 @@ namespace Pulsarc
 
         public Pulsarc()
         {
+            pulsarc = this;
+
             // Load user config
             Config.Initialize();
 
@@ -213,6 +216,11 @@ namespace Pulsarc
         static public Vector2 getDimensions()
         {
             return new Vector2(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+        }
+
+        static public void Quit()
+        {
+            pulsarc.Exit();
         }
     }
 }
