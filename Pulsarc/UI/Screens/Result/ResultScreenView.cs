@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Pulsarc.UI.Screens.Result
         ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
 
         ButtonRetry button_retry;
-        ButtonBack button_back;
+        ReturnButton button_back;
         ButtonAdvanced button_advanced;
 
         Accuracy accuracy;
@@ -38,7 +39,7 @@ namespace Pulsarc.UI.Screens.Result
             judgements = new List<KeyValuePair<Judge, JudgeCount>>();
 
             button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
-            button_back = new ButtonBack(new Vector2(0, 1080));
+            button_back = new ReturnButton("result_button_back", new Vector2(0, 1080));
             button_retry = new ButtonRetry(new Vector2(1920, 1080));
 
             scorecard = new Scorecard();
