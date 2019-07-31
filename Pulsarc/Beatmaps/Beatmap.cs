@@ -22,6 +22,9 @@ namespace Pulsarc.Beatmaps
         public int KeyCount { get; set; } = 4;
         public double Difficulty { get; set; } = 0;
 
+        // Events
+        public List<Event> events;
+
         // Gameplay
         public List<SpeedVariation> speedVariations;
         public List<TimingPoint> timingPoints;
@@ -32,6 +35,7 @@ namespace Pulsarc.Beatmaps
             arcs = new List<Arc>();
             timingPoints = new List<TimingPoint>();
             speedVariations = new List<SpeedVariation>();
+            events = new List<Event>();
         }
     }
 }
