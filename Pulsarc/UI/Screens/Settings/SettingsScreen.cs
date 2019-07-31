@@ -11,6 +11,7 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Init()
         {
+            View = new SettingsScreenView(this);
         }
     }
 }

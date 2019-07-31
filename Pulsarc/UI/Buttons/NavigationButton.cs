@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Screens;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Wobble.Screens;
 
-namespace Pulsarc.UI.Screens.MainMenu.UI
+namespace Pulsarc.UI
 {
     class NavigationButton : Drawable
     {
