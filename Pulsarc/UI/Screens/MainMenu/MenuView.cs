@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
@@ -9,6 +7,7 @@ using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
 using Pulsarc.UI.Screens.SongSelect;
+using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -53,7 +52,16 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         public override void Update(GameTime gameTime)
         {
-
+            if (MouseManager.IsUniqueClick(MouseButton.Left))
+            {
+                foreach (NavigationButton button in navButtons)
+                {
+                    if (button.clicked(MouseManager.CurrentState.Position))
+                    {
+                        button.navigate();
+                    }
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime)

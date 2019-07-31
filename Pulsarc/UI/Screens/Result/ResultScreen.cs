@@ -1,8 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Pulsarc.Beatmaps;
+﻿using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.Gameplay;
-using Pulsarc.Utils;
 using System.Collections.Generic;
 using Wobble.Screens;
 
@@ -69,21 +66,6 @@ namespace Pulsarc.UI.Screens.Result
             }
 
             View = new ResultScreenView(this, accuracyTotal, grade);
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            while (KeyboardInputManager.keyboardPresses.Count > 0)
-            {
-                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
-
-                if(press.Value == Keys.Escape || press.Value == Keys.Delete)
-                {
-                    ScreenManager.RemoveScreen(true);
-                }
-            }
-
-            base.Update(gameTime);
         }
     }
 }
