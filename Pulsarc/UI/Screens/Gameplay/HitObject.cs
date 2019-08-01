@@ -11,18 +11,12 @@ namespace Pulsarc.UI.Screens.Gameplay
         double angle;
         double radius;
 
-        double distanceToCrosshair;
+        double zLocation;
         double baseSpeed;
 
         // Optimization
         // Whether this hitobject is marked for destruction in gameplay
         public bool erase;
-
-        // Distance formula values
-        static double exponent = 4; // Do not use decimals, or gameplay is weird
-        static int targetDisappearDistance = 100;
-        static double curveFixing = 1e9;
-        static double disappearDistanceFixing = Math.Pow(curveFixing * targetDisappearDistance, 1/exponent);
 
         public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
@@ -63,43 +57,54 @@ namespace Pulsarc.UI.Screens.Gameplay
                     break;
             }
 
-            rotation = (float) (45 * (Math.PI / 180));
+            rotation = (float)(45 * (Math.PI / 180));
             changePosition(position);
         }
-        
+
 
         public void recalcPos(int currentTime, double speed, int crosshairRadius)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
-
             Vector2 screen = Pulsarc.getDimensions();
 
-            distanceToCrosshair = getDistanceToCrosshair(currentTime, speed * baseSpeed);
+            zLocation = findZLocation(currentTime, speed * baseSpeed, crosshairRadius);
 
-            Resize(getSizeFromDistanceToCrosshair(crosshairRadius), false);
+            Resize(findArcRadius(zLocation, screen), false);
         }
 
-        public int getSizeFromDistanceToCrosshair(int crosshairRadius)
+        //
+        public double findZLocation(int currentTime, double speed, int crosshairRadius)
         {
-            return (int) (((crosshairRadius / 1920f) * Pulsarc.getDimensions().X) + distanceToCrosshair);
-        }
+            double crosshairZLoc = 960 * 960 / crosshairRadius; //One of these 960s is half of the base width (1920), the other is probably half of the current arc/crosshair texture width (also 1920)
+            //Note: screen.X / 2 is not needed for this second 960, I tried that and it screwed with the offset of the arcs. - FRUP
+            int deltaTime = currentTime - time;
 
-        public double getDistanceToCrosshair(int currentTime, double speed)
+            double zLocation = deltaTime * speed + crosshairZLoc;
+
+            return zLocation;
+        }
+        
+        public float findArcRadius(double zLocation, Vector2 screen)
         {
-            // Formula determinig the route of the arcs on screen.
-            var distanceT = time - currentTime;
-            return (Math.Pow(distanceT + disappearDistanceFixing, exponent) / curveFixing - targetDisappearDistance) * speed;
+            float radius = (float)(960 / zLocation * (screen.X / 2));
+
+            return radius;
         }
 
+        //I'm not sure what this is supposed to do and nothing I changed here seemed to change anything.
+        //I kept the original comment/formula just in case its needed for reference. - FRUP
         public int IsSeenAt(double distance, double speed)
         {
-            // Reverse formula for determining when an arc will first appear on screen
-            return (int) (Math.Pow(curveFixing * (distance * speed + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);
+            /* Reverse formula for determining when an arc will first appear on screen
+            return (int) (Math.Pow(curveFixing * (distance * speed + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);*/
+
+            return (int) ((960 * (Pulsarc.xBaseRes / 2)) / distance); //I probably shouldn't use Pulsarc.xBaseRes here should I? lol
         }
 
+        //Things do change if I screw with this method, but idk why. - FRUP
         public bool IsSeen()
         {
-            return distanceToCrosshair < 2300;
+            return zLocation > 0;
         }
     }
 }

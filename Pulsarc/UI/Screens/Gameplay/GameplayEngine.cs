@@ -65,9 +65,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init(Beatmap beatmap)
         {
             // temp: These values should be obtained from mods/config/beatmap parsing
-            rate = 1f;
+            rate = 1f; //Super slow, should not be the default value.
             keys = 4;
-            userSpeed = 1 / rate / rate;
+            userSpeed = 1; // / rate / rate; What's the purpose of "/ rate / rate"???
             currentCrosshairRadius = 200;
             timeOffset = 0;
 
@@ -107,7 +107,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     if (BeatmapHelper.isColumn(arc, i))
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier);
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, currentCrosshairRadius); //Needed to add currentCrosshairRadius - FRUP
                         objectCount++;
                     }
                 }
