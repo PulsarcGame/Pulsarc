@@ -12,7 +12,7 @@ namespace Pulsarc.Beatmaps
             this.bpm = bpm;
         }
 
-        public string toString()
+        public override string ToString()
         {
             return time + "," + bpm;
         }

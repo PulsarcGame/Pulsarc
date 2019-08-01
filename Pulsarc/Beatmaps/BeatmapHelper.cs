@@ -71,6 +71,7 @@ namespace Pulsarc.Beatmaps
                                     Console.WriteLine("Unknown beatmap field : " + type);
                                 }
                                 break;
+                            case "Events":
                             case "TimingPoints":
                             case "SpeedVariations":
                             case "Arcs":
@@ -89,6 +90,17 @@ namespace Pulsarc.Beatmaps
                         // Handling depends on the data type (or the current reading state)
                         switch (state)
                         {
+                            case "Events":
+                                try
+                                {
+                                    string[] parameters = new string[] { line };
+                                    parsed.events.Add((Event) Activator.CreateInstance(Type.GetType(eventParts[1]), parameters));
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Invalid Event : " + line);
+                                }
+                                break;
                             case "TimingPoints":
                                 try
                                 {
@@ -154,11 +166,19 @@ namespace Pulsarc.Beatmaps
                 writeProperty(file, beatmap, "Difficulty");
 
                 file.WriteLine("");
+                file.WriteLine("Events:");
+
+                foreach (Event evt in beatmap.events)
+                {
+                    file.WriteLine(evt.ToString());
+                }
+
+                file.WriteLine("");
                 file.WriteLine("TimingPoints:");
 
                 foreach (TimingPoint timingPoint in beatmap.timingPoints)
                 {
-                    file.WriteLine(timingPoint.toString());
+                    file.WriteLine(timingPoint.ToString());
                 }
 
                 file.WriteLine("");
@@ -166,7 +186,7 @@ namespace Pulsarc.Beatmaps
 
                 foreach (SpeedVariation speedVariation in beatmap.speedVariations)
                 {
-                    file.WriteLine(speedVariation.toString());
+                    file.WriteLine(speedVariation.ToString());
                 }
 
                 file.WriteLine("");
@@ -174,7 +194,7 @@ namespace Pulsarc.Beatmaps
 
                 foreach (Arc arc in beatmap.arcs)
                 {
-                    file.WriteLine(arc.toString());
+                    file.WriteLine(arc.ToString());
                 }
             }
         }

@@ -32,6 +32,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Column[] columns;
         public int keys;
 
+        // Events indexes
+        public int speedVariationIndex;
+        public int eventIndex;
+
         // Gameplay Elements
 
         public double timeOffset;
@@ -78,6 +82,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             currentSpeedMultiplier = userSpeed;
             currentArcsSpeed = 1;
 
+            speedVariationIndex = 0;
+            eventIndex = 0;
+
             // Initialize Gameplay variables
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
@@ -101,8 +108,24 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             int objectCount = 0;
+            int speedVarInitIndex = 0;
+            
             foreach (Arc arc in currentBeatmap.arcs)
             {
+                // Go through events to update current arcs speed
+                while(currentBeatmap.speedVariations.Count > speedVarInitIndex && currentBeatmap.speedVariations[speedVarInitIndex].time <= arc.time)
+                {
+                    switch (currentBeatmap.speedVariations[speedVarInitIndex].type)
+                    {
+                        case 1:
+                            // Arcs spawn speed change
+                            //currentArcsSpeed = currentBeatmap.speedVariations[speedVarInitIndex].intensity;
+                            break;
+                    }
+                    speedVarInitIndex++;
+                }
+
+                // Add arcs to the columns
                 for (int i = 0; i < keys; i++)
                 {
                     if (BeatmapHelper.isColumn(arc, i))
@@ -208,6 +231,26 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Keep track of whether or not any object is left to play
             bool atLeastOne = false;
 
+            // Handle all events
+            // Speed variations
+            if (currentBeatmap.speedVariations.Count > speedVariationIndex && currentBeatmap.speedVariations[speedVariationIndex].time <= time)
+            {
+                switch (currentBeatmap.speedVariations[speedVariationIndex].type)
+                {
+                    case 0:
+                        // Global speed change
+                        //currentSpeedMultiplier = userSpeed * (1/currentBeatmap.speedVariations[speedVariationIndex].intensity);
+                        break;
+                }
+                speedVariationIndex++;
+            }
+            // Events
+            if (currentBeatmap.events.Count > eventIndex + 1 && currentBeatmap.events[eventIndex].time <= time)
+            {
+                currentBeatmap.events[eventIndex].Handle(this);
+                eventIndex++;
+            }
+
             // Update UI and objects positions
             for (int i = 0; i < keys; i++)
             {
@@ -305,7 +348,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Clear Input and Audio
             KeyboardInputManager.keyboardPresses.Clear();
             AudioManager.Stop();
-            KeyboardInputManager.Reset();
 
             // Unset attributes to avoid potential conflict with next gameplays
             currentBeatmap = null;

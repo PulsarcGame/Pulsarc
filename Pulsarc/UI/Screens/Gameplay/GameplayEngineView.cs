@@ -67,9 +67,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Draw everything
             crosshair.Draw();
 
+            bool skip;
             for (int i = 0; i < GetGameplayEngine().keys; i++)
             {
-                for (int k = 0; k< GetGameplayEngine().columns[i].updateHitObjects.Count; k++)
+                skip = false;
+                for (int k = 0; k< GetGameplayEngine().columns[i].updateHitObjects.Count && !skip; k++)
                 {
                     
                     if (GetGameplayEngine().columns[i].updateHitObjects[k].Value.IsSeen())
@@ -78,7 +80,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
                     if (GetGameplayEngine().columns[i].updateHitObjects[k].Key - GetGameplayEngine().msIgnore > GetGameplayEngine().time)
                     {
-                        break; // not nice ik
+                        skip = true;
                     }
                 }
             }

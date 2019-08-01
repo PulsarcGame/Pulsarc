@@ -19,5 +19,12 @@ namespace Pulsarc.UI
             this.drawPosition.Y = position.Y;
             this.position = drawPosition;
         }
+
+        public void setPos(Vector2 position)
+        {
+            this.drawPosition.X = position.X;
+            this.drawPosition.Y = position.Y;
+            this.position = drawPosition;
+        }
     }
 }

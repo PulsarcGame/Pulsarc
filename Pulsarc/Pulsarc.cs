@@ -13,9 +13,11 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using Wobble.Input;
 using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
+using Wobble.Window;
 
 namespace Pulsarc
 {
@@ -24,6 +26,7 @@ namespace Pulsarc
     /// </summary>
     public class Pulsarc : Game
     {
+        static public Pulsarc pulsarc;
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
 
@@ -48,6 +51,8 @@ namespace Pulsarc
 
         public Pulsarc()
         {
+            pulsarc = this;
+
             // Load user config
             Config.Initialize();
 
@@ -134,8 +139,8 @@ namespace Pulsarc
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {            
-            cursor.setPos(Mouse.GetState().Position);
+        {
+            cursor.setPos(MouseManager.CurrentState.Position);
 
             // Temporary measure for converting intralism or osu!mania beatmaps
             if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
@@ -213,6 +218,11 @@ namespace Pulsarc
         static public Vector2 getDimensions()
         {
             return new Vector2(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+        }
+
+        static public void Quit()
+        {
+            pulsarc.Exit();
         }
     }
 }

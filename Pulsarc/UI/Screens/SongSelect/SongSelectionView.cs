@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Wobble.Screens;
 
@@ -29,7 +30,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 i++;
             }
 
-            background = new Background();
+            background = new Background("select_background");
         }
 
         public override void Destroy()

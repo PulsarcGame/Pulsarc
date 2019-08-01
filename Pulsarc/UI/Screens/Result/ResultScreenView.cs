@@ -1,7 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Buttons;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
+using Pulsarc.Utils;
 using System.Collections.Generic;
 using Wobble.Screens;
 
@@ -12,7 +16,7 @@ namespace Pulsarc.UI.Screens.Result
         ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
 
         ButtonRetry button_retry;
-        ButtonBack button_back;
+        ReturnButton button_back;
         ButtonAdvanced button_advanced;
 
         Accuracy accuracy;
@@ -38,11 +42,11 @@ namespace Pulsarc.UI.Screens.Result
             judgements = new List<KeyValuePair<Judge, JudgeCount>>();
 
             button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
-            button_back = new ButtonBack(new Vector2(0, 1080));
+            button_back = new ReturnButton("result_button_back", new Vector2(0, 1080));
             button_retry = new ButtonRetry(new Vector2(1920, 1080));
 
             scorecard = new Scorecard();
-            background = new Background();
+            background = new Background("result_background");
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePosition("GradeX"), getSkinnablePosition("GradeY")), getSkinnablePosition("GradeScale"));
 
@@ -146,7 +150,15 @@ namespace Pulsarc.UI.Screens.Result
 
         public override void Update(GameTime gameTime)
         {
+            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            {
+                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
 
+                if (press.Value == Keys.Escape || press.Value == Keys.Delete)
+                {
+                    ScreenManager.RemoveScreen(true);
+                }
+            }
         }
     }
 }
