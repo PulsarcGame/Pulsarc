@@ -22,6 +22,7 @@ namespace Pulsarc.Utils
         static Thread audioThread;
         static AudioTrack song;
         static Stopwatch threadLimiterWatch;
+        static GameTime lastTime;
 
         static public void Start()
         {
@@ -58,7 +59,6 @@ namespace Pulsarc.Utils
             running = true;
             var threadTime = new Stopwatch();
 
-
             song = new AudioTrack(song_path, false)
             {
                 Rate = audioRate,
@@ -75,17 +75,13 @@ namespace Pulsarc.Utils
                 song.Play();
                 threadTime.Start();
 
-                TimeSpan ts;
-
                 active = true;
                 while (running)
                 {
                     if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                     {
                         threadLimiterWatch.Restart();
-
-                        ts = new TimeSpan(threadTime.ElapsedMilliseconds);
-                        Wobble.Audio.AudioManager.Update(new GameTime(ts, ts));
+                        Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
                     }
                 }
             }

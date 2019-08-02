@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
 using System;
+using System.Text;
 
 namespace Pulsarc.UI
 {
@@ -19,7 +20,7 @@ namespace Pulsarc.UI
         string name;
 
         SpriteFont font;
-        string text;
+        StringBuilder text;
         float fontScale;
         public Color color;
 
@@ -30,6 +31,7 @@ namespace Pulsarc.UI
             this.name = name;
             this.anchor = anchor;
             this.color = color ?? Color.White;
+            text = new StringBuilder(20);
 
             font = AssetsManager.fonts["DefaultFont"];
             color = Color.White;
@@ -43,19 +45,8 @@ namespace Pulsarc.UI
 
         public void Update(string value)
         {
-            text = name + value;
-            string result = "";
-            foreach(char c in text)
-            {
-                if(font.Characters.Contains(c))
-                {
-                    result = result + c;
-                } else
-                {
-                    Console.WriteLine("'" + c + "' invalid !");
-                }
-            }
-            text = result;
+            text.Clear();
+            text.Append(name).Append(value);
 
             float newX = position.X;
             float newY = position.Y;
@@ -95,7 +86,7 @@ namespace Pulsarc.UI
         public override void move(Vector2 position)
         {
             base.move(position);
-            Update(text);
+            Update(text.ToString());
         }
 
         public override void Draw()
