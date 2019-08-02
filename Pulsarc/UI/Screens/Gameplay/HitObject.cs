@@ -79,7 +79,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             //Note: screen.X / 2 is not needed for this second 960, I tried that and it screwed with the offset of the arcs. - FRUP
             int deltaTime = currentTime - time;
 
-            double zLocation = deltaTime * speed + crosshairZLoc;
+            double zLocation = deltaTime * speed + crosshairZLoc + speed;
 
             return zLocation;
         }
