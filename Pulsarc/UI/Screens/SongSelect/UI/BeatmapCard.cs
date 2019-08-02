@@ -26,7 +26,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             this.beatmap = beatmap;
 
             float percent = (float) (beatmap.Difficulty / 10f);
-            diffBar = new BeatmapCardDifficulty(new Vector2(position.X + 280, position.Y + 135), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
+            diffBar = new BeatmapCardDifficulty(new Vector2(position.X + 265, position.Y + 130), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
 
             title = new BeatmapTitle(new Vector2(position.X + 30, position.Y + 10), Color.White, 22);
             artist = new BeatmapArtist(new Vector2(position.X + 30, position.Y + 50), Color.White, 22);

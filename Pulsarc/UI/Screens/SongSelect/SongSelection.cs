@@ -5,6 +5,7 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Wobble.Input;
 using Wobble.Screens;
 
@@ -37,6 +38,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             List<Beatmap> beatmaps = new List<Beatmap>();
             cards = new List<BeatmapCard>();
 
+            // Ultimately, this should be loaded from a cache and updated incrementally or when doing a refresh
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.psc"))
@@ -44,8 +46,27 @@ namespace Pulsarc.UI.Screens.SongSelect
                     beatmaps.Add(BeatmapHelper.Load(file));
                 }
             }
-
+            beatmaps = sortBeatmaps(beatmaps, "difficulty");
             View = new SongSelectionView(this, beatmaps);
+        }
+
+        public List<Beatmap> sortBeatmaps(List<Beatmap> beatmaps, string sort)
+        {
+            switch(sort)
+            {
+                case "difficulty":
+                    return beatmaps.OrderBy(i => i.Difficulty).ToList();
+                case "artist":
+                    return beatmaps.OrderBy(i => i.Artist).ToList();
+                case "title":
+                    return beatmaps.OrderBy(i => i.Title).ToList();
+                case "mapper":
+                    return beatmaps.OrderBy(i => i.Mapper).ToList();
+                case "version":
+                    return beatmaps.OrderBy(i => i.Version).ToList();
+                default:
+                    return beatmaps;
+            }
         }
 
         public override void Update(GameTime gameTime)

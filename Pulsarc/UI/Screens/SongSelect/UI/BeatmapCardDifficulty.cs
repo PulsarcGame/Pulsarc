@@ -21,8 +21,8 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         }
         public override void Draw()
         {
-            base.Draw();
             fill.Draw();
+            base.Draw();
         }
     }
 }
