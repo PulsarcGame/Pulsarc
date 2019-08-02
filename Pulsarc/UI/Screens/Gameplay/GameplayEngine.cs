@@ -69,9 +69,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init(Beatmap beatmap)
         {
             // temp: These values should be obtained from mods/config/beatmap parsing
-            rate = 1f; //Super slow, should not be the default value.
+            rate = 1f; //1 is pretty slow and unreadable with new arc movement.
             keys = 4;
-            userSpeed = 1; // / rate / rate; What's the purpose of "/ rate / rate"???
+            userSpeed = 1 / rate;
             currentCrosshairRadius = 200;
             timeOffset = 0;
 
