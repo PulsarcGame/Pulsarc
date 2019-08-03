@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
+using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.SongSelect.UI;
+using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -14,6 +16,8 @@ namespace Pulsarc.UI.Screens.SongSelect
         SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
         Background background;
+
+        ReturnButton button_back;
 
         int cardWidth = 800;
         int cardHeight = 170;
@@ -31,6 +35,8 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
 
             background = new Background("select_background");
+
+            button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
         }
 
         public override void Destroy()
@@ -47,6 +53,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                     card.Draw();
                 }
             }
+            button_back.Draw();
         }
 
         public override void Update(GameTime gameTime)
@@ -61,6 +68,14 @@ namespace Pulsarc.UI.Screens.SongSelect
                 }
 
                 lastFocus = GetSongSelection().currentFocus;
+            }
+
+            if (MouseManager.IsUniqueClick(MouseButton.Left))
+            {
+                if (button_back.clicked(MouseManager.CurrentState.Position))
+                {
+                    button_back.onClick();
+                }
             }
         }
     }

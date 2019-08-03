@@ -107,6 +107,9 @@ namespace Pulsarc.UI
                     newPos.X -= size.X;
                     newPos.Y -= size.Y;
                     break;
+                case Anchor.BottomLeft:
+                    newPos.Y -= size.Y;
+                    break;
                 case Anchor.CenterLeft:
                     newPos.Y -= size.Y / 2;
                     break;

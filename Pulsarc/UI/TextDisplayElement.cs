@@ -12,8 +12,9 @@ namespace Pulsarc.UI
         TopRight = 1,
         CenterRight = 2,
         BottomRight = 3,
-        CenterLeft = 4,
-        TopLeft = 5,
+        TopLeft = 4,
+        CenterLeft = 5,
+        BottomLeft = 6,
     }
     class TextDisplayElement : Drawable
     {
@@ -69,6 +70,9 @@ namespace Pulsarc.UI
                     break;
                 case Anchor.BottomRight:
                     newX -= size.X;
+                    newY -= size.Y;
+                    break;
+                case Anchor.BottomLeft:
                     newY -= size.Y;
                     break;
                 case Anchor.CenterLeft:
