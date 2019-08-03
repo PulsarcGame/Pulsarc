@@ -21,6 +21,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // temp: Whether or not the gameplay is automatically run
         bool autoPlay = false;
+        // Whether or not autoplay should use randomness. Added for testing reasons - FRUP
+        bool autoPlayRandom = true;
 
         // Used for delaying the gameplay's end
         Stopwatch endWatch;
@@ -69,9 +71,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init(Beatmap beatmap)
         {
             // temp: These values should be obtained from mods/config/beatmap parsing
-            rate = 1f; //1 is pretty slow and unreadable with new arc movement.
+            rate = 1f; 
             keys = 4;
-            userSpeed = 1 / rate;
+            userSpeed = 1 / rate; //1 is pretty slow and unreadable with new arc movement.
             currentCrosshairRadius = 200;
             timeOffset = 0;
 
@@ -130,7 +132,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     if (BeatmapHelper.isColumn(arc, i))
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, currentCrosshairRadius); //Needed to add currentCrosshairRadius - FRUP
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, currentCrosshairRadius);
                         objectCount++;
                     }
                 }
@@ -168,7 +170,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     foreach (HitObject arc in columns[i].hitObjects)
                     {
-                        inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1300, presses[i]));
+                        if (autoPlayRandom)
+                        {
+                            inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1300, presses[i]));
+                        }
+                        else
+                        {
+                            inputs.Add(new KeyValuePair<double, Keys>(arc.time, presses[i]));
+                        }
                     }
                 }
 

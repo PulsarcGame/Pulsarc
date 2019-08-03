@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
+using Pulsarc.Beatmaps;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
@@ -16,9 +17,11 @@ namespace Pulsarc.UI.Screens.Result
     {
         ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
 
-        ButtonRetry button_retry;
+        RetryButton button_retry;
         ReturnButton button_back;
         ButtonAdvanced button_advanced;
+
+        Beatmap beatmap;
 
         Accuracy accuracy;
         Score score;
@@ -38,13 +41,14 @@ namespace Pulsarc.UI.Screens.Result
 
         HitErrorGraph hitErrorGraph;
 
-        public ResultScreenView(Screen screen, double accuracy, string grade) : base(screen)
+        public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap) : base(screen)
         {
             judgements = new List<KeyValuePair<Judge, JudgeCount>>();
+            this.beatmap = beatmap;
 
             button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
             button_back = new ReturnButton("result_button_back", new Vector2(0, 1080));
-            button_retry = new ButtonRetry(new Vector2(1920, 1080));
+            button_retry = new RetryButton("result_button_retry", new Vector2(1920, 1080));
 
             scorecard = new Scorecard();
             background = new Background("result_background");
@@ -61,7 +65,7 @@ namespace Pulsarc.UI.Screens.Result
             mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), new Color(74, 245, 254), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
 
             button_advanced.move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
-            button_retry.move(new Vector2(-button_retry.texture.Width, -button_retry.texture.Height));
+            //button_retry.move(new Vector2(button_retry.texture.Width, -button_retry.texture.Height));
 
             this.accuracy.Update(accuracy);
             combo.Update(GetResultScreen().combo);
@@ -164,6 +168,10 @@ namespace Pulsarc.UI.Screens.Result
                 if (button_back.clicked(MouseManager.CurrentState.Position))
                 {
                     button_back.onClick();
+                }
+                else if (button_retry.clicked(MouseManager.CurrentState.Position))
+                {
+                    button_retry.onClick(beatmap);
                 }
             }
         }

@@ -65,7 +65,7 @@ namespace Pulsarc.UI.Screens.Result
                 grade = "C";
             }
 
-            View = new ResultScreenView(this, accuracyTotal, grade);
+            View = new ResultScreenView(this, accuracyTotal, grade, beatmap);
         }
     }
 }

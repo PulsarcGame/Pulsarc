@@ -9,7 +9,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int time;
 
         double angle;
-        double radius;
+        //double radius;
 
         double zLocation;
         double baseSpeed;
@@ -26,7 +26,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             erase = false;
 
             Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.xBaseRes / Pulsarc.baseRatio);
-            radius = (200f / 1920f) * screen.X;
+            //radius = (200f / 1920f) * screen.X;
 
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
             origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
@@ -72,11 +72,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             Resize(findArcRadius(zLocation, screen), false);
         }
 
-        //
         public double findZLocation(int currentTime, double speed, int crosshairRadius)
         {
-            double crosshairZLoc = 960 * 960 / crosshairRadius; //One of these 960s is half of the base width (1920), the other is probably half of the current arc/crosshair texture width (also 1920)
-            //Note: screen.X / 2 is not needed for this second 960, I tried that and it screwed with the offset of the arcs. - FRUP
+            double crosshairZLoc = 960 * (texture.Width / 2) / crosshairRadius; // Note: screen.X / 2 is not needed for the first "960", fucks up arc offset.
             int deltaTime = currentTime - time;
 
             double zLocation = deltaTime * speed + crosshairZLoc + speed;

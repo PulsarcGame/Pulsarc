@@ -18,8 +18,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void AddHitObject(HitObject hitObject, double speed, int crosshairRadius)
         {
             hitObjects.Add(hitObject);
-            //updateHitObjects.Add(new KeyValuePair<long,HitObject>(hitObject.IsSeenAt(hitObject.findZLocation(0, speed), speed), hitObject));
-            updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(hitObject.findZLocation(0, speed, crosshairRadius), speed), hitObject)); //Needed to add crosshairRadius - FRUP
+            updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(hitObject.findZLocation(0, speed, crosshairRadius), speed), hitObject));
         }
 
         public void SortUpdateHitObjects()
