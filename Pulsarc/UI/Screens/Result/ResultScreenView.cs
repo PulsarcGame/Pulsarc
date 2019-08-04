@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
 using Pulsarc.Beatmaps;
@@ -65,7 +65,6 @@ namespace Pulsarc.UI.Screens.Result
             mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), new Color(74, 245, 254), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
 
             button_advanced.move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
-            //button_retry.move(new Vector2(button_retry.texture.Width, -button_retry.texture.Height));
 
             this.accuracy.Update(accuracy);
             combo.Update(GetResultScreen().combo);
