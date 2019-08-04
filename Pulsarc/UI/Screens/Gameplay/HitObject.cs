@@ -62,28 +62,32 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
 
-        public void recalcPos(int currentTime, double speed, int crosshairRadius)
+        public void recalcPos(int currentTime, double speed, double crosshairZLoc)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
-            Vector2 screen = Pulsarc.getDimensions();
+            setZLocation(currentTime, speed * baseSpeed, crosshairZLoc);
 
-            zLocation = findZLocation(currentTime, speed * baseSpeed, crosshairRadius);
-
-            Resize(findArcRadius(zLocation, screen), false);
+            Resize(findArcRadius(), false);
         }
 
-        public double findZLocation(int currentTime, double speed, int crosshairRadius)
+        public void setZLocation(int currentTime, double speed, double crosshairZLoc)
         {
-            double crosshairZLoc = 960 * (texture.Width / 2) / crosshairRadius; // Note: screen.X / 2 is not needed for the first "960", fucks up arc offset.
+            zLocation = calcZLocation(currentTime, speed, crosshairZLoc);
+        }
+
+        public double calcZLocation(int currentTime, double speed, double crosshairZLoc)
+        {
             int deltaTime = currentTime - time;
 
-            double zLocation = deltaTime * speed + crosshairZLoc + speed;
+            double zLocation = deltaTime * speed + speed + crosshairZLoc;
 
             return zLocation;
         }
         
-        public float findArcRadius(double zLocation, Vector2 screen)
+        public float findArcRadius()
         {
+            Vector2 screen = Pulsarc.getDimensions();
+
             float radius = (float)(960 / zLocation * (screen.X / 2));
 
             return radius;
@@ -91,15 +95,17 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         //I'm not sure what this is supposed to do and nothing I changed here seemed to change anything.
         //I kept the original comment/formula just in case its needed for reference. - FRUP
-        public int IsSeenAt(double distance, double speed)
+        public int IsSeenAt(int currentTime, double speed, double crosshairZLoc)
         {
             /* Reverse formula for determining when an arc will first appear on screen
             return (int) (Math.Pow(curveFixing * (distance * speed + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);*/
 
-            return (int) ((960 * (Pulsarc.xBaseRes / 2)) / distance); //I probably shouldn't use Pulsarc.xBaseRes here should I? lol
+            //return (int)(((zLocation - speed - crosshairZLoc) / speed) + time); 
+            int wat = (int)calcZLocation(currentTime, speed, crosshairZLoc);
+            System.Diagnostics.Debug.WriteLine(wat);
+            return wat;
         }
 
-        //Things do change if I screw with this method, but idk why. - FRUP
         public bool IsSeen()
         {
             return zLocation > 0;

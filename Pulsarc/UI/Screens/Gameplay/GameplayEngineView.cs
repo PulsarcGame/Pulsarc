@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init()
         {
             // Initialize UI depending on skin config
-            crosshair = new Crosshair(GetGameplayEngine().currentCrosshairRadius);
+            crosshair = GetGameplayEngine().currentCrosshair;
 
             scoreDisplay = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), centered: true);
             accuracyDisplay = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), centered: true);
@@ -66,14 +66,23 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Draw everything
             crosshair.Draw();
+            drawArcs();
+            accuracyDisplay.Draw();
+            scoreDisplay.Draw();
+            comboDisplay.Draw();
+            judgeBox.Draw();
+            accMeter.Draw();
+        }
 
+        private void drawArcs()
+        {
             bool skip;
             for (int i = 0; i < GetGameplayEngine().keys; i++)
             {
                 skip = false;
-                for (int k = 0; k< GetGameplayEngine().columns[i].updateHitObjects.Count && !skip; k++)
+                for (int k = 0; k < GetGameplayEngine().columns[i].updateHitObjects.Count && !skip; k++)
                 {
-                    
+
                     if (GetGameplayEngine().columns[i].updateHitObjects[k].Value.IsSeen())
                     {
                         GetGameplayEngine().columns[i].updateHitObjects[k].Value.Draw();
@@ -84,12 +93,6 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
                 }
             }
-
-            accuracyDisplay.Draw();
-            scoreDisplay.Draw();
-            comboDisplay.Draw();
-            judgeBox.Draw();
-            accMeter.Draw();
         }
 
         private float getSkinnablePosition(string key)
