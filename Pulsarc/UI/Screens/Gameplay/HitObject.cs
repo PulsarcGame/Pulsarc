@@ -92,18 +92,11 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             return radius;
         }
-
-        //I'm not sure what this is supposed to do and nothing I changed here seemed to change anything.
-        //I kept the original comment/formula just in case its needed for reference. - FRUP
-        public int IsSeenAt(int currentTime, double speed, double crosshairZLoc)
+        
+        public int IsSeenAt(double speed, double crosshairZLoc)
         {
-            /* Reverse formula for determining when an arc will first appear on screen
-            return (int) (Math.Pow(curveFixing * (distance * speed + targetDisappearDistance), 1 / exponent) - disappearDistanceFixing);*/
-
-            //return (int)(((zLocation - speed - crosshairZLoc) / speed) + time); 
-            int wat = (int)calcZLocation(currentTime, speed, crosshairZLoc);
-            System.Diagnostics.Debug.WriteLine(wat);
-            return wat;
+            // Reverse formula for determining when an arc will first appear on screen
+            return (int)(time - (crosshairZLoc / speed));
         }
 
         public bool IsSeen()

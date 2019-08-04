@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void AddHitObject(HitObject hitObject, double speed, double crosshairZLoc)
         {
             hitObjects.Add(hitObject);
-            updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt((int)hitObject.calcZLocation(0, speed, crosshairZLoc), speed, crosshairZLoc), hitObject));
+            updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
         }
 
         public void SortUpdateHitObjects()
