@@ -20,7 +20,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public static bool active = false;
 
         // temp: Whether or not the gameplay is automatically run
-        bool autoPlay = true;
+        bool autoPlay = false;
         // Whether or not autoplay should use randomness. Added for testing reasons - FRUP
         bool autoPlayRandom = false;
 
@@ -79,7 +79,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             keys = 4;
             userSpeed = 5 / rate; //1 is pretty slow and unreadable with new arc movement.
 
-            crosshair = new Crosshair(200); // 200 = base crosshair radius
+            crosshair = new Crosshair(300); // 300 = base crosshair radius in intralism
             timeOffset = 0;
 
             // Initialize default variables, parse beatmap
