@@ -20,8 +20,8 @@ namespace Pulsarc.UI.Buttons
         {
             ScreenManager.RemoveScreen(true);
             GameplayEngine gameplay = new GameplayEngine();
-            ScreenManager.AddScreen(gameplay);
             gameplay.Init(beatmap);
+            ScreenManager.AddScreen(gameplay);
         }
     }
 }

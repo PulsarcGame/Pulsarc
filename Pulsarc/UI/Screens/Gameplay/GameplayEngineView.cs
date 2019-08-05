@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init()
         {
             // Initialize UI depending on skin config
-            crosshair = GetGameplayEngine().currentCrosshair;
+            crosshair = GetGameplayEngine().crosshair;
 
             scoreDisplay = new Score(new Vector2(getSkinnablePosition("ScoreX"), getSkinnablePosition("ScoreY")), centered: true);
             accuracyDisplay = new Accuracy(new Vector2(getSkinnablePosition("AccuracyX"), getSkinnablePosition("AccuracyY")), centered: true);

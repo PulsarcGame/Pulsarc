@@ -41,8 +41,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Gameplay Elements
 
         public double timeOffset;
-        //public int currentCrosshairRadius;
-        public Crosshair currentCrosshair;
+
+        public Crosshair crosshair;
         public double userSpeed;
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
@@ -71,12 +71,15 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public void Init(Beatmap beatmap)
         {
+            // Reset in case it wasn't properly handled outside
+            Reset();
+
             // temp: These values should be obtained from mods/config/beatmap parsing
             rate = 1f; 
             keys = 4;
-            userSpeed = 1 / rate; //1 is pretty slow and unreadable with new arc movement.
-            //currentCrosshairRadius = 200;
-            currentCrosshair = new Crosshair(200);
+            userSpeed = 5 / rate; //1 is pretty slow and unreadable with new arc movement.
+
+            crosshair = new Crosshair(200); // 200 = base crosshair radius
             timeOffset = 0;
 
             // Initialize default variables, parse beatmap
@@ -134,7 +137,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     if (BeatmapHelper.isColumn(arc, i))
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, currentCrosshair.getZLocation());
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, crosshair.getZLocation());
                         objectCount++;
                     }
                 }
@@ -276,7 +279,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Process the new position of this object
-                    columns[i].updateHitObjects[k].Value.recalcPos((int)time, currentSpeedMultiplier, currentCrosshair.getZLocation());
+                    columns[i].updateHitObjects[k].Value.recalcPos((int)time, currentSpeedMultiplier, crosshair.getZLocation());
                     atLeastOne = true;
 
                     // Ignore the following objects if we have reached the ignored distance
