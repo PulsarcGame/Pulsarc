@@ -7,6 +7,7 @@ using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
 using Pulsarc.UI.Screens.SongSelect;
+using Pulsarc.Utils;
 using Wobble.Input;
 using Wobble.Screens;
 
@@ -52,11 +53,12 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         public override void Update(GameTime gameTime)
         {
-            if (MouseManager.IsUniqueClick(MouseButton.Left))
+            if (InputManager.isLeftClick())
             {
+                Point pos = InputManager.lastMouseClick.Key.Position;
                 foreach (NavigationButton button in navButtons)
                 {
-                    if (button.clicked(MouseManager.CurrentState.Position))
+                    if (button.clicked(pos))
                     {
                         button.navigate();
                     }

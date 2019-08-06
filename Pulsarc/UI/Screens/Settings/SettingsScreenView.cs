@@ -34,9 +34,9 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Update(GameTime gameTime)
         {
-            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            while (InputManager.keyboardPresses.Count > 0)
             {
-                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
                 {

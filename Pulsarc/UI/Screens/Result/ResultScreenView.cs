@@ -153,22 +153,24 @@ namespace Pulsarc.UI.Screens.Result
 
         public override void Update(GameTime gameTime)
         {
-            while (KeyboardInputManager.keyboardPresses.Count > 0)
+            while (InputManager.keyboardPresses.Count > 0)
             {
-                KeyValuePair<double, Keys> press = KeyboardInputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
                 {
                     ScreenManager.RemoveScreen(true);
                 }
             }
-            if (MouseManager.IsUniqueClick(MouseButton.Left))
+
+            if (InputManager.isLeftClick())
             {
-                if (button_back.clicked(MouseManager.CurrentState.Position))
+                Point pos = InputManager.lastMouseClick.Key.Position;
+                if (button_back.clicked(pos))
                 {
                     button_back.onClick();
                 }
-                else if (button_retry.clicked(MouseManager.CurrentState.Position))
+                else if (button_retry.clicked(pos))
                 {
                     button_retry.onClick(beatmap);
                 }

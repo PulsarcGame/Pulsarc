@@ -91,7 +91,7 @@ namespace Pulsarc
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             // Start the thread listening for user input
-            KeyboardInputManager.StartThread();
+            InputManager.StartThread();
 
             // Fps
             fpsDisplay = new FPS(new Vector2());
