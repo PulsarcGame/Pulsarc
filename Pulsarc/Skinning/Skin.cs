@@ -12,13 +12,13 @@ namespace Pulsarc.Skinning
 {
     static class Skin
     {
-        static private bool loaded = false;
+        private static bool loaded = false;
 
-        static public Texture2D defaultTexture;
+        public static Texture2D defaultTexture;
 
-        static public Dictionary<String, Texture2D> assets { get; set; }
-        static public Dictionary<int, Texture2D> judges;
-        static public Dictionary<String, IniData> configs { get; set; }
+        public static Dictionary<string, Texture2D> assets { get; set; }
+        public static Dictionary<int, Texture2D> judges;
+        public static Dictionary<string, IniData> configs { get; set; }
 
         static public void LoadSkin(string name)
         {
@@ -141,22 +141,22 @@ namespace Pulsarc.Skinning
             return cropped;
         }
 
-        static public int getConfigInt(string config, string section, string key)
+        static public int GetConfigInt(string config, string section, string key)
         {
             return int.Parse(configs[config][section][key]);
         }
 
-        static public float getConfigFloat(string config, string section, string key)
+        static public float GetConfigFloat(string config, string section, string key)
         {
             return float.Parse(configs[config][section][key], CultureInfo.InvariantCulture);
         }
 
-        static public Anchor getConfigAnchor(string config, string section, string key)
+        static public Anchor GetConfigAnchor(string config, string section, string key)
         {
             return (Anchor) Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
         }
 
-        static public bool isLoaded()
+        static public bool IsLoaded()
         {
             return loaded;
         }

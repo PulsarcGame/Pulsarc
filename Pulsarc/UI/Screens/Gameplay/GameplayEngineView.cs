@@ -96,7 +96,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private float getSkinnablePosition(string key)
         {
-            return Skin.getConfigFloat("gameplay", "Positions", key);
+            return Skin.GetConfigFloat("gameplay", "Positions", key);
         }
 
         public bool IsActive()

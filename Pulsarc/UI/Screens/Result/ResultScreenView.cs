@@ -93,17 +93,17 @@ namespace Pulsarc.UI.Screens.Result
 
         private float getSkinnablePosition(string key)
         {
-            return Skin.getConfigFloat("result_screen", "Positions", key);
+            return Skin.GetConfigFloat("result_screen", "Positions", key);
         }
 
         private int getSkinnableInt(string key)
         {
-            return Skin.getConfigInt("result_screen", "Positions", key);
+            return Skin.GetConfigInt("result_screen", "Positions", key);
         }
 
         private Anchor getSkinnableAnchor(string key)
         {
-            return Skin.getConfigAnchor("result_screen", "Positions", key);
+            return Skin.GetConfigAnchor("result_screen", "Positions", key);
         }
 
         private void addJudgeInfo(string name)

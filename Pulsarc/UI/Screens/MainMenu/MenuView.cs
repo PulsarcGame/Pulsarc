@@ -37,17 +37,17 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         private float GetSkinnablePosition(string key)
         {
-            return Skin.getConfigFloat("main_menu", "Positions", key);
+            return Skin.GetConfigFloat("main_menu", "Positions", key);
         }
 
         private int GetSkinnableInt(string key)
         {
-            return Skin.getConfigInt("main_menu", "Positions", key);
+            return Skin.GetConfigInt("main_menu", "Positions", key);
         }
 
         private Anchor GetSkinnableAnchor(string key)
         {
-            return Skin.getConfigAnchor("main_menu", "Positions", key);
+            return Skin.GetConfigAnchor("main_menu", "Positions", key);
         }
 
         public override void Update(GameTime gameTime)

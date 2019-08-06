@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Wobble.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Beatmaps;
+using Pulsarc.Skinning;
 
 namespace Pulsarc.UI.Buttons
 {
