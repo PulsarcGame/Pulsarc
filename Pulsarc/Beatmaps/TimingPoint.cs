@@ -1,5 +1,4 @@
-﻿
-namespace Pulsarc.Beatmaps
+﻿namespace Pulsarc.Beatmaps
 {
     public class TimingPoint
     {

@@ -139,7 +139,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 // Add arcs to the columns
                 for (int i = 0; i < keys; i++)
                 {
-                    if (BeatmapHelper.isColumn(arc, i))
+                    if (BeatmapHelper.IsColumn(arc, i))
                     {
                         columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, crosshair.GetZLocation());
                         objectCount++;

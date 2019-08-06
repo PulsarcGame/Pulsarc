@@ -154,16 +154,16 @@ namespace Pulsarc.Beatmaps
             using (StreamWriter file =
                 new StreamWriter(file_path))
             {
-                writeProperty(file, beatmap, "FormatVersion");
-                writeProperty(file, beatmap, "Title");
-                writeProperty(file, beatmap, "Artist");
-                writeProperty(file, beatmap, "Mapper");
-                writeProperty(file, beatmap, "Version");
-                writeProperty(file, beatmap, "Audio");
+                WriteProperty(file, beatmap, "FormatVersion");
+                WriteProperty(file, beatmap, "Title");
+                WriteProperty(file, beatmap, "Artist");
+                WriteProperty(file, beatmap, "Mapper");
+                WriteProperty(file, beatmap, "Version");
+                WriteProperty(file, beatmap, "Audio");
 
                 file.WriteLine("");
-                writeProperty(file, beatmap, "KeyCount");
-                writeProperty(file, beatmap, "Difficulty");
+                WriteProperty(file, beatmap, "KeyCount");
+                WriteProperty(file, beatmap, "Difficulty");
 
                 file.WriteLine("");
                 file.WriteLine("Events:");
@@ -199,7 +199,7 @@ namespace Pulsarc.Beatmaps
             }
         }
 
-        static private void writeProperty(StreamWriter file, Beatmap beatmap, string property)
+        static private void WriteProperty(StreamWriter file, Beatmap beatmap, string property)
         {
             try
             {
@@ -212,7 +212,7 @@ namespace Pulsarc.Beatmaps
             }
         }
 
-        static public bool isColumn(Arc arc, int k)
+        static public bool IsColumn(Arc arc, int k)
         {
             // Use bitwise enumeration to determine if an arc is on the specified column
             return ((arc.type >> k) & 1) != 0;

@@ -1,7 +1,6 @@
 ﻿using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.Beatmaps
 {
@@ -75,7 +74,7 @@ namespace Pulsarc.Beatmaps
             {
                 for (int k = 0; k < beatmap.KeyCount; k++)
                 {
-                    if (BeatmapHelper.isColumn(arc, k))
+                    if (BeatmapHelper.IsColumn(arc, k))
                     {
                         columns[k].Add(arc);
                     }

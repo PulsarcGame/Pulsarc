@@ -1,4 +1,3 @@
-using IniParser;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,7 +8,6 @@ using Pulsarc.UI.Screens.MainMenu;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -17,7 +15,6 @@ using Wobble.Input;
 using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
-using Wobble.Window;
 
 namespace Pulsarc
 {
@@ -26,17 +23,17 @@ namespace Pulsarc
     /// </summary>
     public class Pulsarc : Game
     {
-        static public Pulsarc pulsarc;
-        static public GraphicsDeviceManager graphics;
-        static public SpriteBatch spriteBatch;
+        public static Pulsarc pulsarc;
+        public static GraphicsDeviceManager graphics;
+        public static SpriteBatch spriteBatch;
 
         // Width used for reference in making the game responsive
-        static public int xBaseRes = 1920;
-        static public float baseRatio = 16/9f;
+        public static int xBaseRes = 1920;
+        public static float baseRatio = 16 / 9f;
 
         // Whether or not the in-game cursor is displayed 
-        static public bool display_cursor = true;
-        static public Cursor cursor;
+        public static bool display_cursor = true;
+        public static Cursor cursor;
 
         // The camera controlling the game's viewport
         Camera game_camera;
@@ -46,7 +43,7 @@ namespace Pulsarc
         Stopwatch fpsWatch;
         FPS fpsDisplay;
         int fpsResolution;
-        static public int frames;
+        public static int frames;
         bool converting = false;
 
         public Pulsarc()
