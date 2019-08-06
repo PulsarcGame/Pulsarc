@@ -44,7 +44,7 @@ namespace Pulsarc.Beatmaps
                     {
                         times.Add(arc.time);
                     }
-                    double stdDiff = StdDeviation.calc(times);
+                    double stdDiff = StdDeviation.Calc(times);
 
                     double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff) * keyDiff[key];
                     diff += c;
@@ -57,7 +57,7 @@ namespace Pulsarc.Beatmaps
                 key++;
             }
 
-            var std = diffs.Count > 0 ? StdDeviation.calc(diffs) : 0;
+            var std = diffs.Count > 0 ? StdDeviation.Calc(diffs) : 0;
 
             return diff + std + (previousStrain / strainDecay);
         }

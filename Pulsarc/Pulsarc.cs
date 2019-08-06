@@ -161,8 +161,8 @@ namespace Pulsarc
                 BeatmapConverter converter;
 
                 Config.Reload();
-                string convertFrom = Config.iniData["Converting"]["Game"];
-                string toConvert = Config.iniData["Converting"]["Path"];
+                string convertFrom = Config.get["Converting"]["Game"];
+                string toConvert = Config.get["Converting"]["Path"];
 
                 switch (convertFrom.ToLower()) 
                 { 

@@ -53,7 +53,7 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.isLeftClick())
+            if (InputManager.IsLeftClick())
             {
                 Point pos = InputManager.lastMouseClick.Key.Position;
                 foreach (NavigationButton button in navButtons)

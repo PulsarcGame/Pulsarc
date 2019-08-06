@@ -33,7 +33,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                     if (parts.Count > 1)
                     {
                         string key = parts.Dequeue();
-                        string value = String.Join(":", parts.ToArray()).Trim();
+                        string value = string.Join(":", parts.ToArray()).Trim();
 
                         if (state == "")
                         {
@@ -56,7 +56,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                 case "Mode":
                                     try
                                     {
-                                        Mode = Int16.Parse(value);
+                                        Mode = short.Parse(value);
                                     }
                                     catch
                                     {
@@ -64,7 +64,8 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     break;
                             }
-                        } else
+                        }
+                        else
                         {
                             switch(state)
                             {
@@ -82,7 +83,8 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     break;
                             }
                         }
-                    } else
+                    }
+                    else
                     {
                         switch(line)
                         {

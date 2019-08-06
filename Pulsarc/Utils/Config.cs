@@ -9,7 +9,7 @@ namespace Pulsarc.Utils
     static class Config
     {
         private static FileIniDataParser parser;
-        public static IniData iniData;
+        public static IniData get;
 
         public static Dictionary<string, Keys> bindings;
 
@@ -20,7 +20,7 @@ namespace Pulsarc.Utils
             parser = new FileIniDataParser();
             bindings = new Dictionary<string, Keys>();
 
-            iniData = parser.ReadFile("config.ini");
+            get = parser.ReadFile("config.ini");
 
             AddBinding("Left");
             AddBinding("Up");
@@ -34,7 +34,7 @@ namespace Pulsarc.Utils
         public static void Reload()
         {
             bindings.Clear();
-            iniData = parser.ReadFile("config.ini");
+            get = parser.ReadFile("config.ini");
 
             AddBinding("Left");
             AddBinding("Up");
@@ -48,18 +48,18 @@ namespace Pulsarc.Utils
 
         private static void AddBinding(string key)
         {
-            bindings.Add(key, (Keys)Enum.Parse(keyType, iniData["Bindings"][key]));
+            bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
         }
 
         public static int GetInt(string category, string key)
         {
-            return int.Parse(iniData[category][key]);
+            return int.Parse(get[category][key]);
         }
 
         public static void SetInt(string category, string key, int value)
         {
-            iniData[category][key] = value.ToString();
-            parser.WriteFile("config.ini", iniData);
+            get[category][key] = value.ToString();
+            parser.WriteFile("config.ini", get);
         }
     }
 }

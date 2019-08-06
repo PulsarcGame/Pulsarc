@@ -79,19 +79,22 @@ namespace Pulsarc.Utils
                         {
                             lastMouseClick.Key = mouseState;
                             lastMouseClick.Value = 1;
-                        } else if (lastMouseClick.Value == 1 && mouseState.LeftButton == ButtonState.Released)
+                        }
+                        else if (lastMouseClick.Value == 1 && mouseState.LeftButton == ButtonState.Released)
                         {
                             lastMouseClick.Key = mouseState;
                             lastMouseClick.Value = 2;
                         }
-                    } catch
+                    }
+                    catch
                     {
+
                     }
                 }
             }
         }
 
-        static public bool isLeftClick()
+        static public bool IsLeftClick()
         {
             if(lastMouseClick.Value == 2)
             {

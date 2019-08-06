@@ -110,7 +110,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             currentBeatmap = beatmap;
 
             // Set the path of the song to be played later on
-            AudioManager.song_path = Directory.GetParent(currentBeatmap.path).FullName + "\\" + currentBeatmap.Audio;
+            AudioManager.songPath = Directory.GetParent(currentBeatmap.path).FullName + "\\" + currentBeatmap.Audio;
 
             // Create columns and their hitobjects
             for (int i = 1; i <= keys; i++)

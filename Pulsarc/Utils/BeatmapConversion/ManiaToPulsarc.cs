@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Pulsarc.Beatmaps;
 using System.IO;
 
@@ -9,13 +8,13 @@ namespace Pulsarc.Utils.BeatmapConversion
     {
         int msOffset = 0;
 
-        public List<Beatmap> Convert(string folder_path)
+        public List<Beatmap> Convert(string folderPath)
         {
             List<Beatmap> results = new List<Beatmap>();
 
-            if (Directory.Exists(folder_path))
+            if (Directory.Exists(folderPath))
             {
-                foreach (string file in Directory.GetFiles(folder_path, "*.osu"))
+                foreach (string file in Directory.GetFiles(folderPath, "*.osu"))
                 {
                     Beatmap result = new Beatmap();
                     ManiaBeatmap maniaBeatmap = new ManiaBeatmap(file);
@@ -48,7 +47,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                 break;
                         }
 
-                        int time = Int32.Parse(parts[2]) + msOffset;
+                        int time = int.Parse(parts[2]) + msOffset;
                         result.arcs.Add(new Arc(time, arc));
                     }
                     results.Add(result);
@@ -58,13 +57,13 @@ namespace Pulsarc.Utils.BeatmapConversion
             return results;
         }
 
-        public void Save(string folder_path)
+        public void Save(string folderPath)
         {
-            foreach (Beatmap map in Convert(folder_path))
+            foreach (Beatmap map in Convert(folderPath))
             {
                 if (map.Audio != null)
                 {
-                    string audioPath = folder_path + "/" + map.Audio;
+                    string audioPath = folderPath + "/" + map.Audio;
                     if (File.Exists(audioPath))
                     {
                         int id = 0;

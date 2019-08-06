@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.Utils
 {
@@ -60,15 +56,17 @@ namespace Pulsarc.Utils
             get { return _pos; }
             set
             {
-                float leftBarrier = (float)_viewportWidth *
+                float leftBarrier = _viewportWidth *
                        .5f / _zoom;
                 float rightBarrier = _worldWidth -
-                       (float)_viewportWidth * .5f / _zoom;
+                       _viewportWidth * .5f / _zoom;
                 float topBarrier = _worldHeight -
-                       (float)_viewportHeight * .5f / _zoom;
-                float bottomBarrier = (float)_viewportHeight *
+                       _viewportHeight * .5f / _zoom;
+                float bottomBarrier = _viewportHeight *
                        .5f / _zoom;
+
                 _pos = value;
+
                 if (_pos.X < leftBarrier)
                     _pos.X = leftBarrier;
                 if (_pos.X > rightBarrier)

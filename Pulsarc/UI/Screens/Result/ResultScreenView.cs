@@ -163,7 +163,7 @@ namespace Pulsarc.UI.Screens.Result
                 }
             }
 
-            if (InputManager.isLeftClick())
+            if (InputManager.IsLeftClick())
             {
                 Point pos = InputManager.lastMouseClick.Key.Position;
                 if (button_back.clicked(pos))

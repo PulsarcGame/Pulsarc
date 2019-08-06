@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Diagnostics;
@@ -9,34 +8,33 @@ namespace Pulsarc.Utils
 {
     static class AudioManager
     {
-        static public bool running = false;
-        static public bool initialized = false;
-        static public bool active = false;
-        static public bool activeThreadLimiterWatch = false;
-        static public bool paused = false;
-        static public string song_path = "";
-        static public double offset = 35;
-        static public double startDelayMs = 1000;
-        static public float audioRate = 1;
+        public static bool running = false;
+        public static bool initialized = false;
+        public static bool active = false;
+        public static bool activeThreadLimiterWatch = false;
+        public static bool paused = false;
+        public static string songPath = "";
+        public static double offset = 35;
+        public static double startDelayMs = 1000;
+        public static float audioRate = 1;
 
         static Thread audioThread;
         static AudioTrack song;
         static Stopwatch threadLimiterWatch;
-        static GameTime lastTime;
 
-        static public void Start()
+        public static void Start()
         {
             audioThread = new Thread(new ThreadStart(AudioPlayer));
             audioThread.Start();
         }
 
-        static public void AudioPlayer()
+        public static void AudioPlayer()
         {
             threadLimiterWatch = new Stopwatch();
             threadLimiterWatch.Start();
             activeThreadLimiterWatch = true;
 
-            if (song_path == "")
+            if (songPath == "")
             {
                 return;
             }
@@ -59,7 +57,7 @@ namespace Pulsarc.Utils
             running = true;
             var threadTime = new Stopwatch();
 
-            song = new AudioTrack(song_path, false)
+            song = new AudioTrack(songPath, false)
             {
                 Rate = audioRate,
             };
@@ -88,7 +86,7 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public double getTime()
+        public static double getTime()
         {
             if(active && song.StreamLoaded) { 
                 return song.Position - offset;
@@ -98,7 +96,7 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public void deltaTime(long time)
+        public static void deltaTime(long time)
         {
             if(active)
             {
@@ -106,7 +104,7 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public void Pause()
+        public static void Pause()
         {
             if (active && !paused && song.IsPlaying)
             {
@@ -115,7 +113,7 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public void Resume()
+        public static void Resume()
         {
             if (active && paused && !song.IsPlaying)
             {
@@ -124,7 +122,7 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public void Stop()
+        public static void Stop()
         {
             if (active)
             {
@@ -138,16 +136,16 @@ namespace Pulsarc.Utils
             }
         }
 
-        static public void Reset()
+        public static void Reset()
         {
             active = false;
             paused = false;
             running = false;
-            song_path = "";
+            songPath = "";
             threadLimiterWatch.Reset();
         }
 
-        static public bool FinishedPlaying()
+        public static bool FinishedPlaying()
         {
             return !paused && !song.IsPlaying && song.IsStopped;
         }
