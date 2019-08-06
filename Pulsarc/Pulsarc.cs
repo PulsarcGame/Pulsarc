@@ -57,25 +57,25 @@ namespace Pulsarc
             Config.Initialize();
 
             // Set default resolution if not set, and fullscreen when at least one isn't set.
-            if (Config.getInt("Graphics", "ResolutionWidth") <= 0)
+            if (Config.GetInt("Graphics", "ResolutionWidth") <= 0)
             {
-                Config.setInt("Graphics","ResolutionWidth",GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
-                Config.setInt("Graphics", "FullScreen", 1);
+                Config.SetInt("Graphics","ResolutionWidth",GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+                Config.SetInt("Graphics", "FullScreen", 1);
             }
-            if (Config.getInt("Graphics", "ResolutionHeight") <= 0)
+            if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
             {
-                Config.setInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
-                Config.setInt("Graphics", "FullScreen", 1);
+                Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+                Config.SetInt("Graphics", "FullScreen", 1);
             }
 
             // Create the game's application window
             graphics = new GraphicsDeviceManager(this);
 
             // Set Graphics preferences according to config.ini
-            graphics.PreferredBackBufferWidth = Config.getInt("Graphics", "ResolutionWidth");
-            graphics.PreferredBackBufferHeight = Config.getInt("Graphics", "ResolutionHeight");
-            graphics.IsFullScreen = Config.getInt("Graphics", "FullScreen") == 1;
-            graphics.SynchronizeWithVerticalRetrace = Config.getInt("Graphics", "VSync") == 1;
+            graphics.PreferredBackBufferWidth = Config.GetInt("Graphics", "ResolutionWidth");
+            graphics.PreferredBackBufferHeight = Config.GetInt("Graphics", "ResolutionHeight");
+            graphics.IsFullScreen = Config.GetInt("Graphics", "FullScreen") == 1;
+            graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
 
             // Uncap the Update and Draw loop
             base.IsFixedTimeStep = false;
@@ -161,8 +161,8 @@ namespace Pulsarc
                 BeatmapConverter converter;
 
                 Config.Reload();
-                string convertFrom = Config.get["Converting"]["Game"];
-                string toConvert = Config.get["Converting"]["Path"];
+                string convertFrom = Config.iniData["Converting"]["Game"];
+                string toConvert = Config.iniData["Converting"]["Path"];
 
                 switch (convertFrom.ToLower()) 
                 { 

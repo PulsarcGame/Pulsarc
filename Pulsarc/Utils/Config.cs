@@ -3,67 +3,63 @@ using IniParser.Model;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.Utils
 {
     static class Config
     {
+        private static FileIniDataParser parser;
+        public static IniData iniData;
 
-        static public FileIniDataParser parser;
-        static public IniData get;
+        public static Dictionary<string, Keys> bindings;
 
-        static public Dictionary<string, Keys> bindings;
+        private static Type keyType = Keys.A.GetType();
 
-        static private Type keyType = Keys.A.GetType();
-
-        static public void Initialize()
+        public static void Initialize()
         {
             parser = new FileIniDataParser();
             bindings = new Dictionary<string, Keys>();
 
-            get = parser.ReadFile("config.ini");
+            iniData = parser.ReadFile("config.ini");
 
+            AddBinding("Left");
+            AddBinding("Up");
+            AddBinding("Down");
+            AddBinding("Right");
 
-            addBinding("Left");
-            addBinding("Up");
-            addBinding("Down");
-            addBinding("Right");
-
-            addBinding("Pause");
-            addBinding("Continue");
+            AddBinding("Pause");
+            AddBinding("Continue");
         }
 
-        static public void Reload()
+        public static void Reload()
         {
             bindings.Clear();
-            get = parser.ReadFile("config.ini");
+            iniData = parser.ReadFile("config.ini");
 
+            AddBinding("Left");
+            AddBinding("Up");
+            AddBinding("Down");
+            AddBinding("Right");
 
-            addBinding("Left");
-            addBinding("Up");
-            addBinding("Down");
-            addBinding("Right");
-
-            addBinding("Pause");
-            addBinding("Continue");
+            AddBinding("Pause");
+            AddBinding("Continue");
         }
 
 
-        static private void addBinding(string key)
+        private static void AddBinding(string key)
         {
-            bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
+            bindings.Add(key, (Keys)Enum.Parse(keyType, iniData["Bindings"][key]));
         }
 
-        static public int getInt(string category, string key)
+        public static int GetInt(string category, string key)
         {
-            return int.Parse(get[category][key]);
+            return int.Parse(iniData[category][key]);
         }
 
-        static public void setInt(string category, string key, int value)
+        public static void SetInt(string category, string key, int value)
         {
-            get[category][key] = value.ToString();
-            parser.WriteFile("config.ini", get);
+            iniData[category][key] = value.ToString();
+            parser.WriteFile("config.ini", iniData);
         }
     }
 }
