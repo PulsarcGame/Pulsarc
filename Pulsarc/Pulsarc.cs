@@ -56,6 +56,18 @@ namespace Pulsarc
             // Load user config
             Config.Initialize();
 
+            // Set default resolution if not set, and fullscreen when at least one isn't set.
+            if (Config.getInt("Graphics", "ResolutionWidth") <= 0)
+            {
+                Config.setInt("Graphics","ResolutionWidth",GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+                Config.setInt("Graphics", "FullScreen", 1);
+            }
+            if (Config.getInt("Graphics", "ResolutionHeight") <= 0)
+            {
+                Config.setInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+                Config.setInt("Graphics", "FullScreen", 1);
+            }
+
             // Create the game's application window
             graphics = new GraphicsDeviceManager(this);
 

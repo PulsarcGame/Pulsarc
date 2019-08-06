@@ -74,10 +74,14 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Reset in case it wasn't properly handled outside
             Reset();
 
+            // Set the offset for each play before starting audio
+            // TODO: add local beatmap offset
+            AudioManager.offset = Config.getInt("Audio", "GlobalOffset");
+
             // temp: These values should be obtained from mods/config/beatmap parsing
             rate = 1f; 
             keys = 4;
-            userSpeed = 5 / rate; //1 is pretty slow and unreadable with new arc movement.
+            userSpeed = Config.getInt("Gameplay", "ApproachSpeed") / 5f / rate; // "5f" is used to give more choice in config for speed
 
             crosshair = new Crosshair(300); // 300 = base crosshair radius in intralism
             timeOffset = 0;

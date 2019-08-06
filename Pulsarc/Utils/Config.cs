@@ -59,5 +59,11 @@ namespace Pulsarc.Utils
         {
             return int.Parse(get[category][key]);
         }
+
+        static public void setInt(string category, string key, int value)
+        {
+            get[category][key] = value.ToString();
+            parser.WriteFile("config.ini", get);
+        }
     }
 }
