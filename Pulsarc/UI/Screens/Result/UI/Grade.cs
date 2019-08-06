@@ -12,7 +12,7 @@ namespace Pulsarc.UI.Screens.Result.UI
         {
             Resize(texture.Width * scale);
 
-            changePosition(new Vector2(position.X - (texture.Width * scale) / 2, position.Y - (texture.Height * scale) / 2));
+            ChangePosition(new Vector2(position.X - (texture.Width * scale) / 2, position.Y - (texture.Height * scale) / 2));
         }
     }
 }

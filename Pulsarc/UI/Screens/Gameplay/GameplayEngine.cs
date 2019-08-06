@@ -14,7 +14,7 @@ namespace Pulsarc.UI.Screens.Gameplay
     public class GameplayEngine : Screen
     {
         public override ScreenView View { get ; protected set; }
-        private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
+        private GameplayEngineView GetGameplayView() { return (GameplayEngineView)View; }
 
         // Whether or not the gameplay engine is currently running
         public static bool active = false;
@@ -141,14 +141,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     if (BeatmapHelper.isColumn(arc, i))
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, crosshair.getZLocation());
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, crosshair.GetZLocation());
                         objectCount++;
                     }
                 }
             }
 
             // Compute the beatmap's highest possible score, for displaying the current display_score later on
-            max_score = Scoring.getMaxScore(objectCount);
+            max_score = Scoring.GetMaxScore(objectCount);
 
             // Sort the hitobjects according to their first appearance for optimizing update/draw
             foreach (Column col in columns)
@@ -199,7 +199,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             // Once everything is loaded, initialize the view
-            getGameplayView().Init();
+            GetGameplayView().Init();
 
             // Start audio and gameplay
             AudioManager.Start();
@@ -230,7 +230,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             // Handle user input in priority
-            handleInputs();
+            HandleInputs();
 
             // Gameplay commands
 
@@ -283,7 +283,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Process the new position of this object
-                    columns[i].updateHitObjects[k].Value.recalcPos((int)time, currentSpeedMultiplier, crosshair.getZLocation());
+                    columns[i].updateHitObjects[k].Value.RecalcPos((int)time, currentSpeedMultiplier, crosshair.GetZLocation());
                     atLeastOne = true;
 
                     // Ignore the following objects if we have reached the ignored distance
@@ -293,7 +293,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Determine whether or not this note has been missed by the user, and take action if so
-                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < time)
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.GetMiss().judge * rate < time)
                     {
                         // Remove the hitobject and reset the combo
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
@@ -302,19 +302,19 @@ namespace Pulsarc.UI.Screens.Gameplay
                         combo = 0;
 
                         // Add a miss to the score and obtained judgements, then display it
-                        JudgementValue miss = Judgement.getMiss();
+                        JudgementValue miss = Judgement.GetMiss();
 
                         KeyValuePair<long, int> hitResult = Scoring.processHitResults(miss, score, combo_multiplier);
                         score = hitResult.Key;
                         combo_multiplier = hitResult.Value;
-                        getGameplayView().addJudge(time, miss.score);
+                        GetGameplayView().AddJudge(time, miss.score);
                         judgements.Add(miss);
                     }
                 }
             }
 
             // Reprocess the displayed score
-            updateScoreDisplay();
+            UpdateScoreDisplay();
 
             // Update other display elements
             View.Update(gameTime);
@@ -337,13 +337,13 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
         }
 
-        private void updateScoreDisplay()
+        private void UpdateScoreDisplay()
         {
             // Formula for the display_score according to the maximum displayed score
             score_display = (int) (score / (float) max_score * Scoring.max_score);
         }
 
-        public void deltaTime(long delta)
+        public void DeltaTime(long delta)
         {
             // Move the gameplay backwards or forward in time
             AudioManager.deltaTime(delta);
@@ -376,7 +376,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             currentArcsSpeed = 1;
         }
 
-        public void handleInputs()
+        public void HandleInputs()
         {
             while (InputManager.keyboardPresses.Count > 0 
                 && InputManager.keyboardPresses.Peek().Key <= AudioManager.getTime()) // Prevents future input from being handled. Useful for auto. Remove for quick auto result testing
@@ -396,14 +396,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                         int error = (int)((pressed.time - press.Key) / rate);
 
                         // Get the judge for the timing error
-                        JudgementValue judge = Judgement.getErrorJudgementValue(Math.Abs(error));
+                        JudgementValue judge = Judgement.GetErrorJudgementValue(Math.Abs(error));
 
                         // If no judge is obtained, it is a ghost hit and is ignored
                         if (judge != null)
                         {
                             // Otherwise, handle the hit according to the judge
 
-                            getGameplayView().addHit(press.Key, error, judge.score);
+                            GetGameplayView().AddHit(press.Key, error, judge.score);
 
                             columns[column].hitObjects[0].erase = true;
                             columns[column].hitObjects.RemoveAt(0);

@@ -7,7 +7,6 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngineView : ScreenView
     {
-
         // UI Elements
 
         Accuracy accuracyDisplay;
@@ -34,13 +33,13 @@ namespace Pulsarc.UI.Screens.Gameplay
                                        , new Vector2(getSkinnablePosition("AccMeterWidth"), getSkinnablePosition("AccMeterHeight")));
         }
 
-        public void addHit(double time, int error, int judge)
+        public void AddHit(double time, int error, int judge)
         {
             accMeter.addError(time, error);
-            addJudge(time, judge);
+            AddJudge(time, judge);
         }
 
-        public void addJudge(double time, int judge)
+        public void AddJudge(double time, int judge)
         {
             judgeBox.Add(time, judge);
         }
@@ -66,7 +65,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Draw everything
             crosshair.Draw();
-            drawArcs();
+            DrawArcs();
             accuracyDisplay.Draw();
             scoreDisplay.Draw();
             comboDisplay.Draw();
@@ -74,7 +73,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             accMeter.Draw();
         }
 
-        private void drawArcs()
+        private void DrawArcs()
         {
             bool skip;
             for (int i = 0; i < GetGameplayEngine().keys; i++)
@@ -100,7 +99,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             return Skin.getConfigFloat("gameplay", "Positions", key);
         }
 
-        public bool isActive()
+        public bool IsActive()
         {
             return GameplayEngine.active;
         }

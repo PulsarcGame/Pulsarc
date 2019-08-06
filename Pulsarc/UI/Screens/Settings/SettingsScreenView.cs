@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI.Buttons;
@@ -45,9 +43,9 @@ namespace Pulsarc.UI.Screens.Settings
             }
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                if (button_back.clicked(MouseManager.CurrentState.Position))
+                if (button_back.Clicked(MouseManager.CurrentState.Position))
                 {
-                    button_back.onClick();
+                    button_back.OnClick();
                 }
             }
         }

@@ -33,7 +33,7 @@ namespace Pulsarc.UI
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
             Resize(size);
-            changePosition(position);
+            ChangePosition(position);
         }
 
         public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
@@ -63,22 +63,22 @@ namespace Pulsarc.UI
             Resize(new Vector2(size, size), resolutionScale);
         }
 
-        public void setRotation(float degrees)
+        public void SetRotation(float degrees)
         {
-            if(degrees>=-360 && degrees<=360)
+            if(degrees >= -360 && degrees <= 360)
             {
                 rotation = (float) (degrees * (Math.PI / 180));
             }
         }
 
-        static public Vector2 getResponsivePosition(Vector2 position)
+        static public Vector2 GetResponsivePattern(Vector2 position)
         {
             return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / (Pulsarc.xBaseRes / Pulsarc.baseRatio) * Pulsarc.getDimensions().Y);
         }
 
-        public void changePosition(Vector2 position)
+        public void ChangePosition(Vector2 position)
         {
-            this.position = getResponsivePosition(position);
+            this.position = GetResponsivePattern(position);
 
             Vector2 newPos = position;
             Vector2 size;
@@ -118,31 +118,31 @@ namespace Pulsarc.UI
                     break;
             }
 
-            drawPosition = getResponsivePosition(newPos);
+            drawPosition = GetResponsivePattern(newPos);
         }
 
-        public virtual void move(Vector2 position)
+        public virtual void Move(Vector2 position)
         {
-            this.position += getResponsivePosition(position);
-            this.drawPosition += getResponsivePosition(position);
+            this.position += GetResponsivePattern(position);
+            this.drawPosition += GetResponsivePattern(position);
         }
 
-        public bool clicked(Vector2 mousePos)
-        {
-            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + texture.Width && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + texture.Height;
-        }
-
-        public bool clicked(Point mousePos)
+        public bool Clicked(Vector2 mousePos)
         {
             return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + texture.Width && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + texture.Height;
         }
 
-        public bool onScreen()
+        public bool Clicked(Point mousePos)
+        {
+            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + texture.Width && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + texture.Height;
+        }
+
+        public bool OnScreen()
         {
             return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int)Pulsarc.getDimensions().Y));
         }
 
-        public bool intersects(Drawable drawable)
+        public bool Intersects(Drawable drawable)
         {
             return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height)
                 .Intersects(
@@ -153,7 +153,7 @@ namespace Pulsarc.UI
         {
             Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
 
-            if(hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+            if(hover != null && Clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {
                 hover.Draw();
             }

@@ -97,12 +97,12 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             // Used to determine where to draw each HitError on the bar
 
-            JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
+            JudgementValue judgement = Judgement.GetErrorJudgementValue(Math.Abs(error));
             
             int baseX = (int)(position.X + size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.judgements.IndexOf(judgement) * sectionLength;
-            int timeSize = Judgement.getNextJudgementValue(judgement).judge - judgement.judge;
+            int timeSize = Judgement.GetNextJudgementValue(judgement).judge - judgement.judge;
 
             float judgePos = 0;
             if(timeSize > 0)
@@ -162,7 +162,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             foreach(KeyValuePair<double, int> error in errors)
             {
-                KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.getErrorJudgementValue(Math.Abs(error.Value)));
+                KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.GetErrorJudgementValue(Math.Abs(error.Value)));
 
                 Pulsarc.spriteBatch.Draw(judgeBar.Value, position: getErrorPixelPosition(error.Value), rotation: rotation, origin: origin, color: judgeBar.Key.color * (float) LifeLeft(error.Key, lastTime));
             }

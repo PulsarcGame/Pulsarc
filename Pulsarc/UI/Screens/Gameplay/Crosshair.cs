@@ -18,12 +18,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
             Resize((float)radius);
-            changePosition(position);
+            ChangePosition(position);
 
             rotation = (float)(45 * (Math.PI / 180));
         }
 
-        public double getZLocation()
+        public double GetZLocation()
         {
             return 960 * (texture.Width / 2) / radius;
         }

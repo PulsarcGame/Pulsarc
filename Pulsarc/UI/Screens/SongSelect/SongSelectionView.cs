@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Buttons;
@@ -48,7 +46,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             background.Draw();
             foreach (BeatmapCard card in GetSongSelection().cards)
             {
-                if (card.onScreen())
+                if (card.OnScreen())
                 {
                     card.Draw();
                 }
@@ -64,7 +62,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0, (cardHeight + cardMargin) *diff / 2.5f));
+                    card.Move(new Vector2(0, (cardHeight + cardMargin) *diff / 2.5f));
                 }
 
                 lastFocus = GetSongSelection().currentFocus;
@@ -72,9 +70,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                if (button_back.clicked(MouseManager.CurrentState.Position))
+                if (button_back.Clicked(MouseManager.CurrentState.Position))
                 {
-                    button_back.onClick();
+                    button_back.OnClick();
                 }
             }
         }

@@ -13,7 +13,7 @@ namespace Pulsarc.Utils
 
         public static Dictionary<string, Keys> bindings;
 
-        private static Type keyType = Keys.A.GetType();
+        public static Type keyType = Keys.A.GetType();
 
         public static void Initialize()
         {

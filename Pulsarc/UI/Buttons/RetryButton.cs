@@ -1,8 +1,4 @@
 using Microsoft.Xna.Framework;
-using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Beatmaps;
@@ -16,7 +12,7 @@ namespace Pulsarc.UI.Buttons
         {
         }
 
-        public void onClick(Beatmap beatmap)
+        public void OnClick(Beatmap beatmap)
         {
             ScreenManager.RemoveScreen(true);
             GameplayEngine gameplay = new GameplayEngine();

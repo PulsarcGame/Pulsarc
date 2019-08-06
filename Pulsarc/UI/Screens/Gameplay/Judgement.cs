@@ -6,7 +6,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     static class Judgement
     {
-        static public List<JudgementValue> judgements = new List<JudgementValue>()
+        public static List<JudgementValue> judgements = new List<JudgementValue>()
         {
             //////////////// Judge equal to Stepmania J4 /////////////
             new JudgementValue("max",       1,      22,    320,    2,  new Color(216,   0, 255)),
@@ -17,12 +17,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             new JudgementValue("miss",      0,     200,      0,  -100,  new Color(158,  28,  28)),
         };
 
-        static public JudgementValue getMiss()
+        public static JudgementValue GetMiss()
         {
             return judgements.Last();
         }
 
-        static public JudgementValue getByName(string name)
+        public static JudgementValue GetByName(string name)
         {
             foreach(JudgementValue j in judgements)
             {
@@ -31,7 +31,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             return null;
         }
 
-        static public JudgementValue getErrorJudgementValue(int error)
+        public static JudgementValue GetErrorJudgementValue(int error)
         {
             JudgementValue result = null;
             if (error <= judgements.Last().judge)
@@ -51,7 +51,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             return result;
         }
 
-        static public JudgementValue getPreviousJudgementValue(JudgementValue judgement)
+        public static JudgementValue GetPreviousJudgementValue(JudgementValue judgement)
         {
             JudgementValue result = new JudgementValue("0",0,0,0,0,Color.White);
 
@@ -69,9 +69,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             return result;
         }
 
-        static public JudgementValue getNextJudgementValue(JudgementValue judgement)
+        public static JudgementValue GetNextJudgementValue(JudgementValue judgement)
         {
-            JudgementValue result = getMiss();
+            JudgementValue result = GetMiss();
             for (int i = 0; i < judgements.Count; i++)
             {
                 result = judgements[i];

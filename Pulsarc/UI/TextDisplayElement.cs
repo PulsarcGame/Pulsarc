@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System;
 using System.Text;
 
 namespace Pulsarc.UI
@@ -40,7 +39,7 @@ namespace Pulsarc.UI
 
             this.position = position;
             processedPosition = this.position;
-            changePosition(position);
+            ChangePosition(position);
             Update("");
         }
 
@@ -87,9 +86,9 @@ namespace Pulsarc.UI
             processedPosition.Y = newY;
         }
 
-        public override void move(Vector2 position)
+        public override void Move(Vector2 position)
         {
-            base.move(position);
+            base.Move(position);
             Update(text.ToString());
         }
 

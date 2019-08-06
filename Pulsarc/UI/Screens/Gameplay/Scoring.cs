@@ -4,10 +4,10 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     static class Scoring
     {
-        static public int max_score = 1000000;
-        static public int max_combo_multiplier = 100;
+        public static int max_score = 1000000;
+        public static int max_combo_multiplier = 100;
 
-        static public int getMaxScore(int objectsCount)
+        public static int GetMaxScore(int objectsCount)
         {
             // Simple formula due to the combo system starting at max and being capped
             // Changing it wrongly would require parsing and other stuff
@@ -15,7 +15,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             return objectsCount * Judgement.judgements[0].score * max_combo_multiplier;
         }
 
-        static public KeyValuePair<long, int> processHitResults(JudgementValue judge, long currentScore, int currentComboMultiplier)
+        public static KeyValuePair<long, int> processHitResults(JudgementValue judge, long currentScore, int currentComboMultiplier)
         {
             // Get the next score from a score and a new hit
 
@@ -25,7 +25,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             if(comboMultiplier > max_combo_multiplier)
             {
                 comboMultiplier = max_combo_multiplier;
-            } else if (comboMultiplier < 1)
+            }
+            else if (comboMultiplier < 1)
             {
                 comboMultiplier = 1;
             }

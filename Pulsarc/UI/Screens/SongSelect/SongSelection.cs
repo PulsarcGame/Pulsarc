@@ -6,14 +6,12 @@ using Pulsarc.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
     class SongSelection : PulsarcScreen
     {
-
         public override ScreenView View { get; protected set; }
 
         public List<BeatmapCard> cards;
@@ -46,11 +44,11 @@ namespace Pulsarc.UI.Screens.SongSelect
                     beatmaps.Add(BeatmapHelper.Load(file));
                 }
             }
-            beatmaps = sortBeatmaps(beatmaps, "difficulty");
+            beatmaps = SortBeatmaps(beatmaps, "difficulty");
             View = new SongSelectionView(this, beatmaps);
         }
 
-        public List<Beatmap> sortBeatmaps(List<Beatmap> beatmaps, string sort)
+        public List<Beatmap> SortBeatmaps(List<Beatmap> beatmaps, string sort)
         {
             switch(sort)
             {
@@ -105,9 +103,9 @@ namespace Pulsarc.UI.Screens.SongSelect
                 Vector2 leftReleasePos = new Vector2(ms.Position.X, ms.Position.Y);
                 foreach (BeatmapCard card in cards)
                 {
-                    if (card.clicked(leftClickingPos) && card.clicked(leftReleasePos))
+                    if (card.Clicked(leftClickingPos) && card.Clicked(leftReleasePos))
                     {
-                        card.onClick();
+                        card.OnClick();
                     }
                 }
             }

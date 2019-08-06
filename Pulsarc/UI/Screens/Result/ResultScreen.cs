@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.Result
 
         public bool full_combo;
 
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_)
+        public ResultScreen(List<JudgementValue> judgements, List<KeyValuePair<double, int>> hits, int display_score, int combo, Beatmap beatmap)
         {
             judges_count = new Dictionary<string, int>();
             foreach(JudgementValue judge in Judgement.judgements)
@@ -26,11 +26,11 @@ namespace Pulsarc.UI.Screens.Result
                 judges_count.Add(judge.name, 0);
             }
 
-            judgements = judgements_;
-            hits = hits_;
-            display_score = display_score_;
-            combo = combo_;
-            beatmap = beatmap_;
+            this.judgements = judgements;
+            this.hits = hits;
+            this.display_score = display_score;
+            this.combo = combo;
+            this.beatmap = beatmap;
 
             double accuracyTotal = 0;
             foreach (JudgementValue judge in judgements)

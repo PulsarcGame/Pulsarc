@@ -2,9 +2,6 @@
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
@@ -53,22 +50,22 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             difficulty.Draw();
         }
 
-        public void onClick()
+        public void OnClick()
         {
             GameplayEngine gameplay = new GameplayEngine();
             ScreenManager.AddScreen(gameplay);
             gameplay.Init(beatmap);
         }
 
-        public override void move(Vector2 delta)
+        public override void Move(Vector2 delta)
         {
-            title.move(delta);
-            artist.move(delta);
-            version.move(delta);
-            mapper.move(delta);
-            difficulty.move(delta);
-            diffBar.move(delta);
-            base.move(delta);
+            title.Move(delta);
+            artist.Move(delta);
+            version.Move(delta);
+            mapper.Move(delta);
+            difficulty.Move(delta);
+            diffBar.Move(delta);
+            base.Move(delta);
         }
     }
 }

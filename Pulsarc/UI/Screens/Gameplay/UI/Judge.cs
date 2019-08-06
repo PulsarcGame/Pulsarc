@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
     {
         public Judge(int key, Vector2 position) : base(Skin.judges[key], position)
         {
-            changePosition(new Vector2(960 - texture.Width / 2, 540 - texture.Height / 2));
+            ChangePosition(new Vector2(960 - texture.Width / 2, 540 - texture.Height / 2));
         }
     }
 }

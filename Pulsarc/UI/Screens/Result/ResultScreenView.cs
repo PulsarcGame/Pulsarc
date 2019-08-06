@@ -8,7 +8,6 @@ using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using Pulsarc.Utils;
 using System.Collections.Generic;
-using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Result
@@ -64,7 +63,7 @@ namespace Pulsarc.UI.Screens.Result
             version = new Version(new Vector2(getSkinnablePosition("VersionX"), getSkinnablePosition("VersionY")), getSkinnableInt("VersionSize"), getSkinnableAnchor("VersionAnchor"));
             mapper = new Mapper(new Vector2(getSkinnablePosition("MapperX"), getSkinnablePosition("MapperY")), new Color(74, 245, 254), getSkinnableInt("MapperSize"), getSkinnableAnchor("MapperAnchor"));
 
-            button_advanced.move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
+            button_advanced.Move(new Vector2(button_back.texture.Width, -button_advanced.texture.Height));
 
             this.accuracy.Update(accuracy);
             combo.Update(GetResultScreen().combo);
@@ -76,11 +75,11 @@ namespace Pulsarc.UI.Screens.Result
             mapper.Update(GetResultScreen().beatmap.Mapper);
 
             hitErrorGraph = new HitErrorGraph(
-                new Vector2(getSkinnablePosition("HitErrorX")
-                            , getSkinnablePosition("HitErrorY"))
-               , (int)(getSkinnablePosition("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
-               , (int) (getSkinnablePosition("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
-               , GetResultScreen().hits);
+                new Vector2(getSkinnablePosition("HitErrorX"),
+                getSkinnablePosition("HitErrorY")),
+                (int)(getSkinnablePosition("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X),
+                (int) (getSkinnablePosition("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y),
+                GetResultScreen().hits);
 
             foreach(JudgementValue judge in Judgement.judgements)
             {
@@ -110,7 +109,7 @@ namespace Pulsarc.UI.Screens.Result
         private void addJudgeInfo(string name)
         {
             string firstUpper = char.ToUpper(name[0]) + name.Substring(1);
-            JudgementValue judgement = Judgement.getByName(name);
+            JudgementValue judgement = Judgement.GetByName(name);
             judgements.Add(new KeyValuePair<Judge, JudgeCount>(
                         new Judge(judgement.score,
                             new Vector2(getSkinnableInt(firstUpper + "X"), getSkinnableInt(firstUpper + "Y")),
@@ -166,13 +165,13 @@ namespace Pulsarc.UI.Screens.Result
             if (InputManager.IsLeftClick())
             {
                 Point pos = InputManager.lastMouseClick.Key.Position;
-                if (button_back.clicked(pos))
+                if (button_back.Clicked(pos))
                 {
-                    button_back.onClick();
+                    button_back.OnClick();
                 }
-                else if (button_retry.clicked(pos))
+                else if (button_retry.Clicked(pos))
                 {
-                    button_retry.onClick(beatmap);
+                    button_retry.OnClick(beatmap);
                 }
             }
         }

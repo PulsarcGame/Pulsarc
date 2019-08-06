@@ -152,7 +152,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            cursor.setPos(MouseManager.CurrentState.Position);
+            cursor.SetPos(MouseManager.CurrentState.Position);
 
             // Temporary measure for converting intralism or osu!mania beatmaps
             if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")

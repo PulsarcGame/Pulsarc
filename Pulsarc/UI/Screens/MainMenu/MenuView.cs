@@ -8,7 +8,6 @@ using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
-using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -26,27 +25,27 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(new Vector2(getSkinnableInt("IconX"), getSkinnableInt("IconY")));
+            gameIcon = new GameIcon(new Vector2(GetSkinnableInt("IconX"), GetSkinnableInt("IconY")));
 
             navButtons = new List<NavigationButton>();
-            navButtons.Add(new NavigationButton(new SongSelection(), getSkinnableInt("PlayType"), "Play Game", new Vector2(getSkinnableInt("PlayX"), getSkinnableInt("PlayY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("MultiType"), "Multiplayer", new Vector2(getSkinnableInt("MultiX"), getSkinnableInt("MultiY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("EditorType"), "Editor", new Vector2(getSkinnableInt("EditorX"), getSkinnableInt("EditorY"))));
-            navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnableInt("SettingsType"), "Settings", new Vector2(getSkinnableInt("SettingsX"), getSkinnableInt("SettingsY"))));
-            navButtons.Add(new NavigationButton(new QuitScreen(), getSkinnableInt("QuitType"), "Quit", new Vector2(getSkinnableInt("QuitX"), getSkinnableInt("QuitY"))));
+            navButtons.Add(new NavigationButton(new SongSelection(), GetSkinnableInt("PlayType"), "Play Game", new Vector2(GetSkinnableInt("PlayX"), GetSkinnableInt("PlayY"))));
+            navButtons.Add(new NavigationButton(new InProgressScreen(), GetSkinnableInt("MultiType"), "Multiplayer", new Vector2(GetSkinnableInt("MultiX"), GetSkinnableInt("MultiY"))));
+            navButtons.Add(new NavigationButton(new InProgressScreen(), GetSkinnableInt("EditorType"), "Editor", new Vector2(GetSkinnableInt("EditorX"), GetSkinnableInt("EditorY"))));
+            navButtons.Add(new NavigationButton(new SettingsScreen(), GetSkinnableInt("SettingsType"), "Settings", new Vector2(GetSkinnableInt("SettingsX"), GetSkinnableInt("SettingsY"))));
+            navButtons.Add(new NavigationButton(new QuitScreen(), GetSkinnableInt("QuitType"), "Quit", new Vector2(GetSkinnableInt("QuitX"), GetSkinnableInt("QuitY"))));
         }
 
-        private float getSkinnablePosition(string key)
+        private float GetSkinnablePosition(string key)
         {
             return Skin.getConfigFloat("main_menu", "Positions", key);
         }
 
-        private int getSkinnableInt(string key)
+        private int GetSkinnableInt(string key)
         {
             return Skin.getConfigInt("main_menu", "Positions", key);
         }
 
-        private Anchor getSkinnableAnchor(string key)
+        private Anchor GetSkinnableAnchor(string key)
         {
             return Skin.getConfigAnchor("main_menu", "Positions", key);
         }
@@ -58,9 +57,9 @@ namespace Pulsarc.UI.Screens.MainMenu
                 Point pos = InputManager.lastMouseClick.Key.Position;
                 foreach (NavigationButton button in navButtons)
                 {
-                    if (button.clicked(pos))
+                    if (button.Clicked(pos))
                     {
-                        button.navigate();
+                        button.Navigate();
                     }
                 }
             }

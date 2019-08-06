@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Pulsarc.Skinning;
+﻿using Pulsarc.Skinning;
 
 namespace Pulsarc.UI.Screens.Result.UI
 {

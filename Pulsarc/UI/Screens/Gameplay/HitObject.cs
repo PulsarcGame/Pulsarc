@@ -58,24 +58,24 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             rotation = (float)(45 * (Math.PI / 180));
-            changePosition(position);
+            ChangePosition(position);
         }
 
 
-        public void recalcPos(int currentTime, double speed, double crosshairZLoc)
+        public void RecalcPos(int currentTime, double speed, double crosshairZLoc)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
-            setZLocation(currentTime, speed * baseSpeed, crosshairZLoc);
+            SetZLocation(currentTime, speed * baseSpeed, crosshairZLoc);
 
-            Resize(findArcRadius(), false);
+            Resize(FindArcRadius(), false);
         }
 
-        public void setZLocation(int currentTime, double speed, double crosshairZLoc)
+        public void SetZLocation(int currentTime, double speed, double crosshairZLoc)
         {
-            zLocation = calcZLocation(currentTime, speed, crosshairZLoc);
+            zLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
         }
 
-        public double calcZLocation(int currentTime, double speed, double crosshairZLoc)
+        public double CalcZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             int deltaTime = currentTime - time;
 
@@ -84,7 +84,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             return zLocation;
         }
         
-        public float findArcRadius()
+        public float FindArcRadius()
         {
             Vector2 screen = Pulsarc.getDimensions();
 

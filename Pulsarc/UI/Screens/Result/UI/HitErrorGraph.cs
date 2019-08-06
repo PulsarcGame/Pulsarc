@@ -23,24 +23,24 @@ namespace Pulsarc.UI.Screens.Result.UI
             texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, width, height);
             Color[] graphBG = new Color[width * height];
 
-            JudgementValue miss = Judgement.getMiss();
+            JudgementValue miss = Judgement.GetMiss();
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    graphBG[(y * width) + x] = Judgement.getErrorJudgementValue((int) Math.Abs(((y - (height / 2)) * miss.judge / (float) height * 2))).color * 0.3f;
+                    graphBG[(y * width) + x] = Judgement.GetErrorJudgementValue((int) Math.Abs(((y - (height / 2)) * miss.judge / (float) height * 2))).color * 0.3f;
                 }
             }
 
             /*
             hits = new List<KeyValuePair<long, int>>();
             int t = 1;
-            for (int j = -Judgement.getMiss().judge; j <= Judgement.getMiss().judge; j++)
+            for (int j = -Judgement.GetMiss().judge; j <= Judgement.GetMiss().judge; j++)
             {
                 hits.Add(new KeyValuePair<long, int>(t++, j));
             }
-            for (int j = Judgement.getMiss().judge; j >= -Judgement.getMiss().judge; j--)
+            for (int j = Judgement.GetMiss().judge; j >= -Judgement.GetMiss().judge; j--)
             {
                 hits.Add(new KeyValuePair<long, int>(t++, j));
             }
@@ -51,7 +51,7 @@ namespace Pulsarc.UI.Screens.Result.UI
                 max_time = hits[hits.Count - 1].Key;
                 foreach (KeyValuePair<double, int> hit in hits)
                 {
-                    KeyValuePair<Vector2, Color> info = getHitInfo(hit);
+                    KeyValuePair<Vector2, Color> info = GetHitInfo(hit);
                     for (int yp = -1; yp < 2; yp++)
                     {
                         for (int xp = -1; xp < 2; xp++)
@@ -69,9 +69,9 @@ namespace Pulsarc.UI.Screens.Result.UI
             texture.SetData(graphBG);
         }
 
-        private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
+        private KeyValuePair<Vector2, Color> GetHitInfo(KeyValuePair<double, int> hit)
         {
-            return new KeyValuePair<Vector2, Color>(new Vector2((float) (hit.Key / max_time * width), (hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
+            return new KeyValuePair<Vector2, Color>(new Vector2((float) (hit.Key / max_time * width), (hit.Value / (float) Judgement.GetMiss().judge * height / 2f) + height / 2), Judgement.GetErrorJudgementValue(Math.Abs(hit.Value)).color);
         }
 
         public override void Draw()
@@ -81,7 +81,7 @@ namespace Pulsarc.UI.Screens.Result.UI
             /*
             foreach (KeyValuePair<long, Double> hit error in hits)
             {
-                KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.getErrorJudgementValue(Math.Abs(error.Value)));
+                KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.GetErrorJudgementValue(Math.Abs(error.Value)));
 
                 Pulsarc.spriteBatch.Draw(judgeBar.Value, position: getErrorPixelPosition(error.Value), rotation: rotation, origin: origin, color: judgeBar.Key.color * LifeLeft(error.Key, lastTime));
             }

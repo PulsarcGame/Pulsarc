@@ -8,8 +8,8 @@
 
         public KeyVal(Key_ key, Value_ val)
         {
-            this.Key = key;
-            this.Value = val;
+            Key = key;
+            Value = val;
         }
     }
 }

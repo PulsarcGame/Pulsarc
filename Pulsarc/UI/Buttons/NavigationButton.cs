@@ -24,7 +24,7 @@ namespace Pulsarc.UI.Buttons
             hoverObject = true;
         }
 
-        public void navigate()
+        public void Navigate()
         {
 
             if(removeFirst)

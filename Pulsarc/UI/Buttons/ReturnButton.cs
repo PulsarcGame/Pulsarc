@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Buttons
@@ -13,7 +10,7 @@ namespace Pulsarc.UI.Buttons
         {
         }
 
-        public void onClick()
+        public void OnClick()
         {
             ScreenManager.RemoveScreen(true);
         }
