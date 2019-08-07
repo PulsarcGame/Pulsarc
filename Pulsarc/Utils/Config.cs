@@ -32,6 +32,7 @@ namespace Pulsarc.Utils
 
             addBinding("Pause");
             addBinding("Continue");
+            addBinding("Retry");
         }
 
         static public void Reload()
@@ -47,6 +48,7 @@ namespace Pulsarc.Utils
 
             addBinding("Pause");
             addBinding("Continue");
+            addBinding("Retry");
         }
 
 

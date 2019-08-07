@@ -246,6 +246,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (Keyboard.GetState().IsKeyDown(Config.bindings["Continue"]))
                 Resume();
 
+            if (Keyboard.GetState().IsKeyDown(Config.bindings["Retry"]))
+            {
+                Retry();
+                return;
+            }
+
             // Keep track of whether or not any object is left to play
             bool atLeastOne = false;
 
@@ -357,6 +363,20 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Resume()
         {
             AudioManager.Resume();
+        }
+
+        public void Retry()
+        {
+            Beatmap retry = currentBeatmap;
+
+            Reset();
+
+            ScreenManager.RemoveScreen(true);
+            GameplayEngine next = new GameplayEngine();
+            next.Init(retry);
+            ScreenManager.AddScreen(next);
+
+            GC.Collect(); //Unsure if this helps or not, I saw that EndGameplay() used it ¯\_(ツ)_/¯
         }
 
         public void Reset()
