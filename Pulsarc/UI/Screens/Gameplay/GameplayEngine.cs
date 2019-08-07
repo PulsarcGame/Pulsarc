@@ -371,12 +371,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             Reset();
 
-            ScreenManager.RemoveScreen(true);
-            GameplayEngine next = new GameplayEngine();
-            next.Init(retry);
-            ScreenManager.AddScreen(next);
-
-            GC.Collect(); //Unsure if this helps or not, I saw that EndGameplay() used it ¯\_(ツ)_/¯
+            Init(retry);
         }
 
         public void Reset()
