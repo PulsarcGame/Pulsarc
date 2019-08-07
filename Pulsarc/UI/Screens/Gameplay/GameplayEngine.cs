@@ -246,6 +246,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (Keyboard.GetState().IsKeyDown(Config.bindings["Continue"]))
                 Resume();
 
+            if (Keyboard.GetState().IsKeyDown(Config.bindings["Retry"]))
+            {
+                Retry();
+                return;
+            }
+
             // Keep track of whether or not any object is left to play
             bool atLeastOne = false;
 
@@ -357,6 +363,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Resume()
         {
             AudioManager.Resume();
+        }
+
+        public void Retry()
+        {
+            Beatmap retry = currentBeatmap;
+
+            Reset();
+
+            Init(retry);
         }
 
         public void Reset()
