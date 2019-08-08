@@ -46,7 +46,7 @@ namespace Pulsarc.UI
 
         public Drawable() { }
 
-        public void Resize(Vector2 size, bool resolutionScale = true)
+        public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             float newAspect = size.X / size.Y;
             if (aspectRatio != -1 && newAspect != aspectRatio)
@@ -58,7 +58,7 @@ namespace Pulsarc.UI
             scale = size.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
         }
 
-        public void Resize(float size, bool resolutionScale = true)
+        public virtual void Resize(float size, bool resolutionScale = true)
         {
             Resize(new Vector2(size, size), resolutionScale);
         }
@@ -73,7 +73,7 @@ namespace Pulsarc.UI
 
         static public Vector2 getResponsivePosition(Vector2 position)
         {
-            return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / (Pulsarc.xBaseRes / Pulsarc.baseRatio) * Pulsarc.getDimensions().Y);
+            return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / Pulsarc.yBaseRes * Pulsarc.getDimensions().Y);
         }
 
         public void changePosition(Vector2 position)

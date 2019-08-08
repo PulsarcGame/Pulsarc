@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public Crosshair(double currentCrosshairRadius) : base(Skin.assets["crosshair"])
         {
-            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.xBaseRes / Pulsarc.baseRatio);
+            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.yBaseRes);
             radius = currentCrosshairRadius;
 
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);

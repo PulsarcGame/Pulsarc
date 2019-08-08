@@ -30,8 +30,9 @@ namespace Pulsarc
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
 
-        // Width used for reference in making the game responsive
+        // Width and Height used for reference in making the game responsive
         static public int xBaseRes = 1920;
+        static public int yBaseRes = 1080;
         static public float baseRatio = 16/9f;
 
         // Whether or not the in-game cursor is displayed 

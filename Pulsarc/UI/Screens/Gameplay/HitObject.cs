@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.baseSpeed = baseSpeed;
             erase = false;
 
-            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.xBaseRes / Pulsarc.baseRatio);
+            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.yBaseRes);
             //radius = (200f / 1920f) * screen.X;
 
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);

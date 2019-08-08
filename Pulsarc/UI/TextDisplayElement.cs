@@ -53,7 +53,7 @@ namespace Pulsarc.UI
             float newY = position.Y;
             Vector2 size = font.MeasureString(text) * fontScale;
             size.X *= Pulsarc.getDimensions().X / Pulsarc.xBaseRes;
-            size.Y *= Pulsarc.getDimensions().Y / (Pulsarc.xBaseRes / Pulsarc.baseRatio);
+            size.Y *= Pulsarc.getDimensions().Y / Pulsarc.yBaseRes;
 
             switch (anchor)
             {

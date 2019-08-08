@@ -8,9 +8,11 @@ namespace Pulsarc.UI
 {
     public class Cursor : Drawable
     {
+        public float cursorScale = 1; //TODO: Make this adjustable by the user
+
         public Cursor() : base(Skin.assets["cursor"])
         {
-            Resize(texture.Width / (texture.Width / (48 / (float) 1920 * Pulsarc.getDimensions().X)));
+            Resize(30 * cursorScale, false);
         }
 
         public void setPos(Point position)
