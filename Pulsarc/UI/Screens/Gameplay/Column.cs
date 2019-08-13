@@ -21,9 +21,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
         }
 
+        /// <summary>
+        /// Organizes the hitobjects to avoid updating yet unseen hitobjects.
+        /// </summary>
         public void SortUpdateHitObjects()
         {
-            // Organizes the hitobjects to avoid updating yet unseen hitobjects
             updateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
         }
     }

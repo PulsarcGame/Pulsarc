@@ -6,6 +6,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     static class Judgement
     {
+        /// <summary>
+        /// The different judgements that can be obtained during gameplay. Can be easily edited to change how Judgement works.
+        /// </summary>
         static public List<JudgementValue> judgements = new List<JudgementValue>()
         {
             //////////////// Judge equal to Stepmania J4 /////////////
@@ -17,11 +20,20 @@ namespace Pulsarc.UI.Screens.Gameplay
             new JudgementValue("miss",      0,     200,      0,  -100,  new Color(158,  28,  28)),
         };
 
+        /// <summary>
+        /// Returns the JudgementValue for a miss.
+        /// </summary>
+        /// <returns>A "miss" JudgmentValue</returns>
         static public JudgementValue getMiss()
         {
             return judgements.Last();
         }
 
+        /// <summary>
+        /// Finds the JudgementValue that has the name provided, then returns it.
+        /// </summary>
+        /// <param name="name">The JudgementValue to search for</param>
+        /// <returns>The JudgementValue that is requested by the string. Returns null if there is no matching JudgementValue.</returns>
         static public JudgementValue getByName(string name)
         {
             foreach(JudgementValue j in judgements)
@@ -31,6 +43,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             return null;
         }
 
+        /// <summary>
+        /// Finds the JudgementValue using the error provided, then returns it.
+        /// </summary>
+        /// <param name="error">The error of a hit. error = |arcTime - hitTime|</param>
+        /// <returns>Returns the judgement that corresponds to the error amount. Returns null if the error is larger than all JudgementValues.</returns>
         static public JudgementValue getErrorJudgementValue(int error)
         {
             JudgementValue result = null;
@@ -51,6 +68,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="judgement"></param>
+        /// <returns></returns>
         static public JudgementValue getPreviousJudgementValue(JudgementValue judgement)
         {
             JudgementValue result = new JudgementValue("0",0,0,0,0,Color.White);
@@ -95,6 +117,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int combo_addition;
         public Color color;
 
+        /// <summary>
+        /// A JudgementValue used to determine the judgement of a hit arc.
+        /// </summary>
+        /// <param name="name">The name of the Judgement. i.e. MAX, Good, Miss, etc.</param>
+        /// <param name="acc">The accuracy of the Judgement; this affects the accuracy in game.</param>
+        /// <param name="judge">The time (in ms) before or after a HitObject's time where this JudgementValue would apply to.</param>
+        /// <param name="score">How much score is added to the total hidden score when this JudgementValue is obtained.</param>
+        /// <param name="combo_addition">How much combo is added to the total hidden combo when this JudgementValue is obtained.</param>
+        /// <param name="color">The color corresponding to this JudgementValue</param>
         public JudgementValue(string name, double acc, int judge, int score, int combo_addition, Color color)
         {
             this.name = name;

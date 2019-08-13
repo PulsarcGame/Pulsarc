@@ -149,6 +149,11 @@ namespace Pulsarc.Beatmaps
             return parsed;
         }
 
+        /// <summary>
+        /// Save a single Beatmap as a .psc.
+        /// </summary>
+        /// <param name="beatmap">The Beatmap to be saved.</param>
+        /// <param name="file_path">The filepath this Beatmap Should be saved to.</param>
         static public void Save(Beatmap beatmap, string file_path)
         {
             using (StreamWriter file =
@@ -199,6 +204,12 @@ namespace Pulsarc.Beatmaps
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="beatmap"></param>
+        /// <param name="property"></param>
         static private void writeProperty(StreamWriter file, Beatmap beatmap, string property)
         {
             try
@@ -212,9 +223,14 @@ namespace Pulsarc.Beatmaps
             }
         }
 
+        /// <summary>
+        /// Use bitwise enumeration to determine if an arc is on the specified column
+        /// </summary>
+        /// <param name="arc"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
         static public bool isColumn(Arc arc, int k)
         {
-            // Use bitwise enumeration to determine if an arc is on the specified column
             return ((arc.type >> k) & 1) != 0;
         }
     }
