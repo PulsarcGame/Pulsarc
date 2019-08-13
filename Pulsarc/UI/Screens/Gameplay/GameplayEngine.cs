@@ -16,36 +16,46 @@ namespace Pulsarc.UI.Screens.Gameplay
         public override ScreenView View { get ; protected set; }
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
-        /// <summary>Whether or not the gameplay engine is currently running</summary>
+        // Whether or not the gameplay engine is currently running
         public static bool active = false;
 
-        /// <summary>temp: Whether or not the gameplay is automatically run</summary>
+        // temp: Whether or not the gameplay is automatically run
         bool autoPlay = false;
-        /// <summary>Whether or not autoplay should use randomness.</summary>
+
+        // Whether or not autoplay should use randomness.
         bool autoPlayRandom = false;
 
         // Used for delaying the gameplay's end
         Stopwatch endWatch;
         public int endDelay = 2000;
 
+
         // Beatmap Elements
-        /// <summary>The current beatmap being played.</summary>
+        
+        // The current beatmap being played.
         public Beatmap currentBeatmap;
+
+        // All the "tracks" or "directions" HitObjects can come from.
         public Column[] columns;
-        /// <summary>Used to determine the key-style of the current map (4k, 7k, etc.)</summary>
+
+        // Used to store the key-style of the current map (4k, 7k, etc.)
         public int keys;
+
 
         // Events indexes
         public int speedVariationIndex;
         public int eventIndex;
 
+
         // Gameplay Elements
         public double timeOffset;
 
         public Crosshair crosshair;
-        /// <summary>User-defined base speed</summary>
+
+        // User-defined base speed
         public double userSpeed;
-        /// <summary>Current speed modifier defined by the Beatmap</summary>
+
+        // Current speed modifier defined by the Beatmap
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
         public List<KeyValuePair<double, int>> errors;
@@ -55,19 +65,25 @@ namespace Pulsarc.UI.Screens.Gameplay
         public long max_score;
         public long score;
         public int score_display;
-        /// <summary>The current combo during gameplay.</summary>
+
+        // The current combo during gameplay.
         public int combo;
-        /// <summary>The highest combo obtained during gameplay thus far.</summary> 
+
+        // The highest combo obtained during gameplay thus far. 
         public int max_combo;
-        /// <summary>Hidden value to determine score.</summary>
+
+        // Hidden value to determine score.
         public int combo_multiplier;
-        /// <summary>How fast the audio (and relevant gameplay) plays at.</summary>
+
+        // How fast the audio (and relevant gameplay) will play at.
         public float rate;
 
         public double time => AudioManager.getTime() + timeOffset;
 
+
         // Performance
-        /// <summary>Time distance from which hitobjects are neither updated not drawn</summary>
+
+        // Time distance from which hitobjects are neither updated not drawn
         public int msIgnore = 500;
 
         /// <summary>
@@ -225,7 +241,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// Initialize this gameplay view by using the folder location and difficulty name to find the beatmap. Legacy.
+        /// Initialize this gameplay view by using the folder location and
+        /// difficulty name to find the beatmap. Legacy.
         /// </summary>
         /// <param name="folder">Beatmap folder name.</param>
         /// <param name="diff">Difficulty name for the beatmap.</param>
@@ -437,7 +454,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// 
+        /// Handle the currently queued Inputs that may affect the gameplay
         /// </summary>
         public void handleInputs()
         {

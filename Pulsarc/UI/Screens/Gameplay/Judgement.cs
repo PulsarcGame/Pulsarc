@@ -7,7 +7,8 @@ namespace Pulsarc.UI.Screens.Gameplay
     static class Judgement
     {
         /// <summary>
-        /// The different judgements that can be obtained during gameplay. Can be easily edited to change how Judgement works.
+        /// The different judgements that can be obtained during gameplay.
+        /// Can be easily edited to change how Judgement works.
         /// </summary>
         static public List<JudgementValue> judgements = new List<JudgementValue>()
         {
@@ -33,7 +34,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Finds the JudgementValue that has the name provided, then returns it.
         /// </summary>
         /// <param name="name">The JudgementValue to search for</param>
-        /// <returns>The JudgementValue that is requested by the string. Returns null if there is no matching JudgementValue.</returns>
+        /// <returns>The JudgementValue that is requested by the string.
+        /// Returns null if there is no matching JudgementValue.</returns>
         static public JudgementValue getByName(string name)
         {
             foreach(JudgementValue j in judgements)
@@ -47,7 +49,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Finds the JudgementValue using the error provided, then returns it.
         /// </summary>
         /// <param name="error">The error of a hit. error = |arcTime - hitTime|</param>
-        /// <returns>Returns the judgement that corresponds to the error amount. Returns null if the error is larger than all JudgementValues.</returns>
+        /// <returns>Returns the judgement that corresponds to the error amount.
+        /// Returns null if the error is larger than all JudgementValues.</returns>
         static public JudgementValue getErrorJudgementValue(int error)
         {
             JudgementValue result = null;
@@ -69,7 +72,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// 
+        /// Get the JudgementValue above (better than) the provided JudgementValue.
         /// </summary>
         /// <param name="judgement"></param>
         /// <returns></returns>

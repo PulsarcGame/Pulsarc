@@ -12,7 +12,8 @@ namespace Pulsarc.UI.Buttons
     class RetryButton : Drawable
     {
         /// <summary>
-        /// A button on the result screen that easily allows the player to retry the map they just played.
+        /// A button on the result screen that easily allows the player
+        /// to retry the map they just played.
         /// </summary>
         /// <param name="skinAsset"></param>
         /// <param name="position">The position of the Retry Button.</param>
@@ -22,7 +23,8 @@ namespace Pulsarc.UI.Buttons
         }
 
         /// <summary>
-        /// This method is called when the RetryButton is clicked on, it restarts the map using the Beatmap provided.
+        /// This method is called when the RetryButton is clicked on, it restarts
+        /// the map using the Beatmap provided.
         /// </summary>
         /// <param name="beatmap">The Beatmap to play.</param>
         public void onClick(Beatmap beatmap)

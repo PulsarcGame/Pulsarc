@@ -6,7 +6,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class Crosshair : Drawable
     {
-        /// <summary>The current diameter of this Crosshair.</summary>
+        // The current diameter of this Crosshair.
         public double diameter;
 
         /// <summary>
@@ -29,9 +29,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
 
-            // Resize to the diameter.
             Resize((float)diameter);
-            // Center this Crosshair.
             changePosition(position);
 
             // Set the rotation of the object.

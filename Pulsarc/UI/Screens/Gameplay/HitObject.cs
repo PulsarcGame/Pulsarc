@@ -6,33 +6,33 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class HitObject : Drawable
     {
-        /// <summary>The time (in ms) from the start of the audio to a "Perfect" hit</summary>
+        // The time (in ms) from the start of the audio to a Perfect hit
         public int time;
 
-        /// <summary>The direction this HitObject is "falling" from.</summary>
+        // The direction this HitObject is "falling" from.
         double angle;
 
-        /// <summary>
-        /// The theoritical z-axis poisition of this arc to assist with imitating a "falling" effect from the screen to the crosshair.
-        /// </summary>
+        // The theoritical z-axis poisition of this arc to assist with imitating a "falling" effect from the screen to the crosshair.
         double zLocation;
-        /// <summary>The user-defined base speed.</summary>
+
+        // The user-defined base speed.
         double baseSpeed;
 
+
         // Optimization
-        /// <summary>Whether this hitobject is marked for destruction in gameplay</summary>
+
+        // Whether this hitobject is marked for destruction in gameplay
         public bool erase;
 
         /// <summary>
         /// HitObject is an "Arc", the main gameplay element for Pulsarc.
         /// </summary>
-        /// <param name="time">The time (in ms) from the start of the audio to a "Perfect" hit</param>
+        /// <param name="time">The time (in ms) from the start of the audio to a Perfect hit</param>
         /// <param name="angle">The direction this HitObject is "falling" from.</param>
         /// <param name="keys">How many keys are in the current Beatmap. Only 4 keys is working right now.</param>
         /// <param name="baseSpeed">The user-defined base speed for this arc.</param>
         public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
-            // Define variables
             this.time = time;
             this.angle = angle;
             this.baseSpeed = baseSpeed;
@@ -82,9 +82,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// Calculates the new z-axis poisition this HitObject should be in and updates its size accordingly.
+        /// Calculates the new z-axis poisition this HitObject should be in
+        /// and updates its size accordingly.
         /// </summary>
-        /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
+        /// <param name="currentTime">The current time (in ms) since
+        /// the start ofthe audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
         public void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
@@ -133,9 +135,12 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
         
         /// <summary>
-        /// Return the time (in ms) since the start of the audio when this HitObject should first be drawn.
+        /// Return the time (in ms) since the start of the audio
+        /// when this HitObject should first be drawn.
         /// </summary>
-        /// <param name="speed">Arc Speed TODO: Figure out if this needs to consider all speed changes before, or if it only needs to consider the speed for the HitObject's time.</param>
+        /// <param name="speed">Arc Speed TODO: Figure out if this needs to consider
+        /// all speed changes before, or if it only needs to consider the speed of
+        /// the HitObject's time.</param>
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
         public int IsSeenAt(double speed, double crosshairZLoc)
         {

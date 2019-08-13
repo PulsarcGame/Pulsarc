@@ -8,39 +8,50 @@ namespace Pulsarc.UI
 {
     public class Drawable
     {
-        /// <summary>The texture for this Drawable.</summary>
+        // The texture for this Drawable.
         public Texture2D texture;
-        /// <summary>If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.</summary>
-        public Drawable hover = null;
 
+        // If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.
+        public Drawable hover = null;
         public bool hoverObject = false;
 
-        /// <summary>The position of this Drawable, relative to its anchor.</summary>
+        // The position of this Drawable, relative to its anchor.
         public Vector2 position;
-        /// <summary> </summary>
+
+        // The processed position at which Draw will be called for this Drawable
         public Vector2 drawPosition;
-        /// <summary>The origin (center) of this Drawable.</summary>
+
+        // The origin (center) of this Drawable.
         public Vector2 origin;
-        /// <summary>What part of the Drawable is drawn, determined by a Rectangle object.</summary>
+
+        // What part of the Drawable is drawn, determined by this Rectangle object.
         public Rectangle drawnPart;
-        /// <summary>The Anchor of the drawable, determines how this Drawable will be rendered in relation to its position.</summary>
+
+        // The Anchor of the drawable, determines how this Drawable will be rendered in relation to its position.
         public Anchor anchor;
 
-        /// <summary>Used to force aspect ratio when using Resize.</summary>
+        // Used to force aspect ratio when using Resize.
         protected float aspectRatio;
-        /// <summary>How big this Drawable is compared to its base texture dimensions.</summary>
+
+        // How big this Drawable is compared to its base texture dimensions.
         protected float scale = 1;
-        /// <summary>The angle of this Drawable.</summary>
+
+        // The angle of this Drawable.
         protected float rotation = 0;
 
         /// <summary>
         /// A 2D object that can be rendered on screen.
         /// </summary>
         /// <param name="texture">The texture for this Drawable.</param>
-        /// <param name="position">The position of this Drawable, relative to the base dimensions (1920 x 1080)</param>
+        /// <param name="position">The position of this Drawable, relative
+        /// to the base dimensions (1920 x 1080)</param>
         /// <param name="size">How large this object is (in pixels).</param>
-        /// <param name="aspectRatio">The aspect ratio of this Drawable. Leave at default of -1 unless this Drawable needs to be displayed with a consistent aspect ratio.</param>
-        /// <param name="anchor">The anchor of this Drawable, the default is TopLeft, which means that the Drawable will be drawn below and to the right of the position.</param>
+        /// <param name="aspectRatio">The aspect ratio of this Drawable.
+        /// Leave at default of -1 unless this Drawable needs to be displayed
+        /// with a consistent aspect ratio.</param>
+        /// <param name="anchor">The anchor of this Drawable, the default is
+        /// TopLeft, which means that the Drawable will be drawn below and to
+        /// the right of the position.</param>
         public Drawable(Texture2D texture, Vector2 position, Vector2 size, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
         {
             // Define variables
@@ -51,29 +62,40 @@ namespace Pulsarc.UI
 
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
-            // Resize to the defined size.
             Resize(size);
-            // set this Drawabl's position.
             changePosition(position);
         }
 
         /// <summary>
-        /// A 2D object that can be rendered on screen, using the size of the texture provided.
+        /// A 2D object that can be rendered on screen, using the size of the
+        /// texture provided.
         /// </summary>
-        /// <param name="texture">The texture for this Drawable. The dimensions determine how large this object will be.</param>
-        /// <param name="position">The position of this Drawable, relative to the base dimensions (1920 x 1080)</param>
-        /// <param name="aspectRatio">The aspect ratio of this Drawable. Leave at default of -1 unless this Drawable needs to be displayed with a consistent aspect ratio.</param>
-        /// <param name="anchor">The anchor of this Drawable, the default is TopLeft, which means that the Drawable will be drawn below and to the right of the position.</param>
+        /// <param name="texture">The texture for this Drawable. The dimensions
+        /// determine how large this object will be.</param>
+        /// <param name="position">The position of this Drawable, relative to
+        /// the base dimensions (1920 x 1080)</param>
+        /// <param name="aspectRatio">The aspect ratio of this Drawable.
+        /// Leave at default of -1 unless this Drawable needs to be displayed
+        /// with a consistent aspect ratio.</param>
+        /// <param name="anchor">The anchor of this Drawable, the default is
+        /// TopLeft, which means that the Drawable will be drawn below and to
+        /// the right of the position.</param>
         public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
             : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio, anchor) { }
 
 
         /// <summary>
-        /// A 2D object that can be rendered on screen, using the size of the texture provided, and with a starting location of (0, 0).
+        /// A 2D object that can be rendered on screen, using the size of the
+        /// texture provided, and with a starting location of (0, 0).
         /// </summary>
-        /// <param name="texture">The texture for this Drawable. The dimensions determine how large this object will be.</param>
-        /// <param name="aspectRatio">The aspect ratio of this Drawable. Leave at default of -1 unless this Drawable needs to be displayed with a consistent aspect ratio.</param>
-        /// <param name="anchor">The anchor of this Drawable, the default is TopLeft, which means that the Drawable will be drawn below and to the right of the position.</param>
+        /// <param name="texture">The texture for this Drawable. The dimensions
+        /// determine how large this object will be.</param>
+        /// <param name="aspectRatio">The aspect ratio of this Drawable.
+        /// Leave at default of -1 unless this Drawable needs to be displayed
+        /// with a consistent aspect ratio.</param>
+        /// <param name="anchor">The anchor of this Drawable, the default is
+        /// TopLeft, which means that the Drawable will be drawn below and to
+        /// the right of the position.</param>
         public Drawable(Texture2D texture, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
             : this(texture, new Vector2(0, 0), new Vector2(texture.Width, texture.Height), aspectRatio, anchor) { }
 
@@ -86,8 +108,11 @@ namespace Pulsarc.UI
         /// <summary>
         /// Resize this Drawable to fit the dimensions provided.
         /// </summary>
-        /// <param name="size">A Vector2 that represents the new dimensions this Drawable should resize to. Width = size.X, Height = size.Y</param>
-        /// <param name="resolutionScale">Whether the resize should consider the current resolution or not. Leave at default of true unless this resize does not need to consider the current resolution to display properly.</param>
+        /// <param name="size">A Vector2 that represents the new dimensions
+        /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
+        /// <param name="resolutionScale">Whether the resize should consider
+        /// the current resolution or not. Leave at default of true unless this
+        /// resize does not need to consider the current resolution to display properly.</param>
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             // Find the aspect ratio of the requested size change.
@@ -108,8 +133,11 @@ namespace Pulsarc.UI
         /// <summary>
         /// Resize this Drawable to the square length provided.
         /// </summary>
-        /// <param name="size">The square length this drawable should be reszied to. Width = size, Length = size.</param>
-        /// <param name="resolutionScale">Whether the resize should consider the current resolution or not. Leave at default of true unless this resize does not need to consider the current resolution to display properly.</param>
+        /// <param name="size">The square length this drawable should be reszied to.
+        /// Width = size, Height = size.</param>
+        /// <param name="resolutionScale">Whether the resize should consider
+        /// the current resolution or not. Leave at default of true unless this
+        /// resize does not need to consider the current resolution to display properly.</param>
         public virtual void Resize(float size, bool resolutionScale = true)
         {
             Resize(new Vector2(size, size), resolutionScale);
@@ -128,7 +156,8 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// 
+        /// Get the real screen position from the Drawable position
+        /// that is relative to the base resolution.
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
@@ -138,9 +167,10 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Change the position of this drawable to the Vector2 coordinates provided.
+        /// Change the position of this drawable to the coordinates provided.
         /// </summary>
-        /// <param name="position">The coordinates of this Drawables new position. New positon = (position.X, position.Y)</param>
+        /// <param name="position">The coordinates of this Drawables new position.
+        /// New positon = (position.X, position.Y)</param>
         public void changePosition(Vector2 position)
         {
             this.position = getResponsivePosition(position);
@@ -187,9 +217,10 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Move this Drawable from its current coordinate + the coordinate provided by position. 
+        /// Move this Drawable from its current coordinate by the amount provided.
         /// </summary>
-        /// <param name="position">How much this Drawable should move. New Position = (Drawable.position.X + position.X, Drawable.positionY + position.Y)</param>
+        /// <param name="position">How much this Drawable should move.
+        /// New Position = (this.position.X + position.X, this.positionY + position.Y)</param>
         public virtual void move(Vector2 position)
         {
             this.position += getResponsivePosition(position);
