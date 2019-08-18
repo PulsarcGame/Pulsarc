@@ -1,11 +1,25 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.Skinning;
 using Pulsarc.Utils.Maths;
 using System;
 
 namespace Pulsarc.UI
 {
+    public enum Anchor
+    {
+        Center = 0,
+        TopRight = 1,
+        CenterRight = 2,
+        BottomRight = 3,
+        TopLeft = 4,
+        CenterLeft = 5,
+        BottomLeft = 6,
+        CenterTop = 7,
+        CenterBottom = 8,
+    }
+
     public class Drawable
     {
         // The texture for this Drawable.
@@ -207,6 +221,13 @@ namespace Pulsarc.UI
                     break;
                 case Anchor.CenterLeft:
                     newPos.Y -= size.Y / 2;
+                    break;
+                case Anchor.CenterTop:
+                    newPos.X -= size.X / 2;
+                    break;
+                case Anchor.CenterBottom:
+                    newPos.X -= size.X / 2;
+                    newPos.Y -= size.Y;
                     break;
                 case Anchor.TopLeft:
                 default:

@@ -13,14 +13,22 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     {
         Beatmap beatmap;
 
+        // The difficulty of the map represented as a bar
         BeatmapCardDifficulty diffBar;
 
+        // Metadata
         BeatmapTitle title;
         BeatmapArtist artist;
         BeatmapVersion version;
         BeatmapMapper mapper;
         BeatmapDifficulty difficulty;
 
+        /// <summary>
+        /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
+        /// </summary>
+        /// <param name="beatmap">The beatmap associated with this card.</param>
+        /// <param name="position">The position of the card.</param>
+        /// <param name="size">The size of the card.</param>
         public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size) : base(Skin.assets["beatmap_card"], position, size)
         {
             this.beatmap = beatmap;
@@ -53,6 +61,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             difficulty.Draw();
         }
 
+        /// <summary>
+        /// When clicked, start playing the beatmap.
+        /// </summary>
         public void onClick()
         {
             GameplayEngine gameplay = new GameplayEngine();
@@ -60,6 +71,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             gameplay.Init(beatmap);
         }
 
+        /// <summary>
+        /// Move this card and all related drawables by the provided delta.
+        /// </summary>
+        /// <param name="delta">How much to move from the current position.</param>
         public override void move(Vector2 delta)
         {
             title.move(delta);

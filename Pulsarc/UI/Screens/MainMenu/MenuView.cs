@@ -15,38 +15,59 @@ namespace Pulsarc.UI.Screens.MainMenu
 {
     class MenuView : ScreenView
     {
-
+        // The background image of the main menu.
         Background background;
+
+        // The logo used for the main menu.
         GameIcon gameIcon;
 
+        // The buttons used to navigate from the main menu.
         public List<NavigationButton> navButtons;
 
-
+        /// <summary>
+        /// The Main Menu of Pulsarc
+        /// </summary>
+        /// <param name="screen">The screen to draw on.</param>
         public MenuView(Screen screen) : base(screen)
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(new Vector2(getSkinnableInt("IconX"), getSkinnableInt("IconY")));
+            gameIcon = new GameIcon(new Vector2(getSkinnablePositionInt("IconX"), getSkinnablePositionInt("IconY")));
 
             navButtons = new List<NavigationButton>();
-            navButtons.Add(new NavigationButton(new SongSelection(), getSkinnableInt("PlayType"), "Play Game", new Vector2(getSkinnableInt("PlayX"), getSkinnableInt("PlayY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("MultiType"), "Multiplayer", new Vector2(getSkinnableInt("MultiX"), getSkinnableInt("MultiY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnableInt("EditorType"), "Editor", new Vector2(getSkinnableInt("EditorX"), getSkinnableInt("EditorY"))));
-            navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnableInt("SettingsType"), "Settings", new Vector2(getSkinnableInt("SettingsX"), getSkinnableInt("SettingsY"))));
-            navButtons.Add(new NavigationButton(new QuitScreen(), getSkinnableInt("QuitType"), "Quit", new Vector2(getSkinnableInt("QuitX"), getSkinnableInt("QuitY"))));
+            navButtons.Add(new NavigationButton(new SongSelection(), getSkinnablePositionInt("PlayType"), "Play Game", new Vector2(getSkinnablePositionInt("PlayX"), getSkinnablePositionInt("PlayY"))));
+            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("MultiType"), "Multiplayer", new Vector2(getSkinnablePositionInt("MultiX"), getSkinnablePositionInt("MultiY"))));
+            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("EditorType"), "Editor", new Vector2(getSkinnablePositionInt("EditorX"), getSkinnablePositionInt("EditorY"))));
+            navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnablePositionInt("SettingsType"), "Settings", new Vector2(getSkinnablePositionInt("SettingsX"), getSkinnablePositionInt("SettingsY"))));
+            navButtons.Add(new NavigationButton(new QuitScreen(), getSkinnablePositionInt("QuitType"), "Quit", new Vector2(getSkinnablePositionInt("QuitX"), getSkinnablePositionInt("QuitY"))));
         }
 
-        private float getSkinnablePosition(string key)
+        /// <summary>
+        /// Find a float position from the Position section of the Main Menu config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnablePositionFloat(string key)
         {
             return Skin.getConfigFloat("main_menu", "Positions", key);
         }
 
-        private int getSkinnableInt(string key)
+        /// <summary>
+        /// Find a int from the Position section of the Main Menu config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnablePositionInt(string key)
         {
             return Skin.getConfigInt("main_menu", "Positions", key);
         }
 
-        private Anchor getSkinnableAnchor(string key)
+        /// <summary>
+        /// Find an Anchor from the Position section of the Main Menu config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnablePositionAnchor(string key)
         {
             return Skin.getConfigAnchor("main_menu", "Positions", key);
         }
