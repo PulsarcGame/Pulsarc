@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pulsarc.UI.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,11 @@ namespace Pulsarc.Beatmaps
 {
     public class Beatmap
     {
-        // The path to the .psc file this Beatmap parses from.
+        // Beatmap folder path
         public string path;
+
+        // Beatmap filename
+        public string fileName;
 
         // Metadata
 
@@ -31,6 +35,8 @@ namespace Pulsarc.Beatmaps
         // The audio for this Beatmap.
         public string Audio { get; set; }
 
+        // Background filename
+        public string Background { get; set; }
 
         // General
 
@@ -45,7 +51,6 @@ namespace Pulsarc.Beatmaps
         
         // All the events in this Beatmap (storyboard, zoom, etc.)
         public List<Event> events;
-
 
         // Gameplay
 

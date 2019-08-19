@@ -44,9 +44,11 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
-                foreach (string file in Directory.GetFiles(dir, "*.psc"))
+                foreach (string file in Directory.GetFiles(dir, "*.psc")
+                                     .Select(Path.GetFileName)
+                                     .ToArray())
                 {
-                    beatmaps.Add(BeatmapHelper.Load(file));
+                    beatmaps.Add(BeatmapHelper.Load(dir, file));
                 }
             }
             beatmaps = sortBeatmaps(beatmaps, "difficulty"); // TODO: Allow user to choose sorting method.

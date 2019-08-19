@@ -44,6 +44,13 @@ namespace Pulsarc.UI
         // The Anchor of the drawable, determines how this Drawable will be rendered in relation to its position.
         public Anchor anchor;
 
+        // The current base size of this drawable in pixels.
+        public Vector2 baseSize;
+
+        // The opacity of this Drawable, 1 is fully opaque, 0 is fully transparent.
+        public float opacity = 1f;
+
+        protected float aspectRatio; // Used to force aspect ratio when using Resize
         // Used to force aspect ratio when using Resize.
         protected float aspectRatio;
 
@@ -130,18 +137,19 @@ namespace Pulsarc.UI
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             // Find the aspect ratio of the requested size change.
-            float newAspect = size.X / size.Y;
+            float newAspect = baseSize.X / baseSize.Y;
+            baseSize = size;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (aspectRatio != -1 && newAspect != aspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Console.WriteLine("Invalid aspect ratio : " + size.X + "x" + size.Y + " isn't " + aspect.ToString());
+                Console.WriteLine("Invalid aspect ratio : " + baseSize.X + "x" + baseSize.Y + " isn't " + aspect.ToString());
                 return;
             }
 
             // Set the scale of this Drawable using the parameters provided.
-            scale = size.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+            scale = baseSize.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
         }
 
         /// <summary>
@@ -180,6 +188,11 @@ namespace Pulsarc.UI
             return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / Pulsarc.yBaseRes * Pulsarc.getDimensions().Y);
         }
 
+        public void changePosition(float x, float y)
+        {
+            changePosition(new Vector2(x, y));
+        }
+
         /// <summary>
         /// Change the position of this drawable to the coordinates provided.
         /// </summary>
@@ -190,37 +203,37 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
 
             Vector2 newPos = position;
-            Vector2 size;
+            /*Vector2 size;
             if (texture != null)
             {
                 size = new Vector2(texture.Width, texture.Height);
             } else
             {
                 size = new Vector2(0,0);
-            }
+            }*/
 
             switch (anchor)
             {
                 case Anchor.Center:
-                    newPos.X -= size.X / 2;
-                    newPos.Y -= size.Y / 2;
+                    newPos.X -= baseSize.X / 2;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    newPos.X -= size.X;
+                    newPos.X -= baseSize.X;
                     break;
                 case Anchor.CenterRight:
-                    newPos.X -= size.X;
-                    newPos.Y -= size.Y / 2;
+                    newPos.X -= baseSize.X;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    newPos.X -= size.X;
-                    newPos.Y -= size.Y;
+                    newPos.X -= baseSize.X;
+                    newPos.Y -= baseSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    newPos.Y -= size.Y;
+                    newPos.Y -= baseSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    newPos.Y -= size.Y / 2;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
                     newPos.X -= size.X / 2;
@@ -294,7 +307,12 @@ namespace Pulsarc.UI
         /// </summary>
         public virtual void Draw()
         {
-            Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
+            Color color = Color.White;
+
+            if (opacity != 1f)
+                color *= opacity;
+
+            Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
             if(hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {

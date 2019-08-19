@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using Pulsarc.UI.Common;
 
 namespace Pulsarc.Beatmaps
 {
@@ -10,15 +11,17 @@ namespace Pulsarc.Beatmaps
         /// <summary>
         /// Load a single Beatmap.
         /// </summary>
-        /// <param name="file_path">The path to a .psc beatmap file.</param>
-        static public Beatmap Load(string file_path)
+        /// <param name="path">The path to the beatmap folder.</param>
+        /// <param name="fileName">The fileName of the .psc file.</param>
+        static public Beatmap Load(string path, string fileName)
         {
             Beatmap parsed = new Beatmap();
-            parsed.path = file_path;
+            parsed.path = path;
+            parsed.fileName = fileName;
 
             var state = "";
 
-            var lines = File.ReadLines(file_path);
+            var lines = File.ReadLines(path + "\\" + fileName);
             foreach (var line in lines)
             {
                 if (line.Length > 0)
@@ -51,6 +54,18 @@ namespace Pulsarc.Beatmaps
                                     Console.WriteLine("Unknown beatmap field : " + type);
                                 }
                                 break;
+                            case "Background":
+                                {
+                                    try
+                                    {
+                                        parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Unknown beatmap field : " + type);
+                                    }
+                                    break;
+                                }
                             case "KeyCount":
                                 try
                                 {
@@ -165,6 +180,7 @@ namespace Pulsarc.Beatmaps
                 writeProperty(file, beatmap, "Mapper");
                 writeProperty(file, beatmap, "Version");
                 writeProperty(file, beatmap, "Audio");
+                writeProperty(file, beatmap, "Background");
 
                 file.WriteLine("");
                 writeProperty(file, beatmap, "KeyCount");
