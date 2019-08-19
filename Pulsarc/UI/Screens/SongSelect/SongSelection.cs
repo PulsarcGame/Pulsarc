@@ -41,9 +41,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             // Ultimately, this should be loaded from a cache and updated incrementally or when doing a refresh
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
-                foreach (string file in Directory.GetFiles(dir, "*.psc"))
+                foreach (string file in Directory.GetFiles(dir, "*.psc")
+                                     .Select(Path.GetFileName)
+                                     .ToArray())
                 {
-                    beatmaps.Add(BeatmapHelper.Load(file));
+                    beatmaps.Add(BeatmapHelper.Load(dir, file));
                 }
             }
             beatmaps = sortBeatmaps(beatmaps, "difficulty");

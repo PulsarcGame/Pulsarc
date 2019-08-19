@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Wobble.Screens;
+using Pulsarc.UI.Common;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -33,6 +34,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Beatmap currentBeatmap;
         public Column[] columns;
         public int keys;
+
+        // Background
+        public Background background;
 
         // Events indexes
         public int speedVariationIndex;
@@ -107,11 +111,17 @@ namespace Pulsarc.UI.Screens.Gameplay
             combo_multiplier = Scoring.max_combo_multiplier;
             score = 0;
 
+            background = new Background(Config.getInt("Gameplay", "BackgroundDim") / 100f);
+            background.changeBackground(beatmap.path, beatmap.Background);
+
             currentBeatmap = beatmap;
 
             // Set the path of the song to be played later on
-            AudioManager.song_path = Directory.GetParent(currentBeatmap.path).FullName + "\\" + currentBeatmap.Audio;
-
+            AudioManager.song_path = Directory  .GetParent(currentBeatmap.path) // Get the path to "\Songs"
+                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
+                                                "\\" + beatmap.path + // Add the beatmap path.
+                                                "\\" + currentBeatmap.Audio; // Add the audio name.
+            
             // Create columns and their hitobjects
             for (int i = 1; i <= keys; i++)
             {
@@ -214,7 +224,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init(string folder, string diff)
         {
             // Legacy
-            Init(BeatmapHelper.Load("Songs/" + folder + "/" + diff + ".psc"));
+            Init(BeatmapHelper.Load("Songs/" + folder, diff + ".psc"));
         }
 
         public override void Update(GameTime gameTime)

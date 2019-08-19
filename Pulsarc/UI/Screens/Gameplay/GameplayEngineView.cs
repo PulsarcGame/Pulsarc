@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay.UI;
 using Wobble.Screens;
 
@@ -17,6 +18,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         AccuracyMeter accMeter;
         public Crosshair crosshair;
 
+        Background background;
+
         private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
         public GameplayEngineView(Screen screen) : base(screen) { }
 
@@ -32,6 +35,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             judgeBox = new JudgeBox(new Vector2(getSkinnablePosition("JudgesX"), getSkinnablePosition("JudgesY")));
             accMeter = new AccuracyMeter(new Vector2(getSkinnablePosition("AccMeterX"), getSkinnablePosition("AccMeterY"))
                                        , new Vector2(getSkinnablePosition("AccMeterWidth"), getSkinnablePosition("AccMeterHeight")));
+
+            background = GetGameplayEngine().background;
         }
 
         public void addHit(double time, int error, int judge)
@@ -65,6 +70,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (!GameplayEngine.active) return;
 
             // Draw everything
+            background.Draw();
             crosshair.Draw();
             drawArcs();
             accuracyDisplay.Draw();

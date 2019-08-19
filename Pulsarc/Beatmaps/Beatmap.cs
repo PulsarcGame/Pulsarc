@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pulsarc.UI.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,11 @@ namespace Pulsarc.Beatmaps
 {
     public class Beatmap
     {
+        // Beatmap folder path
         public string path;
+
+        // Beatmap filename
+        public string fileName;
 
         // Metadata
         public string FormatVersion { get; set; } = "1";
@@ -18,13 +23,16 @@ namespace Pulsarc.Beatmaps
         public string Version { get; set; }
         public string Audio { get; set; }
 
+        // Background filename
+        public string Background { get; set; }
+
         // General
         public int KeyCount { get; set; } = 4;
         public double Difficulty { get; set; } = 0;
 
         // Events
         public List<Event> events;
-
+        
         // Gameplay
         public List<SpeedVariation> speedVariations;
         public List<TimingPoint> timingPoints;

@@ -19,6 +19,12 @@ namespace Pulsarc.UI
         public Rectangle drawnPart;
         public Anchor anchor;
 
+        // The current base size of this drawable in pixels.
+        public Vector2 baseSize;
+
+        // The opacity of this Drawable, 1 is fully opaque, 0 is fully transparent.
+        public float opacity = 1f;
+
         protected float aspectRatio; // Used to force aspect ratio when using Resize
         protected float scale = 1;
         protected float rotation = 0;
@@ -48,14 +54,15 @@ namespace Pulsarc.UI
 
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
-            float newAspect = size.X / size.Y;
+            baseSize = size;
+            float newAspect = baseSize.X / baseSize.Y;
             if (aspectRatio != -1 && newAspect != aspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Console.WriteLine("Invalid aspect ratio : " + size.X + "x" + size.Y + " isn't " + aspect.ToString());
+                Console.WriteLine("Invalid aspect ratio : " + baseSize.X + "x" + baseSize.Y + " isn't " + aspect.ToString());
                 return;
             }
-            scale = size.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+            scale = baseSize.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
         }
 
         public virtual void Resize(float size, bool resolutionScale = true)
@@ -76,42 +83,47 @@ namespace Pulsarc.UI
             return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / Pulsarc.yBaseRes * Pulsarc.getDimensions().Y);
         }
 
+        public void changePosition(float x, float y)
+        {
+            changePosition(new Vector2(x, y));
+        }
+
         public void changePosition(Vector2 position)
         {
             this.position = getResponsivePosition(position);
 
             Vector2 newPos = position;
-            Vector2 size;
+            /*Vector2 size;
             if (texture != null)
             {
                 size = new Vector2(texture.Width, texture.Height);
             } else
             {
                 size = new Vector2(0,0);
-            }
+            }*/
 
             switch (anchor)
             {
                 case Anchor.Center:
-                    newPos.X -= size.X / 2;
-                    newPos.Y -= size.Y / 2;
+                    newPos.X -= baseSize.X / 2;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    newPos.X -= size.X;
+                    newPos.X -= baseSize.X;
                     break;
                 case Anchor.CenterRight:
-                    newPos.X -= size.X;
-                    newPos.Y -= size.Y / 2;
+                    newPos.X -= baseSize.X;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    newPos.X -= size.X;
-                    newPos.Y -= size.Y;
+                    newPos.X -= baseSize.X;
+                    newPos.Y -= baseSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    newPos.Y -= size.Y;
+                    newPos.Y -= baseSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    newPos.Y -= size.Y / 2;
+                    newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.TopLeft:
                 default:
@@ -151,7 +163,12 @@ namespace Pulsarc.UI
 
         public virtual void Draw()
         {
-            Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
+            Color color = Color.White;
+
+            if (opacity != 1f)
+                color *= opacity;
+
+            Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
             if(hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {

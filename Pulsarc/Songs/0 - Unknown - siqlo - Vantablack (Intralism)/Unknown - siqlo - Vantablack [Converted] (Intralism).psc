@@ -4,6 +4,7 @@ Artist: Unknown
 Mapper: Intralism
 Version: Converted
 Audio: music.ogg
+Background: bg.jpg
 
 TimingPoints:
 0,120
