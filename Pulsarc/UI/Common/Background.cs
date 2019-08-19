@@ -41,12 +41,14 @@ namespace Pulsarc.UI.Common
 
                 // If the texture has the same aspect ratio as the base, resize to base res,
                 // if not, resize x to base res and then multiply y by the amount x increased.
-                Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : texture.Height * multiplier));  
+                Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : texture.Height * multiplier));
             }
             catch
             {
                 Console.WriteLine("Failed to load " + asset + " in " + path);
                 texture = Skin.defaultTexture;
+
+                drawnPart = new Rectangle(new Point(0, 0), new Point(0, 0));
             }
 
             changePosition(Pulsarc.xBaseRes / 2, Pulsarc.yBaseRes / 2);
