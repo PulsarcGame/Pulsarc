@@ -236,11 +236,11 @@ namespace Pulsarc.UI
                     newPos.Y -= baseSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
-                    newPos.X -= size.X / 2;
+                    newPos.X -= baseSize.X / 2;
                     break;
                 case Anchor.CenterBottom:
-                    newPos.X -= size.X / 2;
-                    newPos.Y -= size.Y;
+                    newPos.X -= baseSize.X / 2;
+                    newPos.Y -= baseSize.Y;
                     break;
                 case Anchor.TopLeft:
                 default:
