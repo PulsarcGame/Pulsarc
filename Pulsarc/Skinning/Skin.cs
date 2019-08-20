@@ -144,7 +144,6 @@ namespace Pulsarc.Skinning
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine(path + path + "/" + asset + ".png");
                 return Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.Open(path + "/" + asset + ".png", FileMode.Open));
             }
             catch

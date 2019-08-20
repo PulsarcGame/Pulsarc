@@ -50,7 +50,6 @@ namespace Pulsarc.UI
         // The opacity of this Drawable, 1 is fully opaque, 0 is fully transparent.
         public float opacity = 1f;
 
-        protected float aspectRatio; // Used to force aspect ratio when using Resize
         // Used to force aspect ratio when using Resize.
         protected float aspectRatio;
 
