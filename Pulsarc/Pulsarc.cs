@@ -156,7 +156,7 @@ namespace Pulsarc
             cursor.setPos(MouseManager.CurrentState.Position);
 
             // Temporary measure for converting intralism or osu!mania beatmaps
-            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Keys.S) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
+            if (!GameplayEngine.active && Keyboard.GetState().IsKeyDown(Config.bindings["Convert"]) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
                 converting = true;
                 BeatmapConverter converter;
