@@ -177,7 +177,7 @@ namespace Pulsarc
 
                 converter.Save(toConvert);
                 ((SongSelection)ScreenManager.Screens.Peek()).RefreshBeatmaps();
-            } else if(converting && Keyboard.GetState().IsKeyUp(Keys.S))
+            } else if(converting && Keyboard.GetState().IsKeyUp(Config.bindings["Convert"]))
             {
                 converting = false;
             }
