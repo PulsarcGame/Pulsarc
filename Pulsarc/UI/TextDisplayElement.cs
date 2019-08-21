@@ -6,20 +6,11 @@ using System.Text;
 
 namespace Pulsarc.UI
 {
-    public enum Anchor
-    {
-        Center = 0,
-        TopRight = 1,
-        CenterRight = 2,
-        BottomRight = 3,
-        TopLeft = 4,
-        CenterLeft = 5,
-        BottomLeft = 6,
-    }
     class TextDisplayElement : Drawable
     {
         string name;
 
+        // Text
         SpriteFont font;
         StringBuilder text;
         float fontScale;
@@ -27,6 +18,14 @@ namespace Pulsarc.UI
 
         Vector2 processedPosition;
 
+        /// <summary>
+        /// A text-based Drawable.
+        /// </summary>
+        /// <param name="name">The text to be displayed.</param>
+        /// <param name="position">The position of this TDE</param>
+        /// <param name="fontSize">The size of the text in pt. Default is 18.</param>
+        /// <param name="anchor">The anchor of this TDE, Default is Anchor.TopLeft</param>
+        /// <param name="color">The color of the text, default is null.</param>
         public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft, Color? color = null)
         {
             this.name = name;
@@ -35,7 +34,6 @@ namespace Pulsarc.UI
             text = new StringBuilder(20);
 
             font = AssetsManager.fonts["DefaultFont"];
-            color = Color.White;
             fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
 
             this.position = position;
@@ -77,6 +75,13 @@ namespace Pulsarc.UI
                     break;
                 case Anchor.CenterLeft:
                     newY -= size.Y / 2;
+                    break;
+                case Anchor.CenterTop:
+                    newX -= size.X / 2;
+                    break;
+                case Anchor.CenterBottom:
+                    newX -= size.X / 2;
+                    newY -= size.Y;
                     break;
                 case Anchor.TopLeft:
                 default:

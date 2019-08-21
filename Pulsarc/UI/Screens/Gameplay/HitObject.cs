@@ -6,18 +6,31 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class HitObject : Drawable
     {
+        // The time (in ms) from the start of the audio to a Perfect hit
         public int time;
 
+        // The direction this HitObject is "falling" from.
         double angle;
-        //double radius;
 
+        // The theoritical z-axis poisition of this arc to assist with imitating a "falling" effect from the screen to the crosshair.
         double zLocation;
+
+        // The user-defined base speed.
         double baseSpeed;
 
+
         // Optimization
+
         // Whether this hitobject is marked for destruction in gameplay
         public bool erase;
 
+        /// <summary>
+        /// HitObject is an "Arc", the main gameplay element for Pulsarc.
+        /// </summary>
+        /// <param name="time">The time (in ms) from the start of the audio to a Perfect hit</param>
+        /// <param name="angle">The direction this HitObject is "falling" from.</param>
+        /// <param name="keys">How many keys are in the current Beatmap. Only 4 keys is working right now.</param>
+        /// <param name="baseSpeed">The user-defined base speed for this arc.</param>
         public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
             this.time = time;
@@ -25,15 +38,18 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.baseSpeed = baseSpeed;
             erase = false;
 
-            Vector2 screen = new Vector2(Pulsarc.xBaseRes, Pulsarc.yBaseRes);
-            //radius = (200f / 1920f) * screen.X;
+            // Vector representing the base screen of Pulsarc.
+            Vector2 screen = Pulsarc.getBaseScreenDimensions();
 
+            // Find the origin (center) of this HitObject
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
             origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
 
+            // Determine the position for this HitObject
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
 
+            // What part of this HitObject should be drawn?
             drawnPart.Width = texture.Width / 2;
             drawnPart.Height = texture.Height / 2;
 
@@ -57,25 +73,47 @@ namespace Pulsarc.UI.Screens.Gameplay
                     break;
             }
 
+            // Set the rotation of the object
+            // TODO: Make this customizeable by the beatmap.
             rotation = (float)(45 * (Math.PI / 180));
+
+            // Set the HitObject's position
             changePosition(position);
         }
 
-
-        public void recalcPos(int currentTime, double speed, double crosshairZLoc)
+        /// <summary>
+        /// Calculates the new z-axis poisition this HitObject should be in
+        /// and updates its size accordingly.
+        /// </summary>
+        /// <param name="currentTime">The current time (in ms) since
+        /// the start ofthe audio.</param>
+        /// <param name="speedModifier">The current speed modifier.</param>
+        /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
+        public void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
-            setZLocation(currentTime, speed * baseSpeed, crosshairZLoc);
-
+            setZLocation(currentTime, speedModifier * baseSpeed, crosshairZLoc);
             Resize(findArcRadius(), false);
         }
 
-        public void setZLocation(int currentTime, double speed, double crosshairZLoc)
+        /// <summary>
+        /// Calculate and set the current z-axis position for this object.
+        /// </summary>
+        /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
+        /// <param name="speedModifier">The current speed modifier.</param>
+        /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
+        private void setZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             zLocation = calcZLocation(currentTime, speed, crosshairZLoc);
         }
 
-        public double calcZLocation(int currentTime, double speed, double crosshairZLoc)
+        /// <summary>
+        /// Calculate the current z-axis position for this object.
+        /// </summary>
+        /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
+        /// <param name="speedModifier">The current speed modifier.</param>
+        /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
+        private double calcZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             int deltaTime = currentTime - time;
 
@@ -84,6 +122,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             return zLocation;
         }
         
+        /// <summary>
+        /// Find this object's current arc radius using its current z-axis position.
+        /// </summary>
         public float findArcRadius()
         {
             Vector2 screen = Pulsarc.getDimensions();
@@ -93,12 +134,23 @@ namespace Pulsarc.UI.Screens.Gameplay
             return radius;
         }
         
+        /// <summary>
+        /// Return the time (in ms) since the start of the audio
+        /// when this HitObject should first be drawn.
+        /// </summary>
+        /// <param name="speed">Arc Speed TODO: Figure out if this needs to consider
+        /// all speed changes before, or if it only needs to consider the speed of
+        /// the HitObject's time.</param>
+        /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
         public int IsSeenAt(double speed, double crosshairZLoc)
         {
             // Reverse formula for determining when an arc will first appear on screen
             return (int)(time - (crosshairZLoc / speed));
         }
 
+        /// <summary>
+        /// Returns whether this HitObject is currently being drawn.
+        /// </summary>
         public bool IsSeen()
         {
             return zLocation > 0;

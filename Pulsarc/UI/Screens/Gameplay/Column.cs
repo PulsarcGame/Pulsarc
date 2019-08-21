@@ -4,10 +4,19 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class Column
     {
+        // Which side this column represents
         public int side;
-        public List<HitObject> hitObjects;
-        public List<KeyValuePair<long,HitObject>> updateHitObjects;
 
+        // All HitObjects for this column.
+        public List<HitObject> hitObjects;
+
+        //
+        public List<KeyValuePair<long,HitObject>> updateHitObjects;
+        
+        /// <summary>
+        /// A Column is a "track" where all arcs from a specific direction are kept track of.
+        /// </summary>
+        /// <param name="side"></param>
         public Column(int side)
         {
             this.side = side;
@@ -15,15 +24,23 @@ namespace Pulsarc.UI.Screens.Gameplay
             updateHitObjects = new List<KeyValuePair<long, HitObject>>();
         }
 
+        /// <summary>
+        /// Adds the provided HitObject to this Column
+        /// </summary>
+        /// <param name="hitObject">The HitObject to add</param>
+        /// <param name="speed">Current game speed</param>
+        /// <param name="crosshairZLoc">The z-axis position of the Crosshair</param>
         public void AddHitObject(HitObject hitObject, double speed, double crosshairZLoc)
         {
             hitObjects.Add(hitObject);
             updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
         }
 
+        /// <summary>
+        /// Organizes the hitobjects to avoid updating yet unseen hitobjects.
+        /// </summary>
         public void SortUpdateHitObjects()
         {
-            // Organizes the hitobjects to avoid updating yet unseen hitobjects
             updateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
         }
     }

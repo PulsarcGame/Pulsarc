@@ -22,17 +22,24 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // temp: Whether or not the gameplay is automatically run
         bool autoPlay = false;
-        // Whether or not autoplay should use randomness. Added for testing reasons - FRUP
+
+        // Whether or not autoplay should use randomness.
         bool autoPlayRandom = false;
 
         // Used for delaying the gameplay's end
         Stopwatch endWatch;
         public int endDelay = 2000;
 
-        // Beatmap Elements
 
+        // Beatmap Elements
+        
+        // The current beatmap being played.
         public Beatmap currentBeatmap;
+
+        // All the "tracks" or "directions" HitObjects can come from.
         public Column[] columns;
+
+        // Used to store the key-style of the current map (4k, 7k, etc.)
         public int keys;
 
         // Background
@@ -42,12 +49,16 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int speedVariationIndex;
         public int eventIndex;
 
-        // Gameplay Elements
 
+        // Gameplay Elements
         public double timeOffset;
 
         public Crosshair crosshair;
+
+        // User-defined base speed
         public double userSpeed;
+
+        // Current speed modifier defined by the Beatmap
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
         public List<KeyValuePair<double, int>> errors;
@@ -57,22 +68,39 @@ namespace Pulsarc.UI.Screens.Gameplay
         public long max_score;
         public long score;
         public int score_display;
+
+        // The current combo during gameplay.
         public int combo;
+
+        // The highest combo obtained during gameplay thus far. 
         public int max_combo;
+
+        // Hidden value to determine score.
         public int combo_multiplier;
+
+        // How fast the audio (and relevant gameplay) will play at.
         public float rate;
 
         public double time => AudioManager.getTime() + timeOffset;
 
+
         // Performance
+
         // Time distance from which hitobjects are neither updated not drawn
         public int msIgnore = 500;
 
+        /// <summary>
+        /// The engine that handles the gameplay of Pulsarc.
+        /// </summary>
         public GameplayEngine()
         {
             View = new GameplayEngineView(this);
         }
 
+        /// <summary>
+        /// Initializes the current GameplayView with the provided beatmap.
+        /// </summary>
+        /// <param name="beatmap">The beatmap to play through</param>
         public void Init(Beatmap beatmap)
         {
             // Reset in case it wasn't properly handled outside
@@ -87,7 +115,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             keys = 4;
             userSpeed = Config.getInt("Gameplay", "ApproachSpeed") / 5f / rate; // "5f" is used to give more choice in config for speed
 
-            crosshair = new Crosshair(300); // 300 = base crosshair radius in intralism
+            crosshair = new Crosshair(300); // 300 = base crosshair diameter in intralism
             timeOffset = 0;
 
             // Initialize default variables, parse beatmap
@@ -221,6 +249,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             GC.Collect();
         }
 
+        /// <summary>
+        /// Initialize this gameplay view by using the folder location and
+        /// difficulty name to find the beatmap. Legacy.
+        /// </summary>
+        /// <param name="folder">Beatmap folder name.</param>
+        /// <param name="diff">Difficulty name for the beatmap.</param>
         public void Init(string folder, string diff)
         {
             // Legacy
@@ -229,6 +263,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override void Update(GameTime gameTime)
         {
+            // If not active, don't update.
             if (!active) return;
 
             // Quit gameplay when nothing is left to play in terms of Audio.
@@ -243,19 +278,26 @@ namespace Pulsarc.UI.Screens.Gameplay
             handleInputs();
 
             // Gameplay commands
-
+            // End the gameplay with the "escape" key TODO: make this key bindable.
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 EndGameplay();
                 return;
             }
 
+            // Pause Gameplay with bindable "Pause" key.
             if (Keyboard.GetState().IsKeyDown(Config.bindings["Pause"]))
+            {
                 Pause();
-
+            }
+            
+            // Resume Gameplay with bindable "Continue" key.
             if (Keyboard.GetState().IsKeyDown(Config.bindings["Continue"]))
+            {
                 Resume();
-
+            }
+            
+            // Restart gameplay using bindable "Retry" key.
             if (Keyboard.GetState().IsKeyDown(Config.bindings["Retry"]))
             {
                 Retry();
@@ -278,6 +320,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 }
                 speedVariationIndex++;
             }
+
             // Events
             if (currentBeatmap.events.Count > eventIndex + 1 && currentBeatmap.events[eventIndex].time <= time)
             {
@@ -353,28 +396,42 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
         }
 
+        /// <summary>
+        /// Update score_display according to the maximum displayed score.
+        /// </summary>
         private void updateScoreDisplay()
         {
-            // Formula for the display_score according to the maximum displayed score
             score_display = (int) (score / (float) max_score * Scoring.max_score);
         }
 
+        /// <summary>
+        /// Move the gameplay backwards or forward in time.
+        /// </summary>
+        /// <param name="delta">How much time to move.</param>
         public void deltaTime(long delta)
         {
-            // Move the gameplay backwards or forward in time
             AudioManager.deltaTime(delta);
         }
 
+        /// <summary>
+        /// Pause the gameplay.
+        /// </summary>
         public void Pause()
         {
             AudioManager.Pause();
         }
 
+        /// <summary>
+        /// Resume gameplay.
+        /// </summary>
         public void Resume()
         {
             AudioManager.Resume();
         }
 
+        /// <summary>
+        /// Restart gameplay
+        /// </summary>
         public void Retry()
         {
             Beatmap retry = currentBeatmap;
@@ -384,6 +441,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             Init(retry);
         }
 
+        /// <summary>
+        /// Reset this GameplayEngine, use before retrying or changing to a new map.
+        /// </summary>
         public void Reset()
         {
             active = false;
@@ -396,11 +456,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             currentBeatmap = null;
             columns = null;
 
+            // Reset Attributes
             userSpeed = 1;
             currentSpeedMultiplier = 1;
             currentArcsSpeed = 1;
         }
 
+        /// <summary>
+        /// Handle the currently queued Inputs that may affect the gameplay
+        /// </summary>
         public void handleInputs()
         {
             while (InputManager.keyboardPresses.Count > 0 
@@ -457,6 +521,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
         }
 
+        /// <summary>
+        /// Stop gameplay and remove this engine from displaying.
+        /// </summary>
         public void EndGameplay()
         {
             // Create the result screen before exiting gameplay
