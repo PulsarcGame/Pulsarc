@@ -21,8 +21,16 @@ namespace Pulsarc.UI.Screens.Gameplay
         Background background;
 
         private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
+
+        /// <summary>
+        /// Create the GameplayEngineView, in otherwords the UI/HUD elements during Gameplay.
+        /// </summary>
+        /// <param name="screen">The screen this GameplayEngineView is working with.</param>
         public GameplayEngineView(Screen screen) : base(screen) { }
 
+        /// <summary>
+        /// Initialize this GameplayEngineView with new UI elements.
+        /// </summary>
         public void Init()
         {
             // Initialize UI depending on skin config
@@ -39,12 +47,23 @@ namespace Pulsarc.UI.Screens.Gameplay
             background = GetGameplayEngine().background;
         }
 
+        /// <summary>
+        /// Add a hit and its judgement.
+        /// </summary>
+        /// <param name="time">The time of the hit.</param>
+        /// <param name="error">The error of the hit (deltaTime / audio rate)</param>
+        /// <param name="judge">The base score of the judgement.</param>
         public void addHit(double time, int error, int judge)
         {
             accMeter.addError(time, error);
             addJudge(time, judge);
         }
 
+        /// <summary>
+        /// Add a judgement.
+        /// </summary>
+        /// <param name="time">The time of the judgement.</param>
+        /// <param name="judge">The base score of the judgement.</param>
         public void addJudge(double time, int judge)
         {
             judgeBox.Add(time, judge);

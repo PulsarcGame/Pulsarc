@@ -233,6 +233,14 @@ namespace Pulsarc
             return new Vector2(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
         }
 
+        /// <summary>
+        /// Used for getting the game's base screen dimensions in a Vector2 Object
+        /// </summary>
+        static public Vector2 getBaseScreenDimensions()
+        {
+            return new Vector2(xBaseRes, yBaseRes);
+        }
+
         static public void Quit()
         {
             pulsarc.Exit();

@@ -12,8 +12,17 @@ namespace Pulsarc.UI.Screens.Result.UI
         int width;
         int height;
         List<KeyValuePair<double, int>> hits;
+
+        // The time of the last hit
         double max_time;
 
+        /// <summary>
+        /// A graph that shows all the hits of a play on the Result Screen.
+        /// </summary>
+        /// <param name="position">The position of the Graph</param>
+        /// <param name="width">The width of the Graph</param>
+        /// <param name="height">The height of the Graph</param>
+        /// <param name="hits">A list of all hits, KVP[time, judgescore]</param>
         public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<double, int>> hits) : base(Skin.defaultTexture, position)
         {
             this.width = width;
@@ -25,6 +34,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
             JudgementValue miss = Judgement.getMiss();
 
+            // Draw the graph
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -46,6 +56,7 @@ namespace Pulsarc.UI.Screens.Result.UI
             }
             */
 
+            // Draw the hits
             if (hits.Count > 0)
             {
                 max_time = hits[hits.Count - 1].Key;
@@ -69,6 +80,11 @@ namespace Pulsarc.UI.Screens.Result.UI
             texture.SetData(graphBG);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hit"></param>
+        /// <returns></returns>
         private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
         {
             return new KeyValuePair<Vector2, Color>(new Vector2((float) (hit.Key / max_time * width), (hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);

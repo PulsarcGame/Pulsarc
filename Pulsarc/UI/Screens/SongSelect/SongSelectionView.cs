@@ -15,10 +15,14 @@ namespace Pulsarc.UI.Screens.SongSelect
     {
         SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
+        // Background image of Song Select
         Background background;
 
+        // Back button to the Main Menu
         ReturnButton button_back;
 
+        // Card stats
+        // TODO: Make this more skinnable/adjustable by the user.
         int cardWidth = 800;
         int cardHeight = 170;
         int cardMargin = 10;
@@ -58,6 +62,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Update(GameTime gameTime)
         {
+            // Move cards if focus has changed due to mouse wheel input.
             if(lastFocus != GetSongSelection().currentFocus)
             {
                 int diff = GetSongSelection().currentFocus - lastFocus;
@@ -70,6 +75,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 lastFocus = GetSongSelection().currentFocus;
             }
 
+            // Go back if the back button was clicked.
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
                 if (button_back.clicked(MouseManager.CurrentState.Position))

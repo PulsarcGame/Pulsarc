@@ -1,14 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+
+// Placeholder buttons
 
 namespace Pulsarc.UI.Screens.Result.UI
 {
-    /*class ButtonRetry : Drawable
-    {
-        public ButtonRetry(Vector2 position) : base(Skin.assets["result_button_retry"], position)
-        {
-        }
-    }*/
+    /// <summary>
+    /// TODO: Create an Advanced Result Screen.
+    /// </summary>
     class ButtonAdvanced : Drawable
     {
         public ButtonAdvanced(Vector2 position) : base(Skin.assets["result_button_advanced"], position)

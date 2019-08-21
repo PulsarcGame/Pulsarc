@@ -8,9 +8,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class Judge : Drawable
     {
-        public Judge(int key, Vector2 position) : base(Skin.judges[key], position)
+        public Judge(int key, Vector2 position) : base(Skin.judges[key], position, -1, Anchor.Center)
         {
-            changePosition(new Vector2(960 - texture.Width / 2, 540 - texture.Height / 2));
         }
     }
 }
