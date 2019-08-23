@@ -9,6 +9,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Whether or not this HitObject can be hit
         public bool hittable = true;
 
+        // Whether or not this HitObject should fade before reaching the crosshair
+        public bool hidden = false;
+
         // The time (in ms) from the start of the audio to a Perfect hit
         public int time;
 
@@ -33,11 +36,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="angle">The direction this HitObject is "falling" from.</param>
         /// <param name="keys">How many keys are in the current Beatmap. Only 4 keys is working right now.</param>
         /// <param name="baseSpeed">The user-defined base speed for this arc.</param>
-        public HitObject(int time, double angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
+        /// <param name="hidden">Whether or not this arc should fade before reaching the crosshair.</param>
+        public HitObject(int time, double angle, int keys, double baseSpeed, bool hidden) : base(Skin.assets["arcs"])
         {
             this.time = time;
             this.angle = angle;
             this.baseSpeed = baseSpeed;
+            this.hidden = hidden;
             erase = false;
 
             // Vector representing the base screen of Pulsarc.
@@ -85,7 +90,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         /// <summary>
         /// Calculates the new z-axis poisition this HitObject should be in
-        /// and updates its size accordingly.
+        /// and updates its size accordingly. Also sets stransparency if
+        /// hidden is activated.
         /// </summary>
         /// <param name="currentTime">The current time (in ms) since
         /// the start ofthe audio.</param>
@@ -100,6 +106,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         /// <summary>
         /// Calculate and set the current z-axis position for this object.
+        /// Also sets transparency if Hidden is activated.
         /// </summary>
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
@@ -107,6 +114,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void setZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             zLocation = calcZLocation(currentTime, speed, crosshairZLoc);
+
+            // Set hidden status here
+            if (hidden)
+            {
+                double bruh = crosshairZLoc - (crosshairZLoc / 3);
+                opacity = zLocation > bruh ? 0f : (float)(bruh - zLocation) / (float)bruh;
+            }
         }
 
         /// <summary>

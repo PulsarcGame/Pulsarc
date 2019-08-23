@@ -180,11 +180,12 @@ namespace Pulsarc.UI.Screens.Gameplay
                 }
 
                 // Add arcs to the columns
+                bool hidden = Config.getBool("Gameplay", "Hidden");
                 for (int i = 0; i < keys; i++)
                 {
                     if (BeatmapHelper.isColumn(arc, i))
                     {
-                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed), currentArcsSpeed * currentSpeedMultiplier, crosshair.getZLocation());
+                        columns[i].AddHitObject(new HitObject(arc.time, (int)(i / (float)keys * 360), keys, currentArcsSpeed, hidden), currentArcsSpeed * currentSpeedMultiplier, crosshair.getZLocation());
                         objectCount++;
                     }
                 }
@@ -500,7 +501,8 @@ namespace Pulsarc.UI.Screens.Gameplay
                             getGameplayView().addHit(press.Key, error, judge.score);
 
                             // Add a Fading HitObject, and mark the pressed HitObject for removal.
-                            columns[column].AddHitObject(new HitObjectFade(pressed, timeToFade, gameTime), pressed.baseSpeed, crosshair.getZLocation());
+                            if (!pressed.hidden)
+                                columns[column].AddHitObject(new HitObjectFade(pressed, timeToFade, gameTime), pressed.baseSpeed, crosshair.getZLocation());
                             pressed.erase = true;
 
                             columns[column].hitObjects.Remove(pressed);

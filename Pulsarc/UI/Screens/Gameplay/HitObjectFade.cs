@@ -14,7 +14,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         double firstFrameTime;
 
-        public HitObjectFade(HitObject parent, int timeToFade, GameTime gameTime, float opacity = .5f) : base(parent.time, parent.angle, 4, 0)
+        public HitObjectFade(HitObject parent, int timeToFade, GameTime gameTime, float opacity = .5f) : base(parent.time, parent.angle, 4, 0, false)
         {
             hittable = false;
 

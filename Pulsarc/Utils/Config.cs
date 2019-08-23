@@ -65,6 +65,41 @@ namespace Pulsarc.Utils
 
         static public void setInt(string category, string key, int value)
         {
+            setValue(category, key, value);
+        }
+
+        static public double getDouble(string category, string key)
+        {
+            return double.Parse(get[category][key]);
+        }
+
+        static public void setDouble(string category, string key, double value)
+        {
+            setValue(category, key, value);
+        }
+
+        static public float getFloat(string category, string key)
+        {
+            return float.Parse(get[category][key]);
+        }
+
+        static public void setFloat(string category, string key, float value)
+        {
+            setValue(category, key, value);
+        }
+
+        static public bool getBool(string category, string key)
+        {
+            return bool.Parse(get[category][key]);
+        }
+        
+        static public void setBool(string category, string key, bool value)
+        {
+            setValue(category, key, value);
+        }
+
+        static private void setValue(string category, string key, Object value)
+        {
             get[category][key] = value.ToString();
             parser.WriteFile("config.ini", get);
         }
