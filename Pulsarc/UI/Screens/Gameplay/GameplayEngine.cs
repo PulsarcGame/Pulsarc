@@ -21,7 +21,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public static bool active = false;
 
         // temp: Whether or not the gameplay is automatically run
-        bool autoPlay = false;
+        bool autoPlay = Config.getBool("Gameplay", "Autoplay");
 
         // Whether or not autoplay should use randomness.
         bool autoPlayRandom = false;
@@ -114,7 +114,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             AudioManager.offset = Config.getInt("Audio", "GlobalOffset");
 
             // temp: These values should be obtained from mods/config/beatmap parsing
-            rate = 1f; 
+            rate = Config.getFloat("Gameplay", "SongRate"); 
             keys = 4;
             userSpeed = Config.getInt("Gameplay", "ApproachSpeed") / 5f / rate; // "5f" is used to give more choice in config for speed
 
