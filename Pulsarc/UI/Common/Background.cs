@@ -34,14 +34,14 @@ namespace Pulsarc.UI.Common
             {
                 texture = Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.Open(path + "/" + asset, FileMode.Open));
 
-                drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
-
                 bool sameAspectAsBase = (float)texture.Width / texture.Height == Pulsarc.baseRatio;
                 float multiplier = Pulsarc.xBaseRes / texture.Width;
 
                 // If the texture has the same aspect ratio as the base, resize to base res,
                 // if not, resize x to base res and then multiply y by the amount x increased.
-                Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : texture.Height * multiplier));
+                Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : (float)texture.Height * multiplier));
+                
+                drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
             }
             catch
             {
@@ -51,7 +51,8 @@ namespace Pulsarc.UI.Common
                 drawnPart = new Rectangle(new Point(0, 0), new Point(0, 0));
             }
 
-            changePosition(Pulsarc.xBaseRes / 2, Pulsarc.yBaseRes / 2);
+            position = Pulsarc.getBaseScreenDimensions() / 2f;
+            drawPosition = new Vector2(0, 0);
         }
     }
 }

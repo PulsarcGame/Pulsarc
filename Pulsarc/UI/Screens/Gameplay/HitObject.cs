@@ -6,21 +6,23 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class HitObject : Drawable
     {
+        // Whether or not this HitObject can be hit
+        public bool hittable = true;
+
         // The time (in ms) from the start of the audio to a Perfect hit
         public int time;
 
         // The direction this HitObject is "falling" from.
-        double angle;
+        internal double angle;
 
         // The theoritical z-axis poisition of this arc to assist with imitating a "falling" effect from the screen to the crosshair.
-        double zLocation;
+        internal double zLocation;
 
         // The user-defined base speed.
-        double baseSpeed;
+        internal double baseSpeed;
 
 
         // Optimization
-
         // Whether this hitobject is marked for destruction in gameplay
         public bool erase;
 
@@ -31,7 +33,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="angle">The direction this HitObject is "falling" from.</param>
         /// <param name="keys">How many keys are in the current Beatmap. Only 4 keys is working right now.</param>
         /// <param name="baseSpeed">The user-defined base speed for this arc.</param>
-        public HitObject(int time, int angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
+        public HitObject(int time, double angle, int keys, double baseSpeed) : base(Skin.assets["arcs"])
         {
             this.time = time;
             this.angle = angle;
@@ -89,7 +91,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// the start ofthe audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        public void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
+        public virtual void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
             setZLocation(currentTime, speedModifier * baseSpeed, crosshairZLoc);

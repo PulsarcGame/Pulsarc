@@ -32,8 +32,16 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="crosshairZLoc">The z-axis position of the Crosshair</param>
         public void AddHitObject(HitObject hitObject, double speed, double crosshairZLoc)
         {
-            hitObjects.Add(hitObject);
-            updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
+            if (hitObject.hittable)
+            {
+                hitObjects.Add(hitObject);
+                updateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
+            }
+            else
+            {
+                hitObjects.Insert(0, hitObject);
+                updateHitObjects.Insert(0, new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
+            }
         }
 
         /// <summary>

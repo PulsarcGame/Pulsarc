@@ -85,6 +85,8 @@ namespace Pulsarc.Skinning
                 // Load settings assets
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_background");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_button_back");
+                LoadSkinTexture(skinFolder + "UI/Settings/", "slider_select");
+                LoadSkinTexture(skinFolder + "UI/Settings/", "slider");
 
                 // Load Grade assets
                 LoadSkinTexture(skinFolder + "Grades/", "grade_X");
@@ -148,8 +150,15 @@ namespace Pulsarc.Skinning
             }
             catch
             {
-                Console.WriteLine("Failed to load " + asset + " in " + path);
-                return defaultTexture;
+                try
+                {
+                    return Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.Open(path + "/" + asset + ".jpg", FileMode.Open));
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to load " + asset + " in " + path);
+                    return defaultTexture;
+                }
             }
         }
 

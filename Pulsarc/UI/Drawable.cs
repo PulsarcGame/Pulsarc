@@ -44,8 +44,8 @@ namespace Pulsarc.UI
         // The Anchor of the drawable, determines how this Drawable will be rendered in relation to its position.
         public Anchor anchor;
 
-        // The current base size of this drawable in pixels.
-        public Vector2 baseSize;
+        // The current size of this drawable in pixels.
+        public Vector2 currentSize;
 
         // The opacity of this Drawable, 1 is fully opaque, 0 is fully transparent.
         public float opacity = 1f;
@@ -136,19 +136,19 @@ namespace Pulsarc.UI
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             // Find the aspect ratio of the requested size change.
-            float newAspect = baseSize.X / baseSize.Y;
-            baseSize = size;
+            float newAspect = currentSize.X / currentSize.Y;
+            currentSize = size;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (aspectRatio != -1 && newAspect != aspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Console.WriteLine("Invalid aspect ratio : " + baseSize.X + "x" + baseSize.Y + " isn't " + aspect.ToString());
+                Console.WriteLine("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString());
                 return;
             }
 
             // Set the scale of this Drawable using the parameters provided.
-            scale = baseSize.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+            scale = currentSize.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
         }
 
         /// <summary>
@@ -202,6 +202,7 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
 
             Vector2 newPos = position;
+
             /*Vector2 size;
             if (texture != null)
             {
@@ -214,32 +215,32 @@ namespace Pulsarc.UI
             switch (anchor)
             {
                 case Anchor.Center:
-                    newPos.X -= baseSize.X / 2;
-                    newPos.Y -= baseSize.Y / 2;
+                    newPos.X -= currentSize.X / 2;
+                    newPos.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    newPos.X -= baseSize.X;
+                    newPos.X -= currentSize.X;
                     break;
                 case Anchor.CenterRight:
-                    newPos.X -= baseSize.X;
-                    newPos.Y -= baseSize.Y / 2;
+                    newPos.X -= currentSize.X;
+                    newPos.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    newPos.X -= baseSize.X;
-                    newPos.Y -= baseSize.Y;
+                    newPos.X -= currentSize.X;
+                    newPos.Y -= currentSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    newPos.Y -= baseSize.Y;
+                    newPos.Y -= currentSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    newPos.Y -= baseSize.Y / 2;
+                    newPos.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
-                    newPos.X -= baseSize.X / 2;
+                    newPos.X -= currentSize.X / 2;
                     break;
                 case Anchor.CenterBottom:
-                    newPos.X -= baseSize.X / 2;
-                    newPos.Y -= baseSize.Y;
+                    newPos.X -= currentSize.X / 2;
+                    newPos.Y -= currentSize.Y;
                     break;
                 case Anchor.TopLeft:
                 default:
@@ -306,10 +307,8 @@ namespace Pulsarc.UI
         /// </summary>
         public virtual void Draw()
         {
-            Color color = Color.White;
-
-            if (opacity != 1f)
-                color *= opacity;
+            // If opacity isn't 1, color is just Color.White, otherwise it's Color.White * the opacity.
+            Color color = opacity != 1 ? Color.White * opacity : Color.White;
 
             Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 

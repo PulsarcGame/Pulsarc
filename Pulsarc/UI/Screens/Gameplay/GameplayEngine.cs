@@ -39,6 +39,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         // All the "tracks" or "directions" HitObjects can come from.
         public Column[] columns;
 
+        // The time for arcs to fade after being hit, defined by the user
+        public int timeToFade;
+
         // Used to store the key-style of the current map (4k, 7k, etc.)
         public int keys;
 
@@ -114,6 +117,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             rate = 1f; 
             keys = 4;
             userSpeed = Config.getInt("Gameplay", "ApproachSpeed") / 5f / rate; // "5f" is used to give more choice in config for speed
+
+            timeToFade = Config.getInt("Gameplay", "FadeTime");
 
             crosshair = new Crosshair(300); // 300 = base crosshair diameter in intralism
             timeOffset = 0;
@@ -275,7 +280,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             // Handle user input in priority
-            handleInputs();
+            handleInputs(gameTime);
 
             // Gameplay commands
             // End the gameplay with the "escape" key TODO: make this key bindable.
@@ -352,7 +357,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Determine whether or not this note has been missed by the user, and take action if so
-                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < time)
+                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < time && columns[i].updateHitObjects[k].Value.hittable)
                     {
                         // Remove the hitobject and reset the combo
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);
@@ -465,7 +470,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Handle the currently queued Inputs that may affect the gameplay
         /// </summary>
-        public void handleInputs()
+        public void handleInputs(GameTime gameTime)
         {
             while (InputManager.keyboardPresses.Count > 0 
                 && InputManager.keyboardPresses.Peek().Key <= AudioManager.getTime()) // Prevents future input from being handled. Useful for auto. Remove for quick auto result testing
@@ -478,9 +483,9 @@ namespace Pulsarc.UI.Screens.Gameplay
                     var column = bindings[press.Value];
 
                     // Check the first hitobject of the corresponding column if there is >= one
-                    if (columns[column].hitObjects.Count > 0)
+                    if (columns[column].hitObjects.Count > 0 && columns[column].hitObjects.Exists(x => x.hittable))
                     {
-                        pressed = columns[column].hitObjects[0];
+                        pressed = columns[column].hitObjects.Find(x => x.hittable);
 
                         int error = (int)((pressed.time - press.Key) / rate);
 
@@ -494,8 +499,13 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                             getGameplayView().addHit(press.Key, error, judge.score);
 
-                            columns[column].hitObjects[0].erase = true;
-                            columns[column].hitObjects.RemoveAt(0);
+                            // Add a Fading HitObject, and mark the pressed HitObject for removal.
+                            columns[column].AddHitObject(new HitObjectFade(pressed, timeToFade, gameTime), pressed.baseSpeed, crosshair.getZLocation());
+                            pressed.erase = true;
+
+                            columns[column].hitObjects.Remove(pressed);
+
+                            // Take care of judgement of the hit.
                             errors.Add(new KeyValuePair<double, int>(press.Key, error));
                             judgements.Add(judge);
 
