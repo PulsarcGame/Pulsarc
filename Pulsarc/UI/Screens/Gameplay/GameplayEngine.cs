@@ -537,7 +537,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void EndGameplay()
         {
             // Create the result screen before exiting gameplay
-            ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap);
+            ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap, background);
             Pulsarc.display_cursor = true;
             Reset();
             // Switch to results screen

@@ -1,4 +1,5 @@
 ﻿using Pulsarc.Beatmaps;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using System.Collections.Generic;
 using Wobble.Screens;
@@ -30,6 +31,9 @@ namespace Pulsarc.UI.Screens.Result
         // Whether or not a full combo was achieved.
         public bool full_combo;
 
+        // The map background
+        Background mapBackGround;
+
         /// <summary>
         /// The screen that summarizes a play.
         /// </summary>
@@ -38,7 +42,7 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="display_score_">The score to be displayed.</param>
         /// <param name="combo_">The maximum combo achieved from the play.</param>
         /// <param name="beatmap_">The beatmap that was played.</param>
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_)
+        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_, Background mapBackground)
         {
             // Add all the judgement names to judges_count
             judges_count = new Dictionary<string, int>();
@@ -89,7 +93,7 @@ namespace Pulsarc.UI.Screens.Result
                 grade = "C";
             }
 
-            View = new ResultScreenView(this, accuracyTotal, grade, beatmap);
+            View = new ResultScreenView(this, accuracyTotal, grade, beatmap, mapBackground);
         }
     }
 }

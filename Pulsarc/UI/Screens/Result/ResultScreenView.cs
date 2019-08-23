@@ -34,6 +34,7 @@ namespace Pulsarc.UI.Screens.Result
         // Background and scorecard designs
         Scorecard scorecard;
         Background background;
+        Background mapBackground;
 
         // Metadata
         Title title;
@@ -52,7 +53,7 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="accuracy">The accuracy of the play.</param>
         /// <param name="grade">The grade of the play.</param>
         /// <param name="beatmap">The beatmap that was played.</param>
-        public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap) : base(screen)
+        public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap, Background mapBackground) : base(screen)
         {
             judgements = new List<KeyValuePair<Judge, JudgeCount>>();
             this.beatmap = beatmap;
@@ -63,6 +64,9 @@ namespace Pulsarc.UI.Screens.Result
 
             scorecard = new Scorecard();
             background = new Background("result_background");
+
+            this.mapBackground = mapBackground;
+            mapBackground.move(new Vector2(Pulsarc.xBaseRes / 2 - 200, 0));
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePositionFloat("GradeX"), getSkinnablePositionFloat("GradeY")), getSkinnablePositionFloat("GradeScale"));
 
@@ -164,6 +168,7 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="gameTime">Game time</param>
         public override void Draw(GameTime gameTime)
         {
+            mapBackground.Draw();
             background.Draw();
             button_advanced.Draw();
             button_back.Draw();
