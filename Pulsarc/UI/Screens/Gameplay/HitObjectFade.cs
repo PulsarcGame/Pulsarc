@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using System.Diagnostics;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -10,11 +9,9 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         float timeToFade;
 
-        GameTime gameTime;
+        Stopwatch timer;
 
-        double firstFrameTime;
-
-        public HitObjectFade(HitObject parent, int timeToFade, GameTime gameTime, float opacity = .5f) : base(parent.time, parent.angle, 4, 0, false)
+        public HitObjectFade(HitObject parent, int timeToFade, int keys, float opacity = .5f) : base(parent.time, parent.angle, keys, 0, false)
         {
             hittable = false;
 
@@ -22,8 +19,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             this.timeToFade = timeToFade;
 
-            this.gameTime = gameTime;
-            firstFrameTime = gameTime.TotalGameTime.TotalMilliseconds;
+            timer = new Stopwatch();
+            timer.Start();
 
             this.opacity = opacity;
         }
@@ -45,10 +42,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private float findCurrentFade()
         {
-            double currentFrameTime = gameTime.TotalGameTime.TotalMilliseconds;
-            double deltaTime = currentFrameTime - firstFrameTime;
-
-            return (timeToFade - (float)deltaTime) / timeToFade / 2;
+            return (timeToFade - timer.ElapsedMilliseconds) / timeToFade / 2;
         }
     }
 }
