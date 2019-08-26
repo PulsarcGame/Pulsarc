@@ -23,8 +23,8 @@ namespace Pulsarc.Beatmaps
 
             var lines = File.ReadLines(path + "\\" + fileName);
 
-            // Event indices
-            int zoomIndex = 0;
+            // Event indices *May not be needed*
+            // int zoomIndex = 0;
             // int speedVariationIndex = 0;
 
             foreach (var line in lines)
@@ -115,19 +115,7 @@ namespace Pulsarc.Beatmaps
                                 {
                                     int type = int.Parse(eventParts[(int)EventIndex.Type]);
 
-                                    int index;
-
-                                    switch (Event.GetEventType(type))
-                                    {
-                                        case EventType.Zoom:
-                                            index = zoomIndex++;
-                                            break;
-                                        default:
-                                            index = 0;
-                                            break;
-                                    }
-
-                                    Event evnt = makeEvent(line, index);
+                                    Event evnt = makeEvent(line);
                                     if (evnt != null) parsed.events.Add(evnt);
                                     //string[] parameters = new string[] { line };
                                     //parsed.events.Add((Event) Activator.CreateInstance(Type.GetType(eventParts[1]), parameters));
@@ -271,12 +259,12 @@ namespace Pulsarc.Beatmaps
             return ((arc.type >> k) & 1) != 0;
         }
 
-        static private Event makeEvent(string line, int index)
+        static private Event makeEvent(string line)
         {
             switch (Event.GetEventType(int.Parse(line.Split(',')[(int)EventIndex.Type])))
             {
                 case EventType.Zoom:
-                    return new ZoomEvent(line, index);
+                    return new ZoomEvent(line);
                 default:
                     return null;
             }
