@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 
@@ -7,19 +7,19 @@ namespace Pulsarc.UI.Screens.Gameplay
     public class Crosshair : Drawable
     {
         // The current diameter of this Crosshair.
-        public double diameter;
+        public float diameter;
+
+        // The current radius of this Crosshair.
+        public float radius;
 
         /// <summary>
         /// The crosshair, or "Judgement Circle" of Pulsarc.
         /// </summary>
         /// <param name="baseCrosshairDiameter">The base diameter for this Crosshair.</param>
-        public Crosshair(double baseCrosshairDiameter) : base(Skin.assets["crosshair"])
+        public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"])
         {
             // Vector representing the base screen of Pulsarc.
             Vector2 screen = Pulsarc.getBaseScreenDimensions();
-
-            // Set the diameter.
-            diameter = baseCrosshairDiameter;
 
             // Find the origin (center) of this Crosshair
             origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
@@ -29,7 +29,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
 
-            Resize((float)diameter);
+            // Set the diameter and resize
+            Resize(baseCrosshairDiameter);
             changePosition(position);
 
             // Set the rotation of the object.
@@ -43,6 +44,17 @@ namespace Pulsarc.UI.Screens.Gameplay
         public double getZLocation()
         {
             return 960 * (texture.Width / 2) / diameter;
+        }
+
+        /// <summary>
+        /// Resizes the crosshair, and sets diameter to the size
+        /// </summary>
+        /// <param name="size">The size/diameter to resize this crosshair to</param>
+        public void Resize(float size)
+        {
+            diameter = size;
+            radius = diameter / 2;
+            Resize(size, true);
         }
     }
 }

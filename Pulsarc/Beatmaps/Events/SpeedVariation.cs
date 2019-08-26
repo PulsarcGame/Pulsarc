@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Pulsarc.Beatmaps
+namespace Pulsarc.Beatmaps.Events
 {
     public class SpeedVariation
     {

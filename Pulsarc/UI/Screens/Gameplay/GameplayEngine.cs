@@ -1,14 +1,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Beatmaps;
 using Pulsarc.Utils;
+using Pulsarc.Beatmaps;
+using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Result;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
+using System.Collections.Generic;
 using Wobble.Screens;
-using Pulsarc.UI.Common;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -420,6 +421,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void updateGameplay()
         {
+            if (currentBeatmap == null) return;
+
+            atLeastOne = false;
+
             for (int i = 0; i < keys; i++)
             {
                 bool updatedAll = false;
@@ -477,7 +482,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void handleEvents()
         {
+            if (currentBeatmap == null) return;
+
             // Speed variations
+
             // If the current speed variation index is within range, and the speed variation time is less than or equal to the current time
             if (currentBeatmap.speedVariations.Count > speedVariationIndex + 1 && currentBeatmap.speedVariations[speedVariationIndex].time <= time)
             {
@@ -495,7 +503,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Events
 
             // If the current event Index is within range, and the next event time is less than or equal to the current time
-            if (currentBeatmap.events.Count > eventIndex + 1 && nextEvent?.time <= time)
+
+            //System.Diagnostics.Debug.WriteLine(currentBeatmap.events.Count + " >? " + eventIndex + " && " + nextEvent?.time + " <=? " + time);
+            if (currentBeatmap.events.Count > eventIndex && nextEvent.time <= time)
             {
                 // Start handling the current event, and increase the event index
                 nextEvent.active = true;
@@ -503,13 +513,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                 eventIndex++;
 
                 // Setup the next event, if it exists
-                if (currentBeatmap.events.Count > eventIndex + 1)
+                if (currentBeatmap.events.Count > eventIndex)
                 {
                     nextEvent = currentBeatmap.events[eventIndex];
                 }
             }
 
             // Handle all active events
+            List<Event> inactiveEvents = new List<Event>();
             foreach (Event activeEvent in activeEvents)
             {
                 // If the event is active, handle it
@@ -517,11 +528,17 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     activeEvent.Handle(this);
                 }
-                // Otherwise, remove this event from activeEvents
+                // Otherwise, add this to a list of events to remove from active events
                 else
                 {
-                    activeEvents.Remove(activeEvent);
+                    inactiveEvents.Add(activeEvent);
                 }
+            }
+            
+            // Remove all inactive events
+            foreach (Event inactiveEvent in inactiveEvents)
+            {
+                activeEvents.Remove(inactiveEvent);
             }
         }
 

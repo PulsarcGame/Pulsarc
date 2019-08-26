@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
-using Pulsarc.UI.Common;
+using Pulsarc.Beatmaps.Events;
 
 namespace Pulsarc.Beatmaps
 {
@@ -22,6 +22,11 @@ namespace Pulsarc.Beatmaps
             var state = "";
 
             var lines = File.ReadLines(path + "\\" + fileName);
+
+            // Event indices
+            int zoomIndex = 0;
+            // int speedVariationIndex = 0;
+
             foreach (var line in lines)
             {
                 if (line.Length > 0)
@@ -108,8 +113,24 @@ namespace Pulsarc.Beatmaps
                             case "Events":
                                 try
                                 {
-                                    string[] parameters = new string[] { line };
-                                    parsed.events.Add((Event) Activator.CreateInstance(Type.GetType(eventParts[1]), parameters));
+                                    int type = int.Parse(eventParts[(int)EventIndex.Type]);
+
+                                    int index;
+
+                                    switch (Event.GetEventType(type))
+                                    {
+                                        case EventType.Zoom:
+                                            index = zoomIndex++;
+                                            break;
+                                        default:
+                                            index = 0;
+                                            break;
+                                    }
+
+                                    Event evnt = makeEvent(line, index);
+                                    if (evnt != null) parsed.events.Add(evnt);
+                                    //string[] parameters = new string[] { line };
+                                    //parsed.events.Add((Event) Activator.CreateInstance(Type.GetType(eventParts[1]), parameters));
                                 }
                                 catch
                                 {
@@ -248,6 +269,17 @@ namespace Pulsarc.Beatmaps
         static public bool isColumn(Arc arc, int k)
         {
             return ((arc.type >> k) & 1) != 0;
+        }
+
+        static private Event makeEvent(string line, int index)
+        {
+            switch (Event.GetEventType(int.Parse(line.Split(',')[(int)EventIndex.Type])))
+            {
+                case EventType.Zoom:
+                    return new ZoomEvent(line, index);
+                default:
+                    return null;
+            }
         }
     }
 }
