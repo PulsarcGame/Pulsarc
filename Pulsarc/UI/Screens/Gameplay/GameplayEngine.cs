@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Wobble.Screens;
+using Pulsarc.Utils.Graphics;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -159,7 +160,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             score = 0;
 
             background = new Background(Config.getInt("Gameplay", "BackgroundDim") / 100f);
-            background.changeBackground(beatmap.path, beatmap.Background);
+            background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
 
             currentBeatmap = beatmap;
 
