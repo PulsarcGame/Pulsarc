@@ -132,7 +132,6 @@ namespace Pulsarc.Beatmaps.Events
 
         private void handleLinearZooms(GameplayEngine gameplayEngine)
         {
-            System.Diagnostics.Debug.WriteLine("I've been called! :)");
             // Comments show an example to help aid understanding of the code.
             double deltaTime = endPoint - time; // 1000 ms
             float deltaZoom = zoomLevel - startZoomLevel; // -200 px

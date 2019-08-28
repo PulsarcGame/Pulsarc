@@ -353,7 +353,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                             // Add a Fading HitObject, and mark the pressed HitObject for removal.
                             if (!pressed.hidden)
-                                columns[column].AddHitObject(new HitObjectFade(pressed, timeToFade, keys), pressed.baseSpeed, crosshair.getZLocation());
+                                columns[column].AddHitObject(new HitObjectFade(pressed, timeToFade, keys), currentArcsSpeed * currentSpeedMultiplier, crosshair.getZLocation());
                             pressed.erase = true;
 
                             columns[column].hitObjects.Remove(pressed);

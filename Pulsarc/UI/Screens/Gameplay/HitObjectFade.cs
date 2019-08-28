@@ -11,6 +11,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         Stopwatch timer;
 
+        // Used to determine how the Fade Arc should move.
+        double lastCrosshairPosition = -1;
+
         public HitObjectFade(HitObject parent, int timeToFade, int keys, float opacity = .5f) : base(parent.time, parent.angle, keys, 0, false)
         {
             hittable = false;
@@ -25,9 +28,20 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.opacity = opacity;
         }
 
-        public override void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
+        protected override double calcZLocation(int currentTime, double speed, double crosshairZLoc)
         {
-            Resize(findArcRadius(), false);
+            // Crosshair position cannot be negative, so we use the -1 set earlier to set lastCrosshairPosition for the first time properly.
+            if (lastCrosshairPosition == -1) lastCrosshairPosition = crosshairZLoc;
+
+            // If there was no change in crosshair, don't move the arc
+            if (lastCrosshairPosition == crosshairZLoc) return zLocation;
+
+            // Find out how much the crosshair moved
+            double deltaCrosshairZLoc = lastCrosshairPosition - crosshairZLoc;
+            lastCrosshairPosition = crosshairZLoc;
+
+            // Move this arc the same amount the crosshair did.
+            return zLocation - deltaCrosshairZLoc;
         }
 
         public override void Draw()

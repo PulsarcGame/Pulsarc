@@ -129,7 +129,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        private double calcZLocation(int currentTime, double speed, double crosshairZLoc)
+        protected virtual double calcZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             int deltaTime = currentTime - time;
 
