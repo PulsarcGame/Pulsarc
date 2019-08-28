@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pulsarc.UI
 {
-    class TextDisplayElement : Drawable
+    public class TextDisplayElement : Drawable
     {
         string name;
 

@@ -29,6 +29,9 @@ namespace Pulsarc.UI
         public Drawable hover = null;
         public bool hoverObject = false;
 
+        // The position of this Drawable, with base dimensions.
+        public Vector2 basePosition;
+
         // The position of this Drawable, relative to its anchor.
         public Vector2 position;
 
@@ -83,6 +86,7 @@ namespace Pulsarc.UI
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
             Resize(size);
+            basePosition = position;
             changePosition(position);
         }
 
@@ -199,6 +203,7 @@ namespace Pulsarc.UI
         /// New positon = (position.X, position.Y)</param>
         public void changePosition(Vector2 position)
         {
+            basePosition = position;
             this.position = getResponsivePosition(position);
 
             Vector2 newPos = position;
@@ -268,7 +273,7 @@ namespace Pulsarc.UI
         /// <returns>True if clicked, false if not clicked.</returns>
         public bool clicked(Vector2 mousePos)
         {
-            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + texture.Width && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + texture.Height;
+            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + (drawnPart.Width*scale) && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + (drawnPart.Height * scale);
         }
 
         /// <summary>
@@ -278,7 +283,7 @@ namespace Pulsarc.UI
         /// <returns>True if clicked, false if not clicked.</returns>
         public bool clicked(Point mousePos)
         {
-            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + texture.Width && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + texture.Height;
+            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + (drawnPart.Width * scale) && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + (drawnPart.Height * scale);
         }
 
         /// <summary>

@@ -86,6 +86,9 @@ namespace Pulsarc.Skinning
                 // Load settings assets
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_background");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_button_back");
+                // Settings categories
+                LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_test");
+                // Settings elements
                 LoadSkinTexture(skinFolder + "UI/Settings/", "slider_select");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "slider");
 

@@ -17,15 +17,16 @@ namespace Pulsarc.UI.Screens.Settings
         Background background;
         ReturnButton button_back;
 
-        Slider testSlider;
+        List<SettingsGroup> groups;
 
         public SettingsScreenView(Screen screen) : base(screen)
         {
             background = new Background("settings_background");
             button_back = new ReturnButton("settings_button_back", new Vector2(0, 1080));
 
-            testSlider = new Slider();
-            testSlider.changePosition(Pulsarc.xBaseRes / 2 - testSlider.currentSize.X / 2, Pulsarc.yBaseRes / 2);
+            groups = new List<SettingsGroup>();
+
+            groups.Add(new TestSettings(new Vector2(100,100)));
         }
 
         public override void Destroy()
@@ -36,7 +37,11 @@ namespace Pulsarc.UI.Screens.Settings
         {
             background.Draw();
             button_back.Draw();
-            testSlider.Draw();
+            
+            foreach(SettingsGroup settingsGroup in groups)
+            {
+                settingsGroup.Draw();
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -55,6 +60,17 @@ namespace Pulsarc.UI.Screens.Settings
                 if (button_back.clicked(MouseManager.CurrentState.Position))
                 {
                     button_back.onClick();
+                }
+            }
+
+            if(MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
+            {
+                foreach (SettingsGroup settingsGroup in groups)
+                {
+                    if (settingsGroup.clicked(MouseManager.CurrentState.Position))
+                    {
+                        settingsGroup.onClick(MouseManager.CurrentState.Position);
+                    }
                 }
             }
         }
