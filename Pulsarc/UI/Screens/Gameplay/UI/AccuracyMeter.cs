@@ -116,11 +116,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         private Vector2 getErrorPixelPosition(int error)
         {
             JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
-            
+         
             int baseX = (int)(position.X + size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.judgements.IndexOf(judgement) * sectionLength;
-            int timeSize = Judgement.getNextJudgementValue(judgement).judge - judgement.judge;
+            int timeSize = judgement.judge - Judgement.getPreviousJudgementValue(judgement).judge;
 
             float judgePos = 0;
             if(timeSize > 0)
