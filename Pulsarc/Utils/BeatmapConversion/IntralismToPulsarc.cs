@@ -12,6 +12,10 @@ namespace Pulsarc.Utils.BeatmapConversion
 {
     class IntralismToPulsarc : BeatmapConverter
     {
+        // A value needed to properly convert Intralism's PlayerDistance to Pulsarc's ZLocation
+        // It is the "x" in the equation: "IntralismPlayerDistance * x = PulsarcZLocation"
+        private static float playerDistanceToZLocationFactor = 211.862069f;
+
         // Estimated offset difference between Intralism and Pulsarc
         int msOffset = -80;
 
@@ -114,9 +118,9 @@ namespace Pulsarc.Utils.BeatmapConversion
             // Convert the Intralism Event time to the format Pulsarc understands
             int time = (int)Math.Floor(evt.time * 1000) + (msOffset * 2);
 
-            float convertedZLocation = float.Parse(evt.data[1]) * 221f; // 221 is the estimated x in the equation "IntralismPlayerDistance * x = PulsarcZoomLevel" Likely to be somewhere between 220 and 222.5
+            float convertedZLocation = float.Parse(evt.data[1]) * playerDistanceToZLocationFactor;
             
-            float convertedZoomLevel = (Pulsarc.xBaseRes / 2) * (Skin.assets["crosshair"].Width / 2) / convertedZLocation;
+            double convertedZoomLevel = Math.Round((Pulsarc.xBaseRes / 2) * (Skin.assets["crosshair"].Width / 2) / convertedZLocation,2);
 
             return new ZoomEvent(time + ",1,-1," + convertedZoomLevel + "," + 0);
         }
