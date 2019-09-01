@@ -47,6 +47,11 @@ namespace Pulsarc.Beatmaps.Events
         // This ZoomEvent's endPoint time
         private int endPoint;
 
+        // The time of the last frame, used in calculations to handle the next frame
+        private double lastFrameTime = -1;
+
+        private int beenCalled = 1;
+
         /// <summary>
         /// Initializes a ZoomEvent that sets its stats with "line", and tracks
         /// its position in relation to other ZoomEvents using index.
@@ -66,24 +71,6 @@ namespace Pulsarc.Beatmaps.Events
             zoomLevel = float.Parse(parameters[(int)ZoomParameter.ZoomLevel]);
             endPoint = int.Parse(parameters[(int)ZoomParameter.EndPoint]);
         }
-
-        /*/// <summary>
-        /// Initializes an EndPoint ZoomEvent. Used by ZoomEvents to signal
-        /// the end of their movement
-        /// </summary>
-        /// <param name="time">The time of this ZoomEvent</param>
-        private ZoomEvent(int time) : base(time, EventType.Zoom)
-        {
-            zoomType = ZoomType.EndPoint;
-
-            zoomLevel = -1;
-            startZoomLevel = -1;
-            currentZoomLevel = -1;
-
-            index = -1;
-
-            endPoint = null;
-        }*/
 
         /// <summary>
         /// 
@@ -115,9 +102,41 @@ namespace Pulsarc.Beatmaps.Events
             }
         }
 
+        /// <summary>
+        /// Zooms the gameplay to imitate Intralism's zoom method.
+        /// </summary>
+        /// <param name="gameplayEngine">The gameplay engine to modify.</param>
         private void handleIntralizooms(GameplayEngine gameplayEngine)
         {
+            // If lastFrameTime hasn't been set yet, set it.
+            if (lastFrameTime == -1)
+            {
+                lastFrameTime = gameplayEngine.time;
+                return;
+            }
 
+            findAllSimilarEvents(gameplayEngine);
+
+            // If any event has a greater time than this, and the current time is past
+            // that event's time, then deactivate this event as it is no longer needed.
+
+            // This is similar to how Intralism handles PlayerDistance, where it has a
+            // local PlayerDistance that is what the player sees, and a semi-constant "PlayerDistance"
+            // That is changed by the most recent SetPlayerDistance map event.
+            foreach (Event evnt in similarEvents)
+            {
+                if (evnt.time > time && evnt.time < gameplayEngine.time)
+                {
+                    active = false;
+                    return;
+                }
+
+            }
+
+            double deltaTime = gameplayEngine.time - lastFrameTime;
+
+            gameplayEngine.crosshair.Resize(Pulsarc.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 5000f));
+            //System.Diagnostics.Debug.WriteLine(gameplayEngine.crosshair.diameter + " I have been called: " + beenCalled++);
         }
 
         /// <summary>
@@ -130,6 +149,10 @@ namespace Pulsarc.Beatmaps.Events
             active = false;
         }
 
+        /// <summary>
+        /// Zooms the gameplay linearly from the starting position to the end position.
+        /// </summary>
+        /// <param name="gameplayEngine">The gameplay engine to modify.</param>
         private void handleLinearZooms(GameplayEngine gameplayEngine)
         {
             // Comments show an example to help aid understanding of the code.
@@ -147,8 +170,15 @@ namespace Pulsarc.Beatmaps.Events
             // If deltaZoom is negative, and currentZoom is less than zoomLevel, then change currentZoom to zoomLevel
             // If deltaZoom is positive, and currentZoom is greater than zoomLevel, then change currentZoom to zoomLevel
             // Otherwise, keep currentZoom the same
-            currentZoom = negative ? (currentZoom < zoomLevel ? zoomLevel : currentZoom) : (currentZoom > zoomLevel ? zoomLevel : currentZoom);
             // This makes sure zoom doesn't go over or under its intended goal
+            if (negative && currentZoom < zoomLevel)
+            {
+                currentZoom = zoomLevel;
+            }
+            else if (!negative && currentZoom > zoomLevel) 
+            {
+                currentZoom = zoomLevel;
+            }
 
             gameplayEngine.crosshair.Resize(currentZoom);
 

@@ -41,11 +41,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Returns the z-axis Position of this Crosshair.
         /// </summary>
-        public double getZLocation()
+        public float getZLocation()
         {
-            return 960 * (texture.Width / 2) / diameter;
+            return ((Pulsarc.xBaseRes / 2) * texture.Width / 2) / diameter;
         }
-
+        
         /// <summary>
         /// Resizes the crosshair, and sets diameter to the size
         /// </summary>
