@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,10 +70,10 @@ namespace Pulsarc.Utils.BeatmapConversion
         }
 
         /// <summary>
-        /// Handles the conversion of an Intralism event into an arc.
+        /// Handles the conversion of an Intralism SpawnObj Event into an arc.
         /// </summary>
         /// <param name="evt">The event to be converted</param>
-        /// <returns></returns>
+        /// <returns>The Event converted to an arc</returns>
         private Arc handleSpawnObj(Event evt)
         {
             int arc = 0;
@@ -104,6 +104,11 @@ namespace Pulsarc.Utils.BeatmapConversion
             return new Arc(time, arc);
         }
 
+        /// <summary>
+        /// Handles the conversion of an Intralism SetPlayerDistance event into a ZoomEvent.
+        /// </summary>
+        /// <param name="evt">The event to be converted</param>
+        /// <returns>The Event converted to a ZoomEvent</returns>
         private ZoomEvent handleSetPlayerDistance(Event evt)
         {
             // Convert the Intralism Event time to the format Pulsarc understands

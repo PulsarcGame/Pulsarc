@@ -50,8 +50,6 @@ namespace Pulsarc.Beatmaps.Events
         // The time of the last frame, used in calculations to handle the next frame
         private double lastFrameTime = -1;
 
-        private int beenCalled = 1;
-
         /// <summary>
         /// Initializes a ZoomEvent that sets its stats with "line", and tracks
         /// its position in relation to other ZoomEvents using index.
@@ -130,13 +128,11 @@ namespace Pulsarc.Beatmaps.Events
                     active = false;
                     return;
                 }
-
             }
 
             double deltaTime = gameplayEngine.time - lastFrameTime;
-
+            
             gameplayEngine.crosshair.Resize(Pulsarc.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 5000f));
-            //System.Diagnostics.Debug.WriteLine(gameplayEngine.crosshair.diameter + " I have been called: " + beenCalled++);
         }
 
         /// <summary>

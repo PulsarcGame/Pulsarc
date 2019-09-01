@@ -243,11 +243,6 @@ namespace Pulsarc
 
         static public float Lerp(float firstFloat, float secondFloat, float by)
         {
-
-            // 300 * -4 + 1042 * 5
-            //System.Diagnostics.Debug.WriteLine(firstFloat + (secondFloat - firstFloat) * by);
-            //System.Diagnostics.Debug.WriteLine((xBaseRes / 2) * (960) / (firstFloat + (secondFloat - firstFloat) * by));
-
             return firstFloat + (secondFloat - firstFloat) * by;
         }
 
