@@ -64,6 +64,7 @@ namespace Pulsarc.Utils
                 Rate = audioRate,
             };
             song.Volume = Config.getInt("Audio", "MusicVolume");
+            song.ApplyRate(Config.getBool("Audio", "RatePitch"));
 
             threadLimiterWatch.Start();
 
