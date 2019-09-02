@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
+using System.Linq;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -106,8 +107,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
         /// </summary>
-        public GameplayEngine()
+        public GameplayEngine(Background background = null)
         {
+            this.background = background;
             View = new GameplayEngineView(this);
         }
 
@@ -217,8 +219,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             combo_multiplier = Scoring.max_combo_multiplier;
             score = 0;
 
-            background = new Background(Config.getInt("Gameplay", "BackgroundDim") / 100f);
-            background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
+            // To prevent extra loading time when reseting.
+            if (background == null)
+            {
+                background = new Background(Config.getInt("Gameplay", "BackgroundDim") / 100f);
+                background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
+            }
 
             currentBeatmap = beatmap;
         }
@@ -640,6 +646,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public void EndGameplay()
         {
+            background.dim = false;
+
             // Stop watch and audio
             if (endWatch.IsRunning) endWatch.Stop();
             if (AudioManager.running) AudioManager.Stop();
