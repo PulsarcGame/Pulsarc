@@ -1,4 +1,5 @@
 ﻿using Pulsarc.Utils.SQLite;
+using System;
 using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Gameplay
@@ -66,6 +67,7 @@ namespace Pulsarc.UI.Screens.Gameplay
     public class ScoreData : SQLiteData
     {
         public string map;
+        public string dateT;
         public int score;
         public string grade;
         public int max;
@@ -78,6 +80,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public ScoreData(string map_, int score_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
         {
             map = map_;
+            dateT = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             score = score_;
             grade = grade_;
             max = max_;
