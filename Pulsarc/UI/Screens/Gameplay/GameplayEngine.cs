@@ -55,7 +55,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Events
         
         // Indexes
-        public int speedVariationIndex;
         public int eventIndex;
 
         // Next event to be activated
@@ -197,7 +196,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             currentSpeedMultiplier = userSpeed;
             currentArcsSpeed = 1;
 
-            speedVariationIndex = 0;
             eventIndex = 0;
             nextEvent = beatmap.events.Count > 0 ? beatmap.events[eventIndex] : null; // If there are events, make nextEvent the first event, otherwise make it null
         }
@@ -237,23 +235,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             int objectCount = 0;
-            int speedVarInitIndex = 0;
 
             foreach (Arc arc in currentBeatmap.arcs)
             {
-                // Go through events to update current arcs speed
-                while (currentBeatmap.speedVariations.Count > speedVarInitIndex && currentBeatmap.speedVariations[speedVarInitIndex].time <= arc.time)
-                {
-                    switch (currentBeatmap.speedVariations[speedVarInitIndex].type)
-                    {
-                        case 1:
-                            // Arcs spawn speed change
-                            //currentArcsSpeed = currentBeatmap.speedVariations[speedVarInitIndex].intensity;
-                            break;
-                    }
-                    speedVarInitIndex++;
-                }
-
                 // Add arcs to the columns
                 bool hidden = Config.getBool("Gameplay", "Hidden");
                 for (int i = 0; i < keys; i++)
@@ -524,29 +508,21 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void handleEvents()
         {
-            if (currentBeatmap == null) return;
-
-            // Speed variations
-
-            // If the current speed variation index is within range, and the speed variation time is less than or equal to the current time
-            if (currentBeatmap.speedVariations.Count > speedVariationIndex + 1 && currentBeatmap.speedVariations[speedVariationIndex].time <= time)
+            if (currentBeatmap == null)
             {
-                // Change things based on what type of SpeedVariation this event is
-                switch (currentBeatmap.speedVariations[speedVariationIndex].type)
-                {
-                    case 0:
-                        // Global speed change
-                        //currentSpeedMultiplier = userSpeed * (1/currentBeatmap.speedVariations[speedVariationIndex].intensity);
-                        break;
-                }
-                speedVariationIndex++;
+                return;
             }
 
             // Events
+            activateNextEvent();
 
+            // Handle all active events, and remove inactive Events
+            handleActiveEvents();
+        }
+
+        private void activateNextEvent()
+        {
             // If the current event Index is within range, and the next event time is less than or equal to the current time
-
-            //System.Diagnostics.Debug.WriteLine(currentBeatmap.events.Count + " >? " + eventIndex + " && " + nextEvent?.time + " <=? " + time);
             if (currentBeatmap.events.Count > eventIndex && nextEvent.time <= time)
             {
                 // Start handling the current event, and increase the event index
@@ -554,15 +530,18 @@ namespace Pulsarc.UI.Screens.Gameplay
                 activeEvents.Add(nextEvent);
                 eventIndex++;
 
-                // Setup the next event, if it exists
+                // Get ready for the next event, if it exists
                 if (currentBeatmap.events.Count > eventIndex)
                 {
                     nextEvent = currentBeatmap.events[eventIndex];
                 }
             }
+        }
 
-            // Handle all active events
+        private void handleActiveEvents()
+        {
             List<Event> inactiveEvents = new List<Event>();
+
             foreach (Event activeEvent in activeEvents)
             {
                 // If the event is active, handle it
@@ -576,12 +555,9 @@ namespace Pulsarc.UI.Screens.Gameplay
                     inactiveEvents.Add(activeEvent);
                 }
             }
-            
+
             // Remove all inactive events
-            foreach (Event inactiveEvent in inactiveEvents)
-            {
-                activeEvents.Remove(inactiveEvent);
-            }
+            activeEvents = activeEvents.Except(inactiveEvents).ToList();
         }
 
         /// <summary>
@@ -649,6 +625,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Unset attributes to avoid potential conflict with next gameplays
             currentBeatmap = null;
             columns = null;
+
+            activeEvents = new List<Event>();
+            nextEvent = null;
 
             // Reset Attributes
             userSpeed = 1;

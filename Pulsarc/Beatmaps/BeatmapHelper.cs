@@ -135,16 +135,6 @@ namespace Pulsarc.Beatmaps
                                     Console.WriteLine("Invalid TimingPoint : " + line);
                                 }
                                 break;
-                            case "SpeedVariations":
-                                try
-                                {
-                                    parsed.speedVariations.Add(new SpeedVariation(Convert.ToInt32(eventParts[0]), Convert.ToInt32(eventParts[1]), Double.Parse(eventParts[2], CultureInfo.InvariantCulture)));
-                                }
-                                catch
-                                {
-                                    Console.WriteLine("Invalid SpeedVariation : " + line);
-                                }
-                                break;
                             case "Arcs":
                                 try
                                 {

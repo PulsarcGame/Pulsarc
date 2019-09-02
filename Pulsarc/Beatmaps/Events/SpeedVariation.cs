@@ -1,24 +1,27 @@
 ﻿using System.Globalization;
+using Pulsarc.UI.Screens.Gameplay;
 
 namespace Pulsarc.Beatmaps.Events
 {
-    public class SpeedVariation
+    public class SpeedVariation : Event
     {
-        public int time;
-        public int type;
-        public double intensity;
-
-        public SpeedVariation(int time, int type, double intensity)
+        /// <summary>
+        /// Initializes a SpeedVariation that sets its stats with "line",
+        /// and traqcks 
+        /// </summary>
+        /// <param name="line"></param>
+        public SpeedVariation(string line) : base(line)
         {
-            this.time = time;
-            this.type = type;
-            this.intensity = intensity;
+            // Check if the type for this event is "SpeedVariation"
+            if (type != EventType.SpeedVariation)
+            {
+                ThrowWrongEventTypeException(this, EventType.SpeedVariation);
+            }
         }
 
-        public override string ToString()
+        public override void Handle(GameplayEngine gameplayEngine)
         {
-            // timestamp,type,intensity_factor -> 432,1,2.5
-            return time + "," + type + "," + intensity.ToString("0.000", CultureInfo.InvariantCulture);
+            throw new System.NotImplementedException();
         }
     }
 }
