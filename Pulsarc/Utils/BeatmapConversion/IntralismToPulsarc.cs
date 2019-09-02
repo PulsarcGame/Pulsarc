@@ -1,15 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Pulsarc.Beatmaps;
 using Newtonsoft.Json;
 using System.IO;
+using Pulsarc.Beatmaps.Events;
+using Pulsarc.Skinning;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
     class IntralismToPulsarc : BeatmapConverter
     {
+        // A value needed to properly convert Intralism's PlayerDistance to Pulsarc's ZLocation
+        // It is the "x" in the equation: "IntralismPlayerDistance * x = PulsarcZLocation"
+        private static float playerDistanceToZLocationFactor = 211.862069f;
+
         // Estimated offset difference between Intralism and Pulsarc
         int msOffset = -80;
 
@@ -27,7 +33,6 @@ namespace Pulsarc.Utils.BeatmapConversion
             if(Directory.Exists(folder_path))
             {
                 string configPath = folder_path + "/config.txt";
-
                 // See if the a "config.txt" file exists
                 if (File.Exists(configPath))
                 {
@@ -47,34 +52,18 @@ namespace Pulsarc.Utils.BeatmapConversion
                     foreach(Event evt in beatmap.events)
                     {
                         // If the current event is an Arc, convert it to a Pulsarc Arc.
-                        if(evt.data[0] == "SpawnObj")
+                        switch (evt.data[0])
                         {
-                            int arc = 0;
-                            // Find each direction listed in the current event, and assign the appropriate bit to it.
-                            foreach(string direction in evt.data[1].Split(',')[0].Split('[')[1].Split(']')[0].Split('-'))
-                            {
-                                switch(direction)
-                                {
-                                    case "Left":
-                                        arc |= 1 << 2;
-                                        break;
-                                    case "Up":
-                                        arc |= 1 << 3;
-                                        break;
-                                    case "Down":
-                                        arc |= 1 << 1;
-                                        break;
-                                    case "Right":
-                                        arc |= 1 << 0;
-                                        break;
-                                }
-                            }
-
-                            // Convert the Intralism Event time to the format Pulsarc understands
-                            int time = (int) Math.Floor(evt.time * 1000) + msOffset;
-
-                            // Add the converted arc to the Beatmap
-                            result.arcs.Add(new Arc(time, arc));
+                            case "SpawnObj":
+                                // Add the converted arc to the Beatmap
+                                result.arcs.Add(handleSpawnObj(evt));
+                                break;
+                            case "SetPlayerDistance":
+                                // Add the converted zoom to the Beatmap
+                                result.events.Add(handleSetPlayerDistance(evt));
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -82,6 +71,58 @@ namespace Pulsarc.Utils.BeatmapConversion
 
             results.Add(result);
             return results;
+        }
+
+        /// <summary>
+        /// Handles the conversion of an Intralism SpawnObj Event into an arc.
+        /// </summary>
+        /// <param name="evt">The event to be converted</param>
+        /// <returns>The Event converted to an arc</returns>
+        private Arc handleSpawnObj(Event evt)
+        {
+            int arc = 0;
+
+            // Find each direction listed in the current event, and assign the appropriate bit to it.
+            foreach (string direction in evt.data[1].Split(',')[0].Split('[')[1].Split(']')[0].Split('-'))
+            {
+                switch (direction)
+                {
+                    case "Left":
+                        arc |= 1 << 2;
+                        break;
+                    case "Up":
+                        arc |= 1 << 3;
+                        break;
+                    case "Down":
+                        arc |= 1 << 1;
+                        break;
+                    case "Right":
+                        arc |= 1 << 0;
+                        break;
+                }
+            }
+
+            // Convert the Intralism Event time to the format Pulsarc understands
+            int time = (int)Math.Floor(evt.time * 1000) + msOffset;
+
+            return new Arc(time, arc);
+        }
+
+        /// <summary>
+        /// Handles the conversion of an Intralism SetPlayerDistance event into a ZoomEvent.
+        /// </summary>
+        /// <param name="evt">The event to be converted</param>
+        /// <returns>The Event converted to a ZoomEvent</returns>
+        private ZoomEvent handleSetPlayerDistance(Event evt)
+        {
+            // Convert the Intralism Event time to the format Pulsarc understands
+            int time = (int)Math.Floor(evt.time * 1000) + (msOffset * 2);
+
+            float convertedZLocation = float.Parse(evt.data[1]) * playerDistanceToZLocationFactor;
+            
+            double convertedZoomLevel = Math.Round((Pulsarc.xBaseRes / 2) * (Skin.assets["crosshair"].Width / 2) / convertedZLocation,2);
+
+            return new ZoomEvent(time + ",1,-1," + convertedZoomLevel + "," + 0);
         }
 
         /// <summary>

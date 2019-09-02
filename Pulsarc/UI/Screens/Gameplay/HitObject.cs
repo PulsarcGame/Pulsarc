@@ -118,8 +118,20 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Set hidden status here
             if (hidden)
             {
-                double bruh = crosshairZLoc - (crosshairZLoc / 3);
-                opacity = zLocation > bruh ? 0f : (float)(bruh - zLocation) / (float)bruh;
+                double fullFadeLocation = crosshairZLoc - (crosshairZLoc / 3);
+                float newOpacity = (float)(fullFadeLocation - zLocation) / (float)(fullFadeLocation);
+
+                if (zLocation > fullFadeLocation)
+                {
+                    newOpacity = 0f;
+                }
+                // This is for zooms, which can make hitobjects gain opacity which hurts reading.
+                else if (newOpacity > opacity)
+                {
+                    newOpacity = opacity;
+                }
+
+                opacity = newOpacity;
             }
         }
 

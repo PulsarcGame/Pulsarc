@@ -6,8 +6,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     class JudgeBox : Drawable
     {
-        // A list of Judges to be drawn.
-        List<KeyValuePair<double, int>> toDraw;
+        // The stats of the current Judge being drawn
+        int judgeKey = -1;
+        double time = 0;
 
         // A list of each judge type.
         Dictionary<int, Judge> judges;
@@ -27,18 +28,17 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             {
                 judges.Add(judge.score,new Judge(judge.score, new Vector2(position.X, position.Y)));
             }
-
-            toDraw = new List<KeyValuePair<double, int>>();
         }
 
         /// <summary>
-        /// Add a new Judgement to the "toDraw" list.
+        /// Add a new Judgement to be drawn.
         /// </summary>
         /// <param name="time">The time of the judgement.</param>
         /// <param name="judgeKey">The base score of the judgement.</param>
         public void Add(double time, int judgeKey)
         {
-            toDraw.Add(new KeyValuePair<double, int>(time, judgeKey));
+            this.time = time;
+            this.judgeKey = judgeKey;
         }
 
         /// <summary>
@@ -49,25 +49,21 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             // TODO: Make this customizeable by the user
             int judgeDisplayTimeMs = 100;
-
-            for(int i = 0; i < toDraw.Count; i++)
-            {
-                if(toDraw[i].Key + judgeDisplayTimeMs < time)
-                {
-                    toDraw.RemoveAt(i);
-                    i--;
-                }
+           
+            if(this.time + judgeDisplayTimeMs < time)
+            { 
+                judgeKey = -1;
             }
         }
 
         /// <summary>
-        /// Draw judges.
+        /// Draw the most recent judge.
         /// </summary>
         public override void Draw()
         {
-            foreach(KeyValuePair<double, int> judge in toDraw)
+            if (judgeKey >= 0)
             {
-                judges[judge.Value].Draw();
+                judges[judgeKey].Draw();
             }
         }
     }

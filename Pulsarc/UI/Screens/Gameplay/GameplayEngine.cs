@@ -16,7 +16,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngine : Screen
     {
-        public override ScreenView View { get ; protected set; }
+        public override ScreenView View { get; protected set; }
         private GameplayEngineView getGameplayView() { return (GameplayEngineView)View; }
 
         // Whether or not the gameplay engine is currently running
@@ -35,9 +35,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         Stopwatch endWatch;
         public int endDelay = 2000;
 
-
         // Beatmap Elements
-        
+      
         // The current beatmap being played.
         public Beatmap currentBeatmap;
 
@@ -53,7 +52,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Background
         public Background background;
 
-
         // Events
         
         // Indexes
@@ -66,10 +64,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Active Events that are currently being Handled
         public List<Event> activeEvents = new List<Event>();
 
-
         // Gameplay Elements
-
-        public double timeOffset;
+        
+        // The offset for this map determined by the player
+        public double mapOffset;
 
         public Crosshair crosshair;
 
@@ -99,8 +97,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         // How fast the audio (and relevant gameplay) will play at.
         public float rate;
 
-        public double time => AudioManager.getTime() + timeOffset;
-
+        public double time => AudioManager.getTime() + mapOffset;
 
         // Performance
 
@@ -124,20 +121,76 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Reset in case it wasn't properly handled outside
             Reset();
 
+            // Load values gained from config/user settings
+            loadConfig();
+
+            // Initialize default variables, parse beatmap
+            initializeVariables(beatmap);
+
+            // Initialize Gameplay variables
+            initializeGameplay(beatmap);
+
+            // Set the path of the song to be played later on
+            AudioManager.song_path = Directory  .GetParent(currentBeatmap.path) // Get the path to "\Songs"
+                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
+                                                "\\" + beatmap.path + // Add the beatmap path.
+                                                "\\" + currentBeatmap.Audio; // Add the audio name.
+
+            // Create columns and their hitobjects
+            createColumns(beatmap);
+
+            // Sort the hitobjects according to their first appearance for optimizing update/draw
+            sortHitObjects();
+
+            // Once everything is loaded, initialize the view
+            getGameplayView().Init();
+
+            // Start audio and gameplay
+            AudioManager.Start();
+            GameplayEngine.active = true;
+            Pulsarc.display_cursor = false;
+
+            // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
+            // TODO: disable GC while in gameplay
+            GC.Collect();
+        }
+
+        /// <summary>
+        /// Initialize this gameplay view by using the folder location and
+        /// difficulty name to find the beatmap. Legacy.
+        /// </summary>
+        /// <param name="folder">Beatmap folder name.</param>
+        /// <param name="diff">Difficulty name for the beatmap.</param>
+        public void Init(string folder, string diff)
+        {
+            // Legacy
+            Init(BeatmapHelper.Load("Songs/" + folder, diff + ".psc"));
+        }
+
+        /// <summary>
+        /// Load all the stats found in the config
+        /// </summary>
+        private void loadConfig()
+        {
             // Set the offset for each play before starting audio
-            // TODO: add local beatmap offset
             AudioManager.offset = Config.getInt("Audio", "GlobalOffset");
 
-            rate = Config.getFloat("Gameplay", "SongRate"); 
+            rate = Config.getFloat("Gameplay", "SongRate");
             keys = 4;
             userSpeed = Config.getInt("Gameplay", "ApproachSpeed") / 5f / rate; // "5f" is used to give more choice in config for speed
 
             timeToFade = Config.getInt("Gameplay", "FadeTime");
 
             crosshair = new Crosshair(300); // 300 = base crosshair diameter in intralism
-            timeOffset = 0;
+            mapOffset = 0; // TODO: add local beatmap offset
+        }
 
-            // Initialize default variables, parse beatmap
+        /// <summary>
+        /// Initialize default variables
+        /// </summary>
+        /// <param name="beatmap"></param>
+        private void initializeVariables(Beatmap beatmap)
+        {
             endWatch = new Stopwatch();
             AudioManager.audioRate = rate;
 
@@ -147,8 +200,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             speedVariationIndex = 0;
             eventIndex = 0;
             nextEvent = beatmap.events.Count > 0 ? beatmap.events[eventIndex] : null; // If there are events, make nextEvent the first event, otherwise make it null
-        
-            // Initialize Gameplay variables
+        }
+
+        /// <summary>
+        /// Initialize gameplay variables
+        /// </summary>
+        /// <param name="beatmap"></param>
+        private void initializeGameplay(Beatmap beatmap)
+        {
+
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
             errors = new List<KeyValuePair<double, int>>();
@@ -163,14 +223,14 @@ namespace Pulsarc.UI.Screens.Gameplay
             background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
 
             currentBeatmap = beatmap;
+        }
 
-            // Set the path of the song to be played later on
-            AudioManager.song_path = Directory  .GetParent(currentBeatmap.path) // Get the path to "\Songs"
-                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
-                                                "\\" + beatmap.path + // Add the beatmap path.
-                                                "\\" + currentBeatmap.Audio; // Add the audio name.
-            
-            // Create columns and their hitobjects
+        /// <summary>
+        /// Create columns from the beatmap
+        /// </summary>
+        /// <param name="beatmap"></param>
+        private void createColumns(Beatmap beatmap)
+        {
             for (int i = 1; i <= keys; i++)
             {
                 columns[i - 1] = new Column(i);
@@ -178,11 +238,11 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             int objectCount = 0;
             int speedVarInitIndex = 0;
-            
+
             foreach (Arc arc in currentBeatmap.arcs)
             {
                 // Go through events to update current arcs speed
-                while(currentBeatmap.speedVariations.Count > speedVarInitIndex && currentBeatmap.speedVariations[speedVarInitIndex].time <= arc.time)
+                while (currentBeatmap.speedVariations.Count > speedVarInitIndex && currentBeatmap.speedVariations[speedVarInitIndex].time <= arc.time)
                 {
                     switch (currentBeatmap.speedVariations[speedVarInitIndex].type)
                     {
@@ -208,8 +268,13 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Compute the beatmap's highest possible score, for displaying the current display_score later on
             max_score = Scoring.getMaxScore(objectCount);
+        }
 
-            // Sort the hitobjects according to their first appearance for optimizing update/draw
+        /// <summary>
+        /// Sort hit objects based on time so they draw correctly
+        /// </summary>
+        private void sortHitObjects()
+        {
             foreach (Column col in columns)
             {
                 col.SortUpdateHitObjects();
@@ -240,7 +305,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     {
                         if (autoPlayRandom)
                         {
-                            inputs.Add(new KeyValuePair<double, Keys>(arc.time + Math.Pow(new Random().Next(80) - 40, 3) / 1300, presses[i]));
+                            inputs.Add(new KeyValuePair<double, Keys>(arc.time + (Math.Pow(new Random().Next(80) - 40, 3) / 1300), presses[i]));
                         }
                         else
                         {
@@ -256,30 +321,6 @@ namespace Pulsarc.UI.Screens.Gameplay
                     InputManager.keyboardPresses.Enqueue(input);
                 }
             }
-
-            // Once everything is loaded, initialize the view
-            getGameplayView().Init();
-
-            // Start audio and gameplay
-            AudioManager.Start();
-            GameplayEngine.active = true;
-            Pulsarc.display_cursor = false;
-
-            // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
-            // TODO: disable GC while in gameplay
-            GC.Collect();
-        }
-
-        /// <summary>
-        /// Initialize this gameplay view by using the folder location and
-        /// difficulty name to find the beatmap. Legacy.
-        /// </summary>
-        /// <param name="folder">Beatmap folder name.</param>
-        /// <param name="diff">Difficulty name for the beatmap.</param>
-        public void Init(string folder, string diff)
-        {
-            // Legacy
-            Init(BeatmapHelper.Load("Songs/" + folder, diff + ".psc"));
         }
 
         /// <summary>
@@ -449,7 +490,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Determine whether or not this note has been missed by the user, and take action if so
-                    if (columns[i].updateHitObjects[k].Value.time + Judgement.getMiss().judge * rate < time && columns[i].updateHitObjects[k].Value.hittable)
+                    if (columns[i].updateHitObjects[k].Value.time + (Judgement.getMiss().judge * rate) < time && columns[i].updateHitObjects[k].Value.hittable)
                     {
                         // Remove the hitobject and reset the combo
                         columns[i].hitObjects.Remove(columns[i].updateHitObjects[k].Value);

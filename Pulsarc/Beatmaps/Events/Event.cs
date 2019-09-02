@@ -30,7 +30,7 @@ namespace Pulsarc.Beatmaps.Events
         public List<string> parameters;
 
         // The list of all events of this type
-        public List<Event> similarEvents;
+        public List<Event> similarEvents = new List<Event>();
 
         // Whether or not this event is currently being handled
         public bool active = false;
