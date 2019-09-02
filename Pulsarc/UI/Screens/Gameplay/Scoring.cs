@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Pulsarc.Utils.SQLite;
+using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -31,6 +32,60 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             return new KeyValuePair<long, int>(score, comboMultiplier);
+        }
+
+        static public string getGrade(double accuracyTotal)
+        {
+            string grade = "D";
+
+            if (accuracyTotal == 1.0)
+            {
+                grade = "X";
+            }
+            else if (accuracyTotal >= 0.95)
+            {
+                grade = "S";
+            }
+            else if (accuracyTotal >= 0.90)
+            {
+                grade = "A";
+            }
+            else if (accuracyTotal >= 0.80)
+            {
+                grade = "B";
+            }
+            else if (accuracyTotal >= 0.70)
+            {
+                grade = "C";
+            }
+
+            return grade;
+        }
+    }
+
+    public class ScoreData : SQLiteData
+    {
+        public string map;
+        public int score;
+        public string grade;
+        public int max;
+        public int perfect;
+        public int great;
+        public int good;
+        public int bad;
+        public int miss;
+
+        public ScoreData(string map_, int score_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
+        {
+            map = map_;
+            score = score_;
+            grade = grade_;
+            max = max_;
+            perfect = perfect_;
+            great = great_;
+            good = good_;
+            bad = bad_;
+            miss = miss_;
         }
     }
 }

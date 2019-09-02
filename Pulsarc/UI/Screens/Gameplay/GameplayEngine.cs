@@ -335,7 +335,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Quit gameplay when nothing is left to play, or if the audio finished playing
             if ((AudioManager.active && AudioManager.FinishedPlaying()) || endWatch.ElapsedMilliseconds >= endDelay)
             {                
-                EndGameplay();
+                EndGameplay(true);
                 return;
             }
 
@@ -659,14 +659,14 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Stop gameplay and remove this engine from view.
         /// </summary>
-        public void EndGameplay()
+        public void EndGameplay(bool save = false)
         {
             // Stop watch and audio
             if (endWatch.IsRunning) endWatch.Stop();
             if (AudioManager.running) AudioManager.Stop();
 
             // Create the result screen before exiting gameplay
-            ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap, background);
+            ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap, background, !autoPlay && save);
             Pulsarc.display_cursor = true;
             Reset();
             // Switch to results screen

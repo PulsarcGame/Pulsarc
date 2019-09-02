@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pulsarc.UI.Screens.Gameplay;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,14 +10,20 @@ namespace Pulsarc.Utils.SQLite
         public ScoreDB() : base("scores") { }
         public override void initDB()
         {
-            exec("CREATE TABLE score (map bigint, score int, grade char, max mediumint, perfect mediumint, great mediumint, good mediumint, bad mediumint, miss mediumint)");
-            exec("CREATE TABLE replay (map bigint, replaydata BLOB, float performance)");
+            exec("CREATE TABLE scoredata (map text, score int, grade varchar(2), max mediumint, perfect mediumint, great mediumint, good mediumint, bad mediumint, miss mediumint)");
+            exec("CREATE TABLE replay (map text, replaydata BLOB, float performance)");
         }
 
-        public void addScore(int map, int score, char grade, int max, int perfect, int great, int good, int bad, int miss)
+        public void addScore(ScoreData score)
         {
-            exec("INSERT INTO score (map, score, grade, max, perfect, great, good, bad, miss) VALUES " +
-                "( " + map + "," + score + ",'" + grade + "'," + max + "," + perfect + "," + great + "," + good + "," + bad + "," + miss + ")");
+            score.SaveData(this);
+        }
+
+        public List<ScoreData> getScores()
+        {
+            List<ScoreData> scores = new List<ScoreData>();
+
+            return scores;
         }
     }
 }

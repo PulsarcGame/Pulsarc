@@ -9,14 +9,14 @@ namespace Pulsarc.Utils.SQLite
     public abstract class SQLiteStore
     {
         SQLiteConnection db;
-        string name;
+        string filename;
 
         public SQLiteStore(string name_)
         {
-            name = name_;
+            filename = name_ + ".db";
 
-            if (!File.Exists(name)) {
-                SQLiteConnection.CreateFile(name+".db");
+            if (!File.Exists(filename)) {
+                SQLiteConnection.CreateFile(filename);
                 connect();
                 initDB();
             } else
@@ -29,17 +29,19 @@ namespace Pulsarc.Utils.SQLite
 
         public void connect()
         {
-            db = new SQLiteConnection("Data Source="+name+".db;Version=3;");
+            db = new SQLiteConnection("Data Source="+ filename +";Version=3;");
             db.Open();
         }
 
         public void exec(string sql)
         {
+            Console.WriteLine(sql);
             new SQLiteCommand(sql, db).ExecuteNonQuery();
         }
 
         public SQLiteDataReader query(string sql)
         {
+            Console.WriteLine(sql);
             return new SQLiteCommand(sql, db).ExecuteReader();
         }
 
