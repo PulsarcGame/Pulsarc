@@ -217,7 +217,7 @@ namespace Pulsarc.UI.Screens.Result
                 }
                 else if (button_retry.clicked(pos))
                 {
-                    button_retry.onClick(beatmap, mapBackground);
+                    button_retry.onClick(beatmap);
                 }
             }
         }

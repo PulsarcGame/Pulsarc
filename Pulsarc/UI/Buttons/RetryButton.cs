@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Wobble.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Beatmaps;
-using Pulsarc.UI.Common;
 
 namespace Pulsarc.UI.Buttons
 {
@@ -25,14 +27,10 @@ namespace Pulsarc.UI.Buttons
         /// the map using the Beatmap provided.
         /// </summary>
         /// <param name="beatmap">The Beatmap to play.</param>
-        public void onClick(Beatmap beatmap, Background mapBackground)
+        public void onClick(Beatmap beatmap)
         {
-            // Reset mapBackground for gameplay
-            mapBackground.dim = mapBackground.dimTexture.opacity > 0;
-            mapBackground.move(new Vector2(Pulsarc.xBaseRes / -2 + 200, 0));
-            
             ScreenManager.RemoveScreen(true);
-            GameplayEngine gameplay = new GameplayEngine(mapBackground);
+            GameplayEngine gameplay = new GameplayEngine();
             gameplay.Init(beatmap);
             ScreenManager.AddScreen(gameplay);
         }
