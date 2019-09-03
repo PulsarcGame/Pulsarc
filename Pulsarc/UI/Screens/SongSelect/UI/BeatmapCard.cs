@@ -86,6 +86,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             {
                 move(new Vector2(-45, 0));
                 isclicked = set;
+                beatmap.getLocalScores();
             }
         }
 

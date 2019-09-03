@@ -1,4 +1,5 @@
 ﻿using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -88,6 +89,11 @@ namespace Pulsarc.Beatmaps
                    .Replace("-", string.Empty)
                    // make lowercase
                    .ToLower();
+        }
+
+        public List<ScoreData> getLocalScores()
+        {
+            return Pulsarc.scoreDB.getScores(getHash());
         }
     }
 }

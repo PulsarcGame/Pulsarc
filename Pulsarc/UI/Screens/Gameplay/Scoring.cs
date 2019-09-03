@@ -1,6 +1,7 @@
 ﻿using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -69,6 +70,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         public string map;
         public string dateT;
         public int score;
+        public double accuracy;
+        public int maxcombo;
         public string grade;
         public int max;
         public int perfect;
@@ -77,11 +80,18 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int bad;
         public int miss;
 
-        public ScoreData(string map_, int score_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
+        public ScoreData(SQLiteDataReader data) : base(data) { }
+
+        public ScoreData(string map_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_) : 
+            this(map_, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), score_, accuracy_, maxcombo_, grade_, max_, perfect_, great_, good_, bad_, miss_) { }
+
+        public ScoreData(string map_, string datet_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
         {
             map = map_;
-            dateT = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            dateT = datet_;
             score = score_;
+            accuracy = accuracy_;
+            maxcombo = maxcombo_;
             grade = grade_;
             max = max_;
             perfect = perfect_;
@@ -90,12 +100,19 @@ namespace Pulsarc.UI.Screens.Gameplay
             bad = bad_;
             miss = miss_;
         }
+
+        public override string ToString()
+        {
+            return dateT + " - " + score + " | " + Math.Round(accuracy*100,2) + "% | x" + maxcombo;
+        }
     }
 
     public class ReplayData : SQLiteData
     {
         public string map;
         public string replaydata;
+
+        public ReplayData(SQLiteDataReader data) : base(data) { }
 
         public ReplayData(string map_, string replaydata_)
         {
