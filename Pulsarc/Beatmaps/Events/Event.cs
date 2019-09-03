@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Pulsarc.Beatmaps.Events
 {
+    /// <summary>
+    /// Enum for the different types of Events there can be
+    /// </summary>
     public enum EventType
     {
         Invalid = -1,
@@ -12,15 +15,36 @@ namespace Pulsarc.Beatmaps.Events
         SpeedVariation = 2,
     }
 
+    /// <summary>
+    /// Enum that keeps track of indexes that never change
+    /// </summary>
     public enum EventIndex
     {
         Time = 0, // Time is always index 0 in an event line
         Type = 1, // Type is always index 1 in an event line
     }
 
+    /// <summary>
+    /// A custom Exception for Event-derived objects to throw when
+    /// they are being treated like a specific event that they are not.
+    /// </summary>
+    public class WrongEventTypeException : Exception
+    {
+        public WrongEventTypeException() { }
+
+        public WrongEventTypeException(string message)
+            : base(message) { }
+
+        public WrongEventTypeException(string message, Exception inner)
+            : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// Gameplay Elements, Zooms, SpeedVariation, Rotation, etc.
+    /// </summary>
     abstract public class Event
     {
-        // Time that this event activates (ms)
+        // The time when this event activates (ms)
         public int time;
 
         // The type of event this is
@@ -29,7 +53,7 @@ namespace Pulsarc.Beatmaps.Events
         // The list of parameters for this event
         public List<string> parameters;
 
-        // The list of all events of this type
+        // The list of all events of this type for the beatmap
         public List<Event> similarEvents = new List<Event>();
 
         // Whether or not this event is currently being handled
@@ -50,12 +74,13 @@ namespace Pulsarc.Beatmaps.Events
         }
 
         /// <summary>
+        /// Legacy, keeping in case it proves useful in the future - FRUP
         /// Creates a new Event using the time and type provided.
         /// Used by other Events that need a "nextEvent" for calculations.
         /// </summary>
         /// <param name="time">The this event activates</param>
         /// <param name="type">The type of event this is.</param>
-        public Event(int time, EventType type)
+        private Event(int time, EventType type)
         {
             this.time = time;
             this.type = type;
@@ -67,7 +92,7 @@ namespace Pulsarc.Beatmaps.Events
         /// Finds the EventType for the string provided.
         /// </summary>
         /// <param name="type">The string to find the corresponding EventType of.</param>
-        /// <returns>The appropriate EventType, or empty if one was not found.</returns>
+        /// <returns>The appropriate EventType, or EventType.Invalid if one was not found.</returns>
         public static EventType GetEventType(string type)
         {
             
@@ -84,6 +109,11 @@ namespace Pulsarc.Beatmaps.Events
             }
         }
 
+        /// <summary>
+        /// Finds the EventType for the int provided.
+        /// </summary>
+        /// <param name="type">The int to find the corresponding EventType of.</param>
+        /// <returns>The appropriate EventType, or EventType.Invalid if one was not found.</returns>
         public static EventType GetEventType(int type)
         {
             switch (type)
@@ -132,7 +162,7 @@ namespace Pulsarc.Beatmaps.Events
         /// <summary>
         /// Returns this Event as a string in the same format as the string used in a.psc beatmap to define this event.
         /// </summary>
-        /// <returns>This Event in this format: "[Time(ms)],[Type],[Parameter 1],[Parameter 2],[...],[Parameter n]"</returns>
+        /// <returns>This Event in this format: "[Time(ms)],[EventType],[Parameter 1],[Parameter 2],[...],[Parameter n]"</returns>
         public override string ToString()
         {
             return time + "," + (int)type + "," + string.Join(',',parameters.ToArray());
@@ -144,29 +174,23 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The currently running GameplayEngine this event being handled in.</param>
         public abstract void Handle(GameplayEngine gameplayEngine);
 
+        /// <summary>
+        /// Find all events that share the same type as this Event.
+        /// </summary>
+        /// <param name="gameplayEngine">The gameplayEngine to look through</param>
         public void findAllSimilarEvents(GameplayEngine gameplayEngine)
         {
-            similarEvents = gameplayEngine.currentBeatmap.events.FindAll(FindSimilarEvent);
+            similarEvents = gameplayEngine.currentBeatmap.events.FindAll(SameEventType);
         }
 
-        private bool FindSimilarEvent(Event evnt)
+        /// <summary>
+        /// Whether or not the provided event has the same type as this event.
+        /// </summary>
+        /// <param name="evt">The event to compare to</param>
+        /// <returns>True if evt and this Event share the same type.</returns>
+        private bool SameEventType(Event evt)
         {
-            return type == evnt.type;
+            return type == evt.type;
         }
-    }
-
-    /// <summary>
-    /// A custom Exception for Event-derived objects to throw when
-    /// they are being treated like an event they are not.
-    /// </summary>
-    public class WrongEventTypeException : Exception
-    {
-        public WrongEventTypeException() { }
-
-        public WrongEventTypeException(string message)
-            : base(message) { }
-        
-        public WrongEventTypeException(string message, Exception inner)
-            : base(message, inner) { }
     }
 }

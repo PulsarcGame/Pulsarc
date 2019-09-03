@@ -24,14 +24,21 @@ namespace Pulsarc.Utils
         static Stopwatch threadLimiterWatch;
         static GameTime lastTime;
 
+        /// <summary>
+        /// Start playing audio on a new thread
+        /// </summary>
         static public void Start()
         {
             audioThread = new Thread(new ThreadStart(AudioPlayer));
             audioThread.Start();
         }
 
+        /// <summary>
+        /// Initializes the AudioPlayer
+        /// </summary>
         static public void AudioPlayer()
         {
+            // Initialize variables
             threadLimiterWatch = new Stopwatch();
             threadLimiterWatch.Start();
             activeThreadLimiterWatch = true;
@@ -40,6 +47,8 @@ namespace Pulsarc.Utils
             {
                 return;
             }
+
+            // Keep trying to initizlie the Audio Manager
             if (!initialized)
             {
                 while (!initialized)
@@ -59,6 +68,7 @@ namespace Pulsarc.Utils
             running = true;
             var threadTime = new Stopwatch();
 
+            // Initialize the song
             song = new AudioTrack(song_path, false)
             {
                 Rate = audioRate,
@@ -68,8 +78,10 @@ namespace Pulsarc.Utils
 
             threadLimiterWatch.Start();
 
+            // Add a delay
             while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
 
+            // Start playing if the gameplay engine is active
             if (GameplayEngine.active)
             {
                 threadLimiterWatch.Restart();
@@ -78,6 +90,7 @@ namespace Pulsarc.Utils
                 threadTime.Start();
 
                 active = true;
+
                 while (running)
                 {
                     if (threadLimiterWatch.ElapsedMilliseconds >= 1)
@@ -89,6 +102,10 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Get the current time of the audio playing
+        /// </summary>
+        /// <returns>The current time of the audio (in ms)</returns>
         static public double getTime()
         {
             if(active && song.StreamLoaded) { 
@@ -99,6 +116,10 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Move the audio position forward or backward in time
+        /// </summary>
+        /// <param name="time">The amount of time to move</param>
         static public void deltaTime(long time)
         {
             if(active)
@@ -107,6 +128,9 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Pause the audio
+        /// </summary>
         static public void Pause()
         {
             if (active && !paused && song.IsPlaying)
@@ -116,6 +140,9 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Resume the audio
+        /// </summary>
         static public void Resume()
         {
             if (active && paused && !song.IsPlaying)
@@ -125,6 +152,9 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Stop the audio
+        /// </summary>
         static public void Stop()
         {
             if (active)
@@ -139,6 +169,9 @@ namespace Pulsarc.Utils
             }
         }
 
+        /// <summary>
+        /// Reset the audio
+        /// </summary>
         static public void Reset()
         {
             active = false;
@@ -148,6 +181,10 @@ namespace Pulsarc.Utils
             threadLimiterWatch.Reset();
         }
 
+        /// <summary>
+        /// Has the song finished playing?
+        /// </summary>
+        /// <returns>Whether the song has finished (not stopped or paused)</returns>
         static public bool FinishedPlaying()
         {
             return !paused && !song.IsPlaying && song.IsStopped;

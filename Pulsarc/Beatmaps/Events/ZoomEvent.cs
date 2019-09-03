@@ -44,16 +44,15 @@ namespace Pulsarc.Beatmaps.Events
         // The index of this zoom.
         private int index;
 
-        // This ZoomEvent's endPoint time
-        private int endPoint;
+        // This ZoomEvent's end time, for non-Intralizooms
+        private int endTime;
 
         // The time of the last frame, used in calculations to handle the next frame
         private double lastFrameTime = -1;
 
         /// <summary>
-        /// Initializes a ZoomEvent that sets its stats with "line", and tracks
-        /// its position in relation to other ZoomEvents using index.
-        /// [time],1,[zoomType],[zoomLevel],[EndTime]
+        /// Initializes a ZoomEvent that sets its stats with "line".
+        /// line should be in this format: [Time (ms)],1,[ZoomType],[ZoomLevel],[EndTime (ms)]
         /// </summary>
         /// <param name="line">A line from a .psc beatmap that defines an event.</param>
         /// <exception cref="WrongEventTypeException"></exception>
@@ -67,7 +66,7 @@ namespace Pulsarc.Beatmaps.Events
 
             zoomType = (ZoomType)int.Parse(parameters[(int)ZoomParameter.ZoomType]);
             zoomLevel = float.Parse(parameters[(int)ZoomParameter.ZoomLevel]);
-            endPoint = int.Parse(parameters[(int)ZoomParameter.EndPoint]);
+            endTime = int.Parse(parameters[(int)ZoomParameter.EndPoint]);
         }
 
         /// <summary>
@@ -152,12 +151,13 @@ namespace Pulsarc.Beatmaps.Events
         private void handleLinearZooms(GameplayEngine gameplayEngine)
         {
             // Comments show an example to help aid understanding of the code.
-            double deltaTime = endPoint - time; // 1000 ms
+            double deltaTime = endTime - time; // 1000 ms
             float deltaZoom = zoomLevel - startZoomLevel; // -200 px
 
             double deltaCurrentTime = gameplayEngine.time - time; // Variable (between time and endPoint) between 1-1000 ms
 
             double zoomFactor = 1 - ((deltaTime - deltaCurrentTime) / deltaTime); // 1 - (1000 - variable) / 1000, supposed to represent the percentage of time that has past between time and endPoint
+
 
             float currentZoom = startZoomLevel + (deltaZoom * (float)zoomFactor); // What should current zoom be right now? 300 + (-200 * (0-1)) = (between 300-100)
 
