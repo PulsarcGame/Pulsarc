@@ -91,4 +91,16 @@ namespace Pulsarc.UI.Screens.Gameplay
             miss = miss_;
         }
     }
+
+    public class ReplayData : SQLiteData
+    {
+        public string map;
+        public string replaydata;
+
+        public ReplayData(string map_, string replaydata_)
+        {
+            map = map_;
+            replaydata = replaydata_;
+        }
+    }
 }

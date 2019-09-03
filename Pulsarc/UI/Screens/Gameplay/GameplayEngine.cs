@@ -78,6 +78,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public double currentSpeedMultiplier;
         public double currentArcsSpeed;
         public List<KeyValuePair<double, int>> errors;
+        public List<KeyValuePair<double, int>> rawInputs;
         public List<JudgementValue> judgements;
         public Dictionary<Keys, int> bindings;
 
@@ -212,6 +213,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
             errors = new List<KeyValuePair<double, int>>();
+            rawInputs = new List<KeyValuePair<double, int>>();
             bindings = new Dictionary<Keys, int>();
 
             combo = 0;
@@ -372,9 +374,11 @@ namespace Pulsarc.UI.Screens.Gameplay
                 KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
 
                 // Process a hit if the pressed key corresponds to a bound key
-                if(bindings.ContainsKey(press.Value)) { 
+                if(bindings.ContainsKey(press.Value))
+                {
                     HitObject pressed = null;
                     var column = bindings[press.Value];
+                    rawInputs.Add(new KeyValuePair<double, int>(press.Key, column));
 
                     // Check the first hitobject of the corresponding column if there is >= one
                     if (columns[column].hitObjects.Count > 0 && columns[column].hitObjects.Exists(x => x.hittable))
@@ -664,6 +668,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Stop watch and audio
             if (endWatch.IsRunning) endWatch.Stop();
             if (AudioManager.running) AudioManager.Stop();
+
+            // Save rplay data if this is a valid play
+            if(!autoPlay && save)
+            {
+                Pulsarc.scoreDB.addReplay(new ReplayData(currentBeatmap.getHash(), string.Join(",", rawInputs)));
+            }
 
             // Create the result screen before exiting gameplay
             ResultScreen next = new ResultScreen(judgements, errors, score_display, max_combo, currentBeatmap, background, !autoPlay && save);
