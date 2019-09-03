@@ -8,6 +8,7 @@ namespace Pulsarc.Utils.SQLite
 {
     public abstract class SQLiteStore
     {
+        static public bool logging = false;
         SQLiteConnection db;
         string filename;
 
@@ -35,13 +36,13 @@ namespace Pulsarc.Utils.SQLite
 
         public void exec(string sql)
         {
-            Console.WriteLine(sql);
+            if (logging) Console.WriteLine(sql);
             new SQLiteCommand(sql, db).ExecuteNonQuery();
         }
 
         public SQLiteDataReader query(string sql)
         {
-            Console.WriteLine(sql);
+            if (logging) Console.WriteLine(sql);
             return new SQLiteCommand(sql, db).ExecuteReader();
         }
 

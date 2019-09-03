@@ -15,6 +15,7 @@ namespace Pulsarc.UI.Screens.SongSelect
     {
 
         public override ScreenView View { get; protected set; }
+        SongSelectionView GetSongSelectionView() { return (SongSelectionView)View; }
 
         // All cards that can be played.
         public List<BeatmapCard> cards;
@@ -23,7 +24,8 @@ namespace Pulsarc.UI.Screens.SongSelect
         int lastScrollValue = 0;
         bool leftClicking = false;
         Vector2 leftClickingPos;
-        public int currentFocus = 0;
+        public float currentFocus = 0;
+        public BeatmapCard focusedCard;
 
         public SongSelection()
         {
@@ -99,11 +101,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             
             if (ms.ScrollWheelValue < lastScrollValue)
             {
-                currentFocus--;
+                currentFocus-=0.3f;
             }
             else if (ms.ScrollWheelValue > lastScrollValue)
             {
-                currentFocus++;
+                currentFocus+=0.3f;
             }
 
             lastScrollValue = ms.ScrollWheelValue;
@@ -122,7 +124,13 @@ namespace Pulsarc.UI.Screens.SongSelect
                 {
                     if (card.clicked(leftClickingPos) && card.clicked(leftReleasePos))
                     {
+                        if(focusedCard != card)
+                        {
+                            focusedCard.setClicked(false);
+                            focusedCard = card;
+                        }
                         card.onClick();
+                        GetSongSelectionView().focusCard(card);
                     }
                 }
             }

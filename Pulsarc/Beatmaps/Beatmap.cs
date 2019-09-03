@@ -80,7 +80,7 @@ namespace Pulsarc.Beatmaps
             int t = 0;
             foreach (SpeedVariation sv in speedVariations)
             {
-                t += sv.time + sv.time + sv.type;
+                t += sv.time + sv.time + (int) sv.type;
             }
             string uniqueMapDescriptor = Artist + Title + Mapper + Version + a + ',' + t;
             return BitConverter.ToString(((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(new UTF8Encoding().GetBytes(uniqueMapDescriptor)))

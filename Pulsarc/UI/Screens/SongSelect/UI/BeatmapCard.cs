@@ -12,6 +12,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     class BeatmapCard : Drawable
     {
         Beatmap beatmap;
+        private bool isclicked = false;
 
         // The difficulty of the map represented as a bar
         BeatmapCardDifficulty diffBar;
@@ -66,9 +67,26 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         public void onClick()
         {
-            GameplayEngine gameplay = new GameplayEngine();
-            ScreenManager.AddScreen(gameplay);
-            gameplay.Init(beatmap);
+            if (isclicked)
+            {
+                GameplayEngine gameplay = new GameplayEngine();
+                ScreenManager.AddScreen(gameplay);
+                gameplay.Init(beatmap);
+            }
+        }
+
+        public void setClicked(bool set)
+        {
+            if(isclicked && !set)
+            {
+                move(new Vector2(45, 0));
+                isclicked = set;
+            }
+            else if (!isclicked && set)
+            {
+                move(new Vector2(-45, 0));
+                isclicked = set;
+            }
         }
 
         /// <summary>
