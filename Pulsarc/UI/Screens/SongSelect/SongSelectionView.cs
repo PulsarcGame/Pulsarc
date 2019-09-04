@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Wobble.Input;
 using Wobble.Screens;
@@ -18,6 +19,9 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Background image of Song Select
         Background background;
 
+        // Current Scores to display
+        List<ScoreCard> scores;
+
         // Back button to the Main Menu
         ReturnButton button_back;
 
@@ -30,7 +34,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps) : base(screen)
         {
-
+            scores = new List<ScoreCard>();
             int i = 0;
             foreach(Beatmap beatmap in beatmaps)
             {
@@ -56,6 +60,15 @@ namespace Pulsarc.UI.Screens.SongSelect
                 if(card == s)
                 {
                     card.setClicked(true);
+                    scores.Clear();
+                    Vector2 currentPos = new Vector2(0, 40);
+                    int rank = 1;
+                    foreach(ScoreData score in card.beatmap.getLocalScores())
+                    {
+                        scores.Add(new ScoreCard(score, currentPos, rank));
+                        currentPos.Y += 100;
+                        rank++;
+                    }
                     break;
                 }
             }
@@ -74,6 +87,10 @@ namespace Pulsarc.UI.Screens.SongSelect
                 {
                     card.Draw();
                 }
+            }
+            foreach(ScoreCard card in scores)
+            {
+                card.Draw();
             }
             button_back.Draw();
         }

@@ -11,7 +11,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     class BeatmapCard : Drawable
     {
-        Beatmap beatmap;
+        public Beatmap beatmap;
         private bool isclicked = false;
 
         // The difficulty of the map represented as a bar
@@ -86,7 +86,6 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             {
                 move(new Vector2(-45, 0));
                 isclicked = set;
-                beatmap.getLocalScores();
             }
         }
 
