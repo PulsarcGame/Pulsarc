@@ -82,6 +82,7 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "UI/SongSelect/", "beatmap_card");
                 LoadSkinTexture(skinFolder + "UI/SongSelect/", "card_diff_bar");
                 LoadSkinTexture(skinFolder + "UI/SongSelect/", "card_diff_fill");
+                LoadSkinTexture(skinFolder + "UI/SongSelect/", "scorecard");
 
                 // Load settings assets
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_background");

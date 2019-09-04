@@ -7,7 +7,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     class ScoreCardScore : TextDisplayElement
     {
-        public ScoreCardScore(Vector2 position, Color color, int fontSize = 14, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
+        public ScoreCardScore(Vector2 position, Color color, int fontSize = 30, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     }
     class ScoreCardRank : TextDisplayElement
     {
-        public ScoreCardRank(Vector2 position, Color color, int fontSize = 14, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
+        public ScoreCardRank(Vector2 position, Color color, int fontSize = 30, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
 
@@ -29,7 +29,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     }
     class ScoreCardAccuracy : TextDisplayElement
     {
-        public ScoreCardAccuracy(Vector2 position, Color color, int fontSize = 14, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
+        public ScoreCardAccuracy(Vector2 position, Color color, int fontSize = 30, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
 
@@ -40,7 +40,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     }
     class ScoreCardCombo : TextDisplayElement
     {
-        public ScoreCardCombo(Vector2 position, Color color, int fontSize = 14, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
+        public ScoreCardCombo(Vector2 position, Color color, int fontSize = 20, Anchor anchor = Anchor.TopLeft) : base("", position, fontSize, anchor, color)
         {
         }
 

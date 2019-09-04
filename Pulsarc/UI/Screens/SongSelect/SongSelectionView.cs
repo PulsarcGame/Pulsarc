@@ -61,12 +61,12 @@ namespace Pulsarc.UI.Screens.SongSelect
                 {
                     card.setClicked(true);
                     scores.Clear();
-                    Vector2 currentPos = new Vector2(0, 40);
+                    Vector2 currentPos = new Vector2(0, 20);
                     int rank = 1;
                     foreach(ScoreData score in card.beatmap.getLocalScores())
                     {
                         scores.Add(new ScoreCard(score, currentPos, rank));
-                        currentPos.Y += 100;
+                        currentPos.Y += 150;
                         rank++;
                     }
                     break;
