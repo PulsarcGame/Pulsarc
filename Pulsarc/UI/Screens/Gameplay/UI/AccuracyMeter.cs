@@ -128,7 +128,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
                 judgePos = (judgement.judge - Math.Abs(error)) / (float) timeSize;
             }
 
-            int errorX = (int) ((sectionX + judgePos * sectionLength) * Math.Sign(error));
+            int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
 
             return new Vector2(baseX - errorX, position.Y);
         }

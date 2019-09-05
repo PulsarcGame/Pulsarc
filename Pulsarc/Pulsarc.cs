@@ -185,7 +185,7 @@ namespace Pulsarc
                 }
 
                 converter.Save(toConvert);
-                ((SongSelection)ScreenManager.Screens.Peek()).RefreshBeatmaps();
+                ((SongSelection)ScreenManager.Screens.Peek()).rescanBeatmaps();
             } else if(converting && Keyboard.GetState().IsKeyUp(Config.bindings["Convert"]))
             {
                 converting = false;
