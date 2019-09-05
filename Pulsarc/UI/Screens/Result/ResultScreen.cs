@@ -70,15 +70,17 @@ namespace Pulsarc.UI.Screens.Result
             full_combo = judges_count["miss"] == 0;
 
             // Determine the grade achieved.
-            string grade = Scoring.getGrade(accuracyTotal);
+            ScoreData scoreData = new ScoreData(beatmap.getHash(), display_score, (float)accuracyTotal, combo, "D", judges_count["max"], judges_count["perfect"], judges_count["great"], judges_count["good"], judges_count["bad"], judges_count["miss"]);
+            scoreData.grade = Scoring.getGrade(scoreData);
+
 
             if(newScore)
             {
                 // Save the score locally
-                Pulsarc.scoreDB.addScore(new ScoreData(beatmap.getHash(), display_score,(float) accuracyTotal, combo, grade, judges_count["max"], judges_count["perfect"], judges_count["great"], judges_count["good"], judges_count["bad"], judges_count["miss"]));
+                Pulsarc.scoreDB.addScore(scoreData);
             }
 
-            View = new ResultScreenView(this, accuracyTotal, grade, beatmap, mapBackground);
+            View = new ResultScreenView(this, accuracyTotal, scoreData.grade, beatmap, mapBackground);
         }
     }
 }

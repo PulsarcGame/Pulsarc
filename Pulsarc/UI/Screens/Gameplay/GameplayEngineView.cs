@@ -77,7 +77,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 accuracyTotal += judge.acc;
             }
 
-            accuracyDisplay.Update(GetGameplayEngine().errors.Count > 0 ? accuracyTotal / GetGameplayEngine().errors.Count : 1);
+            accuracyDisplay.Update(GetGameplayEngine().judgements.Count > 0 ? accuracyTotal / GetGameplayEngine().judgements.Count : 1);
             scoreDisplay.Update(GetGameplayEngine().score_display);
             comboDisplay.Update(GetGameplayEngine().combo);
             judgeBox.Update(GetGameplayEngine().time);

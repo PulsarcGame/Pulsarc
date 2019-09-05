@@ -36,32 +36,67 @@ namespace Pulsarc.UI.Screens.Gameplay
             return new KeyValuePair<long, int>(score, comboMultiplier);
         }
 
-        static public string getGrade(double accuracyTotal)
+        static public string getGrade(ScoreData score)
         {
-            string grade = "D";
+            if (score.accuracy >= 0.975)
+            {
+                if(score.miss >= 1)
+                {
+                    return "AAA";
+                } else
+                {
+                    if(score.great + score.good + score.bad == 0)
+                    {
+                        if(score.perfect == 0)
+                        {
+                            return "X";
+                        } else
+                        {
+                            if(score.max / score.perfect >= 10)
+                            {
+                                return "SSS";
+                            } else
+                            {
+                                return "SS";
+                            }
+                        }
+                    } else
+                    {
+                        if(score.great >= 10)
+                        {
+                            return "AAA";
+                        } else
+                        {
+                            if(score.perfect == 0 || score.max / score.perfect >= 10)
+                            {
+                                return "SS";
+                            } else
+                            {
+                                return "S";
+                            }
+                        }
 
-            if (accuracyTotal == 1.0)
-            {
-                grade = "X";
-            }
-            else if (accuracyTotal >= 0.95)
-            {
-                grade = "S";
-            }
-            else if (accuracyTotal >= 0.90)
-            {
-                grade = "A";
-            }
-            else if (accuracyTotal >= 0.80)
-            {
-                grade = "B";
-            }
-            else if (accuracyTotal >= 0.70)
-            {
-                grade = "C";
-            }
+                    }
+                }
 
-            return grade;
+            }
+            if (score.accuracy >= 0.95)
+            {
+                return "AA";
+            }
+            if (score.accuracy >= 0.9)
+            {
+                return "A";
+            }
+            if (score.accuracy >= 0.8)
+            {
+                return "B";
+            }
+            if (score.accuracy >= 0.7)
+            {
+                return "C";
+            }
+            return "D";
         }
     }
 
