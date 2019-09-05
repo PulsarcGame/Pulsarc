@@ -21,6 +21,11 @@ namespace Pulsarc.Utils.SQLite
             map.SaveData(this);
         }
 
+        public void clearBeatmaps()
+        {
+            exec("DELETE FROM beatmapdata");
+        }
+
         public List<BeatmapData> getBeatmaps()
         {
             List<BeatmapData> maps = new List<BeatmapData>();

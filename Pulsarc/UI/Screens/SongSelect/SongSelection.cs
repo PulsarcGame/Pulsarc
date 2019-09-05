@@ -61,6 +61,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             List<Beatmap> beatmaps = new List<Beatmap>();
 
+            Pulsarc.beatmapDB.clearBeatmaps();
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.psc")
