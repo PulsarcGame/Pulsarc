@@ -59,7 +59,12 @@ namespace Pulsarc.UI.Screens.Result.UI
             // Draw the hits
             if (hits.Count > 0)
             {
-                max_time = hits[hits.Count - 1].Key;
+                max_time = 0;
+                foreach (KeyValuePair<double, int> hit in hits)
+                {
+                    max_time = max_time < hit.Key ? hit.Key : max_time;
+                }
+                max_time += 4000;
                 foreach (KeyValuePair<double, int> hit in hits)
                 {
                     KeyValuePair<Vector2, Color> info = getHitInfo(hit);
@@ -67,7 +72,7 @@ namespace Pulsarc.UI.Screens.Result.UI
                     {
                         for (int xp = -1; xp < 2; xp++)
                         {
-                            int pos = (int)((info.Key.Y + yp) * width + (info.Key.X + xp));
+                            int pos = (int)((int)(info.Key.Y + yp) * width + (info.Key.X + xp));
                             if (pos >= 0 && pos < width * height)
                             {
                                 graphBG[pos] = info.Value;
@@ -87,7 +92,7 @@ namespace Pulsarc.UI.Screens.Result.UI
         /// <returns></returns>
         private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
         {
-            return new KeyValuePair<Vector2, Color>(new Vector2((float) (hit.Key / max_time * width), (hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
+            return new KeyValuePair<Vector2, Color>(new Vector2((float) ((2000+ hit.Key) / max_time * width), (-hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
         }
 
         public override void Draw()
