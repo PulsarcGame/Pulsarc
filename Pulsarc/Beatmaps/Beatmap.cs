@@ -1,5 +1,9 @@
 ﻿using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.Gameplay;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Pulsarc.Beatmaps
 {
@@ -64,6 +68,32 @@ namespace Pulsarc.Beatmaps
             timingPoints = new List<TimingPoint>();
             speedVariations = new List<SpeedVariation>();
             events = new List<Event>();
+        }
+
+        public string getHash()
+        {
+            // The hash is modified for any metadata or arc/sv change
+            int a = 0;
+            foreach (Arc arc in arcs)
+            {
+                a += arc.time + arc.type;
+            }
+            int t = 0;
+            foreach (SpeedVariation sv in speedVariations)
+            {
+                t += sv.time + sv.time + (int) sv.type;
+            }
+            string uniqueMapDescriptor = Artist + Title + Mapper + Version + a + ',' + t;
+            return BitConverter.ToString(((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(new UTF8Encoding().GetBytes(uniqueMapDescriptor)))
+                   // without dashes
+                   .Replace("-", string.Empty)
+                   // make lowercase
+                   .ToLower();
+        }
+
+        public List<ScoreData> getLocalScores()
+        {
+            return Pulsarc.scoreDB.getScores(getHash());
         }
     }
 }

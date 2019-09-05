@@ -42,7 +42,7 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="display_score_">The score to be displayed.</param>
         /// <param name="combo_">The maximum combo achieved from the play.</param>
         /// <param name="beatmap_">The beatmap that was played.</param>
-        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_, Background mapBackground)
+        public ResultScreen(List<JudgementValue> judgements_, List<KeyValuePair<double, int>> hits_, int display_score_, int combo_, Beatmap beatmap_, Background mapBackground, bool newScore = false)
         {
             // Add all the judgement names to judges_count
             judges_count = new Dictionary<string, int>();
@@ -70,27 +70,12 @@ namespace Pulsarc.UI.Screens.Result
             full_combo = judges_count["miss"] == 0;
 
             // Determine the grade achieved.
-            string grade = "D";
+            string grade = Scoring.getGrade(accuracyTotal);
 
-            if(accuracyTotal == 1.0)
+            if(newScore)
             {
-                grade = "X";
-            }
-            else if (accuracyTotal >= 0.95)
-            {
-                grade = "S";
-            }
-            else if (accuracyTotal >= 0.90)
-            {
-                grade = "A";
-            }
-            else if (accuracyTotal >= 0.80)
-            {
-                grade = "B";
-            }
-            else if (accuracyTotal >= 0.70)
-            {
-                grade = "C";
+                // Save the score locally
+                Pulsarc.scoreDB.addScore(new ScoreData(beatmap.getHash(), display_score,(float) accuracyTotal, combo, grade, judges_count["max"], judges_count["perfect"], judges_count["great"], judges_count["good"], judges_count["bad"], judges_count["miss"]));
             }
 
             View = new ResultScreenView(this, accuracyTotal, grade, beatmap, mapBackground);

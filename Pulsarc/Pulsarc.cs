@@ -9,6 +9,7 @@ using Pulsarc.UI.Screens.MainMenu;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
+using Pulsarc.Utils.SQLite;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -29,6 +30,9 @@ namespace Pulsarc
         static public Pulsarc pulsarc;
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
+
+        // DBs
+        static public ScoreDB scoreDB;
 
         // Width and Height used for reference in making the game responsive
         static public int xBaseRes = 1920;
@@ -56,6 +60,9 @@ namespace Pulsarc
 
             // Load user config
             Config.Initialize();
+
+            // Setup DBs
+            scoreDB = new ScoreDB();
 
             // Set default resolution if not set, and fullscreen when at least one isn't set.
             if (Config.getInt("Graphics", "ResolutionWidth") <= 0)
@@ -248,6 +255,7 @@ namespace Pulsarc
 
         static public void Quit()
         {
+            scoreDB.close();
             pulsarc.Exit();
         }
     }

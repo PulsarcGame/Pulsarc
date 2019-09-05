@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Wobble.Input;
 using Wobble.Screens;
@@ -18,6 +19,9 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Background image of Song Select
         Background background;
 
+        // Current Scores to display
+        List<ScoreCard> scores;
+
         // Back button to the Main Menu
         ReturnButton button_back;
 
@@ -26,21 +30,48 @@ namespace Pulsarc.UI.Screens.SongSelect
         int cardWidth = 800;
         int cardHeight = 170;
         int cardMargin = 10;
-        int lastFocus = 0;
+        float lastFocus = 0;
 
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps) : base(screen)
         {
-
+            scores = new List<ScoreCard>();
             int i = 0;
             foreach(Beatmap beatmap in beatmaps)
             {
                 GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(1920 - cardWidth,(cardHeight + cardMargin) * i), new Vector2(cardWidth, cardHeight)));
                 i++;
             }
+            // Select a map by default in the song selection.
+            // TODO: Select a map that was randomly playing in the background on the previous menu
+            GetSongSelection().focusedCard = GetSongSelection().cards[0];
+            focusCard(GetSongSelection().focusedCard);
 
             background = new Background("select_background");
 
             button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
+        }
+
+        public void focusCard(BeatmapCard card)
+        {
+            GetSongSelection().currentFocus = 3;
+            foreach(BeatmapCard s in GetSongSelection().cards)
+            {
+                GetSongSelection().currentFocus--;
+                if(card == s)
+                {
+                    card.setClicked(true);
+                    scores.Clear();
+                    Vector2 currentPos = new Vector2(0, 20);
+                    int rank = 1;
+                    foreach(ScoreData score in card.beatmap.getLocalScores())
+                    {
+                        scores.Add(new ScoreCard(score, currentPos, rank));
+                        currentPos.Y += 150;
+                        rank++;
+                    }
+                    break;
+                }
+            }
         }
 
         public override void Destroy()
@@ -57,19 +88,23 @@ namespace Pulsarc.UI.Screens.SongSelect
                     card.Draw();
                 }
             }
+            foreach(ScoreCard card in scores)
+            {
+                card.Draw();
+            }
             button_back.Draw();
         }
 
         public override void Update(GameTime gameTime)
         {
-            // Move cards if focus has changed due to mouse wheel input.
+            // Move cards if focus has changed.
             if(lastFocus != GetSongSelection().currentFocus)
             {
-                int diff = GetSongSelection().currentFocus - lastFocus;
+                float diff = GetSongSelection().currentFocus - lastFocus;
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0, (cardHeight + cardMargin) *diff / 2.5f));
+                    card.move(new Vector2(0, (cardHeight + cardMargin) *diff));
                 }
 
                 lastFocus = GetSongSelection().currentFocus;
