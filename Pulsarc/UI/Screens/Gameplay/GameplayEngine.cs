@@ -119,6 +119,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap">The beatmap to play through</param>
         public void Init(Beatmap beatmap)
         {
+            if (!beatmap.fullyLoaded) beatmap = BeatmapHelper.Load(beatmap.path, beatmap.fileName);
+
             // Reset in case it wasn't properly handled outside
             Reset();
 

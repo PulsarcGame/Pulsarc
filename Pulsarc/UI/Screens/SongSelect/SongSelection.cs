@@ -45,20 +45,33 @@ namespace Pulsarc.UI.Screens.SongSelect
             List<Beatmap> beatmaps = new List<Beatmap>();
             cards = new List<BeatmapCard>();
 
+            foreach(BeatmapData data in Pulsarc.beatmapDB.getBeatmaps())
+            {
+                if (keyword == "" || data.match(keyword))
+                {
+                    beatmaps.Add(BeatmapHelper.LoadLight(data));
+                }
+            }
+
+            beatmaps = sortBeatmaps(beatmaps, "difficulty"); // TODO: Allow user to choose sorting method.
+            View = new SongSelectionView(this, beatmaps, keyword);
+        }
+
+        public void rescanBeatmaps()
+        {
+            List<Beatmap> beatmaps = new List<Beatmap>();
+
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.psc")
                                      .Select(Path.GetFileName)
                                      .ToArray())
                 {
-                    if (keyword == "" || file.ToLower().Contains(keyword))
-                    {
-                        beatmaps.Add(BeatmapHelper.Load(dir, file));
-                    }
+                    Pulsarc.beatmapDB.addBeatmap(new BeatmapData(BeatmapHelper.Load(dir, file)));
                 }
             }
-            beatmaps = sortBeatmaps(beatmaps, "difficulty"); // TODO: Allow user to choose sorting method.
-            View = new SongSelectionView(this, beatmaps, keyword);
+
+            RefreshBeatmaps(GetSongSelectionView().searchBox.getText());
         }
 
         /// <summary>
@@ -97,6 +110,10 @@ namespace Pulsarc.UI.Screens.SongSelect
                 if (press.Value == Keys.Escape)
                 {
                     ScreenManager.RemoveScreen(true);
+                }
+                else if (press.Value == Keys.F5)
+                {
+                    rescanBeatmaps();
                 }
                 else if (press.Value == Keys.Enter)
                 {

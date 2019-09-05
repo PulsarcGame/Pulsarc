@@ -58,6 +58,9 @@ namespace Pulsarc.Beatmaps
         public List<TimingPoint> timingPoints;
         public List<Arc> arcs;
 
+        // Performance
+        public bool fullyLoaded = false;
+
         /// <summary>
         /// A collection of arcs, timing points, speed variations,
         /// and events that make up the gameplay of Pulsarc.
@@ -94,6 +97,11 @@ namespace Pulsarc.Beatmaps
         public List<ScoreData> getLocalScores()
         {
             return Pulsarc.scoreDB.getScores(getHash());
+        }
+
+        public override string ToString()
+        {
+            return Artist + " - " + Title + " [" + Version + "] (" + Mapper + ")";
         }
     }
 }

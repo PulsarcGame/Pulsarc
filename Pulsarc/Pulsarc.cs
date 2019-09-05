@@ -33,6 +33,7 @@ namespace Pulsarc
 
         // DBs
         static public ScoreDB scoreDB;
+        static public BeatmapDB beatmapDB;
 
         // Width and Height used for reference in making the game responsive
         static public int xBaseRes = 1920;
@@ -63,6 +64,7 @@ namespace Pulsarc
 
             // Setup DBs
             scoreDB = new ScoreDB();
+            beatmapDB = new BeatmapDB();
 
             // Set default resolution if not set, and fullscreen when at least one isn't set.
             if (Config.getInt("Graphics", "ResolutionWidth") <= 0)

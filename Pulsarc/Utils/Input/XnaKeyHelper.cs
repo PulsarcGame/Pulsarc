@@ -544,7 +544,7 @@ namespace Pulsarc.Utils.Input
                     keyStr = "RCTRL";
                     return keyStr;
                 case Keys.Space:
-                    keyStr = "Space";
+                    keyStr = " ";
                     return keyStr;
                 case Keys.NumPad0:
                     keyStr = "KP_INS";
@@ -678,6 +678,7 @@ namespace Pulsarc.Utils.Input
                 case Keys.Asterisk:
                 case Keys.Squared:
                 case Keys.Multiply:
+                case Keys.Space:
                     return true;
                 default:
                     return false;

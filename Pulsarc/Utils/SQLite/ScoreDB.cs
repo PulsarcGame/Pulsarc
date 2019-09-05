@@ -9,10 +9,11 @@ namespace Pulsarc.Utils.SQLite
     public class ScoreDB : SQLiteStore
     {
         public ScoreDB() : base("scores") { }
-        public override void initDB()
+
+        public override void initTables()
         {
-            exec("CREATE TABLE scoredata (map text, datet datetime, score int, accuracy float, maxcombo int, grade varchar(2), max int, perfect int, great int, good int, bad int, miss int)");
-            exec("CREATE TABLE replaydata (map text, replaydata BLOB)");
+            tables.Add(new ScoreData());
+            tables.Add(new ReplayData());
         }
 
         public void addScore(ScoreData score)

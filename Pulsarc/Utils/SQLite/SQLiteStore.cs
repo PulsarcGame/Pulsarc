@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Data.SQLite;
+using System.Reflection;
+using Pulsarc.UI.Screens.Gameplay;
 
 namespace Pulsarc.Utils.SQLite
 {
     public abstract class SQLiteStore
     {
-        static public bool logging = false;
+        static public bool logging = true;
         SQLiteConnection db;
         string filename;
+        public List<SQLiteData> tables;
 
         public SQLiteStore(string name_)
         {
             filename = name_ + ".db";
+
+            tables = new List<SQLiteData>();
+
+            initTables(); 
 
             if (!File.Exists(filename)) {
                 SQLiteConnection.CreateFile(filename);
@@ -24,9 +31,9 @@ namespace Pulsarc.Utils.SQLite
             {
                 connect();
             }
-
-
         }
+
+        public abstract void initTables();
 
         public void connect()
         {
@@ -60,6 +67,29 @@ namespace Pulsarc.Utils.SQLite
             db.Close();
         }
 
-        public abstract void initDB();
+        public void initDB()
+        {
+            foreach(SQLiteData data in tables)
+            {
+                string r = "CREATE TABLE " + data.GetType().Name.ToLower() + " (";
+
+                bool first = true;
+                foreach (FieldInfo prop in data.GetType().GetFields())
+                {
+                    if(first)
+                    {
+                        first = false;
+                    } else
+                    {
+                        r += ",";
+                    }
+                    r += prop.Name.ToLower() + " " + prop.FieldType.Name.ToString().ToLower();
+                }
+
+                r += ")";
+
+                exec(r);
+            }
+        }
     }
 }

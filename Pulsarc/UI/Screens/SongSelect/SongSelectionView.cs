@@ -71,6 +71,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                     scores.Clear();
                     Vector2 currentPos = new Vector2(0, 20);
                     int rank = 1;
+                    if (!card.beatmap.fullyLoaded) card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
                     foreach(ScoreData score in card.beatmap.getLocalScores())
                     {
                         scores.Add(new ScoreCard(score, currentPos, rank));

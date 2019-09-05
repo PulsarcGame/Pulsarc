@@ -160,6 +160,28 @@ namespace Pulsarc.Beatmaps
                 parsed.Difficulty = DifficultyCalculation.GetDifficulty(parsed);
             }
 
+            parsed.fullyLoaded = true;
+
+            return parsed;
+        }
+
+        static public Beatmap LoadLight(BeatmapData data)
+        {
+
+            Beatmap parsed = new Beatmap();
+            parsed.fullyLoaded = false;
+            parsed.path = data.path;
+            parsed.fileName = data.fileName;
+            parsed.Background = data.background_path;
+            parsed.Audio = data.audio_path;
+
+            parsed.Artist = data.artist;
+            parsed.Title = data.title;
+            parsed.Version = data.version;
+            parsed.Mapper = data.mapper;
+            parsed.KeyCount = data.key_count;
+            parsed.Difficulty = data.difficulty;
+
             return parsed;
         }
 

@@ -115,6 +115,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int bad;
         public int miss;
 
+        public ScoreData() : base() { }
+
         public ScoreData(SQLiteDataReader data) : base(data) { }
 
         public ScoreData(string map_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_) : 
@@ -146,6 +148,8 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         public string map;
         public string replaydata;
+
+        public ReplayData() : base() { }
 
         public ReplayData(SQLiteDataReader data) : base(data) { }
 
