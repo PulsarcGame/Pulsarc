@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Input;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <summary>
         /// Load all beatmaps. TODO: this should be loaded from a cache and updated incrementally or when doing a refresh
         /// </summary>
-        public void RefreshBeatmaps()
+        public void RefreshBeatmaps(string keyword = "")
         {
             List<Beatmap> beatmaps = new List<Beatmap>();
             cards = new List<BeatmapCard>();
@@ -50,11 +51,14 @@ namespace Pulsarc.UI.Screens.SongSelect
                                      .Select(Path.GetFileName)
                                      .ToArray())
                 {
-                    beatmaps.Add(BeatmapHelper.Load(dir, file));
+                    if (keyword == "" || file.ToLower().Contains(keyword))
+                    {
+                        beatmaps.Add(BeatmapHelper.Load(dir, file));
+                    }
                 }
             }
             beatmaps = sortBeatmaps(beatmaps, "difficulty"); // TODO: Allow user to choose sorting method.
-            View = new SongSelectionView(this, beatmaps);
+            View = new SongSelectionView(this, beatmaps, keyword);
         }
 
         /// <summary>
@@ -90,9 +94,26 @@ namespace Pulsarc.UI.Screens.SongSelect
             {
                 KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
 
-                if (press.Value == Keys.Escape || press.Value == Keys.Delete)
+                if (press.Value == Keys.Escape)
                 {
                     ScreenManager.RemoveScreen(true);
+                }
+                else if (press.Value == Keys.Enter)
+                {
+                    focusedCard.onClick();
+                }
+                else if (press.Value == Keys.Delete || press.Value == Keys.Back)
+                {
+                    GetSongSelectionView().searchBox.clear();
+                    RefreshBeatmaps();
+                }
+                else
+                {
+                    if (XnaKeyHelper.isTypingCharacter(press.Value))
+                    {
+                        GetSongSelectionView().searchBox.addText(InputManager.caps ? XnaKeyHelper.GetStringFromKey(press.Value) : XnaKeyHelper.GetStringFromKey(press.Value).ToLower());
+                    }
+                    RefreshBeatmaps(GetSongSelectionView().searchBox.getText().ToLower());
                 }
             }
 

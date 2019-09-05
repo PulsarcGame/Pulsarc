@@ -12,7 +12,7 @@ namespace Pulsarc.UI
 
         // Text
         SpriteFont font;
-        StringBuilder text;
+        public StringBuilder text;
         float fontScale;
         public Color color;
 
@@ -100,7 +100,13 @@ namespace Pulsarc.UI
 
         public override void Draw()
         {
-            Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
+            try
+            {
+                Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
+            } catch
+            {
+
+            }
         }
     }
 }

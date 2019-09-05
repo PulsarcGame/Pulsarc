@@ -18,6 +18,9 @@ namespace Pulsarc.Utils
         public static MouseState mouseState;
         public static KeyVal<MouseState, int> lastMouseClick;
 
+        public static bool capsLock = false;
+        public static bool caps = false;
+
         static public void StartThread()
         {
             pressedKeys = new List<Keys>();
@@ -58,6 +61,17 @@ namespace Pulsarc.Utils
                                 {
                                     keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.getTime(), key));
                                     pressedKeys.Add(key);
+
+                                    if(key == Keys.CapsLock)
+                                    {
+                                        capsLock = !capsLock;
+                                        caps = capsLock;
+                                    }
+
+                                    if(key == Keys.LeftShift || key == Keys.RightShift)
+                                    {
+                                        caps = !capsLock;
+                                    }
                                 }
                             }
                         }
@@ -72,6 +86,12 @@ namespace Pulsarc.Utils
                                 //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
                                 pressedKeys.RemoveAt(i);
                                 i--;
+
+
+                                if (key == Keys.LeftShift || key == Keys.RightShift)
+                                {
+                                    caps = capsLock;
+                                }
                             }
                         }
 

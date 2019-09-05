@@ -618,5 +618,70 @@ namespace Pulsarc.Utils.Input
                     return key.ToString();
             }
         }
+
+        static public bool isTypingCharacter(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Q:
+                case Keys.W:
+                case Keys.E:
+                case Keys.R:
+                case Keys.T:
+                case Keys.Y:
+                case Keys.U:
+                case Keys.I:
+                case Keys.O:
+                case Keys.P:
+                case Keys.A:
+                case Keys.S:
+                case Keys.D:
+                case Keys.F:
+                case Keys.G:
+                case Keys.H:
+                case Keys.J:
+                case Keys.K:
+                case Keys.L:
+                case Keys.Z:
+                case Keys.X:
+                case Keys.C:
+                case Keys.V:
+                case Keys.B:
+                case Keys.N:
+                case Keys.M:
+                case Keys.OemPeriod:
+                case Keys.OemComma:
+                case Keys.OemColon:
+                case Keys.OemSemicolon:
+                case Keys.OemQuotes:
+                case Keys.OemCloseParenthesis:
+                case Keys.OemCloseBrackets:
+                case Keys.OemOpenBrackets:
+                case Keys.OemQuestion:
+                case Keys.OemExclamationMark:
+                case Keys.Caret:
+                case Keys.DollarSign:
+                case Keys.PunctuatedU:
+                case Keys.OemTilde:
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                case Keys.D9:
+                case Keys.D0:
+                case Keys.OemMinus:
+                case Keys.OemPlus:
+                case Keys.Asterisk:
+                case Keys.Squared:
+                case Keys.Multiply:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

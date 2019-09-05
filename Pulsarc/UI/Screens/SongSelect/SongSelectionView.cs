@@ -16,6 +16,9 @@ namespace Pulsarc.UI.Screens.SongSelect
     {
         SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
+        // SearchBox
+        public SearchBox searchBox;
+
         // Background image of Song Select
         Background background;
 
@@ -32,7 +35,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         int cardMargin = 10;
         float lastFocus = 0;
 
-        public SongSelectionView(Screen screen, List<Beatmap> beatmaps) : base(screen)
+        public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
             int i = 0;
@@ -43,8 +46,13 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
             // Select a map by default in the song selection.
             // TODO: Select a map that was randomly playing in the background on the previous menu
-            GetSongSelection().focusedCard = GetSongSelection().cards[0];
-            focusCard(GetSongSelection().focusedCard);
+            if (GetSongSelection().cards.Count > 0)
+            {
+                GetSongSelection().focusedCard = GetSongSelection().cards[0];
+                focusCard(GetSongSelection().focusedCard);
+            }
+
+            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
 
             background = new Background("select_background");
 
@@ -93,6 +101,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 card.Draw();
             }
             button_back.Draw();
+            searchBox.Draw();
         }
 
         public override void Update(GameTime gameTime)
