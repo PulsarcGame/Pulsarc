@@ -1,8 +1,5 @@
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Beatmaps;
