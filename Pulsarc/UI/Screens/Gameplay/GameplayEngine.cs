@@ -130,12 +130,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Initialize Gameplay variables
             initializeGameplay(beatmap);
 
-            // Set the path of the song to be played later on
-            AudioManager.song_path = Directory  .GetParent(currentBeatmap.path) // Get the path to "\Songs"
-                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
-                                                "\\" + beatmap.path + // Add the beatmap path.
-                                                "\\" + currentBeatmap.Audio; // Add the audio name.
-
             // Create columns and their hitobjects
             createColumns(beatmap);
 
@@ -146,9 +140,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             getGameplayView().Init();
 
             // Start audio and gameplay
-            AudioManager.Start();
-            GameplayEngine.active = true;
-            Pulsarc.display_cursor = false;
+            startGameplay();
 
             // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
             // TODO: disable GC while in gameplay
@@ -207,7 +199,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap"></param>
         private void initializeGameplay(Beatmap beatmap)
         {
-
             columns = new Column[keys];
             judgements = new List<JudgementValue>();
             errors = new List<KeyValuePair<double, int>>();
@@ -220,6 +211,12 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             background = new Background(Config.getInt("Gameplay", "BackgroundDim") / 100f);
             background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
+
+            // Set the path of the song to be played later on
+            AudioManager.song_path = Directory.GetParent(beatmap.path) // Get the path to "\Songs"
+                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
+                                                "\\" + beatmap.path + // Add the beatmap path.
+                                                "\\" + beatmap.Audio; // Add the audio name.
 
             currentBeatmap = beatmap;
         }
@@ -309,6 +306,18 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
+        /// Start gameplay, activate audio, start PulsarcTime, etc.
+        /// </summary>
+        private void startGameplay()
+        {
+            AudioManager.Start();
+            PulsarcTime.Start();
+
+            GameplayEngine.active = true;
+            Pulsarc.display_cursor = false;
+        }
+
+        /// <summary>
         /// Updates everything during gameplay
         /// </summary>
         /// <param name="gameTime">The current GameTime</param>
@@ -317,6 +326,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             // If not active, don't update.
             if (!active) return;
 
+            // Engine stuff (pause, continue, end, restart)
+            handleEngineInputs();
+
+            // If paused, don't handle anything else
+            if (AudioManager.paused) return;
+
             // Quit gameplay when nothing is left to play, or if the audio finished playing
             if ((AudioManager.active && AudioManager.FinishedPlaying()) || endWatch.ElapsedMilliseconds >= endDelay)
             {                
@@ -324,11 +339,11 @@ namespace Pulsarc.UI.Screens.Gameplay
                 return;
             }
 
+            // Keep PulsarcTime updated
+            PulsarcTime.Update();
+
             // Handle user input in priority
             handleInputs(gameTime);
-
-            // Engine stuff (pause, continue, end, restart)
-            handleEngineInputs();
             
             // Event Handling
             handleEvents();
@@ -590,6 +605,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Pause()
         {
             AudioManager.Pause();
+            PulsarcTime.Stop();
         }
 
         /// <summary>
@@ -598,6 +614,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Resume()
         {
             AudioManager.Resume();
+            PulsarcTime.Resume();
         }
 
         /// <summary>
@@ -623,6 +640,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             InputManager.keyboardPresses.Clear();
             AudioManager.Stop();
 
+            // Stop PulsarcTime
+            PulsarcTime.Reset();
+
             // Unset attributes to avoid potential conflict with next gameplays
             currentBeatmap = null;
             columns = null;
@@ -641,6 +661,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public void EndGameplay()
         {
+            background.dim = false;
+
             // Stop watch and audio
             if (endWatch.IsRunning) endWatch.Stop();
             if (AudioManager.running) AudioManager.Stop();

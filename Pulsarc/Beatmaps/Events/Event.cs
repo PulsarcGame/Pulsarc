@@ -1,6 +1,7 @@
 ﻿using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -70,7 +71,7 @@ namespace Pulsarc.Beatmaps.Events
 
             time = int.Parse(parts.Dequeue());
             type = (EventType)int.Parse(parts.Dequeue());
-            parameters.AddRange(parts);            
+            parameters.AddRange(parts);
         }
 
         /// <summary>

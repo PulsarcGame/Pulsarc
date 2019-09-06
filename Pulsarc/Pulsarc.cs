@@ -241,11 +241,6 @@ namespace Pulsarc
             return new Vector2(xBaseRes, yBaseRes);
         }
 
-        static public float Lerp(float firstFloat, float secondFloat, float by)
-        {
-            return firstFloat + (secondFloat - firstFloat) * by;
-        }
-
         static public void Quit()
         {
             pulsarc.Exit();

@@ -16,6 +16,7 @@ namespace Pulsarc.UI.Common
         /// Create a background using the Skin-asset name to find the image.
         /// </summary>
         /// <param name="skinAsset">The name of the asset this background will use.</param>
+        /// <param name="dim">Optional parameter to change the background dim.</param>
         public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset])
         {
             if (dim > 0)
@@ -29,7 +30,7 @@ namespace Pulsarc.UI.Common
         /// <summary>
         /// Create a blank, center-anchored background. Can be made transparent. Meant to be used for map backgrounds.
         /// </summary>
-        /// <param name="opacity">Optional parameter to change the opacity of the background.</param>
+        /// <param name="dim">Optional parameter to change the background dim.</param>
         public Background(float dim = 0f) : base(Skin.defaultTexture, -1, Anchor.Center)
         {
             if (dim > 0)
@@ -43,8 +44,7 @@ namespace Pulsarc.UI.Common
         /// <summary>
         /// Change this background's texture to a new texture.
         /// </summary>
-        /// <param name="path">The folder to look in.</param>
-        /// <param name="asset">The filename of the picture to use.</param>
+        /// <param name="newBackground">The texture to use for the background</param>
         public void changeBackground(Texture2D newBackground)
         {
             texture = newBackground;
@@ -54,7 +54,7 @@ namespace Pulsarc.UI.Common
 
             // If the texture has the same aspect ratio as the base, resize to base res,
             // if not, resize x to base res and then multiply y by the amount x increased.
-            Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : (float)texture.Height * multiplier));
+            Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : texture.Height * multiplier));
 
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 

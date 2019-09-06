@@ -89,7 +89,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (!GameplayEngine.active) return;
 
             // Draw everything
-            background.Draw();
+
+            // Don't bother drawing the background if dim is 100%
+            if (background.dim && background.dimTexture.opacity != 1f || !background.dim)
+            {
+                background.Draw();
+            }
             crosshair.Draw();
             drawArcs();
             accuracyDisplay.Draw();

@@ -1,6 +1,6 @@
 using Pulsarc.UI.Screens.Gameplay;
-using System;
-using System.Collections.Generic;
+using Pulsarc.Utils;
+using Pulsarc.Utils.Maths;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -47,8 +47,10 @@ namespace Pulsarc.Beatmaps.Events
         // This ZoomEvent's end time, for non-Intralizooms
         private int endTime;
 
+        private bool similarEventsCalled = false;
+
         // The time of the last frame, used in calculations to handle the next frame
-        private double lastFrameTime = -1;
+        //private double lastFrameTime = -1;
 
         /// <summary>
         /// Initializes a ZoomEvent that sets its stats with "line".
@@ -83,7 +85,7 @@ namespace Pulsarc.Beatmaps.Events
 
             // Use the correct handling method depending on this
             // ZoomEvent's ZoomType
-            switch(zoomType)
+            switch (zoomType)
             {
                 case ZoomType.Intralizoom:
                     handleIntralizooms(gameplayEngine);
@@ -105,14 +107,18 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplay engine to modify.</param>
         private void handleIntralizooms(GameplayEngine gameplayEngine)
         {
-            // If lastFrameTime hasn't been set yet, set it.
+            /* If lastFrameTime hasn't been set yet, set it.
             if (lastFrameTime == -1)
             {
                 lastFrameTime = gameplayEngine.time;
                 return;
-            }
+            }*/
 
-            findAllSimilarEvents(gameplayEngine);
+            if (!similarEventsCalled)
+            {
+                findAllSimilarEvents(gameplayEngine);
+                similarEventsCalled = true;
+            }
 
             // If any event has a greater time than this, and the current time is past
             // that event's time, then deactivate this event as it is no longer needed.
@@ -129,9 +135,13 @@ namespace Pulsarc.Beatmaps.Events
                 }
             }
 
-            double deltaTime = gameplayEngine.time - lastFrameTime;
-            
-            gameplayEngine.crosshair.Resize(Pulsarc.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 5000f));
+            double deltaTime = PulsarcTime.smoothDeltaTime;
+            if (deltaTime == 0)
+            {
+                return;
+            }
+
+            gameplayEngine.crosshair.Resize(PulsarcMath.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 100f));
         }
 
         /// <summary>
@@ -171,7 +181,7 @@ namespace Pulsarc.Beatmaps.Events
             {
                 currentZoom = zoomLevel;
             }
-            else if (!negative && currentZoom > zoomLevel) 
+            else if (!negative && currentZoom > zoomLevel)
             {
                 currentZoom = zoomLevel;
             }
