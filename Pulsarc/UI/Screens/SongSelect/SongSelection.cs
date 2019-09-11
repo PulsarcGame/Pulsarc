@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.SongSelect.UI;
@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         int lastScrollValue = 0;
         bool leftClicking = false;
         Vector2 leftClickingPos;
-        public float currentFocus = 0;
+        public float selectedFocus = 0;
         public BeatmapCard focusedCard;
 
         public SongSelection()
@@ -103,28 +103,40 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Update(GameTime gameTime)
         {
-            // Go back if "escape" or "delete" is pressed
+            handleKeyboardPresses();
+            handleMouseInput();
+            
+            View?.Update(gameTime);
+        }
+
+        private void handleKeyboardPresses()
+        {
             while (InputManager.keyboardPresses.Count > 0)
             {
                 KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
 
+                // If Escape has been pressed, go back one screen.
                 if (press.Value == Keys.Escape)
                 {
                     ScreenManager.RemoveScreen(true);
                 }
+                // If F5 has been pressed, refresh beatmaps
                 else if (press.Value == Keys.F5)
                 {
                     rescanBeatmaps();
                 }
+                // If Enter is pressed, start playing the beatmap of the focused card
                 else if (press.Value == Keys.Enter)
                 {
                     focusedCard.onClick();
                 }
+                // If Delete or backspace is pressed, clear the search bar
                 else if (press.Value == Keys.Delete || press.Value == Keys.Back)
                 {
                     GetSongSelectionView().searchBox.clear();
                     RefreshBeatmaps();
                 }
+                // If none of the above, type into the search bar
                 else
                 {
                     if (XnaKeyHelper.isTypingCharacter(press.Value))
@@ -134,27 +146,40 @@ namespace Pulsarc.UI.Screens.SongSelect
                     RefreshBeatmaps(GetSongSelectionView().searchBox.getText().ToLower());
                 }
             }
+        }
 
-            // If the scroll wheel's state has changed, change the focus 
+        private void handleMouseInput()
+        {
             MouseState ms = Mouse.GetState();
-            
+
+            changeFocus(ms);
+            handleClicks(ms);
+        }
+
+        private void changeFocus(MouseState ms)
+        {
+            // If the scroll wheel's state has changed, change the focus
             if (ms.ScrollWheelValue < lastScrollValue)
             {
-                currentFocus-=0.3f;
+                selectedFocus -= 0.3f;
             }
             else if (ms.ScrollWheelValue > lastScrollValue)
             {
-                currentFocus+=0.3f;
+                selectedFocus += 0.3f;
             }
 
             lastScrollValue = ms.ScrollWheelValue;
+        }
 
-            // If a Card is clicked (and released), play its map.
+        private void handleClicks(MouseState ms)
+        {
+            // If the Focused Card is clicked (and released), play its map.
             if (!leftClicking && ms.LeftButton == ButtonState.Pressed)
             {
                 leftClicking = true;
                 leftClickingPos = new Vector2(ms.Position.X, ms.Position.Y);
             }
+            // If a non-focused card is clicked, focus that clicked card
             else if (leftClicking && ms.LeftButton == ButtonState.Released)
             {
                 leftClicking = false;
@@ -163,7 +188,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 {
                     if (card.clicked(leftClickingPos) && card.clicked(leftReleasePos))
                     {
-                        if(focusedCard != card)
+                        if (focusedCard != card)
                         {
                             focusedCard.setClicked(false);
                             focusedCard = card;
@@ -172,10 +197,6 @@ namespace Pulsarc.UI.Screens.SongSelect
                         GetSongSelectionView().focusCard(card);
                     }
                 }
-            }
-            else
-            {
-                View?.Update(gameTime);
             }
         }
     }

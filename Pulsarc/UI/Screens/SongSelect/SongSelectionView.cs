@@ -7,6 +7,8 @@ using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
+using Pulsarc.Utils;
+using Pulsarc.Utils.Maths;
 using Wobble.Input;
 using Wobble.Screens;
 
@@ -33,17 +35,20 @@ namespace Pulsarc.UI.Screens.SongSelect
         int cardWidth = 800;
         int cardHeight = 170;
         int cardMargin = 10;
+        float currentFocus = 0;
         float lastFocus = 0;
 
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
+
             int i = 0;
             foreach(Beatmap beatmap in beatmaps)
             {
                 GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(1920 - cardWidth,(cardHeight + cardMargin) * i), new Vector2(cardWidth, cardHeight)));
                 i++;
             }
+
             // Select a map by default in the song selection.
             // TODO: Select a map that was randomly playing in the background on the previous menu
             if (GetSongSelection().cards.Count > 0)
@@ -61,10 +66,13 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public void focusCard(BeatmapCard card)
         {
-            GetSongSelection().currentFocus = 3;
-            foreach(BeatmapCard s in GetSongSelection().cards)
+            float step = (cardHeight + cardMargin) / 100;
+            GetSongSelection().selectedFocus = -3.5f;
+
+            foreach (BeatmapCard s in GetSongSelection().cards)
             {
-                GetSongSelection().currentFocus--;
+                GetSongSelection().selectedFocus += step;
+
                 if(card == s)
                 {
                     card.setClicked(true);
@@ -107,17 +115,20 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Update(GameTime gameTime)
         {
+            float selectedFocus = GetSongSelection().selectedFocus;
+
             // Move cards if focus has changed.
-            if(lastFocus != GetSongSelection().currentFocus)
+            if(currentFocus != selectedFocus)
             {
-                float diff = GetSongSelection().currentFocus - lastFocus;
+                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.deltaTime / 100f);//(float)PulsarcTime.deltaTime * 2f);
+
+                float diff = lastFocus - currentFocus;
+                lastFocus = currentFocus;
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0, (cardHeight + cardMargin) *diff));
+                    card.move(new Vector2(0, (cardHeight + cardMargin) * diff));
                 }
-
-                lastFocus = GetSongSelection().currentFocus;
             }
 
             // Go back if the back button was clicked.

@@ -2,6 +2,8 @@
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.Utils;
+using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +14,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     class BeatmapCard : Drawable
     {
         public Beatmap beatmap;
-        private bool isclicked = false;
+        private bool isClicked = false;
+        private static float clickedDistance = 45f;
+        private float currentClickDistance = 0f;
+        private float lastClickDistance = 0f;
 
         // The difficulty of the map represented as a bar
         BeatmapCardDifficulty diffBar;
@@ -52,6 +57,8 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public override void Draw()
         {
+            adjustClickDistance();
+
             base.Draw();
             diffBar.Draw();
 
@@ -62,12 +69,31 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             difficulty.Draw();
         }
 
+        private void adjustClickDistance()
+        {
+            // If clicked, smoothly move to the clicked distance
+            if (isClicked && currentClickDistance <= clickedDistance)
+            {
+                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, clickedDistance, (float)PulsarcTime.smoothDeltaTime / 100f);
+            }
+            // Else if not clicked and currentClickDistacne is greater than 0, smoothly move to 0
+            else if (!isClicked && currentClickDistance >= 0)
+            {
+                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, 0, (float)PulsarcTime.smoothDeltaTime / 100f);
+            }
+
+            float diff = lastClickDistance - currentClickDistance;
+            lastClickDistance = currentClickDistance;
+
+            move(new Vector2(diff, 0));
+        }
+
         /// <summary>
         /// When clicked, start playing the beatmap.
         /// </summary>
         public void onClick()
         {
-            if (isclicked)
+            if (isClicked)
             {
                 GameplayEngine gameplay = new GameplayEngine();
                 ScreenManager.AddScreen(gameplay);
@@ -77,16 +103,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public void setClicked(bool set)
         {
-            if(isclicked && !set)
-            {
-                move(new Vector2(45, 0));
-                isclicked = set;
-            }
-            else if (!isclicked && set)
-            {
-                move(new Vector2(-45, 0));
-                isclicked = set;
-            }
+            isClicked = set;
         }
 
         /// <summary>
