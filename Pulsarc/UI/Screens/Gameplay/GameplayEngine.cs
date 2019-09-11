@@ -310,12 +310,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// Start gameplay, activate audio, start PulsarcTime, etc.
+        /// Start gameplay, activate audio, etc.
         /// </summary>
         private void startGameplay()
         {
             AudioManager.Start();
-            PulsarcTime.Start();
 
             GameplayEngine.active = true;
             Pulsarc.display_cursor = false;
@@ -342,9 +341,6 @@ namespace Pulsarc.UI.Screens.Gameplay
                 EndGameplay(true);
                 return;
             }
-
-            // Keep PulsarcTime updated
-            PulsarcTime.Update();
 
             // Handle user input in priority
             handleInputs(gameTime);
@@ -611,7 +607,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Pause()
         {
             AudioManager.Pause();
-            PulsarcTime.Stop();
         }
 
         /// <summary>
@@ -620,7 +615,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Resume()
         {
             AudioManager.Resume();
-            PulsarcTime.Resume();
         }
 
         /// <summary>
@@ -645,9 +639,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Clear Input and Audio
             InputManager.keyboardPresses.Clear();
             AudioManager.Stop();
-
-            // Stop PulsarcTime
-            PulsarcTime.Reset();
 
             // Unset attributes to avoid potential conflict with next gameplays
             currentBeatmap = null;

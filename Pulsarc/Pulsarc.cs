@@ -121,6 +121,8 @@ namespace Pulsarc
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
             frames = 0;
+
+            PulsarcTime.Start();
             
             // Initialize the game camera
             game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
@@ -162,6 +164,8 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            PulsarcTime.Update();
+
             cursor.setPos(MouseManager.CurrentState.Position);
 
             // Temporary measure for converting intralism or osu!mania beatmaps
@@ -214,7 +218,6 @@ namespace Pulsarc
             ScreenManager.Draw(gameTime);
 
             // FPS
-
             frames++;
 
             if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)

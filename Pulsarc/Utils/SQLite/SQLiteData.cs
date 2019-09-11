@@ -51,7 +51,7 @@ namespace Pulsarc.Utils.SQLite
                 r += prop.Name;
                 if (prop.FieldType.Name.ToLower() == "string" || prop.FieldType.Name.ToLower() == "char")
                 {
-                    vals += "'"+prop.GetValue(this).ToString().Replace("'","\\\'"+"'")+"'";
+                    vals += "'"+prop.GetValue(this).ToString().Replace("'","\'"+"'")+"'";
                 } else
                 {
                     vals += prop.GetValue(this);
