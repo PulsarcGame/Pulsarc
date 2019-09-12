@@ -6,6 +6,7 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Wobble.Screens;
 
@@ -98,6 +99,11 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 GameplayEngine gameplay = new GameplayEngine();
                 ScreenManager.AddScreen(gameplay);
                 gameplay.Init(beatmap);
+            } else
+            {
+                AudioManager.song_path = beatmap.getFullAudioPath();
+                AudioManager.StartLazyPlayer();
+                Console.WriteLine("Now Playing: " + AudioManager.song_path);
             }
         }
 

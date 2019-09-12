@@ -54,7 +54,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (GetSongSelection().cards.Count > 0)
             {
                 GetSongSelection().focusedCard = GetSongSelection().cards[0];
-                focusCard(GetSongSelection().focusedCard);
+                GetSongSelection().focusedCard.onClick();
             }
 
             searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);

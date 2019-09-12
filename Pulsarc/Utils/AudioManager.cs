@@ -24,7 +24,48 @@ namespace Pulsarc.Utils
         static Stopwatch threadLimiterWatch;
 
         /// <summary>
-        /// Start playing audio on a new thread
+        /// Start playing audio
+        /// </summary>
+        static public void StartLazyPlayer()
+        {
+            Stop();
+
+            // Keep trying to initialize the Audio Manager
+            if (!initialized)
+            {
+                while (!initialized)
+                {
+                    try
+                    {
+                        Wobble.Audio.AudioManager.Initialize(null, null);
+                        initialized = true;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("BASS failed to initialize, retrying...");
+                    }
+                }
+            }
+
+            if (song_path == "")
+            {
+                return;
+            }
+
+            // Initialize the song
+            song = new AudioTrack(song_path, false)
+            {
+                Rate = audioRate,
+            };
+            song.Volume = Config.getInt("Audio", "MusicVolume");
+            song.ApplyRate(Config.getBool("Audio", "RatePitch"));
+
+            song.Play();
+            active = true;
+        }
+
+        /// <summary>
+        /// Start playing gameplay audio on a new thread
         /// </summary>
         static public void StartGamePlayer()
         {
@@ -33,7 +74,7 @@ namespace Pulsarc.Utils
         }
 
         /// <summary>
-        /// Initializes the AudioPlayer
+        /// Initializes the GameAudioPlayer
         /// </summary>
         static public void GameAudioPlayer()
         {
@@ -47,7 +88,7 @@ namespace Pulsarc.Utils
                 return;
             }
 
-            // Keep trying to initizlie the Audio Manager
+            // Keep trying to initialize the Audio Manager
             if (!initialized)
             {
                 while (!initialized)
@@ -176,8 +217,10 @@ namespace Pulsarc.Utils
             active = false;
             paused = false;
             running = false;
-            song_path = "";
-            threadLimiterWatch.Reset();
+            if (threadLimiterWatch != null)
+            {
+                threadLimiterWatch.Reset();
+            }
         }
 
         /// <summary>

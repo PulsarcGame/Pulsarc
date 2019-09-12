@@ -3,6 +3,7 @@ using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -98,6 +99,14 @@ namespace Pulsarc.Beatmaps
         public List<ScoreData> getLocalScores()
         {
             return DataManager.scoreDB.getScores(getHash());
+        }
+
+        public string getFullAudioPath()
+        {
+            return Directory.GetParent(path) // Get the path to "\Songs"
+                                                   .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
+                                                   "\\" + path + // Add the beatmap path.
+                                                   "\\" + Audio; // Add the audio name.
         }
 
         public override string ToString()

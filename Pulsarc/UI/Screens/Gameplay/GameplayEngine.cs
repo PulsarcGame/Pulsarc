@@ -217,10 +217,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             background.changeBackground(GraphicsUtils.LoadFileTexture(beatmap.path + "/" + beatmap.Background));
 
             // Set the path of the song to be played later on
-            AudioManager.song_path = Directory.GetParent(beatmap.path) // Get the path to "\Songs"
-                                                .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
-                                                "\\" + beatmap.path + // Add the beatmap path.
-                                                "\\" + beatmap.Audio; // Add the audio name.
+            AudioManager.song_path = beatmap.getFullAudioPath();
 
             currentBeatmap = beatmap;
         }
