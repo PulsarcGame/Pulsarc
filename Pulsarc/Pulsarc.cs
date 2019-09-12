@@ -209,7 +209,7 @@ namespace Pulsarc
             // Begin the spritebatch in relation to the camera
             spriteBatch.Begin(SpriteSortMode.Deferred,
                     null, null, null, null, null,
-                    null);//game_camera.GetTransformation());
+                    game_camera.GetTransformation());
 
             GraphicsDevice.Clear(Color.Black);
 
