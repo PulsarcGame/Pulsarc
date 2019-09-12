@@ -37,6 +37,9 @@ namespace Pulsarc.Beatmaps
         // The audio for this Beatmap.
         public string Audio { get; set; }
 
+        // The time (in ms) to start previewing the song at in song selection.
+        public int PreviewTime { get; set; }
+
         // Background filename
         public string Background { get; set; }
 

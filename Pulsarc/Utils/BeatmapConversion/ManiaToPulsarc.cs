@@ -35,6 +35,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                     result.Title = maniaBeatmap.Title;
                     result.Version = maniaBeatmap.Version;
                     result.Audio = maniaBeatmap.AudioFilename;
+                    result.PreviewTime = maniaBeatmap.PreviewTime;
 
                     if (maniaBeatmap.Events.Count > 0)
                     {

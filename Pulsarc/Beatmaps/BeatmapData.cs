@@ -14,6 +14,7 @@ namespace Pulsarc.Beatmaps
         public string path;
         public string background_path;
         public string audio_path;
+        public int audio_preview;
         public string fileName;
         public string title;
         public string artist;
@@ -33,6 +34,7 @@ namespace Pulsarc.Beatmaps
             path = beatmap.path;
             background_path = beatmap.Background;
             audio_path = beatmap.Audio;
+            audio_preview = beatmap.PreviewTime;
             fileName = beatmap.fileName;
             title = beatmap.Title;
             artist = beatmap.Artist;

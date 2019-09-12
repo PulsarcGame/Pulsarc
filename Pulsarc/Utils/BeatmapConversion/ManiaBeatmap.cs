@@ -12,6 +12,9 @@ namespace Pulsarc.Utils.BeatmapConversion
         // The audio filename of the map
         public string AudioFilename { get; set; }
 
+        // Audio Preview Time
+        public int PreviewTime { get; set; }
+
         // The gamemode type
         public int Mode { get; set; }
 
@@ -74,9 +77,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     break;
                                 case "Mode":
+                                case "PreviewTime":
                                     try
                                     {
-                                        Mode = Int16.Parse(value);
+                                        GetType().GetProperty(key).SetValue(this, int.Parse(value));
                                     }
                                     catch
                                     {

@@ -71,10 +71,11 @@ namespace Pulsarc.Beatmaps
                                     }
                                     break;
                                 }
+                            case "PreviewTime":
                             case "KeyCount":
                                 try
                                 {
-                                    parsed.GetType().GetProperty(type).SetValue(parsed, Int32.Parse(rightPart));
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, int.Parse(rightPart));
                                 }
                                 catch
                                 {
@@ -174,6 +175,7 @@ namespace Pulsarc.Beatmaps
             parsed.fileName = data.fileName;
             parsed.Background = data.background_path;
             parsed.Audio = data.audio_path;
+            parsed.PreviewTime = data.audio_preview;
 
             parsed.Artist = data.artist;
             parsed.Title = data.title;
@@ -201,6 +203,7 @@ namespace Pulsarc.Beatmaps
                 writeProperty(file, beatmap, "Mapper");
                 writeProperty(file, beatmap, "Version");
                 writeProperty(file, beatmap, "Audio");
+                writeProperty(file, beatmap, "PreviewTime");
                 writeProperty(file, beatmap, "Background");
 
                 file.WriteLine("");

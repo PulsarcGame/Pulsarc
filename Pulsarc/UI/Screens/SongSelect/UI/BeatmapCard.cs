@@ -101,9 +101,19 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 gameplay.Init(beatmap);
             } else
             {
-                AudioManager.song_path = beatmap.getFullAudioPath();
-                AudioManager.StartLazyPlayer();
-                Console.WriteLine("Now Playing: " + AudioManager.song_path);
+                string path = beatmap.getFullAudioPath();
+                if (AudioManager.song_path != path)
+                {
+                    AudioManager.song_path = beatmap.getFullAudioPath();
+                    AudioManager.StartLazyPlayer();
+
+                    if(beatmap.PreviewTime != 0)
+                    {
+                        AudioManager.deltaTime(beatmap.PreviewTime);
+                    }
+
+                    Console.WriteLine("Now Playing: " + AudioManager.song_path);
+                }
             }
         }
 
