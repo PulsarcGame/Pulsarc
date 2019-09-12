@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System;
 using System.Text;
 
 namespace Pulsarc.UI
@@ -36,8 +35,8 @@ namespace Pulsarc.UI
             font = AssetsManager.fonts["DefaultFont"];
             fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
 
-            this.position = position;
-            processedPosition = this.position;
+            this.truePosition = position;
+            processedPosition = this.truePosition;
             changePosition(position);
             Update("");
         }
@@ -52,8 +51,8 @@ namespace Pulsarc.UI
         public void reprocessPosition()
         {
 
-            float newX = position.X;
-            float newY = position.Y;
+            float newX = truePosition.X;
+            float newY = truePosition.Y;
             Vector2 size = font.MeasureString(text) * fontScale;
             size.X *= Pulsarc.getDimensions().X / Pulsarc.xBaseRes;
             size.Y *= Pulsarc.getDimensions().Y / Pulsarc.yBaseRes;

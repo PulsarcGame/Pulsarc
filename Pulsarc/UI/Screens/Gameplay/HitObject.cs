@@ -53,8 +53,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
 
             // Determine the position for this HitObject
-            position.X = screen.X / 2;
-            position.Y = screen.Y / 2;
+            truePosition.X = screen.X / 2;
+            truePosition.Y = screen.Y / 2;
 
             // What part of this HitObject should be drawn?
             drawnPart.Width = Texture.Width / 2;
@@ -85,7 +85,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             rotation = (float)(45 * (Math.PI / 180));
 
             // Set the HitObject's position
-            changePosition(position);
+            changePosition(truePosition);
         }
 
         /// <summary>

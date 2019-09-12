@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Skinning;
 using Pulsarc.Utils.Maths;
 using System;
 using Wobble.Logging;
@@ -54,14 +53,11 @@ namespace Pulsarc.UI
         public Drawable hover = null;
         public bool hoverObject = false;
 
-        // The position of this Drawable, with base dimensions.
-        public Vector2 basePosition;
+        // The true position of this Drawable, as if it was anchored to Anchor.TopLeft.
+        public Vector2 truePosition;
 
-        // The position of this Drawable, relative to its anchor.
-        public Vector2 position;
-
-        // The processed position at which Draw will be called for this Drawable
-        public Vector2 drawPosition;
+        // The position of this Drawable relative to its anchor.
+        public Vector2 anchorPosition;
 
         // The origin (center) of this Drawable.
         public Vector2 origin;
@@ -83,6 +79,10 @@ namespace Pulsarc.UI
 
         // How big this Drawable is compared to its base texture dimensions.
         public float scale = 1;
+
+        // Whether this Drawable's size scales with the Height or the Width of the game
+        // False means it is instead width scaled
+        protected bool heightScaled = true;
 
         // The angle of this Drawable.
         protected float rotation = 0;
@@ -111,7 +111,6 @@ namespace Pulsarc.UI
             drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
             Resize(size);
-            basePosition = position;
             changePosition(position);
         }
 
@@ -161,7 +160,7 @@ namespace Pulsarc.UI
         /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
         /// <param name="resolutionScale">Whether the resize should consider
         /// the current resolution or not. Leave at default of true unless this
-        /// resize does not need to consider the current resolution to display properly.</param>
+        /// resize does not need to consider the current resolution to draw properly.</param>
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             // Find the aspect ratio of the requested size change.
@@ -204,21 +203,10 @@ namespace Pulsarc.UI
         /// <param name="degrees">The angle of rotation in degrees.</param>
         public void setRotation(float degrees)
         {
-            if(degrees>=-360 && degrees<=360)
+            if (degrees >= -360 && degrees <= 360)
             {
-                rotation = (float) (degrees * (Math.PI / 180));
+                rotation = (float)(degrees * (Math.PI / 180));
             }
-        }
-
-        /// <summary>
-        /// Get the real screen position from the Drawable position
-        /// that is relative to the base resolution.
-        /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        static public Vector2 getResponsivePosition(Vector2 position)
-        {
-            return new Vector2(position.X / Pulsarc.xBaseRes * Pulsarc.getDimensions().X, position.Y / Pulsarc.yBaseRes * Pulsarc.getDimensions().Y);
         }
 
         public void changePosition(float x, float y)
@@ -231,7 +219,10 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="position">The coordinates of this Drawables new position.
         /// New positon = (position.X, position.Y)</param>
-        public void changePosition(Vector2 position)
+        /// <param name="truePositioning">Whether this should consider the Anchor
+        /// when positioning, or just the raw position provided. If true the
+        /// positioning acts as if the Anchor was TopLeft.</param>
+        public void changePosition(Vector2 position, bool truePositioning = false)
         {
             basePosition = position;
 
@@ -241,46 +232,47 @@ namespace Pulsarc.UI
             switch (anchor)
             {
                 case Anchor.Center:
-                    newPos.X -= currentSize.X / 2;
-                    newPos.Y -= currentSize.Y / 2;
+                    position.X -= currentSize.X / 2;
+                    position.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    newPos.X -= currentSize.X;
+                    position.X -= currentSize.X;
                     break;
                 case Anchor.CenterRight:
-                    newPos.X -= currentSize.X;
-                    newPos.Y -= currentSize.Y / 2;
+                    position.X -= currentSize.X;
+                    position.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    newPos.X -= currentSize.X;
-                    newPos.Y -= currentSize.Y;
+                    position.X -= currentSize.X;
+                    position.Y -= currentSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    newPos.Y -= currentSize.Y;
+                    position.Y -= currentSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    newPos.Y -= currentSize.Y / 2;
+                    position.Y -= currentSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
-                    newPos.X -= currentSize.X / 2;
+                    position.X -= currentSize.X / 2;
                     break;
                 case Anchor.CenterBottom:
-                    newPos.X -= currentSize.X / 2;
-                    newPos.Y -= currentSize.Y;
+                    position.X -= currentSize.X / 2;
+                    position.Y -= currentSize.Y;
                     break;
                 case Anchor.TopLeft:
                 default:
                     break;
             }
 
-            drawPosition = getResponsivePosition(newPos);
+            truePosition = position;
+            findAnchorPosition();
         }
 
         /// <summary>
         /// Move this Drawable from its current coordinate by the amount provided.
         /// </summary>
         /// <param name="position">How much this Drawable should move.
-        /// New Position = (this.position.X + position.X, this.positionY + position.Y)</param>
+        /// New Position = (truePosition.X + position.X, truePositionY + position.Y)</param>
         public virtual void move(Vector2 position)
         {
             basePosition += position;
@@ -295,7 +287,7 @@ namespace Pulsarc.UI
         /// <returns>True if clicked, false if not clicked.</returns>
         public bool clicked(Vector2 mousePos)
         {
-            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + (drawnPart.Width*scale) && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + (drawnPart.Height * scale);
+            return mousePos.X >= truePosition.X && mousePos.X <= truePosition.X + (drawnPart.Width * scale) && mousePos.Y >= truePosition.Y && mousePos.Y <= truePosition.Y + (drawnPart.Height * scale);
         }
 
         /// <summary>
@@ -305,7 +297,7 @@ namespace Pulsarc.UI
         /// <returns>True if clicked, false if not clicked.</returns>
         public bool clicked(Point mousePos)
         {
-            return mousePos.X >= drawPosition.X && mousePos.X <= drawPosition.X + (drawnPart.Width * scale) && mousePos.Y >= drawPosition.Y && mousePos.Y <= drawPosition.Y + (drawnPart.Height * scale);
+            return mousePos.X >= truePosition.X && mousePos.X <= truePosition.X + (drawnPart.Width * scale) && mousePos.Y >= truePosition.Y && mousePos.Y <= truePosition.Y + (drawnPart.Height * scale);
         }
 
         /// <summary>
@@ -339,10 +331,53 @@ namespace Pulsarc.UI
 
             Pulsarc.spriteBatch.Draw(Texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
-            if(hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+            if (hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {
                 hover.Draw();
             }
         }
+
+        private void findAnchorPosition()
+        {
+            Vector2 position = truePosition;
+
+            switch (anchor)
+            {
+                case Anchor.Center:
+                    position.X += currentSize.X / 2;
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.TopRight:
+                    position.X += currentSize.X;
+                    break;
+                case Anchor.CenterRight:
+                    position.X += currentSize.X;
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.BottomRight:
+                    position.X += currentSize.X;
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.BottomLeft:
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.CenterLeft:
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.CenterTop:
+                    position.X += currentSize.X / 2;
+                    break;
+                case Anchor.CenterBottom:
+                    position.X += currentSize.X / 2;
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    break;
+            }
+
+            anchorPosition = position;
+        }
     }
 }
+

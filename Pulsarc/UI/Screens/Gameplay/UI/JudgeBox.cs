@@ -21,7 +21,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             Texture = null;
 
-            this.position = position;
+            this.truePosition = position;
 
             judges = new Dictionary<int, Judge>();
             foreach (JudgementValue judge in Judgement.judgements)

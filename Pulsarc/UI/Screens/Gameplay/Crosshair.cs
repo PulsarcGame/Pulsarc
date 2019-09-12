@@ -26,12 +26,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
 
             // Determine the position for this Crosshair
-            position.X = screen.X / 2;
-            position.Y = screen.Y / 2;
+            truePosition.X = screen.X / 2;
+            truePosition.Y = screen.Y / 2;
 
             // Set the diameter and resize
             Resize(baseCrosshairDiameter);
-            changePosition(position);
+            changePosition(truePosition);
 
             // Set the rotation of the object.
             // TODO: Make this customizeable by the beatmap.

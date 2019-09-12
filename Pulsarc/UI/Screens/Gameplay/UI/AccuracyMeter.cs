@@ -38,8 +38,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             errors = new List<KeyValuePair<double, int>>();
 
             this.size = size;
-            this.position.X -= size.X / 2;
-            this.position.Y -= size.Y;
+            this.truePosition.X -= size.X / 2;
+            this.truePosition.Y -= size.Y;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
 
@@ -117,7 +117,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
          
-            int baseX = (int)(position.X + size.X / 2);
+            int baseX = (int)(truePosition.X + size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.judge - Judgement.getPreviousJudgementValue(judgement).judge;
@@ -130,7 +130,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
 
-            return new Vector2(baseX - errorX, position.Y);
+            return new Vector2(baseX - errorX, truePosition.Y);
         }
 
         /// <summary>

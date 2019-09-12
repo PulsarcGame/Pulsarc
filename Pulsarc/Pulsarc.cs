@@ -1,4 +1,3 @@
-using IniParser;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +9,6 @@ using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using Pulsarc.Utils.SQLite;
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -18,7 +16,6 @@ using Wobble.Input;
 using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
-using Wobble.Window;
 
 namespace Pulsarc
 {
@@ -36,13 +33,17 @@ namespace Pulsarc
         static public int yBaseRes = 1080;
         static public float baseRatio = 16/9f;
 
+        // Current Width and Height of the game
+        static public int currentWidth;
+        static public int currentHeight;
+        static public float currentAspectRatio;
+
         // Whether or not the in-game cursor is displayed 
         static public bool display_cursor = true;
         static public Cursor cursor;
 
         // The camera controlling the game's viewport
         Camera game_camera;
-        
 
         // All of these should be brought to other classes
         Stopwatch fpsWatch;
@@ -72,6 +73,10 @@ namespace Pulsarc
                 Config.setInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
                 Config.setInt("Graphics", "FullScreen", 1);
             }
+
+            currentWidth = Config.getInt("Graphics", "ResolutionWidth");
+            currentHeight = Config.getInt("Graphics", "ResolutionHeight");
+            currentAspectRatio = currentWidth / (float)currentHeight;
 
             // Create the game's application window
             graphics = new GraphicsDeviceManager(this);
@@ -240,13 +245,67 @@ namespace Pulsarc
 
             fpsDisplay.Draw();
         }
+        
+        /// <summary>
+         /// Finds the position of the provided anchor on the current screen.
+         /// </summary>
+         /// <param name="anchor">The anchor of the screen to find the position of.</param>
+         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
+        static public Vector2 anchorPosition(Anchor anchor)
+        {
+            float x;
+            float y;
+
+            switch (anchor)
+            {
+                case Anchor.Center:
+                    x = currentWidth / 2;
+                    y = currentHeight / 2;
+                    break;
+                case Anchor.TopRight:
+                    x = currentWidth;
+                    y = 0;
+                    break;
+                case Anchor.CenterRight:
+                    x = currentWidth;
+                    y = currentHeight / 2;
+                    break;
+                case Anchor.BottomRight:
+                    x = currentWidth;
+                    y = currentHeight;
+                    break;
+                case Anchor.CenterLeft:
+                    x = 0;
+                    y = currentHeight / 2;
+                    break;
+                case Anchor.BottomLeft:
+                    x = 0;
+                    y = currentHeight;
+                    break;
+                case Anchor.CenterTop:
+                    x = currentWidth / 2;
+                    y = 0;
+                    break;
+                case Anchor.CenterBottom:
+                    x = currentWidth / 2;
+                    y = currentHeight;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    x = 0;
+                    y = 0;
+                    break;
+            }
+
+            return new Vector2(x, y);
+        }
 
         /// <summary>
         /// Used for getting the game's dimensions in a Vector2 object
         /// </summary>
         static public Vector2 getDimensions()
         {
-            return new Vector2(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+            return new Vector2(currentWidth, currentHeight);
         }
 
         /// <summary>

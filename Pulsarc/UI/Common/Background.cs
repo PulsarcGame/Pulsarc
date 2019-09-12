@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using System;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Pulsarc.Utils.Graphics;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Common
 {
@@ -70,17 +69,11 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            bool sameAspectAsBase = (float)Texture.Width / Texture.Height == Pulsarc.baseRatio;
-            float multiplier = Pulsarc.xBaseRes / Texture.Width;
+            float textureAspectRatio = texture.Width / texture.Height;
+            bool textWidthShorterThanGameWidth = textureAspectRatio <= Pulsarc.currentAspectRatio;
 
-            // If the texture has the same aspect ratio as the base, resize to base res,
-            // if not, resize x to base res and then multiply y by the amount x increased.
-            Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : Texture.Height * multiplier));
-
-            drawnPart = new Rectangle(new Point(0, 0), new Point(Texture.Width, Texture.Height));
-
-            position = Pulsarc.getBaseScreenDimensions() / 2f;
-            drawPosition = new Vector2(0, 0);
+            Logger.Debug(Pulsarc.anchorPosition(Anchor.Center).ToString(), LogType.Runtime);
+            changePosition(Pulsarc.anchorPosition(Anchor.Center));
         }
 
         public override void Resize(Vector2 size, bool resolutionScale = true)
