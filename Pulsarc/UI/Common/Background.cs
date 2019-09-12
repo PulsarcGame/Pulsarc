@@ -32,16 +32,16 @@ namespace Pulsarc.UI.Common
         /// Create a background using the Skin-asset name to find the image.
         /// </summary>
         /// <param name="skinAsset">The name of the asset this background will use.</param>
-        /// <param name="dim">Optional parameter to change the background dim.</param>
+        /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
         public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset])
         {
             makeDimTexture(dim);
         }
 
         /// <summary>
-        /// Create a blank, center-anchored background. Can be made transparent. Meant to be used for map backgrounds.
+        /// Create a blank, center-anchored background. Can be dimmed. Meant to be used for map backgrounds.
         /// </summary>
-        /// <param name="dim">Optional parameter to change the background dim.</param>
+        /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
         public Background(float dim = 0f) : base(Skin.defaultTexture, -1, Anchor.Center)
         {
             makeDimTexture(dim);
@@ -69,10 +69,8 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            float textureAspectRatio = texture.Width / texture.Height;
-            bool textWidthShorterThanGameWidth = textureAspectRatio <= Pulsarc.currentAspectRatio;
+            Resize(Pulsarc.currentWidth);
 
-            Logger.Debug(Pulsarc.anchorPosition(Anchor.Center).ToString(), LogType.Runtime);
             changePosition(Pulsarc.anchorPosition(Anchor.Center));
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.Skinning;
 using Pulsarc.Utils.Maths;
 using System;
 using Wobble.Logging;
@@ -25,7 +26,7 @@ namespace Pulsarc.UI
         // The texture for this Drawable.
         private Texture2D texture;
 
-        // Makes sure that relative variables are correctly updated when Texture is set.
+        // Makes sure that currentSize is correctly updated when Texture is set.
         public virtual Texture2D Texture
         {
             get => texture;
@@ -39,13 +40,13 @@ namespace Pulsarc.UI
                 {
                     texture = Skin.defaultTexture;
                 }
-
+                
                 // Update currentSize and drawnPart
                 currentSize = new Vector2(texture.Width * scale, texture.Height * scale);
                 drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
-                // Update positions
-                changePosition(basePosition);
+                // Update position to refresh anchorPosition
+                changePosition(truePosition, true);
             }
         }
 
@@ -87,6 +88,7 @@ namespace Pulsarc.UI
         // The angle of this Drawable.
         protected float rotation = 0;
 
+
         /// <summary>
         /// A 2D object that can be rendered on screen.
         /// </summary>
@@ -104,11 +106,9 @@ namespace Pulsarc.UI
         {
             // Define variables
             origin = new Vector2(0, 0);
-            this.Texture = texture;
+            Texture = texture;
             this.aspectRatio = aspectRatio;
             this.anchor = anchor;
-
-            drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
 
             Resize(size);
             changePosition(position);
@@ -163,15 +163,19 @@ namespace Pulsarc.UI
         /// resize does not need to consider the current resolution to draw properly.</param>
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
+            Vector2 oldSize = currentSize;
+
             // Find the aspect ratio of the requested size change.
-            float newAspect = size.X / size.Y;
+            currentSize = size;
+            float newAspect = currentSize.X / currentSize.Y;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (aspectRatio != -1 && newAspect != aspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Logger.Debug("Invalid aspect ratio : " + size.X + "x" + size.Y + " isn't " + aspect.ToString(), LogType.Runtime);
+                Logger.Debug("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString(), LogType.Runtime);
 
+                currentSize = oldSize;
                 return;
             }
             

@@ -198,7 +198,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(Texture, position: position, rotation: rotation, origin: origin, color: Color.White * 0.3f);
+            Pulsarc.spriteBatch.Draw(Texture, position: truePosition, rotation: rotation, origin: origin, color: Color.White * 0.3f);
 
             foreach(KeyValuePair<double, int> error in errors)
             {
