@@ -133,7 +133,7 @@ namespace Pulsarc
             game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
 
             // Create and display the default game screen
-            // (Currently Main menu. Should be an intro in later releases)
+            // (Currently Main menu. In the future can implement an intro)
             Menu firstScreen = new Menu();
             ScreenManager.AddScreen(firstScreen);
 
@@ -247,11 +247,11 @@ namespace Pulsarc
         }
         
         /// <summary>
-         /// Finds the position of the provided anchor on the current screen.
-         /// </summary>
-         /// <param name="anchor">The anchor of the screen to find the position of.</param>
-         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
-        static public Vector2 anchorPosition(Anchor anchor)
+        /// Finds the position of the provided anchor on the current screen.
+        /// </summary>
+        /// <param name="anchor">The anchor of the screen to find the position of.</param>
+        /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
+        static public Vector2 currentAnchorPosition(Anchor anchor)
         {
             float x;
             float y;
@@ -289,6 +289,60 @@ namespace Pulsarc
                 case Anchor.CenterBottom:
                     x = currentWidth / 2;
                     y = currentHeight;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    x = 0;
+                    y = 0;
+                    break;
+            }
+
+            return new Vector2(x, y);
+        }
+
+        /// <summary>
+        /// Finds the position of the provided anchor on the base screen.
+        /// </summary>
+        /// <param name="anchor">The anchor of the screen to find the position of.</param>
+        /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
+        static public Vector2 baseAnchorPosition(Anchor anchor)
+        {
+            float x;
+            float y;
+
+            switch (anchor)
+            {
+                case Anchor.Center:
+                    x = xBaseRes / 2;
+                    y = yBaseRes / 2;
+                    break;
+                case Anchor.TopRight:
+                    x = xBaseRes;
+                    y = 0;
+                    break;
+                case Anchor.CenterRight:
+                    x = xBaseRes;
+                    y = yBaseRes / 2;
+                    break;
+                case Anchor.BottomRight:
+                    x = xBaseRes;
+                    y = yBaseRes;
+                    break;
+                case Anchor.CenterLeft:
+                    x = 0;
+                    y = yBaseRes / 2;
+                    break;
+                case Anchor.BottomLeft:
+                    x = 0;
+                    y = yBaseRes;
+                    break;
+                case Anchor.CenterTop:
+                    x = xBaseRes / 2;
+                    y = 0;
+                    break;
+                case Anchor.CenterBottom:
+                    x = xBaseRes / 2;
+                    y = yBaseRes;
                     break;
                 case Anchor.TopLeft:
                 default:

@@ -25,6 +25,12 @@ namespace Pulsarc.UI.Common
                 {
                     makeDimTexture(dimTexture.opacity);
                 }
+
+                // Update position to refresh anchorPosition
+                changePosition(truePosition, true);
+
+                // Debug
+                Logger.Debug(Pulsarc.currentAnchorPosition(Anchor.Center).ToString() + " " + Pulsarc.baseAnchorPosition(Anchor.Center).ToString() + " " + currentSize + " " + anchorPosition + " " + truePosition, LogType.Runtime);
             }
         }
 
@@ -69,9 +75,9 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            Resize(Pulsarc.currentWidth);
+            Resize(Pulsarc.xBaseRes);
 
-            changePosition(Pulsarc.anchorPosition(Anchor.Center));
+            changePosition(Pulsarc.baseAnchorPosition(Anchor.Center));
         }
 
         public override void Resize(Vector2 size, bool resolutionScale = true)

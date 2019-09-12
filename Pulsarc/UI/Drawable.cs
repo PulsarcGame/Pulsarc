@@ -26,7 +26,7 @@ namespace Pulsarc.UI
         // The texture for this Drawable.
         private Texture2D texture;
 
-        // Makes sure that currentSize is correctly updated when Texture is set.
+        // Makes sure that important variabvles are correctly updated when Texture is set.
         public virtual Texture2D Texture
         {
             get => texture;
@@ -190,6 +190,8 @@ namespace Pulsarc.UI
 
         /// <summary>
         /// Resize this Drawable to the square length provided.
+        /// This resizses the width to the square length provided, the height
+        /// scales correctly to match the new width.
         /// </summary>
         /// <param name="size">The square length this drawable should be reszied to.
         /// Width = size, Height = size.</param>
@@ -219,7 +221,7 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Change the position of this drawable to the coordinates provided.
+        /// Change the position of this drawable to the base coordinates provided.
         /// </summary>
         /// <param name="position">The coordinates of this Drawables new position.
         /// New positon = (position.X, position.Y)</param>
