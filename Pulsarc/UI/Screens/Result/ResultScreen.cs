@@ -1,6 +1,7 @@
 ﻿using Pulsarc.Beatmaps;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.Utils;
 using System.Collections.Generic;
 using Wobble.Screens;
 
@@ -77,7 +78,7 @@ namespace Pulsarc.UI.Screens.Result
             if(newScore)
             {
                 // Save the score locally
-                Pulsarc.scoreDB.addScore(scoreData);
+                DataManager.scoreDB.addScore(scoreData);
             }
 
             View = new ResultScreenView(this, accuracyTotal, scoreData.grade, beatmap, mapBackground);

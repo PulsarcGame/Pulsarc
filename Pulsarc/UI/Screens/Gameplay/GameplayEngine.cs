@@ -314,7 +314,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void startGameplay()
         {
-            AudioManager.Start();
+            AudioManager.StartGamePlayer();
 
             GameplayEngine.active = true;
             Pulsarc.display_cursor = false;
@@ -667,7 +667,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Save rplay data if this is a valid play
             if(!autoPlay && save)
             {
-                Pulsarc.scoreDB.addReplay(new ReplayData(currentBeatmap.getHash(), string.Join(",", rawInputs)));
+                DataManager.scoreDB.addReplay(new ReplayData(currentBeatmap.getHash(), string.Join(",", rawInputs)));
             }
 
             // Create the result screen before exiting gameplay

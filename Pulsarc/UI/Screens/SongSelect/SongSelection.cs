@@ -45,7 +45,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             List<Beatmap> beatmaps = new List<Beatmap>();
             cards = new List<BeatmapCard>();
 
-            foreach(BeatmapData data in Pulsarc.beatmapDB.getBeatmaps())
+            foreach(BeatmapData data in DataManager.beatmapDB.getBeatmaps())
             {
                 if (keyword == "" || data.match(keyword))
                 {
@@ -61,14 +61,14 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             List<Beatmap> beatmaps = new List<Beatmap>();
 
-            Pulsarc.beatmapDB.clearBeatmaps();
+            DataManager.beatmapDB.clearBeatmaps();
             foreach (string dir in Directory.GetDirectories("Songs/"))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.psc")
                                      .Select(Path.GetFileName)
                                      .ToArray())
                 {
-                    Pulsarc.beatmapDB.addBeatmap(new BeatmapData(BeatmapHelper.Load(dir, file)));
+                    DataManager.beatmapDB.addBeatmap(new BeatmapData(BeatmapHelper.Load(dir, file)));
                 }
             }
 

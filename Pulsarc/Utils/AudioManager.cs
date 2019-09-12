@@ -22,21 +22,20 @@ namespace Pulsarc.Utils
         static Thread audioThread;
         static AudioTrack song;
         static Stopwatch threadLimiterWatch;
-        static GameTime lastTime;
 
         /// <summary>
         /// Start playing audio on a new thread
         /// </summary>
-        static public void Start()
+        static public void StartGamePlayer()
         {
-            audioThread = new Thread(new ThreadStart(AudioPlayer));
+            audioThread = new Thread(new ThreadStart(GameAudioPlayer));
             audioThread.Start();
         }
 
         /// <summary>
         /// Initializes the AudioPlayer
         /// </summary>
-        static public void AudioPlayer()
+        static public void GameAudioPlayer()
         {
             // Initialize variables
             threadLimiterWatch = new Stopwatch();

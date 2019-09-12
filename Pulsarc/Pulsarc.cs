@@ -31,10 +31,6 @@ namespace Pulsarc
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
 
-        // DBs
-        static public ScoreDB scoreDB;
-        static public BeatmapDB beatmapDB;
-
         // Width and Height used for reference in making the game responsive
         static public int xBaseRes = 1920;
         static public int yBaseRes = 1080;
@@ -59,12 +55,11 @@ namespace Pulsarc
         {
             pulsarc = this;
 
+            // Set up stored Data access
+            DataManager.Initialize();
+
             // Load user config
             Config.Initialize();
-
-            // Setup DBs
-            scoreDB = new ScoreDB();
-            beatmapDB = new BeatmapDB();
 
             // Set default resolution if not set, and fullscreen when at least one isn't set.
             if (Config.getInt("Graphics", "ResolutionWidth") <= 0)
@@ -255,7 +250,6 @@ namespace Pulsarc
 
         static public void Quit()
         {
-            scoreDB.close();
             pulsarc.Exit();
         }
     }

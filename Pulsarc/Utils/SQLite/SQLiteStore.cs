@@ -65,6 +65,7 @@ namespace Pulsarc.Utils.SQLite
         public void close()
         {
             db.Close();
+            tables.Clear();
         }
 
         public void initDB()

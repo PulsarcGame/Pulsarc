@@ -1,5 +1,6 @@
 ﻿using Pulsarc.Beatmaps.Events;
 using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -96,7 +97,7 @@ namespace Pulsarc.Beatmaps
 
         public List<ScoreData> getLocalScores()
         {
-            return Pulsarc.scoreDB.getScores(getHash());
+            return DataManager.scoreDB.getScores(getHash());
         }
 
         public override string ToString()
