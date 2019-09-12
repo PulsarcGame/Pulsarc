@@ -135,7 +135,7 @@ namespace Pulsarc.Beatmaps.Events
                 }
             }
 
-            double deltaTime = PulsarcTime.smoothDeltaTime;
+            double deltaTime = PulsarcTime.SmoothDeltaTime;
             if (deltaTime == 0)
             {
                 return;

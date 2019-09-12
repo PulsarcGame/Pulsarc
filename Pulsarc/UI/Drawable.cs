@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
 using Pulsarc.Utils.Maths;
 using System;
+using Wobble.Logging;
 
 namespace Pulsarc.UI
 {
@@ -23,7 +24,31 @@ namespace Pulsarc.UI
     public class Drawable
     {
         // The texture for this Drawable.
-        public Texture2D texture;
+        private Texture2D texture;
+
+        // Makes sure that relative variables are correctly updated when Texture is set.
+        public virtual Texture2D Texture
+        {
+            get => texture;
+
+            set
+            {
+                texture = value;
+
+                // Change to default texture if value was null
+                if (texture == null)
+                {
+                    texture = Skin.defaultTexture;
+                }
+
+                // Update currentSize and drawnPart
+                currentSize = new Vector2(texture.Width * scale, texture.Height * scale);
+                drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
+
+                // Update positions
+                changePosition(basePosition);
+            }
+        }
 
         // If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.
         public Drawable hover = null;
@@ -79,7 +104,7 @@ namespace Pulsarc.UI
         {
             // Define variables
             origin = new Vector2(0, 0);
-            this.texture = texture;
+            this.Texture = texture;
             this.aspectRatio = aspectRatio;
             this.anchor = anchor;
 
@@ -140,19 +165,24 @@ namespace Pulsarc.UI
         public virtual void Resize(Vector2 size, bool resolutionScale = true)
         {
             // Find the aspect ratio of the requested size change.
-            float newAspect = currentSize.X / currentSize.Y;
-            currentSize = size;
+            float newAspect = size.X / size.Y;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (aspectRatio != -1 && newAspect != aspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Console.WriteLine("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString());
+                Logger.Debug("Invalid aspect ratio : " + size.X + "x" + size.Y + " isn't " + aspect.ToString(), LogType.Runtime);
+
                 return;
             }
+            
+            currentSize = size;
 
             // Set the scale of this Drawable using the parameters provided.
-            scale = currentSize.X / texture.Width *  (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+            scale = currentSize.X / Texture.Width * (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+
+            // Fix currentSize.Y
+            currentSize.Y = Texture.Height * scale;
         }
 
         /// <summary>
@@ -207,15 +237,6 @@ namespace Pulsarc.UI
             this.position = getResponsivePosition(position);
 
             Vector2 newPos = position;
-
-            /*Vector2 size;
-            if (texture != null)
-            {
-                size = new Vector2(texture.Width, texture.Height);
-            } else
-            {
-                size = new Vector2(0,0);
-            }*/
 
             switch (anchor)
             {
@@ -292,7 +313,7 @@ namespace Pulsarc.UI
         /// <returns>True if on screen, false if not on screen.</returns>
         public bool onScreen()
         {
-            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int)Pulsarc.getDimensions().Y));
+            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, Texture.Width, Texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int)Pulsarc.getDimensions().Y));
         }
 
         /// <summary>
@@ -302,9 +323,9 @@ namespace Pulsarc.UI
         /// <returns>True if the two Drawables intersect, false if they dont'.</returns>
         public bool intersects(Drawable drawable)
         {
-            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height)
+            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, Texture.Width, Texture.Height)
                 .Intersects(
-                    new Rectangle((int) drawable.drawPosition.X, (int)drawable.drawPosition.Y, drawable.texture.Width, drawable.texture.Height));
+                    new Rectangle((int) drawable.drawPosition.X, (int)drawable.drawPosition.Y, drawable.Texture.Width, drawable.Texture.Height));
         }
 
         /// <summary>
@@ -315,7 +336,7 @@ namespace Pulsarc.UI
             // If opacity isn't 1, color is just Color.White, otherwise it's Color.White * the opacity.
             Color color = opacity != 1 ? Color.White * opacity : Color.White;
 
-            Pulsarc.spriteBatch.Draw(texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
+            Pulsarc.spriteBatch.Draw(Texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
             if(hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {

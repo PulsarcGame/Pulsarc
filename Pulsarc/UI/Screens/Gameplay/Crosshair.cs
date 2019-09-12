@@ -22,8 +22,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             Vector2 screen = Pulsarc.getBaseScreenDimensions();
 
             // Find the origin (center) of this Crosshair
-            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
-            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
+            origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
 
             // Determine the position for this Crosshair
             position.X = screen.X / 2;
@@ -43,7 +43,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public float getZLocation()
         {
-            return ((Pulsarc.xBaseRes / 2) * texture.Width / 2) / diameter;
+            return ((Pulsarc.xBaseRes / 2) * Texture.Width / 2) / diameter;
         }
         
         /// <summary>

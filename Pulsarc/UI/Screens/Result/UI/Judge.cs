@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.Result.UI
     {
         public Judge(int judge, Vector2 position, float scale) : base(Skin.judges[judge], position)
         {
-            Resize(texture.Width * scale);
+            Resize(Texture.Width * scale);
         }
     }
 }

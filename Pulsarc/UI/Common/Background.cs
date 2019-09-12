@@ -10,7 +10,24 @@ namespace Pulsarc.UI.Common
     public class Background : Drawable
     {
         public Drawable dimTexture;
+
         public bool dim = false;
+
+        public override Texture2D Texture
+        {
+            get => base.Texture;
+
+            set
+            {
+                base.Texture = value;
+
+                // Make dimTexture
+                if (dimTexture != null)
+                {
+                    makeDimTexture(dimTexture.opacity);
+                }
+            }
+        }
 
         /// <summary>
         /// Create a background using the Skin-asset name to find the image.
@@ -19,12 +36,7 @@ namespace Pulsarc.UI.Common
         /// <param name="dim">Optional parameter to change the background dim.</param>
         public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset])
         {
-            if (dim > 0)
-            {
-                this.dim = true;
-                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(1, 1, Color.Black));
-                dimTexture.opacity = dim;
-            }
+            makeDimTexture(dim);
         }
 
         /// <summary>
@@ -33,10 +45,19 @@ namespace Pulsarc.UI.Common
         /// <param name="dim">Optional parameter to change the background dim.</param>
         public Background(float dim = 0f) : base(Skin.defaultTexture, -1, Anchor.Center)
         {
+            makeDimTexture(dim);
+        }
+        
+        /// <summary>
+        /// Makes the dim texture if needed for this Background instance.
+        /// </summary>
+        /// <param name="dim">The amount of background dim to use. 0 is no dim, 1 is full dim.</param>
+        private void makeDimTexture(float dim)
+        {
             if (dim > 0)
             {
                 this.dim = true;
-                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(1, 1, Color.Black));
+                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(Texture.Width, Texture.Height, Color.Black));
                 dimTexture.opacity = dim;
             }
         }
@@ -47,16 +68,16 @@ namespace Pulsarc.UI.Common
         /// <param name="newBackground">The texture to use for the background</param>
         public void changeBackground(Texture2D newBackground)
         {
-            texture = newBackground;
+            Texture = newBackground;
 
-            bool sameAspectAsBase = (float)texture.Width / texture.Height == Pulsarc.baseRatio;
-            float multiplier = Pulsarc.xBaseRes / texture.Width;
+            bool sameAspectAsBase = (float)Texture.Width / Texture.Height == Pulsarc.baseRatio;
+            float multiplier = Pulsarc.xBaseRes / Texture.Width;
 
             // If the texture has the same aspect ratio as the base, resize to base res,
             // if not, resize x to base res and then multiply y by the amount x increased.
-            Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : texture.Height * multiplier));
+            Resize(new Vector2(Pulsarc.xBaseRes, sameAspectAsBase ? Pulsarc.yBaseRes : Texture.Height * multiplier));
 
-            drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
+            drawnPart = new Rectangle(new Point(0, 0), new Point(Texture.Width, Texture.Height));
 
             position = Pulsarc.getBaseScreenDimensions() / 2f;
             drawPosition = new Vector2(0, 0);

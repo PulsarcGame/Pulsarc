@@ -12,14 +12,12 @@ namespace Pulsarc.UI
 
         public Cursor() : base(Skin.assets["cursor"])
         {
-            Resize(30 * cursorScale, false);
+            Resize(30 * cursorScale, false); // Size does not scale with resolution
         }
 
         public void setPos(Point position)
         {
-            this.drawPosition.X = position.X;
-            this.drawPosition.Y = position.Y;
-            this.position = drawPosition;
+            setPos(new Vector2(position.X, position.Y));
         }
 
         public void setPos(Vector2 position)

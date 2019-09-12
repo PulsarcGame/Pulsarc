@@ -117,6 +117,7 @@ namespace Pulsarc
             fpsWatch.Start();
             frames = 0;
 
+            // Start our time and frame-time tracker
             PulsarcTime.Start();
             
             // Initialize the game camera
@@ -124,7 +125,7 @@ namespace Pulsarc
             game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
 
             // Create and display the default game screen
-            // (Currently song select for testing, should be Main menu in the future then an intro when in late releases)
+            // (Currently Main menu. Should be an intro in later releases)
             Menu firstScreen = new Menu();
             ScreenManager.AddScreen(firstScreen);
 
@@ -205,7 +206,7 @@ namespace Pulsarc
             // Begin the spritebatch in relation to the camera
             spriteBatch.Begin(SpriteSortMode.Deferred,
                     null, null, null, null, null,
-                    game_camera.GetTransformation());
+                    null);//game_camera.GetTransformation());
 
             GraphicsDevice.Clear(Color.Black);
 
@@ -213,6 +214,18 @@ namespace Pulsarc
             ScreenManager.Draw(gameTime);
 
             // FPS
+            drawFPSCounter();
+
+            base.Draw(gameTime);
+
+            if(display_cursor)
+                cursor.Draw();
+
+            spriteBatch.End();
+        }
+
+        private void drawFPSCounter()
+        {
             frames++;
 
             if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)
@@ -223,13 +236,6 @@ namespace Pulsarc
             }
 
             fpsDisplay.Draw();
-
-            base.Draw(gameTime);
-
-            if(display_cursor)
-                cursor.Draw();
-
-            spriteBatch.End();
         }
 
         /// <summary>
