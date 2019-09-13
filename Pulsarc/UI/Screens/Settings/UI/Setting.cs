@@ -37,16 +37,16 @@ namespace Pulsarc.UI.Screens.Settings.UI
             switch(type)
             {
                 case "float":
-                    Config.setFloat(category, key, getSaveValue());
+                    Config.setFloat(category, key,(float) getSaveValue());
                     break;
                 case "int":
-                    Config.setInt(category, key, getSaveValue());
+                    Config.setInt(category, key,(int) getSaveValue());
                     break;
                 case "double":
-                    Config.setDouble(category, key, getSaveValue());
+                    Config.setDouble(category, key,(double) getSaveValue());
                     break;
                 case "bool":
-                    Config.setBool(category, key, getSaveValue());
+                    Config.setBool(category, key,(bool) getSaveValue());
                     break;
                 default:
                     Console.WriteLine("Cannot save type " + type.ToString() + " in category "+category+" for setting "+key);
