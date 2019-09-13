@@ -100,8 +100,14 @@ namespace Pulsarc.Utils
 
         static private void setValue(string category, string key, Object value)
         {
+            Console.WriteLine("Set " + category + " " + key + " to " + value.ToString());
             get[category][key] = value.ToString();
+        }
+
+        static public void saveConfig()
+        {
             parser.WriteFile("config.ini", get);
+            Console.WriteLine("Saved config");
         }
     }
 }

@@ -10,6 +10,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public int minValue;
         public int maxValue;
+        public int step;
+        public int displayDivider;
+        public int displayPrecision;
 
         // How far away (in pixels) from the edges the SliderSelector needs to stop at.
         public int edgeOffset;
@@ -20,16 +23,20 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="startingValue"></param>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
-        public Slider(string title, string more, Vector2 position, int startingValue = 50, int minValue = 0, int maxValue = 100, int edgeOffset = 15) : base(title, more, position, Skin.assets["slider"], -1, Anchor.CenterLeft)
+        public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15) : base(title, more, position, Skin.assets["slider"], -1, Anchor.CenterLeft, startingValue, type)
         {
             selector.Resize(50);
 
             value = startingValue;
+            this.step = step;
+            this.displayDivider = displayDivider;
+            this.displayPrecision = displayPrecision;
             this.minValue = minValue;
             this.maxValue = maxValue;
             this.edgeOffset = edgeOffset;
 
             setSelector();
+            Update();
         }
 
 
@@ -39,7 +46,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="value">The value to move the selector to.</param>
         public void setSelector(int value)
         {
-            this.value = value;
+            int stepdist = this.value - value;
+            if(Math.Abs(stepdist) >= step/2)
+            {
+                this.value -= step * (stepdist / step);
+                Update();
+            }
             float percentagePosition = findSelectorPosition();
 
             int rangeMin = edgeOffset;
@@ -49,13 +61,18 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(basePosition.X + edgeOffset + position, basePosition.Y));
+            selector.changePosition(new Vector2(basePosition.X + position, basePosition.Y));
+        }
+
+        public void Update()
+        {
+            title.Update(" : " + Math.Round(value / (float)displayDivider, displayPrecision).ToString());
         }
 
         public void setSelectorPercent(float percent)
         {
-            setSelector((int) ((maxValue - minValue) * percent));
             Console.WriteLine(percent);
+            setSelector((int) (minValue + (maxValue - minValue) * percent));
         }
 
         /// <summary>
@@ -92,6 +109,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return findSelectorPosition(value);
         }
 
+        public override dynamic getSaveValue()
+        {
+            return value / (float) displayDivider;
+        }
+
         public override void Draw()
         {
             base.Draw();
@@ -100,7 +122,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override void onClick(Point mousePosition)
         {
-            setSelectorPercent((mousePosition.X - drawPosition.X) / ((texture.Width) * scale));
+            setSelectorPercent((float) Math.Round((mousePosition.X - drawPosition.X) / ((texture.Width) * scale),2));
         }
     }
 }

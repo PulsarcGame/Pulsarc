@@ -16,17 +16,19 @@ namespace Pulsarc.UI.Screens.Settings
     {
         Background background;
         ReturnButton button_back;
+        SaveButton button_save;
 
-        List<SettingsGroup> groups;
+        public List<SettingsGroup> groups;
 
         public SettingsScreenView(Screen screen) : base(screen)
         {
             background = new Background("settings_background");
             button_back = new ReturnButton("settings_button_back", new Vector2(0, 1080));
+            button_save = new SaveButton("settings_button_save", new Vector2(1920, 1080));
 
             groups = new List<SettingsGroup>();
 
-            groups.Add(new TestSettings(new Vector2(100,100)));
+            groups.Add(new GameplaySettings(new Vector2(100,100)));
         }
 
         public override void Destroy()
@@ -37,6 +39,7 @@ namespace Pulsarc.UI.Screens.Settings
         {
             background.Draw();
             button_back.Draw();
+            button_save.Draw();
             
             foreach(SettingsGroup settingsGroup in groups)
             {
@@ -60,6 +63,10 @@ namespace Pulsarc.UI.Screens.Settings
                 if (button_back.clicked(MouseManager.CurrentState.Position))
                 {
                     button_back.onClick();
+                }
+                if (button_save.clicked(MouseManager.CurrentState.Position))
+                {
+                    button_save.onClick(this);
                 }
             }
 

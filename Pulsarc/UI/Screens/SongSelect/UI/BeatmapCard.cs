@@ -105,6 +105,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 if (AudioManager.song_path != path)
                 {
                     AudioManager.song_path = beatmap.getFullAudioPath();
+                    AudioManager.audioRate = Config.getFloat("Gameplay", "SongRate");
                     AudioManager.StartLazyPlayer();
 
                     if(beatmap.PreviewTime != 0)
