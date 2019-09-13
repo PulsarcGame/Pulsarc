@@ -75,12 +75,12 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // If clicked, smoothly move to the clicked distance
             if (isClicked && currentClickDistance <= clickedDistance)
             {
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, clickedDistance, (float)PulsarcTime.smoothDeltaTime / 100f);
+                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, clickedDistance, (float)PulsarcTime.DeltaTime / 100f);
             }
             // Else if not clicked and currentClickDistacne is greater than 0, smoothly move to 0
             else if (!isClicked && currentClickDistance >= 0)
             {
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, 0, (float)PulsarcTime.smoothDeltaTime / 100f);
+                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, 0, (float)PulsarcTime.DeltaTime / 100f);
             }
 
             float diff = lastClickDistance - currentClickDistance;

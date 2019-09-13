@@ -6,10 +6,16 @@ namespace Pulsarc.Utils
     {
         public static bool isRunning = false;
 
-        public static double smoothDeltaTime;
-        public static double deltaTime;
+        private static double smoothDeltaTime;
+        public static double SmoothDeltaTime { get => smoothDeltaTime; set { } }
+
+        private static double deltaTime;
+        public static double DeltaTime { get => smoothDeltaTime; set { } }
 
         private static double prevFrameTime;
+        public static double PrevFrameElapsedTime { get => prevFrameTime; set { } }
+
+        public static double CurrentElapsedTime { get => stopwatch.ElapsedMilliseconds; set { } }
 
         private static Stopwatch stopwatch = new Stopwatch();
 

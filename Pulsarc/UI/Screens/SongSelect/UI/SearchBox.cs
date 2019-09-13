@@ -12,7 +12,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public SearchBox(string search, Vector2 position, Anchor anchor = Anchor.TopLeft) : base(Skin.assets["searchbox"], position, anchor: anchor)
         {
-            textDisplay = new TextDisplayElement(search, new Vector2(position.X - texture.Width + 20, position.Y + texture.Height/4), anchor: Anchor.CenterLeft);
+            textDisplay = new TextDisplayElement(search, new Vector2(position.X - Texture.Width + 20, position.Y + Texture.Height/4), anchor: Anchor.CenterLeft);
         }
 
         public void Update(string text)

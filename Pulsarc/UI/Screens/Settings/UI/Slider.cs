@@ -122,7 +122,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override void onClick(Point mousePosition)
         {
-            setSelectorPercent((float) Math.Round((mousePosition.X - drawPosition.X) / ((texture.Width) * scale),2));
+            setSelectorPercent((float) Math.Round((mousePosition.X - drawPosition.X) / ((Texture.Width) * scale),2));
         }
     }
 }

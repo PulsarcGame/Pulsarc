@@ -29,7 +29,7 @@ namespace Pulsarc.UI.Screens.Result.UI
             this.height = height;
             this.hits = hits;
 
-            texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, width, height);
+            Texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, width, height);
             Color[] graphBG = new Color[width * height];
 
             JudgementValue miss = Judgement.getMiss();
@@ -82,7 +82,7 @@ namespace Pulsarc.UI.Screens.Result.UI
                 }
             }
 
-            texture.SetData(graphBG);
+            Texture.SetData(graphBG);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(texture, position: position, rotation: rotation, origin: origin, color: Color.White);
+            Pulsarc.spriteBatch.Draw(Texture, position: position, rotation: rotation, origin: origin, color: Color.White);
 
             /*
             foreach (KeyValuePair<long, Double> hit error in hits)

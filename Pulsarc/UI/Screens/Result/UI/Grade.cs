@@ -13,7 +13,7 @@ namespace Pulsarc.UI.Screens.Result.UI
         {
             subGrades = new List<Grade>();
 
-            Resize(texture.Width * scale);
+            Resize(Texture.Width * scale);
 
             for (int i = 0; i < grade_.Length - 1; i++)
             {
@@ -22,18 +22,18 @@ namespace Pulsarc.UI.Screens.Result.UI
                 {
                     foreach (Grade g in subGrades)
                     {
-                        g.move(new Vector2(-texture.Width * this.scale / 2.5f, 0));
+                        g.move(new Vector2(-Texture.Width * this.scale / 2.5f, 0));
                     }
                 }
             }
 
-            changePosition(new Vector2(position.X - (texture.Width * scale) / 2, position.Y - (texture.Height * scale) / 2));
+            changePosition(new Vector2(position.X - (Texture.Width * scale) / 2, position.Y - (Texture.Height * scale) / 2));
 
             for (int i = 0; i < grade_.Length - 1; i++)
             {
                 if (i % 2 == 0)
                 {
-                    move(new Vector2(texture.Width * this.scale / 2.5f, 0));
+                    move(new Vector2(Texture.Width * this.scale / 2.5f, 0));
                 }
             }
         }

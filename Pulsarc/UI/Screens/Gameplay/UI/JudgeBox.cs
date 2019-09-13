@@ -19,7 +19,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="position">Where to place the JudgeBox on the screen</param>
         public JudgeBox(Vector2 position) : base(Skin.defaultTexture)
         {
-            texture = null;
+            Texture = null;
 
             this.position = position;
 

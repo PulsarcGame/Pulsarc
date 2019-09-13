@@ -49,34 +49,34 @@ namespace Pulsarc.UI.Screens.Gameplay
             Vector2 screen = Pulsarc.getBaseScreenDimensions();
 
             // Find the origin (center) of this HitObject
-            origin.X = (screen.X / 2) + ((texture.Width - screen.X) / 2);
-            origin.Y = (screen.Y / 2) + ((texture.Height - screen.Y) / 2);
+            origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
+            origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
 
             // Determine the position for this HitObject
             position.X = screen.X / 2;
             position.Y = screen.Y / 2;
 
             // What part of this HitObject should be drawn?
-            drawnPart.Width = texture.Width / 2;
-            drawnPart.Height = texture.Height / 2;
+            drawnPart.Width = Texture.Width / 2;
+            drawnPart.Height = Texture.Height / 2;
 
             // Should be changed if we want different than 4 keys.
             // Currently no solution available with drawn rectangles
             switch (angle)
             {
                 case 0:
-                    drawnPart.X = texture.Width / 2;
-                    origin.X -= texture.Width / 2;
+                    drawnPart.X = Texture.Width / 2;
+                    origin.X -= Texture.Width / 2;
                     break;
                 case 180:
-                    drawnPart.Y = texture.Height / 2;
-                    origin.Y -= texture.Height / 2;
+                    drawnPart.Y = Texture.Height / 2;
+                    origin.Y -= Texture.Height / 2;
                     break;
                 case 90:
-                    drawnPart.X = texture.Width / 2;
-                    drawnPart.Y = texture.Height / 2;
-                    origin.X -= texture.Width / 2;
-                    origin.Y -= texture.Height / 2;
+                    drawnPart.X = Texture.Width / 2;
+                    drawnPart.Y = Texture.Height / 2;
+                    origin.X -= Texture.Width / 2;
+                    origin.Y -= Texture.Height / 2;
                     break;
             }
 

@@ -61,7 +61,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
                 judges.Add(new KeyValuePair<JudgementValue, Texture2D>(judgement,judgeTexture));
             }
 
-            texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, (int) size.X, (int) size.Y);
+            Texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, (int) size.X, (int) size.Y);
             Color[] bar = new Color[(int) (size.X * size.Y)];
 
 
@@ -97,7 +97,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
                 }
             }
 
-            texture.SetData(bar);
+            Texture.SetData(bar);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(texture, position: position, rotation: rotation, origin: origin, color: Color.White * 0.3f);
+            Pulsarc.spriteBatch.Draw(Texture, position: position, rotation: rotation, origin: origin, color: Color.White * 0.3f);
 
             foreach(KeyValuePair<double, int> error in errors)
             {

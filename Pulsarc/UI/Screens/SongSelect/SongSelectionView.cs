@@ -121,7 +121,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             // Move cards if focus has changed.
             if(currentFocus != selectedFocus)
             {
-                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.deltaTime / 100f);//(float)PulsarcTime.deltaTime * 2f);
+                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
 
                 float diff = lastFocus - currentFocus;
                 lastFocus = currentFocus;
