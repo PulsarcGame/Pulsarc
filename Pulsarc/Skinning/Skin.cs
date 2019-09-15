@@ -96,6 +96,7 @@ namespace Pulsarc.Skinning
                 // Settings categories
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_gameplay");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_audio");
+                LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_bindings");
                 // Settings elements
                 LoadSkinTexture(skinFolder + "UI/Settings/", "slider_select");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "slider");

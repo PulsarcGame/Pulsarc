@@ -42,6 +42,9 @@ namespace Pulsarc
 
         // The camera controlling the game's viewport
         Camera game_camera;
+
+        // Static song selection screen for playing and managing user audio everywhere
+        static public SongSelection songScreen;
         
 
         // All of these should be brought to other classes
@@ -126,6 +129,10 @@ namespace Pulsarc
             // Initialize the game camera
             game_camera = new Camera(graphics.GraphicsDevice.Viewport, (int) getDimensions().X, (int)getDimensions().Y, 1);
             game_camera.Pos = new Vector2(getDimensions().X / 2, getDimensions().Y / 2);
+
+            // Start the song selection in the background to have music when entering the game
+            songScreen = new SongSelection();
+            songScreen.Init();
 
             // Create and display the default game screen
             // (Currently Main menu. Should be an intro in later releases)

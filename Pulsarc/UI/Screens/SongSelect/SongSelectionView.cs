@@ -49,11 +49,12 @@ namespace Pulsarc.UI.Screens.SongSelect
                 i++;
             }
 
-            // Select a map by default in the song selection.
-            // TODO: Select a map that was randomly playing in the background on the previous menu
+            // Select a random map by default in the song selection.
             if (GetSongSelection().cards.Count > 0)
             {
-                GetSongSelection().focusedCard = GetSongSelection().cards[0];
+                Random rd = new Random();
+
+                GetSongSelection().focusedCard = GetSongSelection().cards[rd.Next(0, GetSongSelection().cards.Count)];
                 GetSongSelection().focusedCard.onClick();
                 focusCard(GetSongSelection().focusedCard);
             }

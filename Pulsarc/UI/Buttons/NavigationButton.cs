@@ -46,7 +46,10 @@ namespace Pulsarc.UI.Buttons
                 ScreenManager.RemoveScreen(true);
             }
             ScreenManager.AddScreen(screen);
-            screen.Init();
+            if(!screen.initialized)
+            {
+                screen.Init();
+            }
         }
 
         public override void Draw()

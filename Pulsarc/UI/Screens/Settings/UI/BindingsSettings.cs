@@ -8,7 +8,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     public class BindingsSettings : SettingsGroup
     {
-        public BindingsSettings(Vector2 position) : base("Gameplay", position)
+        public BindingsSettings(Vector2 position) : base("Bindings", position)
         {
             addSetting("Left", new Binding("Left", "Left arc key", getNextPosition(), Config.get["Bindings"]["Left"]));
             addSetting("Up", new Binding("Up", "Up arc key", getNextPosition(), Config.get["Bindings"]["Up"]));
