@@ -38,8 +38,6 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             errors = new List<KeyValuePair<double, int>>();
 
             this.size = size;
-            this.position.X -= size.X / 2;
-            this.position.Y -= size.Y;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
 
@@ -98,6 +96,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             }
 
             Texture.SetData(bar);
+
+            drawPosition = getResponsivePosition(position);
+            currentSize = new Vector2(Texture.Width, Texture.Height);
+            drawPosition.X -= currentSize.X / 2;
+            drawPosition.Y -= currentSize.Y;
         }
 
         /// <summary>
@@ -117,7 +120,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
          
-            int baseX = (int)(position.X + size.X / 2);
+            int baseX = (int)(drawPosition.X + size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.judge - Judgement.getPreviousJudgementValue(judgement).judge;
@@ -130,7 +133,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
 
-            return new Vector2(baseX - errorX, position.Y);
+            return new Vector2(baseX - errorX, drawPosition.Y);
         }
 
         /// <summary>
@@ -198,7 +201,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(Texture, position: position, rotation: rotation, origin: origin, color: Color.White * 0.3f);
+            Pulsarc.spriteBatch.Draw(Texture, position: drawPosition, rotation: rotation, origin: origin, color: Color.White * 0.3f);
 
             foreach(KeyValuePair<double, int> error in errors)
             {
