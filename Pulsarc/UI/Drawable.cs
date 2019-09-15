@@ -82,7 +82,7 @@ namespace Pulsarc.UI
         protected float aspectRatio;
 
         // How big this Drawable is compared to its base texture dimensions.
-        protected float scale = 1;
+        public float scale = 1;
 
         // The angle of this Drawable.
         protected float rotation = 0;
@@ -234,8 +234,8 @@ namespace Pulsarc.UI
         public void changePosition(Vector2 position)
         {
             basePosition = position;
-            this.position = getResponsivePosition(position);
 
+            this.position = getResponsivePosition(basePosition);
             Vector2 newPos = position;
 
             switch (anchor)
@@ -283,8 +283,9 @@ namespace Pulsarc.UI
         /// New Position = (this.position.X + position.X, this.positionY + position.Y)</param>
         public virtual void move(Vector2 position)
         {
-            this.position += getResponsivePosition(position);
-            this.drawPosition += getResponsivePosition(position);
+            basePosition += position;
+            this.position = getResponsivePosition(basePosition);
+            drawPosition += getResponsivePosition(position);
         }
 
         /// <summary>

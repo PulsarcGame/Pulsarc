@@ -223,6 +223,27 @@ namespace Pulsarc.Utils
             }
         }
 
+        static public void updateRate()
+        {
+            if (active)
+            {
+                double time = getTime();
+                string audio = song_path;
+                Stop();
+
+                song_path = audio;
+                audioRate = Config.getFloat("Gameplay", "SongRate");
+                StartLazyPlayer();
+
+                if (time != 0)
+                {
+                    deltaTime((long)time);
+                }
+
+                Console.WriteLine("Now Playing: " + song_path + " at " + audioRate + " rate");
+            }
+        }
+
         /// <summary>
         /// Has the song finished playing?
         /// </summary>

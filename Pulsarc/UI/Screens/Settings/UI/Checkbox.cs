@@ -11,9 +11,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
     {
         Drawable cross;
         public Checkbox(string title, string more, Vector2 position, string type, bool startingValue) : 
-            base(title, more, position, Skin.assets["settings_checkbox"], -1, Anchor.TopLeft, startingValue, type)
+            base(title, more, position, Skin.assets["settings_checkbox"], -1, Anchor.CenterLeft, startingValue, type)
         {
-            cross = new Drawable(Skin.assets["settings_checkbox_cross"], position);
+            cross = new Drawable(Skin.assets["settings_checkbox_cross"], position, anchor: Anchor.CenterLeft);
 
             cross.changePosition(position);
         }

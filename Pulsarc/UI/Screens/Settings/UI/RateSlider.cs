@@ -12,28 +12,16 @@ namespace Pulsarc.UI.Screens.Settings.UI
             base(title, more, position, type, startingValue, minValue, maxValue, step, displayDivider, displayPrecision, edgeOffset)
         { }
 
+        public override void onClick(Point mousePosition)
+        {
+            base.onClick(mousePosition);
+        }
+
 
         public override void Save(string category, string key)
         {
             base.Save(category, key);
-
-            if(AudioManager.active)
-            {
-                double time = AudioManager.getTime();
-                string audio = AudioManager.song_path;
-                AudioManager.Stop();
-
-                AudioManager.song_path = audio;
-                AudioManager.audioRate = Config.getFloat("Gameplay", "SongRate");
-                AudioManager.StartLazyPlayer();
-
-                if (time != 0)
-                {
-                    AudioManager.deltaTime((long) time);
-                }
-
-                Console.WriteLine("Now Playing: " + AudioManager.song_path + " at " + AudioManager.audioRate + " rate");
-            }
+            AudioManager.updateRate();
         }
     }
 }

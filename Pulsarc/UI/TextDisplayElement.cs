@@ -110,7 +110,7 @@ namespace Pulsarc.UI
                 Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
             } catch
             {
-
+                Console.Write("Could not write " + text);
             }
         }
     }

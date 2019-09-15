@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,16 @@ namespace Pulsarc.UI.Screens.Settings.UI
         // Whether this input needs constant input (true) or single click (false)
         public bool hold = false;
 
+        // Wheter this input is able to handle a Key event
+        public bool keyListen = false;
+
         public Setting(string title, string more, Vector2 position, Texture2D texture, float aspect, Anchor anchor, dynamic baseValue, string type) : base(texture, aspect, anchor)
         {
             value = baseValue;
             this.type = type;
             Console.WriteLine(type.ToString() + " set for " + title);
             this.text = title;
-            this.title = new TextDisplayElement(title, position);
+            this.title = new TextDisplayElement(title, new Vector2(position.X - 50, position.Y), anchor: Anchor.CenterRight);
             changePosition(position);
         }
         public abstract void onClick(Point mousePosition);
@@ -62,6 +66,8 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     break;
             }
         }
+
+        public virtual void handleKeyEvent(Keys key) { }
 
         public abstract dynamic getSaveValue();
     }

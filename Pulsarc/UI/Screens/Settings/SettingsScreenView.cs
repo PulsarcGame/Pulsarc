@@ -34,12 +34,25 @@ namespace Pulsarc.UI.Screens.Settings
 
             groups = new List<SettingsGroup>();
 
-            groups.Add(new GameplaySettings(new Vector2(100, 100)));
-            groups.Add(new AudioSettings(new Vector2(100, 1000)));
+            groups.Add(new GameplaySettings(new Vector2(400, getNextGroupPos())));
+            groups.Add(new AudioSettings(new Vector2(400, getNextGroupPos())));
+            groups.Add(new BindingsSettings(new Vector2(400, getNextGroupPos())));
         }
 
         public override void Destroy()
         {
+        }
+
+        public int getNextGroupPos()
+        {
+            int posY = 0;
+             
+            foreach(SettingsGroup group in groups)
+            {
+                posY = (int) group.getNextPosition().Y;
+            }
+
+            return posY;
         }
 
         public override void Draw(GameTime gameTime)
@@ -81,11 +94,22 @@ namespace Pulsarc.UI.Screens.Settings
                 {
                     ScreenManager.RemoveScreen(true);
                 }
+
+                foreach (SettingsGroup settingsGroup in groups)
+                {
+                    foreach (KeyValuePair<string, Setting> settingP in settingsGroup.settings)
+                    {
+                        if (settingP.Value.keyListen)
+                        {
+                            settingP.Value.handleKeyEvent(press.Value);
+                        }
+                    }
+                }
             }
 
             // Check if we released a previously held item
             // TODO: only check when there was a held item
-            if(MouseManager.CurrentState.LeftButton == ButtonState.Released)
+            if (MouseManager.CurrentState.LeftButton == ButtonState.Released)
             {
                 foreach (SettingsGroup settingsGroup in groups)
                 {
@@ -117,7 +141,7 @@ namespace Pulsarc.UI.Screens.Settings
             }
 
             // Handle holding mouse inputs
-            if(MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
+            if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
             {
                 foreach (SettingsGroup settingsGroup in groups)
                 {

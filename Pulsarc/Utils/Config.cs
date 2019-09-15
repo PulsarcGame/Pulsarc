@@ -53,9 +53,15 @@ namespace Pulsarc.Utils
         }
 
 
-        static private void addBinding(string key)
+        static public void addBinding(string key)
         {
-            bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
+            if(bindings.ContainsKey(key))
+            {
+                bindings[key] = (Keys)Enum.Parse(keyType, get["Bindings"][key]);
+            } else
+            {
+                bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
+            }
         }
 
         static public int getInt(string category, string key)
@@ -98,7 +104,7 @@ namespace Pulsarc.Utils
             setValue(category, key, value);
         }
 
-        static private void setValue(string category, string key, Object value)
+        static public void setValue(string category, string key, Object value)
         {
             Console.WriteLine("Set " + category + " " + key + " to " + value.ToString());
             get[category][key] = value.ToString();

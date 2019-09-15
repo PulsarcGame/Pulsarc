@@ -91,6 +91,8 @@ namespace Pulsarc.Skinning
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_button_save");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_checkbox");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_checkbox_cross");
+                LoadSkinTexture(skinFolder + "UI/Settings/", "settings_binding");
+                LoadSkinTexture(skinFolder + "UI/Settings/", "settings_binding_focus");
                 // Settings categories
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_gameplay");
                 LoadSkinTexture(skinFolder + "UI/Settings/", "settings_icon_audio");

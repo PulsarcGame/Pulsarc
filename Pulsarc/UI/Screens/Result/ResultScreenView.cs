@@ -79,7 +79,7 @@ namespace Pulsarc.UI.Screens.Result
             version = new Version(new Vector2(getSkinnablePositionFloat("VersionX"), getSkinnablePositionFloat("VersionY")), getSkinnablePositionInt("VersionSize"), getSkinnablePositionAnchor("VersionAnchor"));
             mapper = new Mapper(new Vector2(getSkinnablePositionFloat("MapperX"), getSkinnablePositionFloat("MapperY")), new Color(74, 245, 254), getSkinnablePositionInt("MapperSize"), getSkinnablePositionAnchor("MapperAnchor"));
 
-            button_advanced.move(new Vector2(button_back.Texture.Width, -button_advanced.Texture.Height));
+            button_advanced.move(new Vector2(button_back.currentSize.X, -button_advanced.currentSize.Y));
 
             this.accuracy.Update(accuracy);
             combo.Update(GetResultScreen().combo);

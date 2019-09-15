@@ -62,7 +62,7 @@ namespace Pulsarc.Utils
                                     keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.getTime(), key));
                                     pressedKeys.Add(key);
 
-                                    if(key == Keys.CapsLock)
+                                    if (key == Keys.CapsLock)
                                     {
                                         capsLock = !capsLock;
                                         caps = capsLock;
