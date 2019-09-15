@@ -82,8 +82,11 @@ namespace Pulsarc
             graphics.IsFullScreen = Config.getInt("Graphics", "FullScreen") == 1;
             graphics.SynchronizeWithVerticalRetrace = Config.getInt("Graphics", "VSync") == 1;
 
-            // Uncap the Update and Draw loop
-            base.IsFixedTimeStep = false;
+            IsFixedTimeStep = Config.getInt("Graphics", "FPSLimit") != 0;  //Force the game to update at fixed time intervals
+            if (IsFixedTimeStep)
+            {
+                TargetElapsedTime = TimeSpan.FromSeconds(1 / (float) Config.getInt("Graphics", "FPSLimit"));  //Set the time interval to 1/30th of a second
+            }
 
             Content.RootDirectory = "Content";
         }

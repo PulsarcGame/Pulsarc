@@ -46,6 +46,11 @@ namespace Pulsarc.UI
         {
             text.Clear();
             text.Append(name).Append(value);
+            reprocessPosition();
+        }
+
+        public void reprocessPosition()
+        {
 
             float newX = position.X;
             float newY = position.Y;
@@ -56,8 +61,8 @@ namespace Pulsarc.UI
             switch (anchor)
             {
                 case Anchor.Center:
-                    newX  -= size.X / 2;
-                    newY  -= size.Y / 2;
+                    newX -= size.X / 2;
+                    newY -= size.Y / 2;
                     break;
                 case Anchor.TopRight:
                     newX -= size.X;
@@ -95,7 +100,7 @@ namespace Pulsarc.UI
         public override void move(Vector2 position)
         {
             base.move(position);
-            Update(text.ToString());
+            reprocessPosition();
         }
 
         public override void Draw()

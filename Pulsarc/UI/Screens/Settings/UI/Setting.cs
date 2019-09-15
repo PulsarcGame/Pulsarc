@@ -15,6 +15,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public TextDisplayElement title;
         public TextDisplayElement more;
 
+        // Whether this input needs constant input (true) or single click (false)
+        public bool hold = false;
+
         public Setting(string title, string more, Vector2 position, Texture2D texture, float aspect, Anchor anchor, dynamic baseValue, string type) : base(texture, aspect, anchor)
         {
             value = baseValue;
@@ -30,6 +33,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             base.Draw();
             title.Draw();
+        }
+
+        public override void move(Vector2 position)
+        {
+            base.move(position);
+            title.move(position);
         }
 
         public virtual void Save(string category, string key)

@@ -12,6 +12,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public string name;
         public Drawable icon;
         public Dictionary<String, Setting> settings;
+        public Setting focusedHoldSetting;
 
         public SettingsGroup(string name, Vector2 position)
         {
@@ -26,6 +27,17 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             settings.Add(key, setting);
             drawnPart.Height += setting.drawnPart.Height;
+        }
+
+        public override void move(Vector2 position)
+        {
+            base.move(position);
+            icon.move(position);
+
+            foreach(KeyValuePair<string, Setting> settp in settings)
+            {
+                settp.Value.move(position);
+            }
         }
 
         public Vector2 getNextPosition()
@@ -43,13 +55,40 @@ namespace Pulsarc.UI.Screens.Settings.UI
             }
         }
 
-        public void onClick(Point mousePosition)
+        public void resetFocusedHoldSetting()
+        {
+            focusedHoldSetting = null;
+        }
+
+        public void onClick(Point mousePosition, bool hold)
         {
             foreach (KeyValuePair<string, Setting> entry in settings)
             {
-                if(entry.Value.clicked(mousePosition))
+                // Check if this setting corresponds to the current input type
+                if(entry.Value.hold == hold)
                 {
-                    entry.Value.onClick(mousePosition);
+                    // Single Input
+                    if(!hold)
+                    {
+                        if (entry.Value.clicked(mousePosition))
+                        {
+                            entry.Value.onClick(mousePosition);
+                        }
+                    } else
+                    // Hold Input
+                    {
+                        // Start to hold this item, keep it in memory
+                        if (entry.Value.clicked(mousePosition) && focusedHoldSetting == null)
+                        {
+                            focusedHoldSetting = entry.Value;
+                        }
+
+                        // Continue to update the held item, even if out of range
+                        if (focusedHoldSetting == entry.Value)
+                        {
+                            entry.Value.onClick(mousePosition);
+                        }
+                    }
                 }
             }
         }

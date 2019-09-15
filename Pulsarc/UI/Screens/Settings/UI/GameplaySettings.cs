@@ -14,6 +14,8 @@ namespace Pulsarc.UI.Screens.Settings.UI
             addSetting("ApproachSpeed", new Slider("Approach Speed", "The speed at which arcs are approaching the crosshair", getNextPosition(), "int", Config.getInt(name, "ApproachSpeed"), 1, 40));
             addSetting("BackgroundDim", new Slider("Background Dim", "Opacity (in %) of the Dim applied to a beatmap's Background while playing", getNextPosition(), "int", Config.getInt(name, "BackgroundDim"), 1, 100));
             addSetting("FadeTime", new Slider("Fade Time", "Amount of time (in ms) each arc takes to disappear after being pressed", getNextPosition(), "int", Config.getInt(name, "FadeTime"), 0, 1000));
+            addSetting("Hidden", new Checkbox("Hidden", "Enables the Hidden mod", getNextPosition(), "bool", Config.getBool(name, "Hidden")));
+            addSetting("Autoplay", new Checkbox("Autoplay", "Enables the Autoplay mod", getNextPosition(), "bool", Config.getBool(name, "Autoplay")));
         }
     }
 }

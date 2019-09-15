@@ -35,6 +35,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
             this.maxValue = maxValue;
             this.edgeOffset = edgeOffset;
 
+            hold = true;
             setSelector();
             Update();
         }
@@ -61,7 +62,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(basePosition.X + position, basePosition.Y));
+            selector.changePosition(new Vector2(this.position.X + position, this.position.Y));
         }
 
         public void Update()
@@ -112,6 +113,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public override dynamic getSaveValue()
         {
             return value / (float) displayDivider;
+        }
+
+        public override void move(Vector2 position)
+        {
+            base.move(position);
+            selector.move(position);
         }
 
         public override void Draw()
