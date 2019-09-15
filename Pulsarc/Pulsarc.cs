@@ -9,6 +9,7 @@ using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using Pulsarc.Utils.SQLite;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;

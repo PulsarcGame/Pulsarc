@@ -230,9 +230,6 @@ namespace Pulsarc.UI
         /// positioning acts as if the Anchor was TopLeft.</param>
         public void changePosition(Vector2 position, bool truePositioning = false)
         {
-            basePosition = position;
-
-            this.position = getResponsivePosition(basePosition);
             Vector2 newPos = position;
 
             switch (anchor)
@@ -281,9 +278,8 @@ namespace Pulsarc.UI
         /// New Position = (truePosition.X + position.X, truePositionY + position.Y)</param>
         public virtual void move(Vector2 position)
         {
-            basePosition += position;
-            this.position = getResponsivePosition(basePosition);
-            drawPosition += getResponsivePosition(position);
+            truePosition += position;
+            findAnchorPosition();
         }
 
         /// <summary>
@@ -312,7 +308,7 @@ namespace Pulsarc.UI
         /// <returns>True if on screen, false if not on screen.</returns>
         public bool onScreen()
         {
-            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, Texture.Width, Texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int)Pulsarc.getDimensions().Y));
+            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.getDimensions().X, (int)Pulsarc.getDimensions().Y));
         }
 
         /// <summary>
@@ -322,9 +318,9 @@ namespace Pulsarc.UI
         /// <returns>True if the two Drawables intersect, false if they dont'.</returns>
         public bool intersects(Drawable drawable)
         {
-            return new Rectangle((int)drawPosition.X, (int)drawPosition.Y, Texture.Width, Texture.Height)
+            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
                 .Intersects(
-                    new Rectangle((int) drawable.drawPosition.X, (int)drawable.drawPosition.Y, drawable.Texture.Width, drawable.Texture.Height));
+                    new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, drawable.Texture.Width, drawable.Texture.Height));
         }
 
         /// <summary>
@@ -335,7 +331,7 @@ namespace Pulsarc.UI
             // If opacity isn't 1, color is just Color.White, otherwise it's Color.White * the opacity.
             Color color = opacity != 1 ? Color.White * opacity : Color.White;
 
-            Pulsarc.spriteBatch.Draw(Texture, drawPosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
+            Pulsarc.spriteBatch.Draw(Texture, truePosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
             if (hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {

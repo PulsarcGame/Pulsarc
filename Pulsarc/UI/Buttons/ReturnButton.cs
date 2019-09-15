@@ -24,10 +24,6 @@ namespace Pulsarc.UI.Buttons
         /// </summary>
         public void onClick()
         {
-            Console.WriteLine("base: " + basePosition);
-            Console.WriteLine("position: " + position);
-            Console.WriteLine("draw: " + drawPosition);
-            Console.WriteLine("dimensions: " + currentSize);
             ScreenManager.RemoveScreen(true);
         }
     }
