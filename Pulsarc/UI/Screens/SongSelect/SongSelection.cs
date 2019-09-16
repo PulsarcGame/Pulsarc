@@ -12,7 +12,7 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
-    class SongSelection : PulsarcScreen
+    public class SongSelection : PulsarcScreen
     {
 
         public override ScreenView View { get; protected set; }
@@ -34,6 +34,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Init()
         {
+            base.Init();
             RefreshBeatmaps();
         }
 

@@ -12,7 +12,7 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    class BeatmapCard : Drawable
+    public class BeatmapCard : Drawable
     {
         public Beatmap beatmap;
         private bool isClicked = false;

@@ -35,7 +35,7 @@ namespace Pulsarc.UI.Screens.MainMenu
             gameIcon = new GameIcon(new Vector2(getSkinnablePositionInt("IconX"), getSkinnablePositionInt("IconY")));
 
             navButtons = new List<NavigationButton>();
-            navButtons.Add(new NavigationButton(new SongSelection(), getSkinnablePositionInt("PlayType"), "Play Game", new Vector2(getSkinnablePositionInt("PlayX"), getSkinnablePositionInt("PlayY"))));
+            navButtons.Add(new NavigationButton(Pulsarc.songScreen, getSkinnablePositionInt("PlayType"), "Play Game", new Vector2(getSkinnablePositionInt("PlayX"), getSkinnablePositionInt("PlayY"))));
             navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("MultiType"), "Multiplayer", new Vector2(getSkinnablePositionInt("MultiX"), getSkinnablePositionInt("MultiY"))));
             navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("EditorType"), "Editor", new Vector2(getSkinnablePositionInt("EditorX"), getSkinnablePositionInt("EditorY"))));
             navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnablePositionInt("SettingsType"), "Settings", new Vector2(getSkinnablePositionInt("SettingsX"), getSkinnablePositionInt("SettingsY"))));

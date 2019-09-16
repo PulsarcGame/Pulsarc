@@ -7,6 +7,10 @@ namespace Pulsarc.UI.Screens
 {
     public abstract class PulsarcScreen : Screen
     {
-        public abstract void Init();
+        public bool initialized = false;
+        public virtual void Init()
+        {
+            initialized = true;
+        }
     }
 }

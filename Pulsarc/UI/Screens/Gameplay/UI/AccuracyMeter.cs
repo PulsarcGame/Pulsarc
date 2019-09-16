@@ -38,8 +38,6 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             errors = new List<KeyValuePair<double, int>>();
 
             this.size = size;
-            this.truePosition.X -= size.X / 2;
-            this.truePosition.Y -= size.Y;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
 
@@ -98,6 +96,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             }
 
             Texture.SetData(bar);
+
+            drawPosition = getResponsivePosition(position);
+            currentSize = new Vector2(Texture.Width, Texture.Height);
+            drawPosition.X -= currentSize.X / 2;
+            drawPosition.Y -= currentSize.Y;
         }
 
         /// <summary>
