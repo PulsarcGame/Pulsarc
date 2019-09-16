@@ -97,10 +97,10 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             Texture.SetData(bar);
 
-            drawPosition = getResponsivePosition(position);
+            //drawPosition = getResponsivePosition(position);
             currentSize = new Vector2(Texture.Width, Texture.Height);
-            drawPosition.X -= currentSize.X / 2;
-            drawPosition.Y -= currentSize.Y;
+            truePosition.X -= currentSize.X / 2;
+            truePosition.Y -= currentSize.Y;
         }
 
         /// <summary>
