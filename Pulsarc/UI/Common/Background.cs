@@ -3,6 +3,7 @@ using Pulsarc.Skinning;
 using Microsoft.Xna.Framework;
 using Pulsarc.Utils.Graphics;
 using Wobble.Logging;
+using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Common
 {
@@ -29,8 +30,8 @@ namespace Pulsarc.UI.Common
                 // Update position to refresh anchorPosition
                 changePosition(truePosition, true);
 
-                // Debug
-                Logger.Debug(Pulsarc.currentAnchorPosition(Anchor.Center).ToString() + " " + Pulsarc.baseAnchorPosition(Anchor.Center).ToString() + " " + currentSize + " " + anchorPosition + " " + truePosition, LogType.Runtime);
+                // Broken Debug
+                // Logger.Debug(ScreenAnchor.FindPosition(Anchor.Center).ToString() + " " + ScreenAnchor.FindBasePosition(Anchor.Center).ToString() + " " + currentSize + " " + anchorPosition + " " + truePosition, LogType.Runtime);
             }
         }
 
@@ -77,7 +78,7 @@ namespace Pulsarc.UI.Common
 
             Resize(Pulsarc.xBaseRes);
 
-            changePosition(Pulsarc.baseAnchorPosition(Anchor.Center));
+            changePosition(ScreenAnchor.FindPosition(Anchor.Center));
         }
 
         public override void Resize(Vector2 size, bool resolutionScale = true)
