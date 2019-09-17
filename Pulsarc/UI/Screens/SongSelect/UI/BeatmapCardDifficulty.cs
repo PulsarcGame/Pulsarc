@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using System;
 using System.Collections.Generic;
@@ -14,10 +14,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             fill = new Drawable(Skin.assets["card_diff_fill"], position);
             fill.drawnPart = new Rectangle(0,0,(int) (fill.Texture.Width * percent), Texture.Height);
         }
-        public override void move(Vector2 delta, bool truePositioning = false)
+        public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            base.move(delta, truePositioning);
-            fill.move(delta, truePositioning);
+            base.move(delta, scaledPositioning);
+            fill.move(delta, scaledPositioning);
         }
         public override void Draw()
         {

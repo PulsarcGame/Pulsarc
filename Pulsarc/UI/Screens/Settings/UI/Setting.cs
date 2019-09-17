@@ -39,10 +39,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             title.Draw();
         }
 
-        public override void move(Vector2 position, bool truePositioning = false)
+        public override void move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, truePositioning);
-            title.move(position, truePositioning);
+            base.move(position, scaledPositioning);
+            title.move(position, scaledPositioning);
         }
 
         public virtual void Save(string category, string key)

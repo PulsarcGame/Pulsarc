@@ -35,13 +35,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             combo.Update(scoreData.maxcombo);
         }
 
-        public override void move(Vector2 delta, bool truePositioning = false)
+        public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            rank.move(delta, truePositioning);
-            grade.move(delta, truePositioning);
-            score.move(delta, truePositioning);
-            acc.move(delta, truePositioning);
-            combo.move(delta, truePositioning);
+            rank.move(delta, scaledPositioning);
+            grade.move(delta, scaledPositioning);
+            score.move(delta, scaledPositioning);
+            acc.move(delta, scaledPositioning);
+            combo.move(delta, scaledPositioning);
         }
 
         public override void Draw()

@@ -61,11 +61,11 @@ namespace Pulsarc.UI.Buttons
             }
         }
 
-        public override void move(Vector2 position, bool truePositioning = false)
+        public override void move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, truePositioning);
-            hover.move(position, truePositioning);
-            text.move(position, truePositioning);
+            base.move(position, scaledPositioning);
+            hover.move(position, scaledPositioning);
+            text.move(position, scaledPositioning);
         }
 
         public override void Draw()

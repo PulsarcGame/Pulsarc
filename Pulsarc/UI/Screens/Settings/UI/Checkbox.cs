@@ -28,10 +28,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Console.WriteLine("click " + value);
         }
 
-        public override void move(Vector2 position, bool truePositioning = false)
+        public override void move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, truePositioning);
-            cross.move(position, truePositioning);
+            base.move(position, scaledPositioning);
+            cross.move(position, scaledPositioning);
         }
 
         public override void Draw()

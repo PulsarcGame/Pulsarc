@@ -358,6 +358,18 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
+        /// Move this Drawable from its current coordinate by the amount provided.
+        /// </summary>
+        /// <param name="xDelta">How much this Drawable should move on the X coordinate.</param>
+        /// <param name="yDelta">How much this Drawable should move on the Y coordinate.</param>
+        /// <param name="scaledPositioning">Whether or not this Drawable should move according
+        /// to the Height/Width scaling.</param>
+        public virtual void move(float xDelta, float yDelta, bool scaledPositioning = true)
+        {
+            move(new Vector2(xDelta, yDelta), scaledPositioning);
+        }
+
+        /// <summary>
         /// Returns whether or not this Drawable was clicked on.
         /// </summary>
         /// <param name="mousePos">The position of the cursor.</param>

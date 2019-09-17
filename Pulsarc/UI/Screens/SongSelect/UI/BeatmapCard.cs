@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
@@ -127,15 +127,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// Move this card and all related drawables by the provided delta.
         /// </summary>
         /// <param name="delta">How much to move from the current position.</param>
-        public override void move(Vector2 delta, bool truePositioning = false)
+        public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            title.move(delta, truePositioning);
-            artist.move(delta, truePositioning);
-            version.move(delta, truePositioning);
-            mapper.move(delta, truePositioning);
-            difficulty.move(delta, truePositioning);
-            diffBar.move(delta, truePositioning);
-            base.move(delta, truePositioning);
+            title.move(delta, scaledPositioning);
+            artist.move(delta, scaledPositioning);
+            version.move(delta, scaledPositioning);
+            mapper.move(delta, scaledPositioning);
+            difficulty.move(delta, scaledPositioning);
+            diffBar.move(delta, scaledPositioning);
+            base.move(delta, scaledPositioning);
         }
     }
 }
