@@ -48,6 +48,7 @@ namespace Pulsarc.UI.Screens.Result
 
         /// <summary>
         /// ResultScreenView draws everything needed for the Result Screen.
+        /// TODO: Code Cleanup
         /// </summary>
         /// <param name="screen">The screen to draw on.</param>
         /// <param name="accuracy">The accuracy of the play.</param>
@@ -65,11 +66,8 @@ namespace Pulsarc.UI.Screens.Result
             scorecard = new Scorecard();
             background = new Background("result_background");
 
-            int currentWidth = Pulsarc.CurrentWidth;
-            Vector2 bgPosition = ScreenAnchor.FindPosition(Anchor.Center);
-            bgPosition.X += currentWidth / 10;
             this.mapBackground = mapBackground;
-            mapBackground.changePosition(bgPosition);
+            mapBackground.move(new Vector2 (Pulsarc.CurrentWidth / 10, 0));
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePositionFloat("GradeX"), getSkinnablePositionFloat("GradeY")), getSkinnablePositionFloat("GradeScale"));
 

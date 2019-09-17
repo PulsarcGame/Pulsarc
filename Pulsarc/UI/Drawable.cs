@@ -84,7 +84,7 @@ namespace Pulsarc.UI
         // Whether this Drawable's size scales with the Height or the Width of the game
         // True means this drawable will scale with the game's height
         // False means this drawable will scale with the game's width
-        protected bool heightScaled;
+        protected bool heightScaled = true;
         public bool HeightScaled { get => heightScaled; }
 
         // The angle of this Drawable.
@@ -131,8 +131,8 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
-        public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
-            : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio, anchor) { }
+        public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
+            : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio, anchor, heightScaled) { }
 
 
         /// <summary>
@@ -147,8 +147,8 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
-        public Drawable(Texture2D texture, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
-            : this(texture, new Vector2(0, 0), new Vector2(texture.Width, texture.Height), aspectRatio, anchor) { }
+        public Drawable(Texture2D texture, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
+            : this(texture, new Vector2(0, 0), new Vector2(texture.Width, texture.Height), aspectRatio, anchor, heightScaled) { }
 
 
         /// <summary>
@@ -265,11 +265,6 @@ namespace Pulsarc.UI
             }
         }
 
-        public void changePosition(float x, float y)
-        {
-            changePosition(new Vector2(x, y));
-        }
-
         /// <summary>
         /// Change the position of this drawable to the coordinates provided.
         /// </summary>
@@ -329,21 +324,36 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
+        /// Change the position of this drawable to the coordinates provided.
+        /// </summary>
+        /// <param name="x">The X coordinate of this Drawables new position.</param>
+        /// <param name="y">The Y coordinate of this Drawables new position.</param>
+        public void changePosition(float x, float y)
+        {
+            changePosition(new Vector2(x, y));
+        }
+
+        /// <summary>
         /// Move this Drawable from its current coordinate by the amount provided.
         /// </summary>
         /// <param name="position">How much this Drawable should move.
         /// New Position = (truePosition.X + position.X, truePositionY + position.Y)</param>
-        public virtual void move(Vector2 position, bool truePositioning = false)
+        /// <param name="scaledPositioning">Whether or not this Drawable should move according
+        /// to the Height/Width scaling.</param>
+        public virtual void move(Vector2 position, bool scaledPositioning = true)
         {
-            if (truePositioning)
+            if (scaledPositioning)
             {
                 truePosition += position;
                 findAnchorPosition();
                 return;
             }
 
-            truePosition.X += position.X;
-            truePosition.Y += position.Y * Pulsarc.HeightScale;
+            // If not height scaled, Y movement is normal and X movement is scaled
+            // If height scaled, X movement is normal and Y movement is scaled
+            truePosition.X += position.X * (!heightScaled ? Pulsarc.WidthScale : 1);
+            truePosition.Y += position.Y * (heightScaled ? Pulsarc.HeightScale : 1);
+
             findAnchorPosition();
         }
 

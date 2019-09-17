@@ -35,7 +35,7 @@ namespace Pulsarc.UI.Buttons
         public NavigationButton(PulsarcScreen screen, NavButtonType type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false) : base(Skin.assets["button_back_"+(int)type], position, anchor: anchor)
         {
             this.text = new TextDisplayElement(text, new Vector2(position.X, position.Y), color: Color.Black, anchor: Anchor.Center);
-            this.text.move(new Vector2((1 - scale) * -10, (1-scale) * -10));
+            this.text.move(new Vector2((1 - scale) * -10, (1-scale) * -10)); // TODO: Center text "Properly"
 
             this.screen = screen;
             this.removeFirst = removeFirst;

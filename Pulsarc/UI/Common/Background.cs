@@ -26,39 +26,6 @@ namespace Pulsarc.UI.Common
                 {
                     makeDimTexture(dimTexture.opacity);
                 }
-
-                /* Debug
-
-                Vector2 screenCenter = ScreenAnchor.FindPosition(Anchor.Center);
-                Vector2 baseCenter = ScreenAnchor.FindBasePosition(Anchor.Center);
-
-                Vector2 dimensions = Pulsarc.getDimensions();
-
-                Logger.Debug("", LogType.Runtime);
-
-                Logger.Debug(   "Expected Output: " +
-                                screenCenter + " " +
-                                baseCenter + " " +
-                                dimensions + " " +
-                                screenCenter +
-                                " {X: 0 Y: 0}",
-                                LogType.Runtime);
-
-                Logger.Debug(   "Output:          " +
-                                screenCenter + " " +
-                                baseCenter + " " +
-                                currentSize + " " +
-                                anchorPosition + " " +
-                                truePosition,
-                                LogType.Runtime);
-
-                Logger.Debug(   "Difference:      " +
-                                (screenCenter - screenCenter) + " " + 
-                                (baseCenter - baseCenter) + " " +
-                                (dimensions - currentSize) + " " +
-                                (screenCenter - anchorPosition) + " " +
-                                (Vector2.Zero - truePosition),
-                                LogType.Runtime);*/
             }
         }
 
