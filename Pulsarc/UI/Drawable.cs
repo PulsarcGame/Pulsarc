@@ -336,13 +336,12 @@ namespace Pulsarc.UI
         /// <summary>
         /// Move this Drawable from its current coordinate by the amount provided.
         /// </summary>
-        /// <param name="position">How much this Drawable should move.
-        /// New Position = (truePosition.X + position.X, truePositionY + position.Y)</param>
+        /// <param name="position">How much this Drawable should move.</param>
         /// <param name="scaledPositioning">Whether or not this Drawable should move according
         /// to the Height/Width scaling.</param>
         public virtual void move(Vector2 position, bool scaledPositioning = true)
         {
-            if (scaledPositioning)
+            if (!scaledPositioning)
             {
                 truePosition += position;
                 findAnchorPosition();
@@ -367,6 +366,19 @@ namespace Pulsarc.UI
         public virtual void move(float xDelta, float yDelta, bool scaledPositioning = true)
         {
             move(new Vector2(xDelta, yDelta), scaledPositioning);
+        }
+
+        public virtual void scaledMove(Vector2 position)
+        {
+            truePosition.X += position.X * Pulsarc.WidthScale;
+            truePosition.Y += position.Y * Pulsarc.HeightScale;
+
+            findAnchorPosition();
+        }
+
+        public virtual void scaledMove(float xDelta, float yDelta)
+        {
+            scaledMove(new Vector2(xDelta, yDelta));
         }
 
         /// <summary>

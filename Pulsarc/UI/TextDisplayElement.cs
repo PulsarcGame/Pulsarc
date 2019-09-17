@@ -36,9 +36,8 @@ namespace Pulsarc.UI
             font = AssetsManager.fonts["DefaultFont"];
             fontScale = fontSize / 64f * (Pulsarc.getDimensions().Y / Pulsarc.yBaseRes);
 
-            truePosition = position;
-            processedPosition = truePosition;
             changePosition(position);
+            processedPosition = truePosition;
             Update("");
         }
 

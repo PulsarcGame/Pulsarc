@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
@@ -34,20 +34,30 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
         /// </summary>
         /// <param name="beatmap">The beatmap associated with this card.</param>
-        /// <param name="position">The position of the card.</param>
+        /// <param name="truePosition">The position of the card.</param>
         /// <param name="size">The size of the card.</param>
-        public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size) : base(Skin.assets["beatmap_card"], position, size)
+        public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size) : base(Skin.assets["beatmap_card"], position, size, anchor: Anchor.CenterRight)
         {
             this.beatmap = beatmap;
 
             float percent = (float) (beatmap.Difficulty / 10f);
-            diffBar = new BeatmapCardDifficulty(new Vector2(position.X + 265, position.Y + 130), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
+            diffBar = new BeatmapCardDifficulty(new Vector2(ScreenAnchor.FindPosition(Anchor.CenterRight).X, truePosition.Y), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
+            diffBar.scaledMove(-10, 165); // TODO: Make these values customizeable for custom skins.
 
-            title = new BeatmapTitle(new Vector2(position.X + 30, position.Y + 10), Color.White, 22);
-            artist = new BeatmapArtist(new Vector2(position.X + 30, position.Y + 50), Color.White, 22);
-            version = new BeatmapVersion(new Vector2(position.X + 30, position.Y + 90), new Color(74, 245, 254), 22);
-            mapper = new BeatmapMapper(new Vector2(position.X + 765, position.Y + 50), new Color(74, 245, 254), 22, Anchor.TopRight);
-            difficulty = new BeatmapDifficulty(new Vector2(position.X + 30, position.Y + 128), new Color(74, 245, 254), 22);
+            title = new BeatmapTitle(truePosition, Color.White, 22);
+            title.scaledMove(20, 10);
+
+            artist = new BeatmapArtist(truePosition, Color.White, 22);
+            artist.scaledMove(20, 50);
+
+            version = new BeatmapVersion(truePosition, new Color(74, 245, 254), 22);
+            version.scaledMove(20, 90);
+            
+            mapper = new BeatmapMapper(truePosition, new Color(74, 245, 254), 22, Anchor.TopRight);
+            mapper.scaledMove(700, 50); // TODO: Fix this mother fucker. Doesn't like to scale with everything else.
+
+            difficulty = new BeatmapDifficulty(truePosition, new Color(74, 245, 254), 22);
+            difficulty.scaledMove(20, 128);
 
             title.Update(beatmap.Title);
             artist.Update(beatmap.Artist);

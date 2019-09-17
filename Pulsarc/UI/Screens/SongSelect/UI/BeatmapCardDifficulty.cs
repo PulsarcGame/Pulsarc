@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     class BeatmapCardDifficulty : Drawable
     {
         Drawable fill;
-        public BeatmapCardDifficulty(Vector2 position, float percent) : base (Skin.assets["card_diff_bar"], position)
+        public BeatmapCardDifficulty(Vector2 position, float percent) : base (Skin.assets["card_diff_bar"], position, anchor: Anchor.BottomRight)
         {
-            fill = new Drawable(Skin.assets["card_diff_fill"], position);
+            fill = new Drawable(Skin.assets["card_diff_fill"], position, anchor: Anchor.BottomRight);
             fill.drawnPart = new Rectangle(0,0,(int) (fill.Texture.Width * percent), Texture.Height);
         }
         public override void move(Vector2 delta, bool scaledPositioning = true)
@@ -19,6 +19,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             base.move(delta, scaledPositioning);
             fill.move(delta, scaledPositioning);
         }
+
+        public override void scaledMove(float xDelta, float yDelta)
+        {
+            base.scaledMove(xDelta, yDelta);
+            fill.scaledMove(xDelta, yDelta);
+        }
+
         public override void Draw()
         {
             fill.Draw();

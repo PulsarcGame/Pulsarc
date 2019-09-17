@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
@@ -32,9 +34,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         // Card stats
         // TODO: Make this more skinnable/adjustable by the user.
-        int cardWidth = 800;
-        int cardHeight = 170;
-        int cardMargin = 10;
+        float cardWidth = 800;
+        float cardHeight = 170;
+        float cardMargin = 10;
         float currentFocus = 0;
         float lastFocus = 0;
 
@@ -43,9 +45,15 @@ namespace Pulsarc.UI.Screens.SongSelect
             scores = new List<ScoreCard>();
 
             int i = 0;
-            foreach(Beatmap beatmap in beatmaps)
+
+            Texture2D beatmapCardTex = Skin.assets["beatmap_card"];
+            cardWidth = beatmapCardTex.Width;
+            cardHeight = beatmapCardTex.Height;
+            cardMargin = 10;
+
+            foreach (Beatmap beatmap in beatmaps)
             {
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(1920 - cardWidth,(cardHeight + cardMargin) * i), new Vector2(cardWidth, cardHeight)));
+                GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(ScreenAnchor.FindPosition(Anchor.CenterRight).X, (cardHeight + cardMargin) * Pulsarc.HeightScale * i), new Vector2(cardWidth, cardHeight)));
                 i++;
             }
 
@@ -59,11 +67,11 @@ namespace Pulsarc.UI.Screens.SongSelect
                 focusCard(GetSongSelection().focusedCard);
             }
 
-            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
+            searchBox = new SearchBox(search, ScreenAnchor.FindPosition(Anchor.TopRight), Anchor.TopRight);
 
             background = new Background("select_background");
 
-            button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
+            button_back = new ReturnButton("select_button_back", ScreenAnchor.FindPosition(Anchor.BottomLeft));
         }
 
         public void focusCard(BeatmapCard card)
