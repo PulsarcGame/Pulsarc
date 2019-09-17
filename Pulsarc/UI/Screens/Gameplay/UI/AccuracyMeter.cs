@@ -32,7 +32,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         /// <param name="position">Where this meter will be on the screen.</param>
         /// <param name="size">The width and height of this meter.</param>
-        public AccuracyMeter(Vector2 position, Vector2 size) : base(Skin.defaultTexture, position, size, -1, Anchor.CenterBottom)
+        public AccuracyMeter(Vector2 position, Vector2 size) : base(Skin.DefaultTexture, position, size, -1, Anchor.CenterBottom)
         {
             lastTime = 0;
             errors = new List<KeyValuePair<double, int>>();

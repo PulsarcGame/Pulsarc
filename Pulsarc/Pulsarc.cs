@@ -8,6 +8,7 @@ using Pulsarc.UI.Screens.MainMenu;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
+using Pulsarc.Utils.Maths;
 using Pulsarc.Utils.SQLite;
 using System;
 using System.Diagnostics;
@@ -28,16 +29,28 @@ namespace Pulsarc
         static public Pulsarc pulsarc;
         static public GraphicsDeviceManager graphics;
         static public SpriteBatch spriteBatch;
-
+        
         // Width and Height used for reference in making the game responsive
-        static public int xBaseRes = 1920;
-        static public int yBaseRes = 1080;
-        static public float baseRatio = 16/9f;
+        public static readonly int xBaseRes = 1920;
+        public static readonly int yBaseRes = 1080;
+        public static readonly float baseAspectRatio = 16/9f;
 
         // Current Width and Height of the game
-        static public int currentWidth;
-        static public int currentHeight;
-        static public float currentAspectRatio;
+        private static int currentWidth;
+        public static int CurrentWidth { get => currentWidth; }
+
+        private static int currentHeight;
+        public static int CurrentHeight { get => currentHeight; }
+
+        private static float currentAspectRatio;
+        public static float CurrentAspectRatio { get => currentAspectRatio; }
+
+        // Used for Drawable Resizing
+        private static float heightScale;
+        public static float HeightScale { get => heightScale; }
+
+        private static float widthScale;
+        public static float WidthScale { get => heightScale; }
 
         // Whether or not the in-game cursor is displayed 
         static public bool display_cursor = true;
@@ -82,6 +95,9 @@ namespace Pulsarc
             currentWidth = Config.getInt("Graphics", "ResolutionWidth");
             currentHeight = Config.getInt("Graphics", "ResolutionHeight");
             currentAspectRatio = currentWidth / (float)currentHeight;
+
+            heightScale = (float)currentHeight / yBaseRes;
+            widthScale = (float)currentWidth / xBaseRes;
 
             // Create the game's application window
             graphics = new GraphicsDeviceManager(this);
@@ -269,6 +285,11 @@ namespace Pulsarc
         static public Vector2 getBaseScreenDimensions()
         {
             return new Vector2(xBaseRes, yBaseRes);
+        }
+
+        static public bool isWiderThan16by9()
+        {
+            return currentAspectRatio > baseAspectRatio;
         }
 
         static public void Quit()

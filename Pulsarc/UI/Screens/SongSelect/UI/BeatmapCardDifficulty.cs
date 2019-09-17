@@ -14,10 +14,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             fill = new Drawable(Skin.assets["card_diff_fill"], position);
             fill.drawnPart = new Rectangle(0,0,(int) (fill.Texture.Width * percent), Texture.Height);
         }
-        public override void move(Vector2 delta)
+        public override void move(Vector2 delta, bool truePositioning = false)
         {
-            base.move(delta);
-            fill.move(delta);
+            base.move(delta, truePositioning);
+            fill.move(delta, truePositioning);
         }
         public override void Draw()
         {

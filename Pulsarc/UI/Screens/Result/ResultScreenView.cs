@@ -65,8 +65,11 @@ namespace Pulsarc.UI.Screens.Result
             scorecard = new Scorecard();
             background = new Background("result_background");
 
+            int currentWidth = Pulsarc.CurrentWidth;
+            Vector2 bgPosition = ScreenAnchor.FindPosition(Anchor.Center);
+            bgPosition.X += currentWidth / 10;
             this.mapBackground = mapBackground;
-            mapBackground.move(new Vector2(Pulsarc.xBaseRes / 2 - 200, 0));
+            mapBackground.changePosition(bgPosition);
 
             this.grade = new Grade(grade, new Vector2(getSkinnablePositionFloat("GradeX"), getSkinnablePositionFloat("GradeY")), getSkinnablePositionFloat("GradeScale"));
 

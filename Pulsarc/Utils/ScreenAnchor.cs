@@ -18,8 +18,8 @@ namespace Pulsarc.Utils
             float x;
             float y;
 
-            int currentWidth = Pulsarc.currentWidth;
-            int currentHeight = Pulsarc.currentHeight;
+            int currentWidth = Pulsarc.CurrentWidth;
+            int currentHeight = Pulsarc.CurrentHeight;
 
             switch (anchor)
             {

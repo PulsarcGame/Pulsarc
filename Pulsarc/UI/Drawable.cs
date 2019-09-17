@@ -38,7 +38,7 @@ namespace Pulsarc.UI
                 // Change to default texture if value was null
                 if (texture == null)
                 {
-                    texture = Skin.defaultTexture;
+                    texture = Skin.DefaultTexture;
                 }
                 
                 // Update currentSize and drawnPart
@@ -82,8 +82,10 @@ namespace Pulsarc.UI
         public float scale = 1;
 
         // Whether this Drawable's size scales with the Height or the Width of the game
-        // False means it is instead width scaled
-        protected bool heightScaled = true;
+        // True means this drawable will scale with the game's height
+        // False means this drawable will scale with the game's width
+        protected bool heightScaled;
+        public bool HeightScaled { get => heightScaled; }
 
         // The angle of this Drawable.
         protected float rotation = 0;
@@ -102,15 +104,16 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
-        public Drawable(Texture2D texture, Vector2 position, Vector2 size, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft)
+        public Drawable(Texture2D texture, Vector2 position, Vector2 size, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
         {
             // Define variables
             origin = new Vector2(0, 0);
             Texture = texture;
             this.aspectRatio = aspectRatio;
             this.anchor = anchor;
+            this.heightScaled = heightScaled;
 
-            Resize(size);
+            Resize(size * Pulsarc.HeightScale);
             changePosition(position);
         }
 
@@ -155,13 +158,42 @@ namespace Pulsarc.UI
 
         /// <summary>
         /// Resize this Drawable to fit the dimensions provided.
+        /// If Height scaled, it will Resize Height over Width.
+        /// Otherwise it will Resize Width over Height
         /// </summary>
         /// <param name="size">A Vector2 that represents the new dimensions
         /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
-        /// <param name="resolutionScale">Whether the resize should consider
-        /// the current resolution or not. Leave at default of true unless this
-        /// resize does not need to consider the current resolution to draw properly.</param>
-        public virtual void Resize(Vector2 size, bool resolutionScale = true)
+        public virtual void Resize(Vector2 size)
+        {
+            if (heightScaled)
+            {
+                ResizeHeight(size);
+            }
+            else
+            {
+                ResizeWidth(size);
+            }
+        }
+
+        /// <summary>
+        /// Resize this Drawable to the square length provided.
+        /// This resizses the height (or width) to the square length provided,
+        /// the opposite length will scale itself accordingly.
+        /// </summary>
+        /// <param name="size">The square length this drawable should be reszied to.
+        /// Height = size, Width = Height.</param>
+        public virtual void Resize(float size)
+        {
+            Resize(new Vector2(size,size));
+        }
+
+        /// <summary>
+        /// Resize this Drawable to fit the dimensions provided, focusing on height
+        /// over width
+        /// </summary>
+        /// <param name="size">A Vector2 that represents the new dimensions
+        /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
+        protected virtual void ResizeHeight(Vector2 size)
         {
             Vector2 oldSize = currentSize;
 
@@ -182,25 +214,43 @@ namespace Pulsarc.UI
             currentSize = size;
 
             // Set the scale of this Drawable using the parameters provided.
-            scale = currentSize.X / Texture.Width * (resolutionScale ? (Pulsarc.getDimensions().X / Pulsarc.xBaseRes) : 1);
+            scale = currentSize.Y / Texture.Height;
 
-            // Fix currentSize.Y
-            currentSize.Y = Texture.Height * scale;
+            // Fix currentSize.X
+            currentSize.X = Texture.Width * scale;
         }
 
         /// <summary>
-        /// Resize this Drawable to the square length provided.
-        /// This resizses the width to the square length provided, the height
-        /// scales correctly to match the new width.
+        /// Resize this Drawable to fit the dimensions provided, focusing on width
+        /// over height
         /// </summary>
-        /// <param name="size">The square length this drawable should be reszied to.
-        /// Width = size, Height = size.</param>
-        /// <param name="resolutionScale">Whether the resize should consider
-        /// the current resolution or not. Leave at default of true unless this
-        /// resize does not need to consider the current resolution to display properly.</param>
-        public virtual void Resize(float size, bool resolutionScale = true)
+        /// <param name="size">A Vector2 that represents the new dimensions
+        /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
+        public virtual void ResizeWidth(Vector2 size)
         {
-            Resize(new Vector2(size, size), resolutionScale);
+            Vector2 oldSize = currentSize;
+
+            // Find the aspect ratio of the requested size change.
+            currentSize = size;
+            float newAspect = currentSize.X / currentSize.Y;
+
+            // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
+            if (aspectRatio != -1 && newAspect != aspectRatio)
+            {
+                Fraction aspect = new Fraction(newAspect);
+                Logger.Debug("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString(), LogType.Runtime);
+
+                currentSize = oldSize;
+                return;
+            }
+
+            currentSize = size;
+
+            // Set the scale of this Drawable using the parameters provided.
+            scale = currentSize.X / Texture.Width;
+
+            // Fix currentSize.Y
+            currentSize.Y = Texture.Height * scale;
         }
 
         /// <summary>
@@ -221,7 +271,7 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Change the position of this drawable to the base coordinates provided.
+        /// Change the position of this drawable to the coordinates provided.
         /// </summary>
         /// <param name="position">The coordinates of this Drawables new position.
         /// New positon = (position.X, position.Y)</param>
@@ -230,6 +280,13 @@ namespace Pulsarc.UI
         /// positioning acts as if the Anchor was TopLeft.</param>
         public void changePosition(Vector2 position, bool truePositioning = false)
         {
+            if (truePositioning)
+            {
+                truePosition = position;
+                findAnchorPosition();
+                return;
+            }
+
             Vector2 newPos = position;
 
             switch (anchor)
@@ -276,9 +333,17 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="position">How much this Drawable should move.
         /// New Position = (truePosition.X + position.X, truePositionY + position.Y)</param>
-        public virtual void move(Vector2 position)
+        public virtual void move(Vector2 position, bool truePositioning = false)
         {
-            truePosition += position;
+            if (truePositioning)
+            {
+                truePosition += position;
+                findAnchorPosition();
+                return;
+            }
+
+            truePosition.X += position.X;
+            truePosition.Y += position.Y * Pulsarc.HeightScale;
             findAnchorPosition();
         }
 

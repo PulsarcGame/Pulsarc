@@ -9,6 +9,7 @@ using Pulsarc.UI.Screens.Settings;
 using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Wobble.Input;
+using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -30,16 +31,31 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// <param name="screen">The screen to draw on.</param>
         public MenuView(Screen screen) : base(screen)
         {
+            setUpBackgroundAndIcon();
+            setUpNavigationButtons();
+        }
+
+        private void setUpBackgroundAndIcon()
+        {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(new Vector2(getSkinnablePositionInt("IconX"), getSkinnablePositionInt("IconY")));
+            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Positions", "IconStartPos"));
 
+            Vector2 offset = new Vector2(
+                getSkinnablePositionInt("IconX"),
+                getSkinnablePositionInt("IconY"));
+
+            gameIcon.move(offset);
+        }
+
+        private void setUpNavigationButtons()
+        {
             navButtons = new List<NavigationButton>();
-            navButtons.Add(new NavigationButton(Pulsarc.songScreen, getSkinnablePositionInt("PlayType"), "Play Game", new Vector2(getSkinnablePositionInt("PlayX"), getSkinnablePositionInt("PlayY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("MultiType"), "Multiplayer", new Vector2(getSkinnablePositionInt("MultiX"), getSkinnablePositionInt("MultiY"))));
-            navButtons.Add(new NavigationButton(new InProgressScreen(), getSkinnablePositionInt("EditorType"), "Editor", new Vector2(getSkinnablePositionInt("EditorX"), getSkinnablePositionInt("EditorY"))));
-            navButtons.Add(new NavigationButton(new SettingsScreen(), getSkinnablePositionInt("SettingsType"), "Settings", new Vector2(getSkinnablePositionInt("SettingsX"), getSkinnablePositionInt("SettingsY"))));
-            navButtons.Add(new NavigationButton(new QuitScreen(), getSkinnablePositionInt("QuitType"), "Quit", new Vector2(getSkinnablePositionInt("QuitX"), getSkinnablePositionInt("QuitY"))));
+            addNavButton(Pulsarc.songScreen, "Play", "Play Game");
+            addNavButton(new InProgressScreen(), "Multi", "Multiplayer");
+            addNavButton(new InProgressScreen(), "Editor", "Editor");
+            addNavButton(new SettingsScreen(), "Settings", "Settings");
+            addNavButton(new QuitScreen(), "Quit", "Quit");
         }
 
         /// <summary>
@@ -72,6 +88,33 @@ namespace Pulsarc.UI.Screens.MainMenu
             return Skin.getConfigAnchor("main_menu", "Positions", key);
         }
 
+        /// <summary>
+        /// Find a NavButtonType from the Position section of the Main Menu config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The NavButtonType of the key provided.</returns>
+        private NavButtonType getSkinnableNavButtonType(string key)
+        {
+            return (NavButtonType)getSkinnablePositionInt(key);
+        }
+
+        private void addNavButton(PulsarcScreen screen, string typeName, string text)
+        {
+            NavigationButton navButton = new NavigationButton(  screen, 
+                                                                getSkinnableNavButtonType(typeName + "Type"),
+                                                                text, Skin.getStartPosition("main_menu",
+                                                                "Positions",
+                                                                typeName + "StartPos"));
+
+            Vector2 offset = new Vector2(
+                getSkinnablePositionInt(typeName + "X"),
+                getSkinnablePositionInt(typeName + "Y"));
+
+            navButton.move(offset);
+
+            navButtons.Add(navButton);
+        }
+
         public override void Update(GameTime gameTime)
         {
             if (InputManager.isLeftClick())
@@ -96,6 +139,7 @@ namespace Pulsarc.UI.Screens.MainMenu
             }
             gameIcon.Draw();
         }
+
         public override void Destroy()
         {
         }

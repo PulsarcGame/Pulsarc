@@ -46,7 +46,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             erase = false;
 
             // Vector representing the base screen of Pulsarc.
-            Vector2 screen = Pulsarc.getBaseScreenDimensions();
+            Vector2 screen = Pulsarc.getDimensions();
 
             // Find the origin (center) of this HitObject
             origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
@@ -101,7 +101,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
             setZLocation(currentTime, speedModifier * baseSpeed, crosshairZLoc);
-            Resize(findArcRadius(), false);
+            Resize(findArcRadius());
         }
 
         /// <summary>

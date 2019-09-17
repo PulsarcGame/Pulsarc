@@ -8,19 +8,19 @@ namespace Pulsarc.Utils
 {
     static class AssetsManager
     {
-        static public ContentManager Content;
+        static private ContentManager content;
+        static public ContentManager Content { get => content; }
         static public Dictionary<String, SpriteFont> fonts { get; set; }
 
         static public void Initialize(ContentManager Content)
         {
-            AssetsManager.Content = Content;
+            content = Content;
 
             fonts = new Dictionary<String, SpriteFont>();
 
             fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600"));
             
             Skin.LoadSkin("DefaultSkin");
-            Skin.defaultTexture = Content.Load<Texture2D>("default");
         }
 
         static public void Unload()

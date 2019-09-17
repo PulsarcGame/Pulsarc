@@ -25,8 +25,8 @@ namespace Pulsarc.UI
         /// <param name="position">The position of this TDE</param>
         /// <param name="fontSize">The size of the text in pt. Default is 18.</param>
         /// <param name="anchor">The anchor of this TDE, Default is Anchor.TopLeft</param>
-        /// <param name="color">The color of the text, default is null.</param>
-        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft, Color? color = null)
+        /// <param name="color">The color of the text, default is White.</param>
+        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.CenterLeft, Color? color = null)
         {
             this.name = name;
             this.anchor = anchor;
@@ -34,10 +34,10 @@ namespace Pulsarc.UI
             text = new StringBuilder(20);
 
             font = AssetsManager.fonts["DefaultFont"];
-            fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
+            fontScale = fontSize / 64f * (Pulsarc.getDimensions().Y / Pulsarc.yBaseRes);
 
-            this.truePosition = position;
-            processedPosition = this.truePosition;
+            truePosition = position;
+            processedPosition = truePosition;
             changePosition(position);
             Update("");
         }
@@ -97,9 +97,9 @@ namespace Pulsarc.UI
             processedPosition.Y = newY;
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool truePositioning = false)
         {
-            base.move(position);
+            base.move(position, truePositioning);
             reprocessPosition();
         }
 

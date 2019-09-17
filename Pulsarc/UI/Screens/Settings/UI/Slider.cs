@@ -62,7 +62,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(this.truePosition.X + edgeOffset + position, this.truePosition.Y));
+            selector.changePosition(new Vector2(truePosition.X + edgeOffset + position, truePosition.Y));
         }
 
         public void Update()
@@ -115,10 +115,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return value / (float) displayDivider;
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool truePositioning = false)
         {
-            base.move(position);
-            selector.move(position);
+            base.move(position, truePositioning);
+            selector.move(position, truePositioning);
         }
 
         public override void Draw()

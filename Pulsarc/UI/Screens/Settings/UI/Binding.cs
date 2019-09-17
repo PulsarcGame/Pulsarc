@@ -40,11 +40,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
             }
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool truePositioning = false)
         {
-            base.move(position);
-            listening.move(position);
-            key.move(position);
+            base.move(position, truePositioning);
+            listening.move(position, truePositioning);
+            key.move(position, truePositioning);
         }
 
         public override void onClick(Point mousePosition)

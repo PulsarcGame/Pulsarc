@@ -19,7 +19,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"])
         {
             // Vector representing the base screen of Pulsarc.
-            Vector2 screen = Pulsarc.getBaseScreenDimensions();
+            Vector2 screen = Pulsarc.getDimensions();
 
             // Find the origin (center) of this Crosshair
             origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
@@ -43,18 +43,18 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public float getZLocation()
         {
-            return ((Pulsarc.xBaseRes / 2) * Texture.Width / 2) / diameter;
+            return ((Pulsarc.CurrentWidth / 2) * Texture.Width / 2) / diameter;
         }
         
         /// <summary>
         /// Resizes the crosshair, and sets diameter to the size
         /// </summary>
         /// <param name="size">The size/diameter to resize this crosshair to</param>
-        public void Resize(float size)
+        public override void Resize(float size)
         {
             diameter = size;
             radius = diameter / 2;
-            Resize(size, true);
+            base.Resize(size);
         }
     }
 }

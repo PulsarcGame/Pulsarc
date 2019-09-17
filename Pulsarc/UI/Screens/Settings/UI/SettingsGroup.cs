@@ -29,10 +29,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             drawnPart.Height += setting.drawnPart.Height;
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool truePositioning = false)
         {
-            base.move(position);
-            icon.move(position);
+            base.move(position, truePositioning);
+            icon.move(position, truePositioning);
 
             foreach(KeyValuePair<string, Setting> settp in settings)
             {

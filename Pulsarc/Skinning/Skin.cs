@@ -3,11 +3,13 @@ using IniParser.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
+using Pulsarc.Utils;
 using Pulsarc.Utils.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Wobble.Logging;
 
 namespace Pulsarc.Skinning
 {
@@ -15,7 +17,8 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
-        static public Texture2D defaultTexture;
+        static private Texture2D defaultTexture;
+        static public Texture2D DefaultTexture { get => defaultTexture; }
 
         // A collection of all assets and their textures.
         static public Dictionary<String, Texture2D> assets { get; set; }
@@ -119,6 +122,9 @@ namespace Pulsarc.Skinning
                 judges.Add(100, LoadTexture(skinFolder + "Judgements/", "good"));
                 judges.Add(50, LoadTexture(skinFolder + "Judgements/", "bad"));
                 judges.Add(0, LoadTexture(skinFolder + "Judgements/", "miss"));
+
+                // Load default Texture
+                defaultTexture = AssetsManager.Content.Load<Texture2D>("default");
 
                 loaded = true;
             } else
@@ -238,7 +244,39 @@ namespace Pulsarc.Skinning
         /// <returns>The Anchor found using the provided parameters.</returns>
         static public Anchor getConfigAnchor(string config, string section, string key)
         {
-            return (Anchor) Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
+            return (Anchor)Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the section provided, and return the start position of the
+        /// key provided. "{Object}:{Anchor}" will provide the location of the {Object}'s {Anchor}.
+        /// For example, "Screen:CenterTop" would return (960,0) on a 1920x1080 resolution.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The position found using the provided parameters.
+        /// Currently only ScreenAnchor position finding is supported. WIll return (0,0) otherwise.</returns>
+        static public Vector2 getStartPosition(string config, string section, string key)
+        {
+            string valueToParse = configs[config][section][key];
+
+
+            var parts = valueToParse.Split(':');
+
+            Vector2 position;
+
+            switch (parts[0])
+            {
+                case "Screen":
+                    position = ScreenAnchor.FindPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(),parts[1]));
+                    break;
+                default:
+                    position = Vector2.Zero;
+                    break;
+            }
+
+            return position;
         }
 
         /// <summary>

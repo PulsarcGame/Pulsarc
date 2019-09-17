@@ -9,7 +9,7 @@ namespace Pulsarc.UI
 
         public Cursor() : base(Skin.assets["cursor"])
         {
-            Resize(30 * cursorScale, false); // Size does not scale with resolution
+            Resize(30 * cursorScale); // Size does not scale with resolution
         }
 
         public void setPos(Point position)

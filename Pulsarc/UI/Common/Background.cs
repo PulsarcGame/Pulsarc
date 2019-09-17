@@ -27,11 +27,38 @@ namespace Pulsarc.UI.Common
                     makeDimTexture(dimTexture.opacity);
                 }
 
-                // Update position to refresh anchorPosition
-                changePosition(truePosition, true);
+                /* Debug
 
-                // Broken Debug
-                // Logger.Debug(ScreenAnchor.FindPosition(Anchor.Center).ToString() + " " + ScreenAnchor.FindBasePosition(Anchor.Center).ToString() + " " + currentSize + " " + anchorPosition + " " + truePosition, LogType.Runtime);
+                Vector2 screenCenter = ScreenAnchor.FindPosition(Anchor.Center);
+                Vector2 baseCenter = ScreenAnchor.FindBasePosition(Anchor.Center);
+
+                Vector2 dimensions = Pulsarc.getDimensions();
+
+                Logger.Debug("", LogType.Runtime);
+
+                Logger.Debug(   "Expected Output: " +
+                                screenCenter + " " +
+                                baseCenter + " " +
+                                dimensions + " " +
+                                screenCenter +
+                                " {X: 0 Y: 0}",
+                                LogType.Runtime);
+
+                Logger.Debug(   "Output:          " +
+                                screenCenter + " " +
+                                baseCenter + " " +
+                                currentSize + " " +
+                                anchorPosition + " " +
+                                truePosition,
+                                LogType.Runtime);
+
+                Logger.Debug(   "Difference:      " +
+                                (screenCenter - screenCenter) + " " + 
+                                (baseCenter - baseCenter) + " " +
+                                (dimensions - currentSize) + " " +
+                                (screenCenter - anchorPosition) + " " +
+                                (Vector2.Zero - truePosition),
+                                LogType.Runtime);*/
             }
         }
 
@@ -40,18 +67,20 @@ namespace Pulsarc.UI.Common
         /// </summary>
         /// <param name="skinAsset">The name of the asset this background will use.</param>
         /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
-        public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset])
+        public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset], anchor: Anchor.Center)
         {
             makeDimTexture(dim);
+            changeBackground(Texture);
         }
 
         /// <summary>
         /// Create a blank, center-anchored background. Can be dimmed. Meant to be used for map backgrounds.
         /// </summary>
         /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
-        public Background(float dim = 0f) : base(Skin.defaultTexture, -1, Anchor.Center)
+        public Background(float dim = 0f) : base(Skin.DefaultTexture, anchor: Anchor.Center)
         {
             makeDimTexture(dim);
+            changeBackground(Texture);
         }
         
         /// <summary>
@@ -63,7 +92,7 @@ namespace Pulsarc.UI.Common
             if (dim > 0)
             {
                 this.dim = true;
-                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(Texture.Width, Texture.Height, Color.Black));
+                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
                 dimTexture.opacity = dim;
             }
         }
@@ -76,17 +105,26 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            Resize(Pulsarc.xBaseRes);
+            heightScaled = !Pulsarc.isWiderThan16by9();
+
+            if (!heightScaled)
+            {
+                Resize(Pulsarc.CurrentWidth);
+            }
+            else
+            {
+                Resize(Pulsarc.CurrentHeight);
+            }
 
             changePosition(ScreenAnchor.FindPosition(Anchor.Center));
         }
 
-        public override void Resize(Vector2 size, bool resolutionScale = true)
+        public override void Resize(Vector2 size)
         {
-            base.Resize(size, resolutionScale);
+            base.Resize(size);
             if (dim)
             {
-                dimTexture.Resize(size, resolutionScale);
+                dimTexture.Resize(size);
             }
         }
 

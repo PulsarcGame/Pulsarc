@@ -127,15 +127,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// Move this card and all related drawables by the provided delta.
         /// </summary>
         /// <param name="delta">How much to move from the current position.</param>
-        public override void move(Vector2 delta)
+        public override void move(Vector2 delta, bool truePositioning = false)
         {
-            title.move(delta);
-            artist.move(delta);
-            version.move(delta);
-            mapper.move(delta);
-            difficulty.move(delta);
-            diffBar.move(delta);
-            base.move(delta);
+            title.move(delta, truePositioning);
+            artist.move(delta, truePositioning);
+            version.move(delta, truePositioning);
+            mapper.move(delta, truePositioning);
+            difficulty.move(delta, truePositioning);
+            diffBar.move(delta, truePositioning);
+            base.move(delta, truePositioning);
         }
     }
 }
