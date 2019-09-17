@@ -53,7 +53,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             foreach (Beatmap beatmap in beatmaps)
             {
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(ScreenAnchor.FindPosition(Anchor.CenterRight).X, (cardHeight + cardMargin) * Pulsarc.HeightScale * i), new Vector2(cardWidth, cardHeight)));
+                GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(AnchorUtil.FindScreenPosition(Anchor.CenterRight).X, (cardHeight + cardMargin) * Pulsarc.HeightScale * i), new Vector2(cardWidth, cardHeight)));
                 i++;
             }
 
@@ -67,11 +67,11 @@ namespace Pulsarc.UI.Screens.SongSelect
                 focusCard(GetSongSelection().focusedCard);
             }
 
-            searchBox = new SearchBox(search, ScreenAnchor.FindPosition(Anchor.TopRight), Anchor.TopRight);
+            searchBox = new SearchBox(search, AnchorUtil.FindScreenPosition(Anchor.TopRight), Anchor.TopRight);
 
             background = new Background("select_background");
 
-            button_back = new ReturnButton("select_button_back", ScreenAnchor.FindPosition(Anchor.BottomLeft));
+            button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
         }
 
         public void focusCard(BeatmapCard card)

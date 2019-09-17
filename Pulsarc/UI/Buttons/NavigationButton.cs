@@ -8,13 +8,6 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Buttons
 {
-    enum NavButtonType
-    {
-        WideUp = 1,
-        WideDown = 2,
-        SmallDown = 3
-    }
-
     class NavigationButton : Drawable
     {
         TextDisplayElement text;
@@ -32,16 +25,20 @@ namespace Pulsarc.UI.Buttons
         /// <param name="anchor">The anchor for this button, defaults to Anchor.Center.</param>
         /// <param name="removeFirst">Whether or not the current screen should be removed
         /// before moving to the navigation screen. True = Remove Current screen before navigating.</param>
-        public NavigationButton(PulsarcScreen screen, NavButtonType type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false) : base(Skin.assets["button_back_"+(int)type], position, anchor: anchor)
+        public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null) : base(Skin.assets["button_back_"+(int)type], position, anchor: anchor)
         {
-            this.text = new TextDisplayElement(text, new Vector2(position.X, position.Y), color: Color.Black, anchor: Anchor.Center);
-            this.text.move(new Vector2((1 - scale) * -10, (1-scale) * -10)); // TODO: Center text "Properly"
+            if (textColor == null)
+            {
+                textColor = Color.Black;
+            }
+
+            this.text = new TextDisplayElement(text, new Vector2(position.X, position.Y), color: textColor, anchor: textAnchor);
+            this.text.move(new Vector2((1 - scale) * -10, (1-scale) * -10)); // TODO: Change positioniong depending on textAnchor | Position text properly, without using hacky workarounds
 
             this.screen = screen;
             this.removeFirst = removeFirst;
 
-            hover = new Drawable(Skin.assets["button_hover_"+(int)type], position, anchor: anchor);
-            hoverObject = true;
+            Hover = new Drawable(Skin.assets["button_hover_"+type], position, anchor: anchor);
         }
 
         /// <summary>
@@ -64,7 +61,7 @@ namespace Pulsarc.UI.Buttons
         public override void move(Vector2 position, bool scaledPositioning = true)
         {
             base.move(position, scaledPositioning);
-            hover.move(position, scaledPositioning);
+            Hover.move(position, scaledPositioning);
             text.move(position, scaledPositioning);
         }
 

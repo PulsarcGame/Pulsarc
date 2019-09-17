@@ -6,14 +6,66 @@ namespace Pulsarc.Utils
     /// <summary>
     /// A static class used to find the position of a particular Anchor point.
     /// </summary>
-    static public class ScreenAnchor
+    static public class AnchorUtil
     {
+        static public Vector2 FindDrawablePosition(Anchor anchor, Drawable drawable)
+        {
+            float x = drawable.truePosition.X;
+            float y = drawable.truePosition.Y;
+
+            float width = drawable.currentSize.X;
+            float height = drawable.currentSize.Y;
+
+            switch (anchor)
+            {
+                case Anchor.Center:
+                    x += width / 2f;
+                    y += height / 2f;
+                    break;
+                case Anchor.TopRight:
+                    x += width;
+                    y += 0;
+                    break;
+                case Anchor.CenterRight:
+                    x += width;
+                    y += height / 2f;
+                    break;
+                case Anchor.BottomRight:
+                    x += width;
+                    y += height;
+                    break;
+                case Anchor.CenterLeft:
+                    x += 0;
+                    y += height / 2f;
+                    break;
+                case Anchor.BottomLeft:
+                    x += 0;
+                    y += height;
+                    break;
+                case Anchor.CenterTop:
+                    x += width / 2f;
+                    y += 0;
+                    break;
+                case Anchor.CenterBottom:
+                    x += width / 2f;
+                    y += height;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    x += 0;
+                    y += 0;
+                    break;
+            }
+
+            return new Vector2(x, y);
+        }
+
         /// <summary>
         /// Finds the position of the provided anchor on the current screen.
         /// </summary>
         /// <param name="anchor">The anchor of the screen to find the position of.</param>
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
-        static public Vector2 FindPosition(Anchor anchor)
+        static public Vector2 FindScreenPosition(Anchor anchor)
         {
             float x;
             float y;
@@ -66,11 +118,12 @@ namespace Pulsarc.Utils
         }
         
         /// <summary>
-        /// Finds the position of the provided anchor on the base screen.
+        /// Finds the position of the provided anchor on the base screen (1920x1080).
+        /// Legacy?
         /// </summary>
         /// <param name="anchor">The anchor of the screen to find the position of.</param>
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
-        static public Vector2 FindBasePosition(Anchor anchor)
+        static public Vector2 FindBaseScreenPosition(Anchor anchor)
         {
             float x;
             float y;

@@ -29,6 +29,8 @@ namespace Pulsarc.UI.Common
             }
         }
 
+        public override bool HeightScaled { get => !Pulsarc.isWiderThan16by9(); }
+
         /// <summary>
         /// Create a background using the Skin-asset name to find the image.
         /// </summary>
@@ -72,9 +74,7 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            heightScaled = !Pulsarc.isWiderThan16by9();
-
-            if (!heightScaled)
+            if (!HeightScaled)
             {
                 Resize(Pulsarc.CurrentWidth);
             }
@@ -83,7 +83,7 @@ namespace Pulsarc.UI.Common
                 Resize(Pulsarc.CurrentHeight);
             }
 
-            changePosition(ScreenAnchor.FindPosition(Anchor.Center));
+            changePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
         }
 
         public override void Resize(Vector2 size)

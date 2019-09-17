@@ -39,7 +39,7 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Positions", "IconStartPos"));
+            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Positions", "IconStartPos"), getSkinnablePositionAnchor("IconAnchor"));
 
             Vector2 offset = new Vector2(
                 getSkinnablePositionInt("IconX"),
@@ -51,11 +51,11 @@ namespace Pulsarc.UI.Screens.MainMenu
         private void setUpNavigationButtons()
         {
             navButtons = new List<NavigationButton>();
-            addNavButton(Pulsarc.songScreen, "Play", "Play Game");
-            addNavButton(new InProgressScreen(), "Multi", "Multiplayer");
-            addNavButton(new InProgressScreen(), "Editor", "Editor");
-            addNavButton(new SettingsScreen(), "Settings", "Settings");
-            addNavButton(new QuitScreen(), "Quit", "Quit");
+            addNavButton(Pulsarc.songScreen, "Play");
+            addNavButton(new InProgressScreen(), "Multi");
+            addNavButton(new InProgressScreen(), "Editor");
+            addNavButton(new SettingsScreen(), "Settings");
+            addNavButton(new QuitScreen(), "Quit");
         }
 
         /// <summary>
@@ -89,22 +89,26 @@ namespace Pulsarc.UI.Screens.MainMenu
         }
 
         /// <summary>
-        /// Find a NavButtonType from the Position section of the Main Menu config.
+        /// Find a string from the Position section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
-        /// <returns>The NavButtonType of the key provided.</returns>
-        private NavButtonType getSkinnableNavButtonType(string key)
+        /// <returns>The string of the key provided.</returns>
+        private string getSkinnablePositionString(string key)
         {
-            return (NavButtonType)getSkinnablePositionInt(key);
+            return Skin.getConfigString("main_menu", "Positions", key);
         }
 
-        private void addNavButton(PulsarcScreen screen, string typeName, string text)
+        private void addNavButton(PulsarcScreen screen, string typeName)
         {
-            NavigationButton navButton = new NavigationButton(  screen, 
-                                                                getSkinnableNavButtonType(typeName + "Type"),
-                                                                text, Skin.getStartPosition("main_menu",
-                                                                "Positions",
-                                                                typeName + "StartPos"));
+            NavigationButton navButton = new NavigationButton   (   screen, // PulsarcScreen screen
+                                                                    getSkinnablePositionInt(typeName + "Type"), // int type
+                                                                    getSkinnablePositionString(typeName + "Text"), // string text
+                                                                    Skin.getStartPosition("main_menu", "Positions", typeName + "StartPos"), // Vector2 position
+                                                                    getSkinnablePositionAnchor(typeName + "Anchor"), // Anchor anchor
+                                                                    
+                                                                    textAnchor: getSkinnablePositionAnchor(typeName + "TextAnchor"), // Anchor textAnchor
+                                                                    textColor: Skin.getColor("main_menu", "Positions", typeName + "TextColor") // Color textColor
+                                                                );
 
             Vector2 offset = new Vector2(
                 getSkinnablePositionInt(typeName + "X"),

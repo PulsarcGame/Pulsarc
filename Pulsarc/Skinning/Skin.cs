@@ -220,7 +220,7 @@ namespace Pulsarc.Skinning
         /// <returns>The int value found using the provided parameters.</returns>
         static public int getConfigInt(string config, string section, string key)
         {
-            return int.Parse(configs[config][section][key]);
+            return int.Parse(getConfigString(config, section, key));
         }
 
         /// <summary>
@@ -232,7 +232,19 @@ namespace Pulsarc.Skinning
         /// <returns>The float value found using the provided parameters.</returns>
         static public float getConfigFloat(string config, string section, string key)
         {
-            return float.Parse(configs[config][section][key], CultureInfo.InvariantCulture);
+            return float.Parse(getConfigString(config, section, key), CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the config-section provided, and return the string value of the key provided.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The float value found using the provided parameters.</returns>
+        static public string getConfigString(string config, string section, string key)
+        {
+            return configs[config][section][key].Replace("\"", string.Empty);
         }
 
         /// <summary>
@@ -244,7 +256,7 @@ namespace Pulsarc.Skinning
         /// <returns>The Anchor found using the provided parameters.</returns>
         static public Anchor getConfigAnchor(string config, string section, string key)
         {
-            return (Anchor)Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
+            return (Anchor)Enum.Parse(Anchor.TopLeft.GetType(), getConfigString(config, section, key));
         }
 
         /// <summary>
@@ -256,11 +268,11 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The position found using the provided parameters.
-        /// Currently only ScreenAnchor position finding is supported. WIll return (0,0) otherwise.</returns>
-        static public Vector2 getStartPosition(string config, string section, string key)
+        /// Currently only ScreenAnchor and pre-determined parent position finding is supported.
+        /// Will return (0,0) otherwise.</returns>
+        static public Vector2 getStartPosition(string config, string section, string key, Drawable parent = null)
         {
-            string valueToParse = configs[config][section][key];
-
+            string valueToParse = getConfigString(config, section, key);
 
             var parts = valueToParse.Split(':');
 
@@ -269,14 +281,75 @@ namespace Pulsarc.Skinning
             switch (parts[0])
             {
                 case "Screen":
-                    position = ScreenAnchor.FindPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(),parts[1]));
+                    if (parent != null)
+                    {
+                        Logger.Warning("The " + key + " will be deterimned using screen positioning, but a parent has been provided in the game code." +
+                            "\nUnless this is your intention, Please make sure to use \"Parent:" + parts[1] + "\" instead of \"Screen:" + parts[1] + "\" in the appropriate .ini file!", LogType.Runtime);
+                    }
+
+                    position = AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), parts[1]));
+                    break;
+                case "Parent":
+                    if (parent == null)
+                    {
+                        Logger.Warning("The " + key + " wants to reference a parent, but none was provided in the game code!" +
+                            "\nPlease Make sure to use \"Screen:" + parts[1] + "\" instead of \"Parent:" + parts[1] + "\" in the appropriate .ini file!" +
+                            "\n" + key + " will use Screen Positioning instead.", LogType.Runtime);
+                        goto case "Screen";
+                    }
+
+                    position = AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), parts[1]), parent);
                     break;
                 default:
+                    Logger.Warning("Invalid Start position reference, please use \"Screen:" + parts[1] + "\" or \"Parent:" + parts[1] + "\" instead of \"" + parts[0] + ":" + parts[1] + "\" in the appropriate .ini file!" +
+                        "\n" + key + "will use (0,0) instead.", LogType.Runtime);
+
                     position = Vector2.Zero;
                     break;
             }
 
             return position;
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the section provided, and return the Color of the
+        /// key provided. Format like this: "r, g, b, [a]"
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The Color found using the provided parameters.</returns>
+        static public Color getColor(string config, string section, string key)
+        {
+            string valueToParse = getConfigString(config, section, key);
+
+            var parts = valueToParse.Split(',');
+            int r, g, b = 0;
+            int a = 255;
+
+            try
+            {
+                r = int.Parse(parts[0]);
+                g = int.Parse(parts[1]);
+                b = int.Parse(parts[2]);
+
+                if (parts.Length > 3)
+                {
+                    a = int.Parse(parts[3]);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(key + " was not formatted correctly." +
+                    "\nPlease format + " + key + " with \"{red},{green},{blue},[alpha]\", where alpha is optional:" +
+                    "\n Each value can be from 0 to 255. For example for Black color write " + key + "=0,0,0,255." +
+                    "\nBecause the format was incorrect, the Color for " + key + " will be Black instead.", LogType.Runtime);
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+
+            return new Color(r, g, b, a);
         }
 
         /// <summary>

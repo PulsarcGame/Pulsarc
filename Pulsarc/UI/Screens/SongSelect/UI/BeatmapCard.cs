@@ -41,7 +41,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             this.beatmap = beatmap;
 
             float percent = (float) (beatmap.Difficulty / 10f);
-            diffBar = new BeatmapCardDifficulty(new Vector2(ScreenAnchor.FindPosition(Anchor.CenterRight).X, truePosition.Y), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
+            diffBar = new BeatmapCardDifficulty(new Vector2(AnchorUtil.FindScreenPosition(Anchor.CenterRight).X, truePosition.Y), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
             diffBar.scaledMove(-10, 165); // TODO: Make these values customizeable for custom skins.
 
             title = new BeatmapTitle(truePosition, Color.White, 22);

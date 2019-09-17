@@ -26,7 +26,7 @@ namespace Pulsarc.UI
         // The texture for this Drawable.
         private Texture2D texture;
 
-        // Makes sure that important variabvles are correctly updated when Texture is set.
+        // Makes sure that important variables are correctly updated when Texture is set.
         public virtual Texture2D Texture
         {
             get => texture;
@@ -40,7 +40,7 @@ namespace Pulsarc.UI
                 {
                     texture = Skin.DefaultTexture;
                 }
-                
+
                 // Update currentSize and drawnPart
                 currentSize = new Vector2(texture.Width * scale, texture.Height * scale);
                 drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
@@ -51,8 +51,10 @@ namespace Pulsarc.UI
         }
 
         // If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.
-        public Drawable hover = null;
-        public bool hoverObject = false;
+        private Drawable hover = null;
+        public virtual Drawable Hover { get; protected set; }
+
+        public virtual bool HoverObject { get => Hover != null; }
 
         // The true position of this Drawable, as if it was anchored to Anchor.TopLeft.
         public Vector2 truePosition;
@@ -84,8 +86,15 @@ namespace Pulsarc.UI
         // Whether this Drawable's size scales with the Height or the Width of the game
         // True means this drawable will scale with the game's height
         // False means this drawable will scale with the game's width
-        protected bool heightScaled = true;
-        public bool HeightScaled { get => heightScaled; }
+        private bool heightScaled = true;
+        public virtual bool HeightScaled
+        {
+            get => heightScaled;
+            protected set
+            {
+                heightScaled = value;
+            }
+        }
 
         // The angle of this Drawable.
         protected float rotation = 0;
@@ -432,9 +441,9 @@ namespace Pulsarc.UI
 
             Pulsarc.spriteBatch.Draw(Texture, truePosition, drawnPart, color, rotation, origin, scale, SpriteEffects.None, 0f);
 
-            if (hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+            if (Hover != null && clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
             {
-                hover.Draw();
+                Hover.Draw();
             }
         }
 
