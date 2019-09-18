@@ -98,24 +98,35 @@ namespace Pulsarc.UI.Screens.MainMenu
             return Skin.getConfigString("main_menu", "Positions", key);
         }
 
+        /// <summary>
+        /// Add a navigation button to the main menu, using the config to
+        /// determine their positioning and other properties.
+        /// </summary>
+        /// <param name="screen">The Screen the nav button will move to.</param>
+        /// <param name="typeName">The "typeName" of the button, or the prefix in the config.</param>
         private void addNavButton(PulsarcScreen screen, string typeName)
         {
-            NavigationButton navButton = new NavigationButton   (   screen, // PulsarcScreen screen
-                                                                    getSkinnablePositionInt(typeName + "Type"), // int type
-                                                                    getSkinnablePositionString(typeName + "Text"), // string text
-                                                                    Skin.getStartPosition("main_menu", "Positions", typeName + "StartPos"), // Vector2 position
-                                                                    getSkinnablePositionAnchor(typeName + "Anchor"), // Anchor anchor
-                                                                    
-                                                                    textAnchor: getSkinnablePositionAnchor(typeName + "TextAnchor"), // Anchor textAnchor
-                                                                    textColor: Skin.getColor("main_menu", "Positions", typeName + "TextColor") // Color textColor
-                                                                );
+            // Find variables for TDE
+            string textStr = getSkinnablePositionString(typeName +"Text"); // string text
+            Vector2 position = Skin.getStartPosition("main_menu", "Positions", typeName + "StartPos"); // Vector2 position;
+            int fontSize = getSkinnablePositionInt(typeName + "TextFontSize");
+            Anchor textAnchor = getSkinnablePositionAnchor(typeName + "TextAnchor"); // Anchor textAnchor;
+            Color textColor = Skin.getColor("main_menu", "Positions", typeName + "TextColor"); // Color textColor;
 
+            // Make TDE
+            TextDisplayElement text = new TextDisplayElement(textStr, position, fontSize, textAnchor, textColor);
+
+            // Make NavButton
+            NavigationButton navButton = new NavigationButton(screen, getSkinnablePositionInt(typeName + "Type"), position, text);
+
+            // Offset
             Vector2 offset = new Vector2(
                 getSkinnablePositionInt(typeName + "X"),
                 getSkinnablePositionInt(typeName + "Y"));
 
             navButton.move(offset);
 
+            // Add
             navButtons.Add(navButton);
         }
 

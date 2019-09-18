@@ -350,6 +350,8 @@ namespace Pulsarc.UI
         /// to the Height/Width scaling.</param>
         public virtual void move(Vector2 position, bool scaledPositioning = true)
         {
+            Hover?.move(position, scaledPositioning);
+
             if (!scaledPositioning)
             {
                 truePosition += position;

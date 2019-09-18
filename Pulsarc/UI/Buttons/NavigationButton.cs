@@ -25,28 +25,27 @@ namespace Pulsarc.UI.Buttons
         /// <param name="anchor">The anchor for this button, defaults to Anchor.Center.</param>
         /// <param name="removeFirst">Whether or not the current screen should be removed
         /// before moving to the navigation screen. True = Remove Current screen before navigating.</param>
-        public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null) : base(Skin.assets["button_back_"+(int)type], position, anchor: anchor)
-        {
-            if (textColor == null)
-            {
-                textColor = Color.Black;
-            }
+        public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null, int fontSize = 18)
+        : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) {}
+        
 
-            this.text = new TextDisplayElement(text, new Vector2(position.X, position.Y), color: textColor, anchor: textAnchor);
-            this.text.move(new Vector2((1 - scale) * -10, (1-scale) * -10)); // TODO: Change positioniong depending on textAnchor | Position text properly, without using hacky workarounds
+        public NavigationButton(PulsarcScreen screen, int type, Vector2 position, TextDisplayElement text, Anchor anchor = Anchor.Center, bool removeFirst = false)
+            : base(Skin.assets["button_back_" + type], position, anchor: anchor)
+        {
+            this.text = text;
+            this.text.move(new Vector2((1 - scale) * -10, (1 - scale) * -10)); // TODO: Change positioniong depending on textAnchor | Position text properly, without using hacky workarounds
 
             this.screen = screen;
             this.removeFirst = removeFirst;
 
-            Hover = new Drawable(Skin.assets["button_hover_"+type], position, anchor: anchor);
+            Hover = new Drawable(Skin.assets["button_hover_" + type], position, anchor: anchor);
         }
 
         /// <summary>
-        /// Navigate to this button's assigned screen.
+        /// Change the active screen to this button's assigned screen.
         /// </summary>
         public void navigate()
         {
-
             if(removeFirst)
             {
                 ScreenManager.RemoveScreen(true);
@@ -58,10 +57,14 @@ namespace Pulsarc.UI.Buttons
             }
         }
 
+        /// <summary>
+        /// Move the Navigation Button and its parts.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="scaledPositioning"></param>
         public override void move(Vector2 position, bool scaledPositioning = true)
         {
             base.move(position, scaledPositioning);
-            Hover.move(position, scaledPositioning);
             text.move(position, scaledPositioning);
         }
 
