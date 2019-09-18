@@ -26,7 +26,7 @@ namespace Pulsarc.UI.Buttons
         /// <param name="removeFirst">Whether or not the current screen should be removed
         /// before moving to the navigation screen. True = Remove Current screen before navigating.</param>
         public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null, int fontSize = 18)
-        : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) {}
+            : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) {}
         
 
         public NavigationButton(PulsarcScreen screen, int type, Vector2 position, TextDisplayElement text, Anchor anchor = Anchor.Center, bool removeFirst = false)

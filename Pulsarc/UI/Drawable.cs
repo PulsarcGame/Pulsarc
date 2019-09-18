@@ -52,7 +52,20 @@ namespace Pulsarc.UI
 
         // If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.
         private Drawable hover = null;
-        public virtual Drawable Hover { get; protected set; }
+
+        // Makes sure that important variables are correctly updated when Hover is set.
+        public virtual Drawable Hover
+        {
+            get => hover;
+
+            protected set
+            {
+                hover = value;
+                hover.changePosition(truePosition, true);
+                hover.scale = scale;
+                hover.HeightScaled = HeightScaled;
+            }
+        }
 
         public virtual bool HoverObject { get => Hover != null; }
 
@@ -87,14 +100,7 @@ namespace Pulsarc.UI
         // True means this drawable will scale with the game's height
         // False means this drawable will scale with the game's width
         private bool heightScaled = true;
-        public virtual bool HeightScaled
-        {
-            get => heightScaled;
-            protected set
-            {
-                heightScaled = value;
-            }
-        }
+        public virtual bool HeightScaled { get; protected set; }
 
         // The angle of this Drawable.
         protected float rotation = 0;
@@ -350,6 +356,7 @@ namespace Pulsarc.UI
         /// to the Height/Width scaling.</param>
         public virtual void move(Vector2 position, bool scaledPositioning = true)
         {
+            // If Hover exists, move it.
             Hover?.move(position, scaledPositioning);
 
             if (!scaledPositioning)

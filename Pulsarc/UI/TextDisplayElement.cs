@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System;
 using System.Text;
+using Wobble.Logging;
 
 namespace Pulsarc.UI
 {
@@ -17,6 +17,8 @@ namespace Pulsarc.UI
         public Color color;
 
         Vector2 processedPosition;
+
+        bool caught = false;
 
         /// <summary>
         /// A text-based Drawable.
@@ -41,13 +43,22 @@ namespace Pulsarc.UI
             Update("");
         }
 
+        /// <summary>
+        /// Update the text with new text.
+        /// </summary>
+        /// <param name="value">The text to change to</param>
         public void Update(string value)
         {
             text.Clear();
             text.Append(name).Append(value);
             reprocessPosition();
+
+            caught = false;
         }
 
+        /// <summary>
+        /// Reprocess the position of this TDE.
+        /// </summary>
         public void reprocessPosition()
         {
 
@@ -104,12 +115,19 @@ namespace Pulsarc.UI
 
         public override void Draw()
         {
+            if (caught)
+            {
+                return;
+            }
+
             try
             {
                 Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
-            } catch
+            }
+            catch
             {
-                Console.Write("Could not write " + text);
+                Logger.Error("Could not write " + text + ", Aborting draw() of this TextDisplayElement.", LogType.Runtime);
+                caught = true; // Don't need to spam the console
             }
         }
     }
