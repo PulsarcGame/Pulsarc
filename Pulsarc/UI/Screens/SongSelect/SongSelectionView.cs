@@ -12,6 +12,7 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using Wobble.Input;
+using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -34,11 +35,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         // Card stats
         // TODO: Make this more skinnable/adjustable by the user.
-        float cardWidth = 800;
-        float cardHeight = 170;
-        float cardMargin = 10;
-        float currentFocus = 0;
-        float lastFocus = 0;
+        float cardWidth, cardHeight, cardMargin, currentFocus, lastFocus;
 
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
@@ -47,8 +44,8 @@ namespace Pulsarc.UI.Screens.SongSelect
             int i = 0;
 
             Texture2D beatmapCardTex = Skin.assets["beatmap_card"];
-            cardWidth = beatmapCardTex.Width;
-            cardHeight = beatmapCardTex.Height;
+            cardWidth = beatmapCardTex.Width - 10;
+            cardHeight = beatmapCardTex.Height - 10;
             cardMargin = 10;
 
             foreach (Beatmap beatmap in beatmaps)
@@ -76,20 +73,22 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public void focusCard(BeatmapCard card)
         {
-            float step = (cardHeight + cardMargin) / 100;
-            GetSongSelection().selectedFocus = -3.5f;
+            GetSongSelection().selectedFocus = -4f;
 
             foreach (BeatmapCard s in GetSongSelection().cards)
             {
-                GetSongSelection().selectedFocus += step;
+                GetSongSelection().selectedFocus++;
 
                 if(card == s)
                 {
                     card.setClicked(true);
+
+                    card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
+
                     scores.Clear();
                     Vector2 currentPos = new Vector2(0, 20);
                     int rank = 1;
-                    card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
+
                     foreach(ScoreData score in card.beatmap.getLocalScores())
                     {
                         scores.Add(new ScoreCard(score, currentPos, rank));

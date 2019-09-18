@@ -138,6 +138,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                     RefreshBeatmaps();
                 }
                 // If none of the above, type into the search bar
+                // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
+                // TODO? Ignore keypresses unless clicked on
                 else
                 {
                     if (XnaKeyHelper.isTypingCharacter(press.Value))
