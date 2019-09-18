@@ -6,10 +6,7 @@ using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
-using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
-using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -39,11 +36,11 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Positions", "IconStartPos"), getSkinnablePositionAnchor("IconAnchor"));
+            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Properties", "IconStartPos"), getSkinnablePropertyAnchor("IconAnchor"));
 
             Vector2 offset = new Vector2(
-                getSkinnablePositionInt("IconX"),
-                getSkinnablePositionInt("IconY"));
+                getSkinnablePropertyInt("IconX"),
+                getSkinnablePropertyInt("IconY"));
 
             gameIcon.move(offset);
         }
@@ -59,43 +56,43 @@ namespace Pulsarc.UI.Screens.MainMenu
         }
 
         /// <summary>
-        /// Find a float position from the Position section of the Main Menu config.
+        /// Find a float from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePositionFloat(string key)
+        private float getSkinnablePropertyFloat(string key)
         {
-            return Skin.getConfigFloat("main_menu", "Positions", key);
+            return Skin.getConfigFloat("main_menu", "Properties", key);
         }
 
         /// <summary>
-        /// Find a int from the Position section of the Main Menu config.
+        /// Find a int from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePositionInt(string key)
+        private int getSkinnablePropertyInt(string key)
         {
-            return Skin.getConfigInt("main_menu", "Positions", key);
+            return Skin.getConfigInt("main_menu", "Properties", key);
         }
 
         /// <summary>
-        /// Find an Anchor from the Position section of the Main Menu config.
+        /// Find an Anchor from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePositionAnchor(string key)
+        private Anchor getSkinnablePropertyAnchor(string key)
         {
-            return Skin.getConfigAnchor("main_menu", "Positions", key);
+            return Skin.getConfigAnchor("main_menu", "Properties", key);
         }
 
         /// <summary>
-        /// Find a string from the Position section of the Main Menu config.
+        /// Find a string from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string getSkinnablePositionString(string key)
+        private string getSkinnablePropertyString(string key)
         {
-            return Skin.getConfigString("main_menu", "Positions", key);
+            return Skin.getConfigString("main_menu", "Properties", key);
         }
 
         /// <summary>
@@ -107,22 +104,22 @@ namespace Pulsarc.UI.Screens.MainMenu
         private void addNavButton(PulsarcScreen screen, string typeName)
         {
             // Find variables for TDE
-            string textStr = getSkinnablePositionString(typeName +"Text"); // string text
-            Vector2 position = Skin.getStartPosition("main_menu", "Positions", typeName + "StartPos"); // Vector2 position;
-            int fontSize = getSkinnablePositionInt(typeName + "TextFontSize");
-            Anchor textAnchor = getSkinnablePositionAnchor(typeName + "TextAnchor"); // Anchor textAnchor;
-            Color textColor = Skin.getColor("main_menu", "Positions", typeName + "TextColor"); // Color textColor;
+            string textStr = getSkinnablePropertyString(typeName + "Text"); // string text
+            Vector2 position = Skin.getStartPosition("main_menu", "Properties", typeName + "StartPos"); // Vector2 position;
+            int fontSize = getSkinnablePropertyInt(typeName + "TextFontSize");
+            Anchor textAnchor = getSkinnablePropertyAnchor(typeName + "TextAnchor"); // Anchor textAnchor;
+            Color textColor = Skin.getColor("main_menu", "Properties", typeName + "TextColor"); // Color textColor;
 
             // Make TDE
             TextDisplayElement text = new TextDisplayElement(textStr, position, fontSize, textAnchor, textColor);
 
             // Make NavButton
-            NavigationButton navButton = new NavigationButton(screen, getSkinnablePositionInt(typeName + "Type"), position, text);
+            NavigationButton navButton = new NavigationButton(screen, getSkinnablePropertyInt(typeName + "Type"), position, text);
 
             // Offset
             Vector2 offset = new Vector2(
-                getSkinnablePositionInt(typeName + "X"),
-                getSkinnablePositionInt(typeName + "Y"));
+                getSkinnablePropertyInt(typeName + "X"),
+                getSkinnablePropertyInt(typeName + "Y"));
 
             navButton.move(offset);
 

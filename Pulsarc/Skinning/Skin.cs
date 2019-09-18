@@ -50,6 +50,7 @@ namespace Pulsarc.Skinning
                 configs.Add("main_menu", parser.ReadFile(skinFolder + "UI/MainMenu/main_menu.ini"));
                 configs.Add("judgements", parser.ReadFile(skinFolder + "Judgements/judgements.ini"));
                 configs.Add("result_screen", parser.ReadFile(skinFolder + "UI/ResultScreen/result_screen.ini"));
+                configs.Add("song_select", parser.ReadFile(skinFolder + "UI/SongSelect/song_select.ini"));
 
                 // Load gameplay assets
                 LoadSkinTexture(skinFolder + "Gameplay/", "arcs");

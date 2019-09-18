@@ -20,10 +20,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             fill.move(delta, scaledPositioning);
         }
 
-        public override void scaledMove(float xDelta, float yDelta)
+        public override void scaledMove(Vector2 delta)
         {
-            base.scaledMove(xDelta, yDelta);
-            fill.scaledMove(xDelta, yDelta);
+            base.scaledMove(delta);
+            fill.scaledMove(delta);
         }
 
         public override void Draw()
