@@ -1,16 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     public class ScoreCard : Drawable
     {
+        public static readonly Texture2D StaticTexture = Skin.assets["scorecard"];
+
         ScoreData scoreData;
+
+        List<TextDisplayElement> scoreCardData = new List<TextDisplayElement>();
 
         Grade grade;
         ScoreCardRank rank;
@@ -18,11 +21,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         ScoreCardAccuracy acc;
         ScoreCardCombo combo;
 
-        public ScoreCard(ScoreData data, Vector2 position, int rankPosition) : base(Skin.assets["scorecard"])
+        public ScoreCard(ScoreData data, Vector2 position, int rankPosition) : base(StaticTexture, position)
         {
             scoreData = data;
 
-            changePosition(position);
             grade = new Grade(scoreData.grade, new Vector2(position.X + 180, position.Y + 75), 0.2f);
             rank = new ScoreCardRank(new Vector2(position.X + 70, position.Y + 70), Color.White, anchor: Anchor.CenterLeft);
             score = new ScoreCardScore(new Vector2(position.X + 260, position.Y + 50), Color.White);

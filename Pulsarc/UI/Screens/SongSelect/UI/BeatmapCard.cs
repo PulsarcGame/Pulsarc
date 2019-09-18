@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
@@ -6,14 +7,14 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    public class BeatmapCard : Drawable
+    public class BeatmapCard : Card
     {
+        public static readonly Texture2D StaticTexture = Skin.assets["beatmap_card"];
+
         public Beatmap beatmap;
 
         private bool isClicked = false;
@@ -38,7 +39,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// <param name="beatmap">The beatmap associated with this card.</param>
         /// <param name="truePosition">The position of the card.</param>
         /// <param name="size">The size of the card.</param>
-        public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size) : base(Skin.assets["beatmap_card"], position, size, anchor: Anchor.CenterRight)
+        public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size, Anchor anchor = Anchor.CenterRight) : base(position, size, anchor)
         {
             this.beatmap = beatmap;
 

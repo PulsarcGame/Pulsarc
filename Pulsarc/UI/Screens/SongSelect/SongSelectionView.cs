@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
@@ -12,7 +11,6 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -33,27 +31,45 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Back button to the Main Menu
         ReturnButton button_back;
 
-        // Card stats
-        // TODO: Make this more skinnable/adjustable by the user.
-        float cardWidth, cardHeight, cardMargin, totalHeight, currentFocus, lastFocus;
+        // Stats for cards and focus
+        float currentFocus, lastFocus; // Focus
+        float beatmapCardWidth, beatapCardHeight, beatmapCardMargin, beatmapCardTotalHeight; // Beatmap Card stats
+        float scoreCardWidth, scoreCardHeight, scoreCardMargin, scoreCardTotalHeight; // Score Card stats
 
+        /// <summary>
+        /// The view for the SongSelect Screen.
+        /// TODO: Cleanup this initializer
+        /// </summary>
+        /// <param name="screen"></param>
+        /// <param name="beatmaps">The list of beatmaps to show on this screen.</param>
+        /// <param name="search">The starting string value of the SearchBar. Default is ""</param>
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
 
-            Texture2D beatmapCardTex = Skin.assets["beatmap_card"];
-            cardWidth = beatmapCardTex.Width - 10;
-            cardHeight = beatmapCardTex.Height - 10;
-            cardMargin = getSkinnablePropertyInt("BeatmapCardMargin");
-            totalHeight = cardHeight + cardMargin;
+            // Beatmap Card stats
+            beatmapCardWidth = BeatmapCard.StaticTexture.Width;
+            beatapCardHeight = BeatmapCard.StaticTexture.Height;
+
+            beatmapCardMargin = getSkinnablePropertyInt("BeatmapCardMargin");
+            beatmapCardTotalHeight = beatapCardHeight + beatmapCardMargin;
+
+            // Score Card stats
+            scoreCardWidth = ScoreCard.StaticTexture.Width;
+            scoreCardHeight = ScoreCard.StaticTexture.Height;
+
+            scoreCardMargin = getSkinnablePropertyFloat("ScoreCardMargin");
+            scoreCardTotalHeight = scoreCardHeight + scoreCardMargin;
 
             int i = 0;
             foreach (Beatmap beatmap in beatmaps)
             {
-                Vector2 position = new Vector2(Pulsarc.CurrentWidth, totalHeight * Pulsarc.HeightScale * i);
-                Vector2 size = new Vector2(cardWidth, cardHeight);
+                Vector2 position = new Vector2(Pulsarc.CurrentWidth, beatmapCardTotalHeight * Pulsarc.HeightScale * i);
+                Vector2 size = new Vector2(beatmapCardWidth, beatapCardHeight);
 
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, position, size));
+                Anchor cardAnchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
+
+                GetSongSelection().cards.Add(new BeatmapCard(beatmap, position, size, cardAnchor));
                 i++;
             }
 
@@ -124,22 +140,43 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 if (card == s)
                 {
+                    // Set to "selected" state
                     card.setClicked(true);
 
+                    // Load Beatmap
                     card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
 
-                    scores.Clear();
-                    Vector2 currentPos = new Vector2(0, 20);
-                    int rank = 1;
-
-                    foreach (ScoreData score in card.beatmap.getLocalScores())
-                    {
-                        scores.Add(new ScoreCard(score, currentPos, rank));
-                        currentPos.Y += 150;
-                        rank++;
-                    }
+                    // ScoreCard Stuff
+                    scoreCardStuff(card);
                     break;
                 }
+            }
+        }
+
+        private void scoreCardStuff(BeatmapCard card)
+        {
+            scores.Clear();
+
+            // ScoreCard Position Setup
+            // Get start position
+            Vector2 currentPos = Skin.getStartPosition("song_select", "Properties", "ScoreCardStartPos");
+
+            // Find the offset
+            float offsetX = getSkinnablePropertyFloat("ScoreCardX");
+            float offsetY = getSkinnablePropertyFloat("ScoreCardY");
+            Vector2 offset = new Vector2(offsetX, offsetY);
+
+            // Apply the offset
+            currentPos += offset;
+
+            int rank = 1;
+
+            // Make a ScoreCard for each score.
+            foreach (ScoreData score in card.beatmap.getLocalScores())
+            {
+                scores.Add(new ScoreCard(score, currentPos, rank));
+                currentPos.Y += 150;
+                rank++;
             }
         }
 
@@ -181,7 +218,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0, totalHeight * diff));
+                    card.move(new Vector2(0, beatmapCardTotalHeight * diff));
                 }
             }
 

@@ -7,7 +7,6 @@ using Pulsarc.Utils.Input;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
