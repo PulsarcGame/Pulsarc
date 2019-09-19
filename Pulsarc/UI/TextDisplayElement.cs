@@ -16,12 +16,13 @@ namespace Pulsarc.UI
         float fontScale;
         public Color color;
 
-        Vector2 processedPosition;
+        public Vector2 processedPosition;
 
         bool caught = false;
 
         /// <summary>
         /// A text-based Drawable.
+        /// TODO: Fix positioning with different Anchors and resolutions/aspect ratios.
         /// </summary>
         /// <param name="name">The text to be displayed.</param>
         /// <param name="position">The position of this TDE</param>

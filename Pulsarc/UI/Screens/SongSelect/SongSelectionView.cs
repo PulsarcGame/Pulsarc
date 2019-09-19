@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -93,7 +93,14 @@ namespace Pulsarc.UI.Screens.SongSelect
                 focusCard(GetSongSelection().focusedCard);
             }
 
-            searchBox = new SearchBox(search, AnchorUtil.FindScreenPosition(Anchor.TopRight), Anchor.TopRight);
+            Anchor searchBoxAnchor = getSkinnablePropertyAnchor("SearchBarAnchor");
+            Vector2 searchBarStartPosition = Skin.getConfigStartPosition("song_select", "Properties", "SearchBarStartPos");
+
+            searchBox = new SearchBox(search, searchBarStartPosition, searchBoxAnchor);
+
+            int searchBarX = getSkinnablePropertyInt("SearchBarX");
+            int searchBarY = getSkinnablePropertyInt("SearchBarY");
+            searchBox.move(searchBarX, searchBarY);
 
             background = new Background("select_background");
 
