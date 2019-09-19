@@ -65,10 +65,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected virtual void addTextDisplayElement(string typeName)
         {
             // Find variables for TDE
-            Vector2 position = Skin.getStartPosition(config, section, typeName + "StartPos", this); // Vector2 position;
+            Vector2 position = Skin.getConfigStartPosition(config, section, typeName + "StartPos", this); // Vector2 position;
             int fontSize = getSkinnableInt(typeName + "FontSize"); // int fontSize
             Anchor anchor = getSkinnableAnchor(typeName + "Anchor"); // Anchor textAnchor;
-            Color color = Skin.getColor(config, section, typeName + "Color"); // Color textColor;
+            Color color = Skin.getConfigColor(config, section, typeName + "Color"); // Color textColor;
 
             // Make TDE
             TextDisplayElement text = new TextDisplayElement("", position, fontSize, anchor, color);

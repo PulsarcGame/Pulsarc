@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -63,20 +63,22 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             // Set up beatmap cards
             int i = 0;
-            Vector2 startPosition = Skin.getStartPosition("song_select", "Properties", "BeatmapCardStartPos");
+            Vector2 beatmapCardStartPosition = Skin.getConfigStartPosition("song_select", "Properties", "BeatmapCardStartPos");
 
             int offsetX = getSkinnablePropertyInt("BeatmapCardX");
             int offsetY = getSkinnablePropertyInt("BeatmapCardY");
-            Vector2 offset = new Vector2(offsetX, offsetY);
 
             foreach (Beatmap beatmap in beatmaps)
             {
-                Vector2 position = new Vector2(startPosition.X, startPosition.Y + (beatmapCardTotalHeight * Pulsarc.HeightScale * i++));
+                Vector2 position = new Vector2(
+                    beatmapCardStartPosition.X,
+                    beatmapCardStartPosition.Y + (beatmapCardTotalHeight * Pulsarc.HeightScale * i++)
+                );
 
                 Anchor anchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
 
                 BeatmapCard card = new BeatmapCard(beatmap, position, anchor);
-                card.move(offset);
+                card.move(offsetX, offsetY);
 
                 GetSongSelection().cards.Add(card);
             }
@@ -167,7 +169,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             // ScoreCard Position Setup
             // Get start position
-            Vector2 startPos = Skin.getStartPosition("song_select", "Properties", "ScoreCardStartPos");
+            Vector2 startPos = Skin.getConfigStartPosition("song_select", "Properties", "ScoreCardStartPos");
 
             float offsetX = getSkinnablePropertyFloat("ScoreCardX");
             float offsetY = getSkinnablePropertyFloat("ScoreCardY");

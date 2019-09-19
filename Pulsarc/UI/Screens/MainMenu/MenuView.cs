@@ -36,7 +36,7 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(Skin.getStartPosition("main_menu", "Properties", "IconStartPos"), getSkinnablePropertyAnchor("IconAnchor"));
+            gameIcon = new GameIcon(Skin.getConfigStartPosition("main_menu", "Properties", "IconStartPos"), getSkinnablePropertyAnchor("IconAnchor"));
 
             Vector2 offset = new Vector2(
                 getSkinnablePropertyInt("IconX"),
@@ -105,10 +105,10 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             // Find variables for TDE
             string textStr = getSkinnablePropertyString(typeName + "Text"); // string text
-            Vector2 position = Skin.getStartPosition("main_menu", "Properties", typeName + "StartPos"); // Vector2 position;
+            Vector2 position = Skin.getConfigStartPosition("main_menu", "Properties", typeName + "StartPos"); // Vector2 position;
             int fontSize = getSkinnablePropertyInt(typeName + "TextFontSize");
             Anchor textAnchor = getSkinnablePropertyAnchor(typeName + "TextAnchor"); // Anchor textAnchor;
-            Color textColor = Skin.getColor("main_menu", "Properties", typeName + "TextColor"); // Color textColor;
+            Color textColor = Skin.getConfigColor("main_menu", "Properties", typeName + "TextColor"); // Color textColor;
 
             // Make TDE
             TextDisplayElement text = new TextDisplayElement(textStr, position, fontSize, textAnchor, textColor);

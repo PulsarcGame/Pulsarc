@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // set grade
             float scale = getSkinnableFloat("GradeScale");
 
-            Vector2 startPos = Skin.getStartPosition(config, section, "GradeStartPos", this);
+            Vector2 startPos = Skin.getConfigStartPosition(config, section, "GradeStartPos", this);
 
             Anchor gradeAnchor = getSkinnableAnchor("GradeAnchor");
 

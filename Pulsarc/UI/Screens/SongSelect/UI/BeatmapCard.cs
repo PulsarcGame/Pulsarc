@@ -45,7 +45,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // set diffbar
             float percent = (float) (beatmap.Difficulty / 10f);
 
-            Vector2 startPos = Skin.getStartPosition(config, section, "DiffBarStartPos", this);
+            Vector2 startPos = Skin.getConfigStartPosition(config, section, "DiffBarStartPos", this);
 
             Anchor diffAnchor = getSkinnableAnchor("DiffBarAnchor");
 

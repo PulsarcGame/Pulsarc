@@ -271,7 +271,7 @@ namespace Pulsarc.Skinning
         /// <returns>The position found using the provided parameters.
         /// Currently only ScreenAnchor and pre-determined parent position finding is supported.
         /// Will return (0,0) otherwise.</returns>
-        static public Vector2 getStartPosition(string config, string section, string key, Drawable parent = null)
+        static public Vector2 getConfigStartPosition(string config, string section, string key, Drawable parent = null)
         {
             string valueToParse = getConfigString(config, section, key);
 
@@ -320,7 +320,7 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The Color found using the provided parameters.</returns>
-        static public Color getColor(string config, string section, string key)
+        static public Color getConfigColor(string config, string section, string key)
         {
             string valueToParse = getConfigString(config, section, key);
 
