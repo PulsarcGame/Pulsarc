@@ -61,16 +61,24 @@ namespace Pulsarc.UI.Screens.SongSelect
             scoreCardMargin = getSkinnablePropertyFloat("ScoreCardMargin");
             scoreCardTotalHeight = scoreCardHeight + scoreCardMargin;
 
+            // Set up beatmap cards
             int i = 0;
+            Vector2 startPosition = Skin.getStartPosition("song_select", "Properties", "BeatmapCardStartPos");
+
+            int offsetX = getSkinnablePropertyInt("BeatmapCardX");
+            int offsetY = getSkinnablePropertyInt("BeatmapCardY");
+            Vector2 offset = new Vector2(offsetX, offsetY);
+
             foreach (Beatmap beatmap in beatmaps)
             {
-                Vector2 position = new Vector2(Pulsarc.CurrentWidth, beatmapCardTotalHeight * Pulsarc.HeightScale * i);
-                Vector2 size = new Vector2(beatmapCardWidth, beatapCardHeight);
+                Vector2 position = new Vector2(startPosition.X, startPosition.Y + (beatmapCardTotalHeight * Pulsarc.HeightScale * i++));
 
-                Anchor cardAnchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
+                Anchor anchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
 
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, position, cardAnchor));
-                i++;
+                BeatmapCard card = new BeatmapCard(beatmap, position, anchor);
+                card.move(offset);
+
+                GetSongSelection().cards.Add(card);
             }
 
             // Select a random map by default in the song selection.
@@ -159,24 +167,25 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             // ScoreCard Position Setup
             // Get start position
-            Vector2 currentPos = Skin.getStartPosition("song_select", "Properties", "ScoreCardStartPos");
+            Vector2 startPos = Skin.getStartPosition("song_select", "Properties", "ScoreCardStartPos");
 
-            // Find the offset
             float offsetX = getSkinnablePropertyFloat("ScoreCardX");
             float offsetY = getSkinnablePropertyFloat("ScoreCardY");
             Vector2 offset = new Vector2(offsetX, offsetY);
 
-            // Apply the offset
-            currentPos += offset;
-
-            int rank = 1;
+            int rank = 0;
 
             // Make a ScoreCard for each score.
             foreach (ScoreData score in card.beatmap.getLocalScores())
             {
-                scores.Add(new ScoreCard(score, currentPos, rank));
-                currentPos.Y += 150;
-                rank++;
+                Vector2 position = new Vector2(startPos.X, startPos.Y + (scoreCardTotalHeight * Pulsarc.HeightScale * rank++));
+
+                Anchor anchor = getSkinnablePropertyAnchor("ScoreCardAnchor");
+
+                ScoreCard scoreCard = new ScoreCard(score, position, rank, anchor);
+                scoreCard.move(offset);
+
+                scores.Add(new ScoreCard(score, position, rank));
             }
         }
 

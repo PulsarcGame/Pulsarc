@@ -3,57 +3,72 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
-using System.Collections.Generic;
+using System;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    public class ScoreCard : Drawable
+    public class ScoreCard : Card
     {
-        public static readonly Texture2D StaticTexture = Skin.assets["scorecard"];
+        public static Texture2D StaticTexture = Skin.assets["scorecard"];
 
         ScoreData scoreData;
 
-        List<TextDisplayElement> scoreCardData = new List<TextDisplayElement>();
-
         Grade grade;
-        ScoreCardRank rank;
-        ScoreCardScore score;
-        ScoreCardAccuracy acc;
-        ScoreCardCombo combo;
 
-        public ScoreCard(ScoreData data, Vector2 position, int rankPosition) : base(StaticTexture, position)
+        public ScoreCard(ScoreData data, Vector2 position, int rankPosition, Anchor anchor = Anchor.TopLeft) : base(StaticTexture, position, anchor)
         {
+            // set scoredata
             scoreData = data;
 
-            grade = new Grade(scoreData.grade, new Vector2(position.X + 180, position.Y + 75), 0.2f);
-            rank = new ScoreCardRank(new Vector2(position.X + 70, position.Y + 70), Color.White, anchor: Anchor.CenterLeft);
-            score = new ScoreCardScore(new Vector2(position.X + 260, position.Y + 50), Color.White);
-            acc = new ScoreCardAccuracy(new Vector2(position.X + 580, position.Y + 70), Color.White, anchor: Anchor.CenterRight);
-            combo = new ScoreCardCombo(new Vector2(position.X + 260, position.Y + 90), Color.White);
+            // set grade
+            float scale = getSkinnableFloat("GradeScale");
 
-            rank.Update(rankPosition);
-            score.Update(scoreData.score);
-            acc.Update(scoreData.accuracy);
-            combo.Update(scoreData.maxcombo);
+            Vector2 startPos = Skin.getStartPosition(config, section, "GradeStartPos", this);
+
+            Anchor gradeAnchor = getSkinnableAnchor("GradeAnchor");
+
+            grade = new Grade(scoreData.grade, startPos, scale);
+
+            int gradeXOffset = getSkinnableInt("GradeX");
+            int gradeYOffset = getSkinnableInt("GradeY");
+            grade.scaledMove(gradeXOffset, gradeYOffset);
+
+            // set other data
+            addTextDisplayElement("Rank");
+            textElements[0].Update("#" + rankPosition);
+
+            addTextDisplayElement("Score");
+            textElements[1].Update(scoreData.score.ToString("#,##"));
+
+            addTextDisplayElement("Acc");
+            textElements[2].Update(Math.Round(scoreData.accuracy * 100, 2).ToString("#,##.00") + "%");
+
+            addTextDisplayElement("Combo");
+            textElements[3].Update("x" + scoreData.maxCombo);
+        }
+
+        protected override void setConfigAndSection()
+        {
+            config = "song_select";
+            section = "ScoreCardData";
         }
 
         public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            rank.move(delta, scaledPositioning);
+            base.move(delta, scaledPositioning);
             grade.move(delta, scaledPositioning);
-            score.move(delta, scaledPositioning);
-            acc.move(delta, scaledPositioning);
-            combo.move(delta, scaledPositioning);
+        }
+
+        public override void scaledMove(Vector2 delta)
+        {
+            base.scaledMove(delta);
+            grade.scaledMove(delta);
         }
 
         public override void Draw()
         {
             base.Draw();
             grade.Draw();
-            rank.Draw();
-            score.Draw();
-            acc.Draw();
-            combo.Draw();
         }
     }
 }

@@ -6,8 +6,6 @@ using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using System;
-using System.Collections.Generic;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
@@ -62,7 +60,6 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             int diffBarXOffset = getSkinnableInt("DiffBarX");
             int diffBarYOffset = getSkinnableInt("DiffBarY");
             diffBar.scaledMove(diffBarXOffset, diffBarYOffset);
-            Logger.Debug(currentSize.ToString() + diffBar.truePosition.ToString(), LogType.Runtime);
 
             // set metadata
             addTextDisplayElement("Title");
