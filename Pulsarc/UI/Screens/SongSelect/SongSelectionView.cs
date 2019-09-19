@@ -69,7 +69,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 Anchor cardAnchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
 
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, position, size, cardAnchor));
+                GetSongSelection().cards.Add(new BeatmapCard(beatmap, position, cardAnchor));
                 i++;
             }
 

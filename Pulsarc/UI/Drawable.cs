@@ -297,8 +297,6 @@ namespace Pulsarc.UI
                 return;
             }
 
-            Vector2 newPos = position;
-
             switch (anchor)
             {
                 case Anchor.Center:

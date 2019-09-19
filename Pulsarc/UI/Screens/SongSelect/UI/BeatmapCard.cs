@@ -7,98 +7,90 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
+using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     public class BeatmapCard : Card
     {
-        public static readonly Texture2D StaticTexture = Skin.assets["beatmap_card"];
+        public static Texture2D StaticTexture = Skin.assets["beatmap_card"];
 
         public Beatmap beatmap;
 
-        private bool isClicked = false;
-        
         // How far this card will extend when selected
-        private static float clickedDistance = Skin.getConfigFloat("song_select", "Properties", "BeatmapCardSelectOffset");
+        private float clickedDistance;
         // What direction this card will extend in
-        private static string clickedDirection = Skin.getConfigString("song_select", "Properties", "BeatmapCardSelectDirection");
+        private string clickedDirection;
 
         private float currentClickDistance = 0f;
         private float lastClickDistance = 0f;
 
         // The difficulty of the map represented as a bar
-        BeatmapCardDifficulty diffBar;
-
-        // Metadata
-        List<TextDisplayElement> metadata = new List<TextDisplayElement>();
-
+        private BeatmapCardDifficulty diffBar;
+        
         /// <summary>
         /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
+        /// TODO: Cleanup
         /// </summary>
         /// <param name="beatmap">The beatmap associated with this card.</param>
         /// <param name="truePosition">The position of the card.</param>
-        /// <param name="size">The size of the card.</param>
-        public BeatmapCard(Beatmap beatmap, Vector2 position, Vector2 size, Anchor anchor = Anchor.CenterRight) : base(position, size, anchor)
+        public BeatmapCard(Beatmap beatmap, Vector2 position, Anchor anchor = Anchor.CenterRight) : base(StaticTexture, position, anchor)
         {
+            // set clicked distance and direction
+            clickedDistance = Skin.getConfigFloat(config, "Properties", "BeatmapCardSelectOffset");
+            clickedDirection = Skin.getConfigString(config, "Properties", "BeatmapCardSelectDirection");
+
+            // set beatmap
             this.beatmap = beatmap;
 
+            // set diffbar
             float percent = (float) (beatmap.Difficulty / 10f);
-            diffBar = new BeatmapCardDifficulty(new Vector2(AnchorUtil.FindScreenPosition(Anchor.CenterRight).X, truePosition.Y), percent <= 10 ? percent >= 0 ? percent : 0 : 10);
-            diffBar.scaledMove(-10, 165); // TODO: Make these values customizeable for custom skins.
 
-            addMetadataTDE("Title");
-            metadata[0].Update(beatmap.Title);
+            Vector2 startPos = Skin.getStartPosition(config, section, "DiffBarStartPos", this);
 
-            addMetadataTDE("Artist");
-            metadata[1].Update(beatmap.Artist);
+            Anchor diffAnchor = getSkinnableAnchor("DiffBarAnchor");
 
-            addMetadataTDE("Version");
-            metadata[2].Update(beatmap.Version);
+            diffBar = new BeatmapCardDifficulty
+            (
+                startPos,
+                // diffbar displayed percentage is 0 if less than 0, and 10 if greater than 10
+                percent <= 10 ? percent >= 0 ? percent : 0 : 10,
+                anchor
+            );
 
-            addMetadataTDE("Mapper");
-            metadata[3].Update(beatmap.Mapper);
+            int diffBarXOffset = getSkinnableInt("DiffBarX");
+            int diffBarYOffset = getSkinnableInt("DiffBarY");
+            diffBar.scaledMove(diffBarXOffset, diffBarYOffset);
+            Logger.Debug(currentSize.ToString() + diffBar.truePosition.ToString(), LogType.Runtime);
 
-            addMetadataTDE("Difficulty");
-            metadata[4].Update(string.Format("{0:0.00}", beatmap.Difficulty));
+            // set metadata
+            addTextDisplayElement("Title");
+            textElements[0].Update(beatmap.Title);
+
+            addTextDisplayElement("Artist");
+            textElements[1].Update(beatmap.Artist);
+
+            addTextDisplayElement("Version");
+            textElements[2].Update(beatmap.Version);
+
+            addTextDisplayElement("Mapper");
+            textElements[3].Update(beatmap.Mapper);
+
+            addTextDisplayElement("Difficulty");
+            textElements[4].Update(string.Format("{0:0.00}", beatmap.Difficulty));
         }
-        
-        /// <summary>
-        /// Add metadata TextDisplayElement to the Beatmap card, using the config to
-        /// determine their positioning and other properties.
-        /// </summary>
-        /// <param name="typeName">The "typeName" of the button, or the prefix in the config.</param>
-        private void addMetadataTDE(string typeName)
+
+        protected override void setConfigAndSection()
         {
-            // Find variables for TDE
-            Vector2 position = Skin.getStartPosition("song_select", "Metadata", typeName + "StartPos", this); // Vector2 position;
-            int fontSize = getSkinnableMetadataInt(typeName + "FontSize");
-            Anchor anchor = getSkinnableMetadataAnchor(typeName + "Anchor"); // Anchor textAnchor;
-            Color color = Skin.getColor("song_select", "Metadata", typeName + "Color"); // Color textColor;
-
-            // Make TDE
-            TextDisplayElement text = new TextDisplayElement("", position, fontSize, anchor, color);
-
-            // Offset
-            Vector2 offset = new Vector2(
-                getSkinnableMetadataInt(typeName + "X"),
-                getSkinnableMetadataInt(typeName + "Y"));
-
-            text.move(offset);
-
-            //Add TDE
-            metadata.Add(text);
+            config = "song_select";
+            section = "Metadata";
         }
 
         public override void Draw()
         {
             base.Draw();
             diffBar.Draw();
-
-            foreach (TextDisplayElement tde in metadata)
-            {
-                tde.Draw();
-            }
         }
 
         /// <summary>
@@ -184,62 +176,14 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// <param name="delta">How much to move from the current position.</param>
         public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            foreach (TextDisplayElement tde in metadata)
-            {
-                tde.move(delta, scaledPositioning);
-            }
             diffBar.move(delta, scaledPositioning);
             base.move(delta, scaledPositioning);
         }
 
         public override void scaledMove(Vector2 delta)
         {
-            foreach (TextDisplayElement tde in metadata)
-            {
-                tde.scaledMove(delta);
-            }
             diffBar.scaledMove(delta);
             base.scaledMove(delta);
-        }
-
-        /// <summary>
-        /// Find a float from the Metadata section of the Song Select config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The float value of the key provided.</returns>
-        private float getSkinnableMetadataFloat(string key)
-        {
-            return Skin.getConfigFloat("song_select", "Metadata", key);
-        }
-
-        /// <summary>
-        /// Find a int from the Metadata section of the Song Select config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The int value of the key provided.</returns>
-        private int getSkinnableMetadataInt(string key)
-        {
-            return Skin.getConfigInt("song_select", "Metadata", key);
-        }
-
-        /// <summary>
-        /// Find an Anchor from the Metadata section of the Song Select config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnableMetadataAnchor(string key)
-        {
-            return Skin.getConfigAnchor("song_select", "Metadata", key);
-        }
-
-        /// <summary>
-        /// Find a string from the Metadata section of the Song Select config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The string of the key provided.</returns>
-        private string getSkinnableMetadataString(string key)
-        {
-            return Skin.getConfigString("song_select", "Metadata", key);
         }
     }
 }
