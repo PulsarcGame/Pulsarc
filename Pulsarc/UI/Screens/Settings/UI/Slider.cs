@@ -62,7 +62,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(truePosition.X + edgeOffset + position, truePosition.Y));
+            selector.changePosition(new Vector2(anchorPosition.X + edgeOffset + position, anchorPosition.Y));
         }
 
         public void Update()
