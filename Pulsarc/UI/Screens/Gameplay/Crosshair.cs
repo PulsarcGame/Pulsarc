@@ -30,7 +30,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             truePosition.Y = screen.Y / 2;
 
             // Set the diameter and resize
-            Resize(baseCrosshairDiameter);
+            Resize(baseCrosshairDiameter * Pulsarc.HeightScale);
             changePosition(truePosition);
 
             // Set the rotation of the object.
@@ -54,7 +54,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             diameter = size;
             radius = diameter / 2;
-            base.Resize(size);
+            base.Resize(diameter);
         }
     }
 }

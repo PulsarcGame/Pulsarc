@@ -2,7 +2,6 @@
 using Pulsarc.Skinning;
 using Microsoft.Xna.Framework;
 using Pulsarc.Utils.Graphics;
-using Wobble.Logging;
 using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Common

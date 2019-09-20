@@ -262,54 +262,29 @@ namespace Pulsarc.Skinning
 
         /// <summary>
         /// Find the config provided, go to the section provided, and return the start position of the
-        /// key provided. "{Object}:{Anchor}" will provide the location of the {Object}'s {Anchor}.
-        /// For example, "Screen:CenterTop" would return (960,0) on a 1920x1080 resolution.
+        /// key provided. If parent is not null, the start position will be based on the parent.
+        /// If parent is null, start position will be based on the screen.
         /// </summary>
         /// <param name="config">The config to look in.</param>
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
-        /// <returns>The position found using the provided parameters.
+        /// <returns>
+        /// The position found using the provided parameters.
         /// Currently only ScreenAnchor and pre-determined parent position finding is supported.
-        /// Will return (0,0) otherwise.</returns>
+        /// </returns>
         static public Vector2 getConfigStartPosition(string config, string section, string key, Drawable parent = null)
         {
-            string valueToParse = getConfigString(config, section, key);
+            string anchorString = getConfigString(config, section, key);
 
-            var parts = valueToParse.Split(':');
-
-            Vector2 position;
-
-            switch (parts[0])
+            if (parent == null)
             {
-                case "Screen":
-                    if (parent != null)
-                    {
-                        Logger.Warning("The " + key + " will be deterimned using screen positioning, but a parent has been provided in the game code." +
-                            "\nUnless this is your intention, Please make sure to use \"Parent:" + parts[1] + "\" instead of \"Screen:" + parts[1] + "\" in the appropriate .ini file!", LogType.Runtime);
-                    }
-
-                    position = AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), parts[1]));
-                    break;
-                case "Parent":
-                    if (parent == null)
-                    {
-                        Logger.Warning("The " + key + " wants to reference a parent, but none was provided in the game code!" +
-                            "\nPlease Make sure to use \"Screen:" + parts[1] + "\" instead of \"Parent:" + parts[1] + "\" in the appropriate .ini file!" +
-                            "\n" + key + " will use Screen Positioning instead.", LogType.Runtime);
-                        goto case "Screen";
-                    }
-
-                    position = AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), parts[1]), parent);
-                    break;
-                default:
-                    Logger.Warning("Invalid Start position reference, please use \"Screen:" + parts[1] + "\" or \"Parent:" + parts[1] + "\" instead of \"" + parts[0] + ":" + parts[1] + "\" in the appropriate .ini file!" +
-                        "\n" + key + "will use (0,0) instead.", LogType.Runtime);
-
-                    position = Vector2.Zero;
-                    break;
+                return AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString));
             }
+            else
+            {
+                return AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString), parent);
 
-            return position;
+            }
         }
 
         /// <summary>

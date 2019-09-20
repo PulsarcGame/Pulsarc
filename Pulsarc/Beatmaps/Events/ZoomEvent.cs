@@ -41,9 +41,6 @@ namespace Pulsarc.Beatmaps.Events
         // when Handle is first called.
         public float startZoomLevel = -1;
 
-        // The index of this zoom.
-        private int index;
-
         // This ZoomEvent's end time, for non-Intralizooms
         private int endTime;
 
@@ -67,7 +64,7 @@ namespace Pulsarc.Beatmaps.Events
             }
 
             zoomType = (ZoomType)int.Parse(parameters[(int)ZoomParameter.ZoomType]);
-            zoomLevel = float.Parse(parameters[(int)ZoomParameter.ZoomLevel]);
+            zoomLevel = float.Parse(parameters[(int)ZoomParameter.ZoomLevel]) * Pulsarc.HeightScale;
             endTime = int.Parse(parameters[(int)ZoomParameter.EndPoint]);
         }
 
@@ -107,13 +104,6 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplay engine to modify.</param>
         private void handleIntralizooms(GameplayEngine gameplayEngine)
         {
-            /* If lastFrameTime hasn't been set yet, set it.
-            if (lastFrameTime == -1)
-            {
-                lastFrameTime = gameplayEngine.time;
-                return;
-            }*/
-
             if (!similarEventsCalled)
             {
                 findAllSimilarEvents(gameplayEngine);
