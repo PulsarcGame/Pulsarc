@@ -48,7 +48,6 @@ namespace Pulsarc.UI.Screens.Result
 
         /// <summary>
         /// ResultScreenView draws everything needed for the Result Screen.
-        /// TODO: Code Cleanup
         /// </summary>
         /// <param name="screen">The screen to draw on.</param>
         /// <param name="accuracy">The accuracy of the play.</param>
@@ -56,86 +55,180 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="beatmap">The beatmap that was played.</param>
         public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap, Background mapBackground) : base(screen)
         {
-            judgements = new List<KeyValuePair<Judge, JudgeCount>>();
             this.beatmap = beatmap;
 
-            button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
-            button_back = new ReturnButton("result_button_back", new Vector2(0, 1080));
-            button_retry = new RetryButton("result_button_retry", new Vector2(1920, 1080));
-
             scorecard = new Scorecard();
+
+            addButtons();
+
+            addBackgrounds(mapBackground);
+
+            addPlayStats(accuracy, grade);
+
+            addMetadata();
+
+            addHitErrorGraph();
+
+            addJudges();
+        }
+
+        private void addButtons()
+        {
+            button_advanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            float width = button_advanced.currentSize.X;
+            float height = button_advanced.currentSize.Y;
+            button_advanced.move(new Vector2(width, -height));
+
+            button_back = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            button_retry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+        }
+
+        private void addBackgrounds(Background mapBackground)
+        {
             background = new Background("result_background");
 
             this.mapBackground = mapBackground;
-            mapBackground.move(new Vector2 (Pulsarc.CurrentWidth / 10, 0));
+            mapBackground.move(new Vector2(Pulsarc.CurrentWidth / 10, 0));
+        }
 
-            this.grade = new Grade(grade, new Vector2(getSkinnablePositionFloat("GradeX"), getSkinnablePositionFloat("GradeY")), getSkinnablePositionFloat("GradeScale"));
+        private void addPlayStats(double accuracy, string grade)
+        {
+            this.grade = new Grade(grade, new Vector2(getSkinnablePropertyFloat("GradeX"), getSkinnablePropertyFloat("GradeY")), getSkinnablePropertyFloat("GradeScale"));
 
-            score = new Score(new Vector2(getSkinnablePositionFloat("ScoreX"), getSkinnablePositionFloat("ScoreY")), new Color(74,245,254), getSkinnablePositionInt("ScoreSize"), getSkinnablePositionAnchor("ScoreAnchor"));
-            combo = new Combo(new Vector2(getSkinnablePositionFloat("ComboX"), getSkinnablePositionFloat("ComboY")), new Color(74, 245, 254), getSkinnablePositionInt("ComboSize"), getSkinnablePositionAnchor("ComboAnchor"));
-            this.accuracy = new Accuracy(new Vector2(getSkinnablePositionFloat("AccuracyX"), getSkinnablePositionFloat("AccuracyY")), new Color(74, 245, 254), getSkinnablePositionInt("AccuracySize"), getSkinnablePositionAnchor("AccuracyAnchor"));
-
-            title = new Title(new Vector2(getSkinnablePositionFloat("TitleX"), getSkinnablePositionFloat("TitleY")), getSkinnablePositionInt("TitleSize"), getSkinnablePositionAnchor("TitleAnchor"));
-            artist = new Artist(new Vector2(getSkinnablePositionFloat("ArtistX"), getSkinnablePositionFloat("ArtistY")), getSkinnablePositionInt("ArtistSize"), getSkinnablePositionAnchor("ArtistAnchor"));
-            version = new Version(new Vector2(getSkinnablePositionFloat("VersionX"), getSkinnablePositionFloat("VersionY")), getSkinnablePositionInt("VersionSize"), getSkinnablePositionAnchor("VersionAnchor"));
-            mapper = new Mapper(new Vector2(getSkinnablePositionFloat("MapperX"), getSkinnablePositionFloat("MapperY")), new Color(74, 245, 254), getSkinnablePositionInt("MapperSize"), getSkinnablePositionAnchor("MapperAnchor"));
-
-            button_advanced.move(new Vector2(button_back.Texture.Width, -button_advanced.Texture.Height));
+            score = new Score(new Vector2(getSkinnablePropertyFloat("ScoreX"), getSkinnablePropertyFloat("ScoreY")), new Color(74, 245, 254), getSkinnablePropertyInt("ScoreSize"), getSkinnablePropertyAnchor("ScoreAnchor"));
+            combo = new Combo(new Vector2(getSkinnablePropertyFloat("ComboX"), getSkinnablePropertyFloat("ComboY")), new Color(74, 245, 254), getSkinnablePropertyInt("ComboSize"), getSkinnablePropertyAnchor("ComboAnchor"));
+            this.accuracy = new Accuracy(new Vector2(getSkinnablePropertyFloat("AccuracyX"), getSkinnablePropertyFloat("AccuracyY")), new Color(74, 245, 254), getSkinnablePropertyInt("AccuracySize"), getSkinnablePropertyAnchor("AccuracyAnchor"));
 
             this.accuracy.Update(accuracy);
             combo.Update(GetResultScreen().combo);
             score.Update(GetResultScreen().display_score);
+        }
 
+        private void addMetadata()
+        {
+            title = new Title(new Vector2(getSkinnablePropertyFloat("TitleX"), getSkinnablePropertyFloat("TitleY")), getSkinnablePropertyInt("TitleSize"), getSkinnablePropertyAnchor("TitleAnchor"));
+            artist = new Artist(new Vector2(getSkinnablePropertyFloat("ArtistX"), getSkinnablePropertyFloat("ArtistY")), getSkinnablePropertyInt("ArtistSize"), getSkinnablePropertyAnchor("ArtistAnchor"));
+            version = new Version(new Vector2(getSkinnablePropertyFloat("VersionX"), getSkinnablePropertyFloat("VersionY")), getSkinnablePropertyInt("VersionSize"), getSkinnablePropertyAnchor("VersionAnchor"));
+            mapper = new Mapper(new Vector2(getSkinnablePropertyFloat("MapperX"), getSkinnablePropertyFloat("MapperY")), new Color(74, 245, 254), getSkinnablePropertyInt("MapperSize"), getSkinnablePropertyAnchor("MapperAnchor"));
+            
             title.Update(GetResultScreen().beatmap.Title);
             artist.Update(GetResultScreen().beatmap.Artist);
             version.Update(GetResultScreen().beatmap.Version);
             mapper.Update(GetResultScreen().beatmap.Mapper);
+        }
 
+        private void addHitErrorGraph()
+        {
             hitErrorGraph = new HitErrorGraph(
-                new Vector2(getSkinnablePositionFloat("HitErrorX")
-                            , getSkinnablePositionFloat("HitErrorY"))
-               , (int)(getSkinnablePositionFloat("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
-               , (int) (getSkinnablePositionFloat("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
+                new Vector2(getSkinnablePropertyFloat("HitErrorX")
+                            , getSkinnablePropertyFloat("HitErrorY"))
+               , (int)(getSkinnablePropertyFloat("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
+               , (int)(getSkinnablePropertyFloat("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
                , GetResultScreen().hits);
+        }
 
-            foreach(JudgementValue judge in Judgement.judgements)
+        private void addJudges()
+        {
+            judgements = new List<KeyValuePair<Judge, JudgeCount>>();
+
+            foreach (JudgementValue judge in Judgement.judgements)
             {
                 addJudgeInfo(judge.name);
             }
-            foreach(KeyValuePair<Judge,JudgeCount> judgePair in judgements)
+            foreach (KeyValuePair<Judge, JudgeCount> judgePair in judgements)
             {
                 judgePair.Value.Update(GetResultScreen().judges_count[judgePair.Value.name]);
             }
         }
 
         /// <summary>
-        /// Find a float position from the Position section of the Result Screen config.
+        /// Find a float position from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePositionFloat(string key)
+        private float getSkinnablePropertyFloat(string key)
         {
-            return Skin.getConfigFloat("result_screen", "Positions", key);
+            return Skin.getConfigFloat("result_screen", "Properties", key);
         }
 
         /// <summary>
-        /// Find a int from the Position section of the Result Screen config.
+        /// Find a float position from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnableMetadataFloat(string key)
+        {
+            return Skin.getConfigFloat("result_screen", "Metadata", key);
+        }
+
+        /// <summary>
+        /// Find a float position from the Grades section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnableGradeFloat(string key)
+        {
+            return Skin.getConfigFloat("result_screen", "Grades", key);
+        }
+
+        /// <summary>
+        /// Find a int from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePositionInt(string key)
+        private int getSkinnablePropertyInt(string key)
         {
-            return Skin.getConfigInt("result_screen", "Positions", key);
+            return Skin.getConfigInt("result_screen", "Properties", key);
         }
 
         /// <summary>
-        /// Find an Anchor from the Position section of the Result Screen config.
+        /// Find a int from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnableMetadataInt(string key)
+        {
+            return Skin.getConfigInt("result_screen", "Metadata", key);
+        }
+
+        /// <summary>
+        /// Find a int from the Grades section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnableGradeInt(string key)
+        {
+            return Skin.getConfigInt("result_screen", "Grades", key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePositionAnchor(string key)
+        private Anchor getSkinnablePropertyAnchor(string key)
         {
-            return Skin.getConfigAnchor("result_screen", "Positions", key);
+            return Skin.getConfigAnchor("result_screen", "Properties", key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnableMetadataAnchor(string key)
+        {
+            return Skin.getConfigAnchor("result_screen", "Metadata", key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Grades section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnableGradeAnchor(string key)
+        {
+            return Skin.getConfigAnchor("result_screen", "Grades", key);
         }
 
         /// <summary>
@@ -148,13 +241,13 @@ namespace Pulsarc.UI.Screens.Result
             JudgementValue judgement = Judgement.getByName(name);
             judgements.Add(new KeyValuePair<Judge, JudgeCount>(
                         new Judge(judgement.score,
-                            new Vector2(getSkinnablePositionInt(firstUpper + "X"), getSkinnablePositionInt(firstUpper + "Y")),
-                            getSkinnablePositionInt(firstUpper + "Scale")),
+                            new Vector2(getSkinnablePropertyInt(firstUpper + "X"), getSkinnablePropertyInt(firstUpper + "Y")),
+                            getSkinnablePropertyInt(firstUpper + "Scale")),
                         new JudgeCount(name, 
-                            new Vector2(getSkinnablePositionInt(firstUpper + "CountX"), getSkinnablePositionInt(firstUpper + "CountY")),
+                            new Vector2(getSkinnablePropertyInt(firstUpper + "CountX"), getSkinnablePropertyInt(firstUpper + "CountY")),
                             judgement.color,
-                            getSkinnablePositionInt(firstUpper + "CountSize"),
-                            getSkinnablePositionAnchor(firstUpper + "CountAnchor"))
+                            getSkinnablePropertyInt(firstUpper + "CountSize"),
+                            getSkinnablePropertyAnchor(firstUpper + "CountAnchor"))
                         ));
         }
 
