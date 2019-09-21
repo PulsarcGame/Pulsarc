@@ -9,11 +9,11 @@ namespace Pulsarc.UI.Screens.Result.UI
     class Grade : Drawable
     {
         List<Grade> subGrades;
-        public Grade(string grade_, Vector2 position, float scale) : base(Skin.assets["grade_" + grade_[0].ToString()], position)
+        public Grade(string grade_, Vector2 position, float scale, Anchor anchor = Anchor.Center) : base(Skin.assets["grade_" + grade_[0].ToString()], position, anchor: anchor)
         {
             subGrades = new List<Grade>();
 
-            Resize(Texture.Width * scale);
+            Resize(currentSize.X * scale);
 
             for (int i = 0; i < grade_.Length - 1; i++)
             {
@@ -22,18 +22,18 @@ namespace Pulsarc.UI.Screens.Result.UI
                 {
                     foreach (Grade g in subGrades)
                     {
-                        g.move(new Vector2(-Texture.Width * this.scale / 2.5f, 0));
+                        g.move(new Vector2(currentSize.X / 2.5f, 0));
                     }
                 }
             }
 
-            changePosition(new Vector2(position.X - (Texture.Width * scale) / 2, position.Y - (Texture.Height * scale) / 2));
+            changePosition(new Vector2(position.X - currentSize.X / 2, position.Y - currentSize.Y / 2));
 
             for (int i = 0; i < grade_.Length - 1; i++)
             {
                 if (i % 2 == 0)
                 {
-                    move(new Vector2(Texture.Width * this.scale / 2.5f, 0));
+                    move(new Vector2(currentSize.X / 2.5f, 0));
                 }
             }
         }

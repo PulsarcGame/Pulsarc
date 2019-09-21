@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Pulsarc.Skinning;
 using System.Collections.Generic;
 using System.Linq;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -10,15 +12,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The different judgements that can be obtained during gameplay.
         /// Can be easily edited to change how Judgement works.
         /// </summary>
-        static public List<JudgementValue> judgements = new List<JudgementValue>()
+        public static readonly List<JudgementValue> judgements = new List<JudgementValue>()
         {
             //////////////// Judge equal to Stepmania J4 /////////////
-            new JudgementValue("max",       1,      22,    320,    2,  new Color(216,   0, 255)),
-            new JudgementValue("perfect",   1,      45,    300,    1,  new Color(240, 198,  35)),
-            new JudgementValue("great",   2/3,      90,    200,    -8,  new Color( 52, 237,  92)),
-            new JudgementValue("good",    1/3,     135,    100,   -15,  new Color( 60, 143, 222)),
-            new JudgementValue("bad",     1/6,     180,     50,  -45,  new Color( 98,  97,  97)),
-            new JudgementValue("miss",      0,     200,      0,  -100,  new Color(158,  28,  28)),
+            new JudgementValue("max",       1,      22,    320,     2),
+            new JudgementValue("perfect",   1,      45,    300,     1),
+            new JudgementValue("great",   2/3,      90,    200,    -8),
+            new JudgementValue("good",    1/3,     135,    100,   -15),
+            new JudgementValue("bad",     1/6,     180,     50,   -45),
+            new JudgementValue("miss",      0,     200,      0,  -100),
         };
 
         /// <summary>
@@ -78,7 +80,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <returns></returns>
         static public JudgementValue getPreviousJudgementValue(JudgementValue judgement)
         {
-            JudgementValue result = new JudgementValue("0",0,0,0,0,Color.White);
+            JudgementValue result = null;
 
             for (int i = 0; i < judgements.Count; i++)
             {
@@ -129,14 +131,18 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="score">How much score is added to the total hidden score when this JudgementValue is obtained.</param>
         /// <param name="combo_addition">How much combo is added to the total hidden combo when this JudgementValue is obtained.</param>
         /// <param name="color">The color corresponding to this JudgementValue</param>
-        public JudgementValue(string name, double acc, int judge, int score, int combo_addition, Color color)
+        public JudgementValue(string name, double acc, int judge, int score, int combo_addition)
         {
             this.name = name;
             this.acc = acc;
             this.judge = judge;
             this.score = score;
-            this.color = color;
             this.combo_addition = combo_addition;
+
+            string colorName = char.ToUpper(name[0]) + name.Substring(1) + "Color";
+            color = Skin.getConfigColor("result_screen", "Judgements", colorName);
+
+            Logger.Debug("Created " + name, LogType.Runtime);
         }
     }
 }

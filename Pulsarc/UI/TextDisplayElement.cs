@@ -8,7 +8,7 @@ namespace Pulsarc.UI
 {
     public class TextDisplayElement : Drawable
     {
-        string name;
+        public string name;
 
         // Text
         SpriteFont font;
@@ -45,7 +45,7 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Update the text with new text.
+        /// Update the text with new text added to name.
         /// </summary>
         /// <param name="value">The text to change to</param>
         public void Update(string value)
