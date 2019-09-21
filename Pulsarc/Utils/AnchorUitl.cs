@@ -9,6 +9,12 @@ namespace Pulsarc.Utils
     /// </summary>
     static public class AnchorUtil
     {
+        /// <summary>
+        /// Finds the position of the provided anchor on the provided drawable.
+        /// </summary>
+        /// <param name="anchor">The anchor of the drawable to find the position of.</param>
+        /// <param name="drawable">The drawable to find the anchorposition of.</param>
+        /// <returns>A Vector2 representing the Coordinate of the anchor point on the provided drawable.</returns>
         static public Vector2 FindDrawablePosition(Anchor anchor, Drawable drawable)
         {
             float x = drawable.truePosition.X;

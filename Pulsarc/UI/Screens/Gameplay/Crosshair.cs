@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -16,22 +17,18 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The crosshair, or "Judgement Circle" of Pulsarc.
         /// </summary>
         /// <param name="baseCrosshairDiameter">The base diameter for this Crosshair.</param>
-        public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"])
+        public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"], anchor: Anchor.Center)
         {
-            // Vector representing the base screen of Pulsarc.
-            Vector2 screen = Pulsarc.getDimensions();
-
             // Find the origin (center) of this Crosshair
-            origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
-            origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
+            int width = Pulsarc.CurrentWidth;
+            int height = Pulsarc.CurrentHeight;
 
-            // Determine the position for this Crosshair
-            truePosition.X = screen.X / 2;
-            truePosition.Y = screen.Y / 2;
+            origin.X = (width / 2) + ((Texture.Width - width) / 2);
+            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
 
             // Set the diameter and resize
             Resize(baseCrosshairDiameter * Pulsarc.HeightScale);
-            changePosition(truePosition);
+            changePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
 
             // Set the rotation of the object.
             // TODO: Make this customizeable by the beatmap.
