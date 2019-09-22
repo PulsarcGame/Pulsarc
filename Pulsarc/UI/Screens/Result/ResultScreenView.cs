@@ -210,6 +210,7 @@ namespace Pulsarc.UI.Screens.Result
             // JudgeCount
             TextDisplayElement text = makeTextDisplayElement(configName + "Count", sections[2]);
             text.name = name;
+            text.color = judgement.color;
 
             judgements.Add(new KeyValuePair<Judge, TextDisplayElement>(judge, text));
         }
@@ -220,7 +221,14 @@ namespace Pulsarc.UI.Screens.Result
             Vector2 position = Skin.getConfigStartPosition(config, section, typeName + "StartPos", scorecard);
             int fontSize = Skin.getConfigInt(config, section, typeName + "FontSize");
             Anchor textAnchor = Skin.getConfigAnchor(config, section, typeName + "Anchor");
-            Color textColor = Skin.getConfigColor(config, section, typeName.Replace("Count", "") + "Color");
+            Color textColor = Color.White;
+
+            // For judgement text, which finds colors from judgements.ini in addJudgeInfo()
+            try
+            {
+                textColor = Skin.getConfigColor(config, section, typeName + "Color");
+            }
+            catch { }
 
             //Make TDE
             TextDisplayElement text = new TextDisplayElement("", position, fontSize, textAnchor, textColor);

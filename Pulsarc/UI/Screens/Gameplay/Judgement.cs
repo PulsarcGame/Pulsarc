@@ -2,7 +2,6 @@
 using Pulsarc.Skinning;
 using System.Collections.Generic;
 using System.Linq;
-using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -140,9 +139,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.combo_addition = combo_addition;
 
             string colorName = char.ToUpper(name[0]) + name.Substring(1) + "Color";
-            color = Skin.getConfigColor("result_screen", "Judgements", colorName);
-
-            Logger.Debug("Created " + name, LogType.Runtime);
+            color = Skin.getConfigColor("judgements", "Colors", colorName);
         }
     }
 }
