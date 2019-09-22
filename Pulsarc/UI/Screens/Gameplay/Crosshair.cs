@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 
@@ -17,7 +16,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The crosshair, or "Judgement Circle" of Pulsarc.
         /// </summary>
         /// <param name="baseCrosshairDiameter">The base diameter for this Crosshair.</param>
-        public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"], anchor: Anchor.Center)
+        public Crosshair(float baseCrosshairDiameter) : base(Skin.assets["crosshair"])
         {
             // Find the origin (center) of this Crosshair
             int width = Pulsarc.CurrentWidth;
