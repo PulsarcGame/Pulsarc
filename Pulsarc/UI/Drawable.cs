@@ -379,15 +379,18 @@ namespace Pulsarc.UI
         /// <param name="yDelta">How much this Drawable should move on the Y coordinate.</param>
         /// <param name="scaledPositioning">Whether or not this Drawable should move according
         /// to the Height/Width scaling.</param>
-        public virtual void move(float xDelta, float yDelta, bool scaledPositioning = true)
+        public void move(float xDelta, float yDelta, bool scaledPositioning = true)
         {
             move(new Vector2(xDelta, yDelta), scaledPositioning);
         }
 
         public virtual void scaledMove(Vector2 position)
         {
-            truePosition.X += position.X * Pulsarc.WidthScale;
-            truePosition.Y += position.Y * Pulsarc.HeightScale;
+            // If height scaled, scale movement by height scale, otherwise by width scale
+            float scale = heightScaled ? Pulsarc.HeightScale : Pulsarc.WidthScale;
+
+            truePosition.X += position.X * scale;
+            truePosition.Y += position.Y * scale;
 
             findAnchorPosition();
         }

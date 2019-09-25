@@ -27,7 +27,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             Anchor gradeAnchor = getSkinnableAnchor("GradeAnchor");
 
-            grade = new Grade(scoreData.grade, startPos, scale);
+            grade = new Grade(scoreData.grade, startPos, scale, gradeAnchor);
 
             int gradeXOffset = getSkinnableInt("GradeX");
             int gradeYOffset = getSkinnableInt("GradeY");

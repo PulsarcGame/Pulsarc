@@ -180,7 +180,6 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             float offsetX = getSkinnablePropertyFloat("ScoreCardX");
             float offsetY = getSkinnablePropertyFloat("ScoreCardY");
-            Vector2 offset = new Vector2(offsetX, offsetY);
 
             int rank = 0;
 
@@ -192,7 +191,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 Anchor anchor = getSkinnablePropertyAnchor("ScoreCardAnchor");
 
                 ScoreCard scoreCard = new ScoreCard(score, position, rank, anchor);
-                scoreCard.move(offset);
+                scoreCard.move(offsetX, offsetY);
 
                 scores.Add(new ScoreCard(score, position, rank));
             }
