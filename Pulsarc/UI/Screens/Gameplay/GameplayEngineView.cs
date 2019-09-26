@@ -2,6 +2,7 @@
 using Pulsarc.Skinning;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using System;
 using System.Collections.Generic;
 using Wobble.Logging;
 using Wobble.Screens;
@@ -92,23 +93,13 @@ namespace Pulsarc.UI.Screens.Gameplay
             Color textColor = Skin.getConfigColor("gameplay", "Properties", typeName + "TextColor"); // Color textColor;
 
             // Make TDE
-            TextDisplayElementFixedSize text;
+            // If this is the combo, change append to "x", if acc change it to "%"
+            string append = typeName == "Combo" ? "x" : (typeName == "Acc" ? "%" : "");
+            // If this is the acc, change numberFormat to "#,##.00" 
+            string numberFormat = typeName.Equals("Acc") ? "#,##.00" : "#,#0";
 
-            switch (typeName)
-            {
-                case "Score":
-                    text = new Score(position, fontSize, textAnchor, textColor);
-                    break;
-                case "Acc":
-                    text = new Accuracy(position, fontSize, textAnchor, textColor);
-                    break;
-                case "Combo":
-                    text = new Combo(position, fontSize, textAnchor, textColor);
-                    break;
-                default:
-                    text = new TextDisplayElementFixedSize("You shouldn't be seeing this", Pulsarc.getDimensions() / 2, "");
-                    break;
-            }
+            TextDisplayElementFixedSize text = new TextDisplayElementFixedSize("", position, append, fontSize, textAnchor, textColor);
+            text.numberFormat = numberFormat;
 
             // Offset
             Vector2 offset = new Vector2(
@@ -194,7 +185,26 @@ namespace Pulsarc.UI.Screens.Gameplay
             {
                 accuracyTotal += judge.acc;
             }
-            uiElements[1].Update(GetGameplayEngine().judgements.Count > 0 ? accuracyTotal / GetGameplayEngine().judgements.Count : 1);
+
+            // If no judgements have happened, 100%, otherwise, find the acc
+            double value = 100d;
+
+            int count = GetGameplayEngine().judgements.Count;
+            if (count > 0)
+            {
+                value *= accuracyTotal / count;
+            }
+
+            value = Math.Round(value, 2);
+
+            if (value < 1)
+            {
+                uiElements[1].Update("0" + value.ToString(uiElements[1].numberFormat));
+            }
+            else
+            {
+                uiElements[1].Update(value);
+            }
 
             // Combo
             uiElements[2].Update(GetGameplayEngine().combo);

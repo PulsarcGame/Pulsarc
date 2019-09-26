@@ -16,9 +16,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             //////////////// Judge equal to Stepmania J4 /////////////
             new JudgementValue("max",       1,      22,    320,     2),
             new JudgementValue("perfect",   1,      45,    300,     1),
-            new JudgementValue("great",   2/3,      90,    200,    -8),
-            new JudgementValue("good",    1/3,     135,    100,   -15),
-            new JudgementValue("bad",     1/6,     180,     50,   -45),
+            new JudgementValue("great",  2/3d,      90,    200,    -8),
+            new JudgementValue("good",   1/3d,     135,    100,   -15),
+            new JudgementValue("bad",    1/6d,     180,     50,   -45),
             new JudgementValue("miss",      0,     200,      0,  -100),
         };
 
@@ -79,14 +79,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <returns></returns>
         static public JudgementValue getPreviousJudgementValue(JudgementValue judgement)
         {
-            JudgementValue result = null;
+            JudgementValue result = new JudgementValue();
 
             for (int i = 0; i < judgements.Count; i++)
             {
                 if (judgements[i].judge >= judgement.judge)
                 {
                     break;
-                } else
+                }
+                else
                 {
                     result = judgements[i];
                 }
@@ -140,6 +141,16 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             string colorName = char.ToUpper(name[0]) + name.Substring(1) + "Color";
             color = Skin.getConfigColor("judgements", "Colors", colorName);
+        }
+
+        public JudgementValue()
+        {
+            name = "";
+            acc = 0;
+            judge = 0;
+            score = 0;
+            combo_addition = 0;
+            color = Color.White;
         }
     }
 }
