@@ -33,7 +33,7 @@ namespace Pulsarc.UI
             this.color = color ?? Color.White;
             text = new StringBuilder(20);
 
-            font = AssetsManager.fonts["DefaultFont"];
+            font = AssetsManager.Fonts["DefaultFont"];
             fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
 
             this.position = position;

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
@@ -42,6 +45,12 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             scores = new List<ScoreCard>();
 
+            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
+
+            background = new Background("select_background");
+
+            button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
+
             int i = 0;
             foreach(Beatmap beatmap in beatmaps)
             {
@@ -58,12 +67,6 @@ namespace Pulsarc.UI.Screens.SongSelect
                 GetSongSelection().focusedCard.onClick();
                 focusCard(GetSongSelection().focusedCard);
             }
-
-            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
-
-            background = new Background("select_background");
-
-            button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
         }
 
         public void focusCard(BeatmapCard card)
@@ -87,6 +90,20 @@ namespace Pulsarc.UI.Screens.SongSelect
                         scores.Add(new ScoreCard(score, currentPos, rank));
                         currentPos.Y += 150;
                         rank++;
+                    }
+
+                    string backgroundPath = card.beatmap.path + "/" + card.beatmap.Background;
+                    Texture2D backgroundTexture = AssetsManager.Load(backgroundPath);
+
+                    if (backgroundTexture != null)
+                    {
+                        background.changeBackground(backgroundTexture);
+                    } else
+                    {
+                        if(background.Texture != Skin.assets["select_background"])
+                        {
+                            background.changeBackground(Skin.assets["select_background"]);
+                        }
                     }
                     break;
                 }
