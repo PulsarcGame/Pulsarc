@@ -32,9 +32,12 @@ namespace Pulsarc.UI.Screens.SongSelect
         ReturnButton button_back;
 
         // Stats for cards and focus
-        float currentFocus, lastFocus; // Focus
-        float beatmapCardWidth, beatapCardHeight, beatmapCardMargin, beatmapCardTotalHeight; // Beatmap Card stats
-        float scoreCardWidth, scoreCardHeight, scoreCardMargin, scoreCardTotalHeight; // Score Card stats
+        // Focus
+        float currentFocus, lastFocus;
+        // Beatmap Card stats
+        float beatmapCardWidth, beatapCardHeight, beatmapCardMargin, beatmapCardTotalHeight;
+        // Score Card stats
+        float scoreCardWidth, scoreCardHeight, scoreCardMargin, scoreCardTotalHeight;
 
         /// <summary>
         /// The view for the SongSelect Screen.

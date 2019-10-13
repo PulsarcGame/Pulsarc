@@ -275,15 +275,11 @@ namespace Pulsarc.Skinning
         {
             string anchorString = getConfigString(config, section, key);
 
-            if (parent == null)
-            {
-                return AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString));
-            }
-            else
-            {
-                return AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString), parent);
-
-            }
+            // If there's a parent, return the start position relative to the parent,
+            // otherwise find the start position relative to the screen.
+            return parent == null
+                ? AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString))
+                : AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString), parent);
         }
 
         /// <summary>
@@ -315,10 +311,10 @@ namespace Pulsarc.Skinning
             }
             catch (Exception e)
             {
-                Logger.Error(key + " was not formatted correctly." +
-                    "\nPlease format + " + key + " with \"{red},{green},{blue},[alpha]\", where alpha is optional:" +
-                    "\n Each value can be from 0 to 255. For example for Black color write " + key + "=0,0,0,255." +
-                    "\nBecause the format was incorrect, the Color for " + key + " will be Black instead.", LogType.Runtime);
+                Logger.Error($"{key} was not formatted correctly." +
+                    $"\nPlease format {key} with \"{{red}},{{green}},{{blue}},[alpha]\", where alpha is optional:" +
+                    $"\n Each value can be from 0 to 255. For example for Black color write {key} =0,0,0,255." +
+                    $"\nBecause the format was incorrect, the Color for {key} will be Black instead.", LogType.Runtime);
                 r = 0;
                 g = 0;
                 b = 0;

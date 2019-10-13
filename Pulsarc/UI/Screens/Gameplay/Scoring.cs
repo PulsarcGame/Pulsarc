@@ -140,7 +140,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override string ToString()
         {
-            return dateT + " - " + score + " | " + Math.Round(accuracy*100,2) + "% | x" + maxCombo;
+            double acc = Math.Round(accuracy * 100, 2);
+
+            return $"{dateT} - {score} | {acc}% | x{maxCombo}";
         }
     }
 

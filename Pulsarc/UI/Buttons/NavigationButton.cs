@@ -33,7 +33,8 @@ namespace Pulsarc.UI.Buttons
             : base(Skin.assets["button_back_" + type], position, anchor: anchor)
         {
             this.text = text;
-            this.text.move(new Vector2((1 - scale) * -10, (1 - scale) * -10)); // TODO: Change positioniong depending on textAnchor | Position text properly, without using hacky workarounds
+            // TODO: Change positioniong depending on textAnchor | Position text properly, without using hacky workarounds
+            this.text.move(new Vector2((1 - scale) * -10, (1 - scale) * -10));
 
             this.screen = screen;
             this.removeFirst = removeFirst;
