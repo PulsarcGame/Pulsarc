@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         public SearchBox searchBox;
 
         // Background image of Song Select
-        Background background;
+        public static Background DefaultBackground => new Background("select_background");
 
         // Current Scores to display
         List<ScoreCard> scores;
@@ -41,13 +41,20 @@ namespace Pulsarc.UI.Screens.SongSelect
         float currentFocus = 0;
         float lastFocus = 0;
 
+        // Background changing stuff.
+        public bool ChangingBackground { get; private set; } = false;
+        public Background CurrentBackground { get; private set; }
+        private Background OldBackground;
+        private const int BackgroundFadeTime = 200;
+
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
 
-            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
+            CurrentBackground = DefaultBackground;
+            OldBackground = DefaultBackground;
 
-            background = new Background("select_background");
+            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
 
             button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
 
@@ -95,17 +102,29 @@ namespace Pulsarc.UI.Screens.SongSelect
                     string backgroundPath = card.beatmap.path + "/" + card.beatmap.Background;
                     Texture2D backgroundTexture = AssetsManager.Load(backgroundPath);
 
-                    if (backgroundTexture != null)
-                    {
-                        background.changeBackground(backgroundTexture);
-                    } else
-                    {
-                        if(background.Texture != Skin.assets["select_background"])
-                        {
-                            background.changeBackground(Skin.assets["select_background"]);
-                        }
-                    }
+                    startChangingBackground(backgroundTexture);
                     break;
+                }
+            }
+        }
+
+        private void startChangingBackground(Texture2D newBackground)
+        {
+            if (newBackground != null)
+            {
+                ChangingBackground = true;
+                OldBackground.changeBackground(CurrentBackground.Texture);
+                CurrentBackground.changeBackground(newBackground);
+                CurrentBackground.opacity = 0;
+            }
+            else
+            {
+                if (CurrentBackground.Texture != DefaultBackground.Texture)
+                {
+                    ChangingBackground = true;
+                    OldBackground = CurrentBackground;
+                    CurrentBackground = DefaultBackground;
+                    CurrentBackground.opacity = 0;
                 }
             }
         }
@@ -116,7 +135,8 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Draw(GameTime gameTime)
         {
-            background.Draw();
+            drawBackgrounds();
+
             foreach (BeatmapCard card in GetSongSelection().cards)
             {
                 if (card.onScreen())
@@ -130,6 +150,23 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
             button_back.Draw();
             searchBox.Draw();
+        }
+
+        private void drawBackgrounds()
+        {
+            if (ChangingBackground && CurrentBackground.opacity < 1)
+            {
+                OldBackground.Draw();
+                CurrentBackground.opacity += (float)PulsarcTime.DeltaTime / BackgroundFadeTime;
+
+                if (CurrentBackground.opacity > 1)
+                {
+                    CurrentBackground.opacity = 1;
+                    ChangingBackground = false;
+                }
+            }
+
+            CurrentBackground.Draw();
         }
 
         public override void Update(GameTime gameTime)
