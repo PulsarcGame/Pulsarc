@@ -62,7 +62,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(this.basePosition.X + position, this.basePosition.Y));
+            selector.changePosition(new Vector2(anchorPosition.X + edgeOffset + position, anchorPosition.Y));
         }
 
         public void Update()
@@ -115,10 +115,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return value / (float) displayDivider;
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position);
-            selector.move(position);
+            base.move(position, scaledPositioning);
+            selector.move(position, scaledPositioning);
         }
 
         public override void Draw()
@@ -129,7 +129,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override void onClick(Point mousePosition)
         {
-            setSelectorPercent((float) Math.Round((mousePosition.X - drawPosition.X) / ((Texture.Width) * scale),2));
+            setSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * scale));
         }
     }
 }

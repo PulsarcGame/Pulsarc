@@ -8,13 +8,16 @@ using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using Pulsarc.Utils;
 using System.Collections.Generic;
-using Wobble.Input;
 using Wobble.Screens;
+using System;
 
 namespace Pulsarc.UI.Screens.Result
 {
     class ResultScreenView : ScreenView
     {
+        public readonly string config = "result_screen";
+        public readonly string[] sections = { "Properties", "Metadata", "Judgements" };
+
         ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
 
         // Buttons
@@ -25,25 +28,20 @@ namespace Pulsarc.UI.Screens.Result
         Beatmap beatmap;
 
         // Play stats
-        Accuracy accuracy;
-        Score score;
-        Combo combo;
-
+        List<TextDisplayElement> playStats = new List<TextDisplayElement>();
         Grade grade;
 
         // Background and scorecard designs
-        Scorecard scorecard;
+        ResultScorecard scorecard;
         Background background;
         Background mapBackground;
 
         // Metadata
-        Title title;
-        Artist artist;
-        Version version;
-        Mapper mapper;
+        List<TextDisplayElement> metadata = new List<TextDisplayElement>();
 
-        List<KeyValuePair<Judge,JudgeCount>> judgements;
-    
+        // Judges and the TDE that tracks the amount of each
+        List<KeyValuePair<Judge,TextDisplayElement>> judgements;
+
         HitErrorGraph hitErrorGraph;
 
         /// <summary>
@@ -55,86 +53,139 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="beatmap">The beatmap that was played.</param>
         public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap, Background mapBackground) : base(screen)
         {
-            judgements = new List<KeyValuePair<Judge, JudgeCount>>();
             this.beatmap = beatmap;
 
-            button_advanced = new ButtonAdvanced(new Vector2(0, 1080));
-            button_back = new ReturnButton("result_button_back", new Vector2(0, 1080));
-            button_retry = new RetryButton("result_button_retry", new Vector2(1920, 1080));
+            // TODO: Redesign ResultScorecard to work on other aspect ratios than 16:9
+            addScoreCard();
 
-            scorecard = new Scorecard();
+            addButtons();
+
+            addBackgrounds(mapBackground);
+
+            addPlayStats(accuracy, grade);
+
+            addMetadata();
+
+            addHitErrorGraph();
+
+            addJudges();
+        }
+
+        private void addScoreCard()
+        {
+            Vector2 startPos = Skin.getConfigStartPosition(config, sections[0], "ScoreCardStartPos");
+            Anchor anchor = getSkinnablePropertyAnchor("ScoreCardAnchor");
+
+            scorecard = new ResultScorecard(startPos, anchor);
+
+            int offsetX = getSkinnablePropertyInt("ScoreCardX");
+            int offsetY = getSkinnablePropertyInt("ScoreCardY");
+
+            scorecard.move(offsetX, offsetY);
+        }
+
+        private void addButtons()
+        {
+            button_back = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            button_retry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+            button_advanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+
+            // Move the advanced button to the right spot
+            float width = button_advanced.Texture.Width;
+            float height = button_advanced.Texture.Height;
+            button_advanced.scaledMove(new Vector2(width, -height));
+        }
+
+        private void addBackgrounds(Background mapBackground)
+        {
+            // Skinned Background
             background = new Background("result_background");
 
+            // Map Background
             this.mapBackground = mapBackground;
-            mapBackground.move(new Vector2(Pulsarc.xBaseRes / 2 - 200, 0));
 
-            this.grade = new Grade(grade, new Vector2(getSkinnablePositionFloat("GradeX"), getSkinnablePositionFloat("GradeY")), getSkinnablePositionFloat("GradeScale"));
+            float scale = getSkinnablePropertyFloat("MapBGScale") * Pulsarc.HeightScale;
+            Vector2 startPosition = Skin.getConfigStartPosition(config, sections[0], "MapBGStartPos", scorecard);
 
-            score = new Score(new Vector2(getSkinnablePositionFloat("ScoreX"), getSkinnablePositionFloat("ScoreY")), new Color(74,245,254), getSkinnablePositionInt("ScoreSize"), getSkinnablePositionAnchor("ScoreAnchor"));
-            combo = new Combo(new Vector2(getSkinnablePositionFloat("ComboX"), getSkinnablePositionFloat("ComboY")), new Color(74, 245, 254), getSkinnablePositionInt("ComboSize"), getSkinnablePositionAnchor("ComboAnchor"));
-            this.accuracy = new Accuracy(new Vector2(getSkinnablePositionFloat("AccuracyX"), getSkinnablePositionFloat("AccuracyY")), new Color(74, 245, 254), getSkinnablePositionInt("AccuracySize"), getSkinnablePositionAnchor("AccuracyAnchor"));
+            int offsetX = getSkinnablePropertyInt("MapBGX");
+            int offsetY = getSkinnablePropertyInt("MapBGY");
 
-            title = new Title(new Vector2(getSkinnablePositionFloat("TitleX"), getSkinnablePositionFloat("TitleY")), getSkinnablePositionInt("TitleSize"), getSkinnablePositionAnchor("TitleAnchor"));
-            artist = new Artist(new Vector2(getSkinnablePositionFloat("ArtistX"), getSkinnablePositionFloat("ArtistY")), getSkinnablePositionInt("ArtistSize"), getSkinnablePositionAnchor("ArtistAnchor"));
-            version = new Version(new Vector2(getSkinnablePositionFloat("VersionX"), getSkinnablePositionFloat("VersionY")), getSkinnablePositionInt("VersionSize"), getSkinnablePositionAnchor("VersionAnchor"));
-            mapper = new Mapper(new Vector2(getSkinnablePositionFloat("MapperX"), getSkinnablePositionFloat("MapperY")), new Color(74, 245, 254), getSkinnablePositionInt("MapperSize"), getSkinnablePositionAnchor("MapperAnchor"));
+            mapBackground.changePosition(startPosition);
 
-            button_advanced.move(new Vector2(button_back.currentSize.X, -button_advanced.currentSize.Y));
+            mapBackground.move(offsetX, offsetY);
+        }
 
-            this.accuracy.Update(accuracy);
-            combo.Update(GetResultScreen().combo);
-            score.Update(GetResultScreen().display_score);
+        private void addPlayStats(double accuracy, string grade)
+        {
+            // Grade
+            Vector2 startPosition = Skin.getConfigStartPosition(config, sections[0], "GradeStartPos");
+            float scale = getSkinnablePropertyFloat("GradeScale");
+            Anchor anchor = getSkinnablePropertyAnchor("GradeAnchor");
 
-            title.Update(GetResultScreen().beatmap.Title);
-            artist.Update(GetResultScreen().beatmap.Artist);
-            version.Update(GetResultScreen().beatmap.Version);
-            mapper.Update(GetResultScreen().beatmap.Mapper);
+            this.grade = new Grade(grade, startPosition, scale, anchor);
 
-            hitErrorGraph = new HitErrorGraph(
-                new Vector2(getSkinnablePositionFloat("HitErrorX")
-                            , getSkinnablePositionFloat("HitErrorY"))
-               , (int)(getSkinnablePositionFloat("HitErrorWidth") / 1920f * Pulsarc.getDimensions().X)
-               , (int) (getSkinnablePositionFloat("HitErrorHeight") / 1080f * Pulsarc.getDimensions().Y)
-               , GetResultScreen().hits);
+            int offsetX = getSkinnablePropertyInt("GradeX");
+            int offsetY = getSkinnablePropertyInt("GradeY");
 
-            foreach(JudgementValue judge in Judgement.judgements)
+            this.grade.move(offsetX, offsetY);
+
+            // TDEs
+            playStats.Add(makeTextDisplayElement("Score", sections[0]));
+            playStats[0].Update(GetResultScreen().display_score.ToString("#,#0"));
+
+            playStats.Add(makeTextDisplayElement("Acc", sections[0]));
+            playStats[1].Update(Math.Round(accuracy * 100, 2).ToString("#,##.00") + "%");
+
+            playStats.Add(makeTextDisplayElement("Combo", sections[0]));
+            playStats[2].Update(GetResultScreen().combo.ToString("#,#0") + "x");
+        }
+
+        private void addMetadata()
+        {
+            metadata.Add(makeTextDisplayElement("Title", sections[1]));
+            metadata[0].Update(GetResultScreen().beatmap.Title);
+
+            metadata.Add(makeTextDisplayElement("Artist", sections[1]));
+            metadata[1].Update(GetResultScreen().beatmap.Artist);
+
+            metadata.Add(makeTextDisplayElement("Version", sections[1]));
+            metadata[2].Update(GetResultScreen().beatmap.Version);
+
+            metadata.Add(makeTextDisplayElement("Mapper", sections[1]));
+            metadata[3].Update(GetResultScreen().beatmap.Mapper);
+        }
+
+        private void addHitErrorGraph()
+        {
+            hitErrorGraph = new HitErrorGraph
+            (
+                Skin.getConfigStartPosition(config, sections[0], "HitErrorStartPos", scorecard),
+                (int)(getSkinnablePropertyInt("HitErrorWidth") * Pulsarc.HeightScale),
+                (int)(getSkinnablePropertyInt("HitErrorHeight") * Pulsarc.HeightScale),
+                GetResultScreen().hits,
+                getSkinnablePropertyAnchor("HitErrorAnchor")
+            );
+
+            int offsetX = getSkinnablePropertyInt("HitErrorX");
+            int offsetY = getSkinnablePropertyInt("HitErrorY");
+
+            hitErrorGraph.scaledMove(offsetX, offsetY);
+        }
+
+        private void addJudges()
+        {
+            judgements = new List<KeyValuePair<Judge, TextDisplayElement>>();
+
+            foreach (JudgementValue judge in Judgement.judgements)
             {
                 addJudgeInfo(judge.name);
             }
-            foreach(KeyValuePair<Judge,JudgeCount> judgePair in judgements)
+            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
-                judgePair.Value.Update(GetResultScreen().judges_count[judgePair.Value.name]);
+                string name = judgePair.Value.name;
+                judgePair.Value.name = "";
+                judgePair.Value.Update(GetResultScreen().judges_count[name].ToString("#,#0"));
             }
-        }
-
-        /// <summary>
-        /// Find a float position from the Position section of the Result Screen config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePositionFloat(string key)
-        {
-            return Skin.getConfigFloat("result_screen", "Positions", key);
-        }
-
-        /// <summary>
-        /// Find a int from the Position section of the Result Screen config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePositionInt(string key)
-        {
-            return Skin.getConfigInt("result_screen", "Positions", key);
-        }
-
-        /// <summary>
-        /// Find an Anchor from the Position section of the Result Screen config.
-        /// </summary>
-        /// <param name="key">The key of the value to find.</param>
-        /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePositionAnchor(string key)
-        {
-            return Skin.getConfigAnchor("result_screen", "Positions", key);
         }
 
         /// <summary>
@@ -143,18 +194,143 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="name">The name of the judgement.</param>
         private void addJudgeInfo(string name)
         {
-            string firstUpper = char.ToUpper(name[0]) + name.Substring(1);
+            string configName = char.ToUpper(name[0]) + name.Substring(1);
             JudgementValue judgement = Judgement.getByName(name);
-            judgements.Add(new KeyValuePair<Judge, JudgeCount>(
-                        new Judge(judgement.score,
-                            new Vector2(getSkinnablePositionInt(firstUpper + "X"), getSkinnablePositionInt(firstUpper + "Y")),
-                            getSkinnablePositionInt(firstUpper + "Scale")),
-                        new JudgeCount(name, 
-                            new Vector2(getSkinnablePositionInt(firstUpper + "CountX"), getSkinnablePositionInt(firstUpper + "CountY")),
-                            judgement.color,
-                            getSkinnablePositionInt(firstUpper + "CountSize"),
-                            getSkinnablePositionAnchor(firstUpper + "CountAnchor"))
-                        ));
+
+            // Judge
+            Vector2 position = Skin.getConfigStartPosition(config, sections[2], configName + "StartPos", scorecard);
+            int offsetX = getSkinnableJudgementInt(configName + "X");
+            int offsetY = getSkinnableJudgementInt(configName + "Y");
+            float scale = getSkinnableJudgementFloat(configName + "Scale") * Pulsarc.HeightScale;
+
+            Judge judge = new Judge(judgement.score, position, scale);
+
+            judge.scaledMove(offsetX, offsetY);
+
+            // JudgeCount
+            TextDisplayElement text = makeTextDisplayElement(configName + "Count", sections[2]);
+            text.name = name;
+            text.color = judgement.color;
+
+            judgements.Add(new KeyValuePair<Judge, TextDisplayElement>(judge, text));
+        }
+
+        private TextDisplayElement makeTextDisplayElement(string typeName, string section)
+        {
+            // Find variables for the TDE
+            Vector2 position = Skin.getConfigStartPosition(config, section, typeName + "StartPos", scorecard);
+            int fontSize = Skin.getConfigInt(config, section, typeName + "FontSize");
+            Anchor textAnchor = Skin.getConfigAnchor(config, section, typeName + "Anchor");
+            Color textColor = Color.White;
+
+            // For judgement text, which finds colors from judgements.ini in addJudgeInfo()
+            try
+            {
+                textColor = Skin.getConfigColor(config, section, typeName + "Color");
+            }
+            catch { }
+
+            //Make TDE
+            TextDisplayElement text = new TextDisplayElement("", position, fontSize, textAnchor, textColor);
+
+            // Offset
+            Vector2 offset = new Vector2(
+                Skin.getConfigInt(config, section, typeName + "X"),
+                Skin.getConfigInt(config, section, typeName + "Y"));
+
+            text.scaledMove(offset);
+
+            return text;
+        }
+
+        /// <summary>
+        /// Find a float position from the Properties section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnablePropertyFloat(string key)
+        {
+            return Skin.getConfigFloat(config, sections[0], key);
+        }
+
+        /// <summary>
+        /// Find a float position from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnableMetadataFloat(string key)
+        {
+            return Skin.getConfigFloat(config, sections[1], key);
+        }
+
+        /// <summary>
+        /// Find a float position from the Judgements section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnableJudgementFloat(string key)
+        {
+            return Skin.getConfigFloat(config, sections[2], key);
+        }
+
+        /// <summary>
+        /// Find a int from the Properties section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnablePropertyInt(string key)
+        {
+            return Skin.getConfigInt(config, sections[0], key);
+        }
+
+        /// <summary>
+        /// Find a int from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnableMetadataInt(string key)
+        {
+            return Skin.getConfigInt(config, sections[1], key);
+        }
+
+        /// <summary>
+        /// Find a int from the Judgements section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnableJudgementInt(string key)
+        {
+            return Skin.getConfigInt(config, sections[2], key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Properties section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnablePropertyAnchor(string key)
+        {
+            return Skin.getConfigAnchor(config, sections[0], key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Metadata section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnableMetadataAnchor(string key)
+        {
+            return Skin.getConfigAnchor(config, sections[1], key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Judgements section of the Result Screen config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnableJudgementAnchor(string key)
+        {
+            return Skin.getConfigAnchor(config, sections[2], key);
         }
 
         public override void Destroy()
@@ -170,19 +346,25 @@ namespace Pulsarc.UI.Screens.Result
         {
             mapBackground.Draw();
             background.Draw();
+
             button_advanced.Draw();
             button_back.Draw();
             button_retry.Draw();
+
             scorecard.Draw();
-            accuracy.Draw();
-            score.Draw();
-            combo.Draw();
-            title.Draw();
-            artist.Draw();
-            version.Draw();
-            mapper.Draw();
+
+            foreach (TextDisplayElement playStat in playStats)
+            {
+                playStat.Draw();
+            }
             grade.Draw();
-            foreach (KeyValuePair<Judge, JudgeCount> judgePair in judgements)
+
+            foreach (TextDisplayElement data in metadata)
+            {
+                data.Draw();
+            }
+
+            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
                 judgePair.Key.Draw();
                 judgePair.Value.Draw();

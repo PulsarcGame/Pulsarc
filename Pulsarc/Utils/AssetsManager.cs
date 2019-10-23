@@ -18,7 +18,7 @@ namespace Pulsarc.Utils
 
         static public void Initialize(ContentManager Content)
         {
-            AssetsManager.Content = Content;
+            content = Content;
 
             Fonts = new Dictionary<String, SpriteFont>();
 

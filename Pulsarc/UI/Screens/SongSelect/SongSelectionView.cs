@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
@@ -33,36 +31,60 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Back button to the Main Menu
         ReturnButton button_back;
 
-        // Card stats
-        // TODO: Make this more skinnable/adjustable by the user.
-        int cardWidth = 800;
-        int cardHeight = 170;
-        int cardMargin = 10;
-        float currentFocus = 0;
-        float lastFocus = 0;
+        // Stats for cards and focus
+        // Focus
+        float currentFocus, lastFocus;
+        // Beatmap Card stats
+        float beatmapCardWidth, beatapCardHeight, beatmapCardMargin, beatmapCardTotalHeight;
+        // Score Card stats
+        float scoreCardWidth, scoreCardHeight, scoreCardMargin, scoreCardTotalHeight;
 
-        // Background changing stuff.
-        public bool ChangingBackground { get; private set; } = false;
-        public Background CurrentBackground { get; private set; }
-        private Background OldBackground;
-        private const int BackgroundFadeTime = 200;
-
+        /// <summary>
+        /// The view for the SongSelect Screen.
+        /// TODO: Cleanup this initializer
+        /// </summary>
+        /// <param name="screen"></param>
+        /// <param name="beatmaps">The list of beatmaps to show on this screen.</param>
+        /// <param name="search">The starting string value of the SearchBar. Default is ""</param>
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
 
-            CurrentBackground = DefaultBackground;
-            OldBackground = DefaultBackground;
 
-            searchBox = new SearchBox(search, new Vector2(1920, 0), Anchor.TopRight);
+            // Beatmap Card stats
+            beatmapCardWidth = BeatmapCard.StaticTexture.Width;
+            beatapCardHeight = BeatmapCard.StaticTexture.Height;
 
-            button_back = new ReturnButton("select_button_back", new Vector2(0, 1080));
+            beatmapCardMargin = getSkinnablePropertyInt("BeatmapCardMargin");
+            beatmapCardTotalHeight = beatapCardHeight + beatmapCardMargin;
 
+            // Score Card stats
+            scoreCardWidth = ScoreCard.StaticTexture.Width;
+            scoreCardHeight = ScoreCard.StaticTexture.Height;
+
+            scoreCardMargin = getSkinnablePropertyFloat("ScoreCardMargin");
+            scoreCardTotalHeight = scoreCardHeight + scoreCardMargin;
+
+            // Set up beatmap cards
             int i = 0;
-            foreach(Beatmap beatmap in beatmaps)
+            Vector2 beatmapCardStartPosition = Skin.getConfigStartPosition("song_select", "Properties", "BeatmapCardStartPos");
+
+            int offsetX = getSkinnablePropertyInt("BeatmapCardX");
+            int offsetY = getSkinnablePropertyInt("BeatmapCardY");
+
+            foreach (Beatmap beatmap in beatmaps)
             {
-                GetSongSelection().cards.Add(new BeatmapCard(beatmap, new Vector2(1920 - cardWidth,(cardHeight + cardMargin) * i), new Vector2(cardWidth, cardHeight)));
-                i++;
+                Vector2 position = new Vector2(
+                    beatmapCardStartPosition.X,
+                    beatmapCardStartPosition.Y + (beatmapCardTotalHeight * Pulsarc.HeightScale * i++)
+                );
+
+                Anchor anchor = getSkinnablePropertyAnchor("BeatmapCardAnchor");
+
+                BeatmapCard card = new BeatmapCard(beatmap, position, anchor);
+                card.move(offsetX, offsetY);
+
+                GetSongSelection().cards.Add(card);
             }
 
             // Select a random map by default in the song selection.
@@ -74,40 +96,108 @@ namespace Pulsarc.UI.Screens.SongSelect
                 GetSongSelection().focusedCard.onClick();
                 focusCard(GetSongSelection().focusedCard);
             }
+
+            Anchor searchBoxAnchor = getSkinnablePropertyAnchor("SearchBarAnchor");
+            Vector2 searchBarStartPosition = Skin.getConfigStartPosition("song_select", "Properties", "SearchBarStartPos");
+
+            searchBox = new SearchBox(search, searchBarStartPosition, searchBoxAnchor);
+
+            int searchBarX = getSkinnablePropertyInt("SearchBarX");
+            int searchBarY = getSkinnablePropertyInt("SearchBarY");
+            searchBox.move(searchBarX, searchBarY);
+
+            background = new Background("select_background");
+
+            button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+        }
+
+        /// <summary>
+        /// Find a float from the Properties section of the Song Select config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The float value of the key provided.</returns>
+        private float getSkinnablePropertyFloat(string key)
+        {
+            return Skin.getConfigFloat("song_select", "Properties", key);
+        }
+
+        /// <summary>
+        /// Find a int from the Properties section of the Song Select config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The int value of the key provided.</returns>
+        private int getSkinnablePropertyInt(string key)
+        {
+            return Skin.getConfigInt("song_select", "Properties", key);
+        }
+
+        /// <summary>
+        /// Find an Anchor from the Properties section of the Song Select config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The Anchor of the key provided.</returns>
+        private Anchor getSkinnablePropertyAnchor(string key)
+        {
+            return Skin.getConfigAnchor("song_select", "Properties", key);
+        }
+
+        /// <summary>
+        /// Find a string from the Properties section of the Song Select config.
+        /// </summary>
+        /// <param name="key">The key of the value to find.</param>
+        /// <returns>The string of the key provided.</returns>
+        private string getSkinnablePropertyString(string key)
+        {
+            return Skin.getConfigString("song_select", "Properties", key);
         }
 
         public void focusCard(BeatmapCard card)
         {
-            float step = (cardHeight + cardMargin) / 100;
-            GetSongSelection().selectedFocus = -3.5f;
+            GetSongSelection().selectedFocus = -4f;
 
             foreach (BeatmapCard s in GetSongSelection().cards)
             {
-                GetSongSelection().selectedFocus += step;
+                GetSongSelection().selectedFocus++;
 
-                if(card == s)
+                if (card == s)
                 {
+                    // Set to "selected" state
                     card.setClicked(true);
-                    scores.Clear();
-                    Vector2 currentPos = new Vector2(0, 20);
-                    int rank = 1;
+
+                    // Load Beatmap
                     card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
-                    foreach(ScoreData score in card.beatmap.getLocalScores())
-                    {
-                        scores.Add(new ScoreCard(score, currentPos, rank));
-                        currentPos.Y += 150;
-                        rank++;
-                    }
-
-                    string backgroundPath = card.beatmap.path + "/" + card.beatmap.Background;
-                    Texture2D backgroundTexture = AssetsManager.Load(backgroundPath);
-
-                    startChangingBackground(backgroundTexture);
+                    // ScoreCard Stuff
+                    scoreCardStuff(card);
                     break;
                 }
             }
         }
 
+        private void scoreCardStuff(BeatmapCard card)
+        {
+            scores.Clear();
+
+            // ScoreCard Position Setup
+            // Get start position
+            Vector2 startPos = Skin.getConfigStartPosition("song_select", "Properties", "ScoreCardStartPos");
+
+            float offsetX = getSkinnablePropertyFloat("ScoreCardX");
+            float offsetY = getSkinnablePropertyFloat("ScoreCardY");
+
+            int rank = 0;
+
+            // Make a ScoreCard for each score.
+            foreach (ScoreData score in card.beatmap.getLocalScores())
+            {
+                Vector2 position = new Vector2(startPos.X, startPos.Y + (scoreCardTotalHeight * Pulsarc.HeightScale * rank++));
+
+                Anchor anchor = getSkinnablePropertyAnchor("ScoreCardAnchor");
+
+                ScoreCard scoreCard = new ScoreCard(score, position, rank, anchor);
+                scoreCard.move(offsetX, offsetY);
+
+                scores.Add(new ScoreCard(score, position, rank));
+                
         private void startChangingBackground(Texture2D newBackground)
         {
             if (newBackground != null)
@@ -139,6 +229,8 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             foreach (BeatmapCard card in GetSongSelection().cards)
             {
+                card.adjustClickDistance();
+
                 if (card.onScreen())
                 {
                     card.Draw();
@@ -183,7 +275,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 foreach(BeatmapCard card in GetSongSelection().cards)
                 {
-                    card.move(new Vector2(0, (cardHeight + cardMargin) * diff));
+                    card.move(new Vector2(0, beatmapCardTotalHeight * diff));
                 }
             }
 

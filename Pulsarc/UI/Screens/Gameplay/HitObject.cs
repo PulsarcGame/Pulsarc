@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -24,7 +25,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         // The user-defined base speed.
         internal double baseSpeed;
 
-
         // Optimization
         // Whether this hitobject is marked for destruction in gameplay
         public bool erase;
@@ -45,16 +45,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             this.hidden = hidden;
             erase = false;
 
-            // Vector representing the base screen of Pulsarc.
-            Vector2 screen = Pulsarc.getBaseScreenDimensions();
+            // Find the origin (center) of this Crosshair
+            int width = Pulsarc.CurrentWidth;
+            int height = Pulsarc.CurrentHeight;
 
-            // Find the origin (center) of this HitObject
-            origin.X = (screen.X / 2) + ((Texture.Width - screen.X) / 2);
-            origin.Y = (screen.Y / 2) + ((Texture.Height - screen.Y) / 2);
+            origin.X = (width / 2) + ((Texture.Width - width) / 2);
+            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
 
-            // Determine the position for this HitObject
-            position.X = screen.X / 2;
-            position.Y = screen.Y / 2;
+            // Position this HitOjbect
+            changePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
 
             // What part of this HitObject should be drawn?
             drawnPart.Width = Texture.Width / 2;
@@ -85,7 +84,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             rotation = (float)(45 * (Math.PI / 180));
 
             // Set the HitObject's position
-            changePosition(position);
+            changePosition(truePosition);
         }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
             setZLocation(currentTime, speedModifier * baseSpeed, crosshairZLoc);
-            Resize(findArcRadius(), false);
+            Resize(findArcRadius());
         }
 
         /// <summary>

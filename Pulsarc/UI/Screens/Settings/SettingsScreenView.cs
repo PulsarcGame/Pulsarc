@@ -29,8 +29,8 @@ namespace Pulsarc.UI.Screens.Settings
         public SettingsScreenView(Screen screen) : base(screen)
         {
             background = new Background("settings_background");
-            button_back = new ReturnButton("settings_button_back", new Vector2(0, 1080));
-            button_save = new SaveButton("settings_button_save", new Vector2(1920, 1080));
+            button_back = new ReturnButton("settings_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            button_save = new SaveButton("settings_button_save", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
 
             groups = new List<SettingsGroup>();
 

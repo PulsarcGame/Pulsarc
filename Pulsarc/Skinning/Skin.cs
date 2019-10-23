@@ -3,11 +3,12 @@ using IniParser.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
-using Pulsarc.Utils.Graphics;
+using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Wobble.Logging;
 
 namespace Pulsarc.Skinning
 {
@@ -15,7 +16,8 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
-        static public Texture2D defaultTexture;
+        static private Texture2D defaultTexture;
+        static public Texture2D DefaultTexture { get => defaultTexture; }
 
         // A collection of all assets and their textures.
         static public Dictionary<String, Texture2D> assets { get; set; }
@@ -47,6 +49,7 @@ namespace Pulsarc.Skinning
                 configs.Add("main_menu", parser.ReadFile(skinFolder + "UI/MainMenu/main_menu.ini"));
                 configs.Add("judgements", parser.ReadFile(skinFolder + "Judgements/judgements.ini"));
                 configs.Add("result_screen", parser.ReadFile(skinFolder + "UI/ResultScreen/result_screen.ini"));
+                configs.Add("song_select", parser.ReadFile(skinFolder + "UI/SongSelect/song_select.ini"));
 
                 // Load gameplay assets
                 LoadSkinTexture(skinFolder + "Gameplay/", "arcs");
@@ -119,6 +122,9 @@ namespace Pulsarc.Skinning
                 judges.Add(100, LoadTexture(skinFolder + "Judgements/", "good"));
                 judges.Add(50, LoadTexture(skinFolder + "Judgements/", "bad"));
                 judges.Add(0, LoadTexture(skinFolder + "Judgements/", "miss"));
+
+                // Load default Texture
+                defaultTexture = AssetsManager.Content.Load<Texture2D>("default");
 
                 loaded = true;
             } else
@@ -214,7 +220,7 @@ namespace Pulsarc.Skinning
         /// <returns>The int value found using the provided parameters.</returns>
         static public int getConfigInt(string config, string section, string key)
         {
-            return int.Parse(configs[config][section][key]);
+            return int.Parse(getConfigString(config, section, key));
         }
 
         /// <summary>
@@ -226,7 +232,19 @@ namespace Pulsarc.Skinning
         /// <returns>The float value found using the provided parameters.</returns>
         static public float getConfigFloat(string config, string section, string key)
         {
-            return float.Parse(configs[config][section][key], CultureInfo.InvariantCulture);
+            return float.Parse(getConfigString(config, section, key), CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the config-section provided, and return the string value of the key provided.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The float value found using the provided parameters.</returns>
+        static public string getConfigString(string config, string section, string key)
+        {
+            return configs[config][section][key].Replace("\"", string.Empty);
         }
 
         /// <summary>
@@ -238,7 +256,71 @@ namespace Pulsarc.Skinning
         /// <returns>The Anchor found using the provided parameters.</returns>
         static public Anchor getConfigAnchor(string config, string section, string key)
         {
-            return (Anchor) Enum.Parse(Anchor.TopLeft.GetType(),configs[config][section][key]);
+            return (Anchor)Enum.Parse(Anchor.TopLeft.GetType(), getConfigString(config, section, key));
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the section provided, and return the start position of the
+        /// key provided. If parent is not null, the start position will be based on the parent.
+        /// If parent is null, start position will be based on the screen.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>
+        /// The position found using the provided parameters.
+        /// Currently only ScreenAnchor and pre-determined parent position finding is supported.
+        /// </returns>
+        static public Vector2 getConfigStartPosition(string config, string section, string key, Drawable parent = null)
+        {
+            string anchorString = getConfigString(config, section, key);
+
+            // If there's a parent, return the start position relative to the parent,
+            // otherwise find the start position relative to the screen.
+            return parent == null
+                ? AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString))
+                : AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString), parent);
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the section provided, and return the Color of the
+        /// key provided. Format like this: "r, g, b, [a]"
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The Color found using the provided parameters.</returns>
+        static public Color getConfigColor(string config, string section, string key)
+        {
+            string valueToParse = getConfigString(config, section, key);
+
+            var parts = valueToParse.Split(',');
+            int r, g, b = 0;
+            int a = 255;
+
+            try
+            {
+                r = int.Parse(parts[0]);
+                g = int.Parse(parts[1]);
+                b = int.Parse(parts[2]);
+
+                if (parts.Length > 3)
+                {
+                    a = int.Parse(parts[3]);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"{key} was not formatted correctly." +
+                    $"\nPlease format {key} with \"{{red}},{{green}},{{blue}},[alpha]\", where alpha is optional:" +
+                    $"\n Each value can be from 0 to 255. For example for Black color write {key} =0,0,0,255." +
+                    $"\nBecause the format was incorrect, the Color for {key} will be Black instead.", LogType.Runtime);
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+
+            return new Color(r, g, b, a);
         }
 
         /// <summary>

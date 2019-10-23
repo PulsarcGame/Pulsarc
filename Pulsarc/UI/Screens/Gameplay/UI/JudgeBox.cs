@@ -17,11 +17,10 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// Container for displaying the obtained Judges in gameplay
         /// </summary>
         /// <param name="position">Where to place the JudgeBox on the screen</param>
-        public JudgeBox(Vector2 position) : base(Skin.defaultTexture)
+        public JudgeBox(Vector2 position, Anchor anchor = Anchor.Center)
+            : base(Skin.DefaultTexture, position, anchor: anchor)
         {
             Texture = null;
-
-            this.position = position;
 
             judges = new Dictionary<int, Judge>();
             foreach (JudgementValue judge in Judgement.judgements)

@@ -24,7 +24,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="append">String to be appended to the displayed value</param>
         /// <param name="fontSize">The size to be used for drawing the font</param>
         /// <param name="anchor">The anchor</param>
-        public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center) : base (name,position, fontSize, anchor)
+        public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center, Color? color = null) : base (name,position, fontSize, anchor, color)
         {
             this.append = append;
         }

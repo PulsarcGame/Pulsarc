@@ -106,7 +106,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public string dateT;
         public int score;
         public double accuracy;
-        public int maxcombo;
+        public int maxCombo;
         public string grade;
         public int max;
         public int perfect;
@@ -128,7 +128,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             dateT = datet_;
             score = score_;
             accuracy = accuracy_;
-            maxcombo = maxcombo_;
+            maxCombo = maxcombo_;
             grade = grade_;
             max = max_;
             perfect = perfect_;
@@ -140,7 +140,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override string ToString()
         {
-            return dateT + " - " + score + " | " + Math.Round(accuracy*100,2) + "% | x" + maxcombo;
+            double acc = Math.Round(accuracy * 100, 2);
+
+            return $"{dateT} - {score} | {acc}% | x{maxCombo}";
         }
     }
 

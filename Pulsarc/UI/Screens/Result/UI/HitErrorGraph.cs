@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Result.UI
         /// <param name="width">The width of the Graph</param>
         /// <param name="height">The height of the Graph</param>
         /// <param name="hits">A list of all hits, KVP[time, judgescore]</param>
-        public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<double, int>> hits) : base(Skin.defaultTexture, position)
+        public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<double, int>> hits, Anchor anchor = Anchor.TopLeft) : base(Skin.DefaultTexture, position, anchor: anchor)
         {
             this.width = width;
             this.height = height;
@@ -97,7 +97,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(Texture, position: position, rotation: rotation, origin: origin, color: Color.White);
+            Pulsarc.spriteBatch.Draw(Texture, position: truePosition, rotation: rotation, origin: origin, color: Color.White);
 
             /*
             foreach (KeyValuePair<long, Double> hit error in hits)

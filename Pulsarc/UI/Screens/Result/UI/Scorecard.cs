@@ -3,8 +3,10 @@ using Pulsarc.Skinning;
 
 namespace Pulsarc.UI.Screens.Result.UI
 {
-    class Scorecard : Drawable
+    // TODO: Redesign ResultScorecard to work on other aspect ratios than 16:9
+    class ResultScorecard : Drawable
     {
-        public Scorecard() : base(Skin.assets["result_scorecard"]) {}
+        public ResultScorecard(Vector2 position, Anchor anchor = Anchor.Center)
+            : base(Skin.assets["result_scorecard"], position, anchor: anchor) { }
     }
 }

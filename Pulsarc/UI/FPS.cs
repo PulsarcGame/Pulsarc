@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Pulsarc.UI.Screens.Gameplay.UI;
 
-namespace Pulsarc.UI.Screens.Gameplay.UI
+namespace Pulsarc.UI
 {
     class FPS : TextDisplayElementFixedSize
     {

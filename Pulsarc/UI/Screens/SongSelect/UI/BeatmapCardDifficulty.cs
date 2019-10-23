@@ -9,16 +9,23 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     class BeatmapCardDifficulty : Drawable
     {
         Drawable fill;
-        public BeatmapCardDifficulty(Vector2 position, float percent) : base (Skin.assets["card_diff_bar"], position)
+        public BeatmapCardDifficulty(Vector2 position, float percent, Anchor anchor) : base (Skin.assets["card_diff_bar"], position, anchor: anchor)
         {
-            fill = new Drawable(Skin.assets["card_diff_fill"], position);
+            fill = new Drawable(Skin.assets["card_diff_fill"], position, anchor: anchor);
             fill.drawnPart = new Rectangle(0,0,(int) (fill.Texture.Width * percent), Texture.Height);
         }
-        public override void move(Vector2 delta)
+        public override void move(Vector2 delta, bool scaledPositioning = true)
         {
-            base.move(delta);
-            fill.move(delta);
+            base.move(delta, scaledPositioning);
+            fill.move(delta, scaledPositioning);
         }
+
+        public override void scaledMove(Vector2 delta)
+        {
+            base.scaledMove(delta);
+            fill.scaledMove(delta);
+        }
+
         public override void Draw()
         {
             fill.Draw();

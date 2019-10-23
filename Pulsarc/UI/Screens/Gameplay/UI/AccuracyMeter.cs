@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
 {
@@ -14,15 +15,13 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         // Width (in pixels) of a hiterror bar
         int errorBarWidth = 2;
 
+        Vector2 size;
 
         // A list of every error, the time it occured at and its judgement type
         List<KeyValuePair<double, int>> errors;
 
         // A list containing all of the HitError bar textures
         List<KeyValuePair<JudgementValue, Texture2D>> judges;
-        
-        // The width and height of this AccuracyMeter
-        Vector2 size;
 
         // Used for keeping track of the time
         double lastTime;
@@ -32,19 +31,20 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         /// <param name="position">Where this meter will be on the screen.</param>
         /// <param name="size">The width and height of this meter.</param>
-        public AccuracyMeter(Vector2 position, Vector2 size) : base(Skin.defaultTexture, position, size, -1, Anchor.CenterBottom)
+        public AccuracyMeter(Vector2 position, Vector2 size, Anchor anchor = Anchor.CenterBottom)
+            : base(Skin.DefaultTexture, position, -1, anchor)
         {
+            this.size = size;
+
             lastTime = 0;
             errors = new List<KeyValuePair<double, int>>();
-
-            this.size = size;
 
             judges = new List<KeyValuePair<JudgementValue, Texture2D>>();
 
             // Create the HitError textures for each judgements
             foreach(JudgementValue judgement in Judgement.judgements)
             {
-                Texture2D judgeTexture = new Texture2D(Pulsarc.graphics.GraphicsDevice, errorBarWidth, (int) size.Y);
+                Texture2D judgeTexture = new Texture2D(Pulsarc.graphics.GraphicsDevice, errorBarWidth, (int)size.Y);
                 Color[] judgeColors = new Color[errorBarWidth * (int)size.Y];
 
                 for(int h = 0; h < (int) size.Y; h++)
@@ -59,8 +59,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
                 judges.Add(new KeyValuePair<JudgementValue, Texture2D>(judgement,judgeTexture));
             }
 
-            Texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, (int) size.X, (int) size.Y);
-            Color[] bar = new Color[(int) (size.X * size.Y)];
+            Texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, (int)size.X, (int)size.Y);
+            Color[] bar = new Color[(int)(size.X * size.Y)];
 
 
             // Build the meter according to judgement's colors and given size
@@ -68,7 +68,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             int x = 0;
             int y = 0;
 
-            for (y = (int) size.Y/3; y < 2*size.Y / 3; y++)
+            for (y = (int)size.Y / 3; y < 2 * size.Y / 3; y++)
             {
                 lastX = 0;
                 x = 0;
@@ -78,7 +78,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
                     for (x = lastX; x - lastX < judgePixelLength; x++)
                     {
-                        bar[(int) (y*size.X)+x] = Judgement.judgements[i].color;
+                        bar[(int) (y * size.X) + x] = Judgement.judgements[i].color;
                     }
                     lastX = x;
                 }
@@ -97,10 +97,8 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             Texture.SetData(bar);
 
-            drawPosition = getResponsivePosition(position);
-            currentSize = new Vector2(Texture.Width, Texture.Height);
-            drawPosition.X -= currentSize.X / 2;
-            drawPosition.Y -= currentSize.Y;
+            Resize(size);
+            changePosition(position);
         }
 
         /// <summary>
@@ -120,7 +118,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             JudgementValue judgement = Judgement.getErrorJudgementValue(Math.Abs(error));
          
-            int baseX = (int)(drawPosition.X + size.X / 2);
+            int baseX = (int)(truePosition.X + size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.judge - Judgement.getPreviousJudgementValue(judgement).judge;
@@ -133,7 +131,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
 
-            return new Vector2(baseX - errorX, drawPosition.Y);
+            return new Vector2(baseX - errorX, truePosition.Y);
         }
 
         /// <summary>
@@ -201,7 +199,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(Texture, position: drawPosition, rotation: rotation, origin: origin, color: Color.White * 0.3f);
+            Pulsarc.spriteBatch.Draw(Texture, position: truePosition, rotation: rotation, origin: origin, color: Color.White * 0.3f);
 
             foreach(KeyValuePair<double, int> error in errors)
             {

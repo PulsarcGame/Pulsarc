@@ -32,9 +32,6 @@ namespace Pulsarc.UI.Screens.Result
         // Whether or not a full combo was achieved.
         public bool full_combo;
 
-        // The map background
-        Background mapBackGround;
-
         /// <summary>
         /// The screen that summarizes a play.
         /// </summary>

@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System;
 using System.Text;
+using Wobble.Logging;
 
 namespace Pulsarc.UI
 {
     public class TextDisplayElement : Drawable
     {
-        string name;
+        public string name;
 
         // Text
         SpriteFont font;
@@ -16,44 +16,55 @@ namespace Pulsarc.UI
         float fontScale;
         public Color color;
 
-        Vector2 processedPosition;
+        public Vector2 processedPosition;
+
+        bool caught = false;
 
         /// <summary>
         /// A text-based Drawable.
+        /// TODO: Fix positioning with different Anchors and resolutions/aspect ratios.
         /// </summary>
         /// <param name="name">The text to be displayed.</param>
         /// <param name="position">The position of this TDE</param>
         /// <param name="fontSize">The size of the text in pt. Default is 18.</param>
         /// <param name="anchor">The anchor of this TDE, Default is Anchor.TopLeft</param>
-        /// <param name="color">The color of the text, default is null.</param>
-        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.TopLeft, Color? color = null)
+        /// <param name="color">The color of the text, default is White.</param>
+        public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.CenterLeft, Color? color = null)
         {
             this.name = name;
             this.anchor = anchor;
             this.color = color ?? Color.White;
             text = new StringBuilder(20);
 
-            font = AssetsManager.Fonts["DefaultFont"];
-            fontScale = fontSize / 64f * (Pulsarc.getDimensions().X / 1920);
+            font = AssetsManager.fonts["DefaultFont"];
+            fontScale = fontSize / 64f * (Pulsarc.getDimensions().Y / Pulsarc.yBaseRes);
 
-            this.position = position;
-            processedPosition = this.position;
             changePosition(position);
+            processedPosition = truePosition;
             Update("");
         }
 
+        /// <summary>
+        /// Update the text with new text added to name.
+        /// </summary>
+        /// <param name="value">The text to change to</param>
         public void Update(string value)
         {
             text.Clear();
             text.Append(name).Append(value);
             reprocessPosition();
+
+            caught = false;
         }
 
+        /// <summary>
+        /// Reprocess the position of this TDE.
+        /// </summary>
         public void reprocessPosition()
         {
 
-            float newX = position.X;
-            float newY = position.Y;
+            float newX = truePosition.X;
+            float newY = truePosition.Y;
             Vector2 size = font.MeasureString(text) * fontScale;
             size.X *= Pulsarc.getDimensions().X / Pulsarc.xBaseRes;
             size.Y *= Pulsarc.getDimensions().Y / Pulsarc.yBaseRes;
@@ -97,20 +108,27 @@ namespace Pulsarc.UI
             processedPosition.Y = newY;
         }
 
-        public override void move(Vector2 position)
+        public override void move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position);
+            base.move(position, scaledPositioning);
             reprocessPosition();
         }
 
         public override void Draw()
         {
+            if (caught)
+            {
+                return;
+            }
+
             try
             {
                 Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
-            } catch
+            }
+            catch
             {
-                Console.Write("Could not write " + text);
+                Logger.Error("Could not write " + text + ", Aborting draw() of this TextDisplayElement.", LogType.Runtime);
+                caught = true; // Don't need to spam the console
             }
         }
     }

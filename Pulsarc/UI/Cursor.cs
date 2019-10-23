@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI
 {
@@ -12,7 +9,7 @@ namespace Pulsarc.UI
 
         public Cursor() : base(Skin.assets["cursor"])
         {
-            Resize(30 * cursorScale, false); // Size does not scale with resolution
+            Resize(30 * cursorScale);
         }
 
         public void setPos(Point position)
@@ -22,9 +19,7 @@ namespace Pulsarc.UI
 
         public void setPos(Vector2 position)
         {
-            this.drawPosition.X = position.X;
-            this.drawPosition.Y = position.Y;
-            this.position = drawPosition;
+            this.truePosition = position;
         }
     }
 }
