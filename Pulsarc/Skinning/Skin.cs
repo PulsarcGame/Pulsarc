@@ -16,8 +16,7 @@ namespace Pulsarc.Skinning
     {
         static private bool loaded = false;
 
-        static private Texture2D defaultTexture;
-        static public Texture2D DefaultTexture { get => defaultTexture; }
+        static public Texture2D DefaultTexture { get; private set; } = AssetsManager.Content.Load<Texture2D>("default");
 
         // A collection of all assets and their textures.
         static public Dictionary<String, Texture2D> assets { get; set; }
@@ -123,9 +122,6 @@ namespace Pulsarc.Skinning
                 judges.Add(50, LoadTexture(skinFolder + "Judgements/", "bad"));
                 judges.Add(0, LoadTexture(skinFolder + "Judgements/", "miss"));
 
-                // Load default Texture
-                defaultTexture = AssetsManager.Content.Load<Texture2D>("default");
-
                 loaded = true;
             } else
             {
@@ -176,7 +172,7 @@ namespace Pulsarc.Skinning
                 catch
                 {
                     Console.WriteLine("Failed to load " + asset + " in " + path);
-                    return defaultTexture;
+                    return DefaultTexture;
                 }
             }
         }

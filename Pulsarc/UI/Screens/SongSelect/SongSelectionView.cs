@@ -38,6 +38,12 @@ namespace Pulsarc.UI.Screens.SongSelect
         float beatmapCardWidth, beatapCardHeight, beatmapCardMargin, beatmapCardTotalHeight;
         // Score Card stats
         float scoreCardWidth, scoreCardHeight, scoreCardMargin, scoreCardTotalHeight;
+        
+        // Background changing stuff.
+        public bool ChangingBackground { get; private set; } = false;
+        public Background CurrentBackground { get; private set; }
+        private Background OldBackground;
+        private const int BackgroundFadeTime = 200;
 
         /// <summary>
         /// The view for the SongSelect Screen.
@@ -50,6 +56,8 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             scores = new List<ScoreCard>();
 
+            CurrentBackground = DefaultBackground;
+            OldBackground = DefaultBackground;
 
             // Beatmap Card stats
             beatmapCardWidth = BeatmapCard.StaticTexture.Width;
@@ -105,8 +113,6 @@ namespace Pulsarc.UI.Screens.SongSelect
             int searchBarX = getSkinnablePropertyInt("SearchBarX");
             int searchBarY = getSkinnablePropertyInt("SearchBarY");
             searchBox.move(searchBarX, searchBarY);
-
-            background = new Background("select_background");
 
             button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
         }
@@ -166,8 +172,11 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                     // Load Beatmap
                     card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
-                    // ScoreCard Stuff
-                    scoreCardStuff(card);
+
+                    string backgroundPath = card.beatmap.path + "/" + card.beatmap.Background;
+                    Texture2D backgroundTexture = AssetsManager.Load(backgroundPath);
+
+                    startChangingBackground(backgroundTexture);
                     break;
                 }
             }
@@ -197,6 +206,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                 scoreCard.move(offsetX, offsetY);
 
                 scores.Add(new ScoreCard(score, position, rank));
+            }
+        }
                 
         private void startChangingBackground(Texture2D newBackground)
         {

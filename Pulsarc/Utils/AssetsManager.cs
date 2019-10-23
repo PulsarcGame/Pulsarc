@@ -16,16 +16,15 @@ namespace Pulsarc.Utils
 
         static public Dictionary<String, KeyValuePair<Texture2D, double>> StoredTexture { get; set; }
 
-        static public void Initialize(ContentManager Content)
+        static public void Initialize(ContentManager content)
         {
-            content = Content;
+            Content = content;
 
             Fonts = new Dictionary<String, SpriteFont>();
 
             Fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600"));
             
             Skin.LoadSkin("DefaultSkin");
-            Skin.defaultTexture = Content.Load<Texture2D>("default");
 
             StoredTexture = new Dictionary<String, KeyValuePair<Texture2D, double>>();
         }
