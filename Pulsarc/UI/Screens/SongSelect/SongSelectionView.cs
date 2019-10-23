@@ -177,6 +177,9 @@ namespace Pulsarc.UI.Screens.SongSelect
                     Texture2D backgroundTexture = AssetsManager.Load(backgroundPath);
 
                     startChangingBackground(backgroundTexture);
+
+                    // ScoreCard Stuff
+                    scoreCardStuff(card);
                     break;
                 }
             }
