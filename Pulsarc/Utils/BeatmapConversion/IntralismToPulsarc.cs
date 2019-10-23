@@ -47,9 +47,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                     result.Version = "Converted";
                     result.Audio = beatmap.musicFile;
                     result.timingPoints.Add(new TimingPoint(0, 120));
+                    result.PreviewTime = 0;
 
                     // Go through each Intralism Event
-                    foreach(Event evt in beatmap.events)
+                    foreach (Event evt in beatmap.events)
                     {
                         // If the current event is an Arc, convert it to a Pulsarc Arc.
                         switch (evt.data[0])

@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         public SearchBox searchBox;
 
         // Background image of Song Select
-        Background background;
+        public static Background DefaultBackground => new Background("select_background");
 
         // Current Scores to display
         List<ScoreCard> scores;
@@ -49,6 +49,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
             scores = new List<ScoreCard>();
+
 
             // Beatmap Card stats
             beatmapCardWidth = BeatmapCard.StaticTexture.Width;
@@ -165,7 +166,6 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                     // Load Beatmap
                     card.beatmap = BeatmapHelper.Load(card.beatmap.path, card.beatmap.fileName);
-
                     // ScoreCard Stuff
                     scoreCardStuff(card);
                     break;
@@ -197,6 +197,25 @@ namespace Pulsarc.UI.Screens.SongSelect
                 scoreCard.move(offsetX, offsetY);
 
                 scores.Add(new ScoreCard(score, position, rank));
+                
+        private void startChangingBackground(Texture2D newBackground)
+        {
+            if (newBackground != null)
+            {
+                ChangingBackground = true;
+                OldBackground.changeBackground(CurrentBackground.Texture);
+                CurrentBackground.changeBackground(newBackground);
+                CurrentBackground.opacity = 0;
+            }
+            else
+            {
+                if (CurrentBackground.Texture != DefaultBackground.Texture)
+                {
+                    ChangingBackground = true;
+                    OldBackground = CurrentBackground;
+                    CurrentBackground = DefaultBackground;
+                    CurrentBackground.opacity = 0;
+                }
             }
         }
 
@@ -206,7 +225,8 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Draw(GameTime gameTime)
         {
-            background.Draw();
+            drawBackgrounds();
+
             foreach (BeatmapCard card in GetSongSelection().cards)
             {
                 card.adjustClickDistance();
@@ -222,6 +242,23 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
             button_back.Draw();
             searchBox.Draw();
+        }
+
+        private void drawBackgrounds()
+        {
+            if (ChangingBackground && CurrentBackground.opacity < 1)
+            {
+                OldBackground.Draw();
+                CurrentBackground.opacity += (float)PulsarcTime.DeltaTime / BackgroundFadeTime;
+
+                if (CurrentBackground.opacity > 1)
+                {
+                    CurrentBackground.opacity = 1;
+                    ChangingBackground = false;
+                }
+            }
+
+            CurrentBackground.Draw();
         }
 
         public override void Update(GameTime gameTime)

@@ -144,8 +144,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                     if (XnaKeyHelper.isTypingCharacter(press.Value))
                     {
                         GetSongSelectionView().searchBox.addText(InputManager.caps ? XnaKeyHelper.GetStringFromKey(press.Value) : XnaKeyHelper.GetStringFromKey(press.Value).ToLower());
+                        RefreshBeatmaps(GetSongSelectionView().searchBox.getText().ToLower());
                     }
-                    RefreshBeatmaps(GetSongSelectionView().searchBox.getText().ToLower());
                 }
             }
         }

@@ -131,7 +131,7 @@ namespace Pulsarc.Beatmaps.Events
                 return;
             }
 
-            gameplayEngine.crosshair.Resize(PulsarcMath.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 100f));
+            gameplayEngine.crosshair.Resize(PulsarcMath.Lerp(gameplayEngine.crosshair.diameter, zoomLevel, (float)deltaTime / 200f));
         }
 
         /// <summary>

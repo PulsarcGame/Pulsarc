@@ -10,7 +10,7 @@ namespace Pulsarc.Utils
         public static double SmoothDeltaTime { get => smoothDeltaTime; set { } }
 
         private static double deltaTime;
-        public static double DeltaTime { get => smoothDeltaTime; set { } }
+        public static double DeltaTime { get => deltaTime; set { } }
 
         private static double prevFrameTime;
         public static double PrevFrameElapsedTime { get => prevFrameTime; set { } }
