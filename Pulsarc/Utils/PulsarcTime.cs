@@ -2,55 +2,59 @@
 
 namespace Pulsarc.Utils
 {
+    // A static class that keeps track of time.
     public static class PulsarcTime
     {
-        public static bool isRunning = false;
+        // Whether or not this Class is keeping track of time.
+        public static bool IsRunning = false;
+        
+        // Delta Time (in ms) that is smoothed in a similar fashion to Unity's Time.SmoothDeltaTime
+        public static double SmoothDeltaTime { get; private set; }
 
-        private static double smoothDeltaTime;
-        public static double SmoothDeltaTime { get => smoothDeltaTime; set { } }
+        // The amount of time (in ms) between the last two frames
+        public static double DeltaTime { get; private set; }
 
-        private static double deltaTime;
-        public static double DeltaTime { get => deltaTime; set { } }
+        // The amount of time since this timer started, as of last frame.
+        public static double PrevFrameElapsedTime { get; private set; }
 
-        private static double prevFrameTime;
-        public static double PrevFrameElapsedTime { get => prevFrameTime; set { } }
+        // The amount of time since this timer was started.
+        public static double CurrentElapsedTime => stopwatch.ElapsedMilliseconds;
 
-        public static double CurrentElapsedTime { get => stopwatch.ElapsedMilliseconds; set { } }
-
+        // The stopwatch doing most of the work for us.
         private static Stopwatch stopwatch = new Stopwatch();
 
         public static void Start()
         {
             stopwatch.Start();
 
-            prevFrameTime = stopwatch.ElapsedMilliseconds;
-            smoothDeltaTime = prevFrameTime;
-            deltaTime = prevFrameTime;
+            PrevFrameElapsedTime = stopwatch.ElapsedMilliseconds;
+            SmoothDeltaTime = PrevFrameElapsedTime;
+            DeltaTime = PrevFrameElapsedTime;
 
-            isRunning = true;
+            IsRunning = true;
         }
 
         public static void Resume()
         {
             stopwatch.Start();
-            isRunning = true;
+            IsRunning = true;
         }
 
         public static void Stop()
         {
             stopwatch.Stop();
-            isRunning = false;
+            IsRunning = false;
         }
 
         public static void Reset()
         {
             stopwatch.Reset();
 
-            prevFrameTime = 0;
-            smoothDeltaTime = 0;
-            deltaTime = 0;
+            PrevFrameElapsedTime = 0;
+            SmoothDeltaTime = 0;
+            DeltaTime = 0;
 
-            isRunning = false;
+            IsRunning = false;
         }
 
         public static void Restart()
@@ -59,26 +63,34 @@ namespace Pulsarc.Utils
             Start();
         }
 
+        /// <summary>
+        /// This method must be called every frame for accurate
+        /// SmoothDeltaTime values.
+        /// </summary>
         public static void Update()
         {
-            if (!isRunning)
-            {
+            if (!IsRunning)
                 return;
-            }
 
             double currentFrameTime = stopwatch.ElapsedMilliseconds;
 
-            deltaTime = currentFrameTime - prevFrameTime;
-            prevFrameTime = currentFrameTime;
+            DeltaTime = currentFrameTime - PrevFrameElapsedTime;
+            PrevFrameElapsedTime = currentFrameTime;
 
-            smoothDeltaTime = findSmoothDeltaTime();
+            SmoothDeltaTime = findSmoothDeltaTime();
         }
 
+        /// <summary>
+        /// Replicates how Unity calculates Smooth Delta Time.
+        /// Found this equation in some random Unity forum after
+        /// 2 hours of internet searching <_<
+        /// </summary>
+        /// <returns>The SmoothDeltaTime for the last frame</returns>
         private static double findSmoothDeltaTime()
         {
             double smoothAmount = .8;
 
-            double newSmoothDeltaTime = (1 - smoothAmount) * deltaTime + (smoothAmount * smoothDeltaTime);
+            double newSmoothDeltaTime = (1 - smoothAmount) * DeltaTime + (smoothAmount * SmoothDeltaTime);
 
             return newSmoothDeltaTime;
         }

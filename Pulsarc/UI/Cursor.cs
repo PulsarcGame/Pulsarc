@@ -5,21 +5,22 @@ namespace Pulsarc.UI
 {
     public class Cursor : Drawable
     {
-        public float cursorScale = 1; //TODO: Make this adjustable by the user
+        //TODO: Make this adjustable by the user
+        public float cursorScale = 1;
 
-        public Cursor() : base(Skin.assets["cursor"])
+        public Cursor() : base(Skin.Assets["cursor"])
         {
             Resize(30 * cursorScale);
         }
 
-        public void setPos(Point position)
+        public void SetPos(Point position)
         {
-            setPos(new Vector2(position.X, position.Y));
+            SetPos(new Vector2(position.X, position.Y));
         }
 
-        public void setPos(Vector2 position)
+        public void SetPos(Vector2 position)
         {
-            this.truePosition = position;
+            TruePosition = position;
         }
     }
 }

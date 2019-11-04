@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.Reflection;
-using System.Text;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils.SQLite
@@ -10,11 +7,13 @@ namespace Pulsarc.Utils.SQLite
     public abstract class SQLiteData
     {
         public SQLiteData() { }
+
         public SQLiteData(SQLiteDataReader data)
         {
             foreach (FieldInfo prop in GetType().GetFields())
             {
-                try { 
+                try
+                { 
                     switch(prop.Name.ToLower())
                     {
                         case "datet":
@@ -24,14 +23,16 @@ namespace Pulsarc.Utils.SQLite
                             prop.SetValue(this, data[prop.Name.ToLower()]);
                             break;
                     }
-                } catch
+                }
+                catch
                 {
                     try
                     {
-                        Logger.Warning("Data field in SQLite request could not be set as a " + prop.FieldType.Name + " : " + data[prop.Name.ToLower()], LogType.Runtime);
-                    } catch
+                        Logger.Warning($"Data field in SQLite request could not be set as a {prop.FieldType.Name} : {data[prop.Name.ToLower()]}", LogType.Runtime);
+                    }
+                    catch
                     {
-                        Logger.Warning("Unexpected data field in SQLite request : " + prop.Name, LogType.Runtime);
+                        Logger.Warning($"Unexpected data field in SQLite request : {prop.Name}", LogType.Runtime);
                     }
                 }
             }
@@ -39,9 +40,10 @@ namespace Pulsarc.Utils.SQLite
 
         public void SaveData(SQLiteStore db)
         {
-            string r = "INSERT INTO " + GetType().Name.ToLower() + " (";
+            string r = $"INSERT INTO {GetType().Name.ToLower()} (";
             string vals = "";
             bool f = true;
+
             foreach (FieldInfo prop in GetType().GetFields())
             {
                 r += f ? "" : ",";
@@ -50,16 +52,13 @@ namespace Pulsarc.Utils.SQLite
 
                 r += prop.Name;
                 if (prop.FieldType.Name.ToLower() == "string" || prop.FieldType.Name.ToLower() == "char")
-                {
-                    vals += "'"+prop.GetValue(this).ToString().Replace("'","\'"+"'")+"'";
-                } else
-                {
+                    vals += "'" + prop.GetValue(this).ToString().Replace("'" , "\'" + "'") + "'";
+                else
                     vals += prop.GetValue(this);
-                }
             }
 
-            r += ") VALUES (" + vals + ")";
-            db.exec(r);
+            r += $") VALUES ({vals})";
+            db.Exec(r);
         }
     }
 }

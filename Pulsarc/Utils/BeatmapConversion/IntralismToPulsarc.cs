@@ -14,10 +14,11 @@ namespace Pulsarc.Utils.BeatmapConversion
     {
         // A value needed to properly convert Intralism's PlayerDistance to Pulsarc's ZLocation
         // It is the "x" in the equation: "IntralismPlayerDistance * x = PulsarcZLocation"
-        private static float playerDistanceToZLocationFactor = 211.862069f;
+        // NOTE: Doesn't work well with negative IntralismPlayerDistance values
+        private const float playerDistanceToZLocationFactor = 211.862069f;
 
         // Estimated offset difference between Intralism and Pulsarc
-        int msOffset = -80;
+        private const int msOffset = -80;
 
         /// <summary>
         /// Convert an Intralism beatmap to a Pulsarc beatmap
@@ -32,7 +33,8 @@ namespace Pulsarc.Utils.BeatmapConversion
             // See if the provided path exists
             if(Directory.Exists(folder_path))
             {
-                string configPath = folder_path + "/config.txt";
+                string configPath = $"{folder_path}/config.txt";
+
                 // See if the a "config.txt" file exists
                 if (File.Exists(configPath))
                 {
@@ -43,30 +45,28 @@ namespace Pulsarc.Utils.BeatmapConversion
                     result.FormatVersion = "1";
                     result.Mapper = "Intralism";
                     result.Artist = "Unknown";
-                    result.Title = beatmap.name;
+                    result.Title = beatmap.Name;
                     result.Version = "Converted";
-                    result.Audio = beatmap.musicFile;
-                    result.timingPoints.Add(new TimingPoint(0, 120));
+                    result.Audio = beatmap.MusicFile;
+                    result.TimingPoints.Add(new TimingPoint(0, 120));
                     result.PreviewTime = 0;
 
                     // Go through each Intralism Event
-                    foreach (Event evt in beatmap.events)
-                    {
+                    foreach (Event evt in beatmap.Events)
                         // If the current event is an Arc, convert it to a Pulsarc Arc.
-                        switch (evt.data[0])
+                        switch (evt.Data[0])
                         {
                             case "SpawnObj":
                                 // Add the converted arc to the Beatmap
-                                result.arcs.Add(handleSpawnObj(evt));
+                                result.Arcs.Add(HandleSpawnObj(evt));
                                 break;
                             case "SetPlayerDistance":
                                 // Add the converted zoom to the Beatmap
-                                result.events.Add(handleSetPlayerDistance(evt));
+                                result.Events.Add(HandleSetPlayerDistance(evt));
                                 break;
                             default:
                                 break;
                         }
-                    }
                 }
             }
 
@@ -79,12 +79,12 @@ namespace Pulsarc.Utils.BeatmapConversion
         /// </summary>
         /// <param name="evt">The event to be converted</param>
         /// <returns>The Event converted to an arc</returns>
-        private Arc handleSpawnObj(Event evt)
+        private Arc HandleSpawnObj(Event evt)
         {
             int arc = 0;
 
             // Find each direction listed in the current event, and assign the appropriate bit to it.
-            foreach (string direction in evt.data[1].Split(',')[0].Split('[')[1].Split(']')[0].Split('-'))
+            foreach (string direction in evt.Data[1].Split(',')[0].Split('[')[1].Split(']')[0].Split('-'))
             {
                 switch (direction)
                 {
@@ -104,7 +104,7 @@ namespace Pulsarc.Utils.BeatmapConversion
             }
 
             // Convert the Intralism Event time to the format Pulsarc understands
-            int time = (int)Math.Floor(evt.time * 1000) + msOffset;
+            int time = (int)Math.Floor(evt.Time * 1000) + msOffset;
 
             return new Arc(time, arc);
         }
@@ -114,16 +114,16 @@ namespace Pulsarc.Utils.BeatmapConversion
         /// </summary>
         /// <param name="evt">The event to be converted</param>
         /// <returns>The Event converted to a ZoomEvent</returns>
-        private ZoomEvent handleSetPlayerDistance(Event evt)
+        private ZoomEvent HandleSetPlayerDistance(Event evt)
         {
             // Convert the Intralism Event time to the format Pulsarc understands
-            int time = (int)Math.Floor(evt.time * 1000) + (msOffset * 2);
+            int time = (int)Math.Floor(evt.Time * 1000) + (msOffset * 2);
 
-            float convertedZLocation = float.Parse(evt.data[1]) * playerDistanceToZLocationFactor;
+            float convertedZLocation = float.Parse(evt.Data[1]) * playerDistanceToZLocationFactor;
             
-            double convertedZoomLevel = Math.Round((Pulsarc.xBaseRes / 2) * (Skin.assets["crosshair"].Width / 2) / convertedZLocation,2);
+            double convertedZoomLevel = Math.Round((Pulsarc.BaseWidth / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
 
-            return new ZoomEvent(time + ",1,-1," + convertedZoomLevel + "," + 0);
+            return new ZoomEvent($"{time},1,-1,{convertedZoomLevel},0");
         }
 
         /// <summary>
@@ -136,25 +136,24 @@ namespace Pulsarc.Utils.BeatmapConversion
 
             if(map.Audio != null)
             {
-                string audioPath = folder_path + "/" + map.Audio;
+                string audioPath = $"{folder_path}/{map.Audio}";
+
                 if (File.Exists(audioPath))
                 {
                     int id = 0;
                     // The folder name will look like "0 - Unknown - MapTitle - (Mapper)"
-                    string folderName = string.Join("_", (id + " - " + map.Artist + " - " + map.Title + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
-                    string dirName = "Songs/" + folderName;
+                    string folderName = string.Join("_", ($"{id} - {map.Artist} - {map.Title} ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
+                    string dirName = $"Songs/{folderName}";
 
                     if (!Directory.Exists(dirName))
-                    {
                         Directory.CreateDirectory(dirName);
-                    }
 
-                    File.Copy(audioPath, dirName + "/" + map.Audio, true);
+                    File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
 
                     // The file name will look like "Unknown - MapTitle [Converted] (Mapper).psc"
-                    string difficultyFileName = string.Join("_", (map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
+                    string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
 
-                    BeatmapHelper.Save(map, dirName + "/" + difficultyFileName + ".psc");
+                    BeatmapHelper.Save(map, $"{dirName}/{difficultyFileName}.psc");
                 }
             }
         }

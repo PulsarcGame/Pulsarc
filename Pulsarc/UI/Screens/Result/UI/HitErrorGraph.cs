@@ -9,12 +9,15 @@ namespace Pulsarc.UI.Screens.Result.UI
 {
     class HitErrorGraph : Drawable
     {
-        int width;
-        int height;
-        List<KeyValuePair<double, int>> hits;
+        // Dimensions of the graph
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        
+        // Data on the graph
+        public List<KeyValuePair<double, int>> Hits { get; private set; }
 
         // The time of the last hit
-        double max_time;
+        private double maxTime;
 
         /// <summary>
         /// A graph that shows all the hits of a play on the Result Screen.
@@ -25,23 +28,19 @@ namespace Pulsarc.UI.Screens.Result.UI
         /// <param name="hits">A list of all hits, KVP[time, judgescore]</param>
         public HitErrorGraph(Vector2 position, int width, int height, List<KeyValuePair<double, int>> hits, Anchor anchor = Anchor.TopLeft) : base(Skin.DefaultTexture, position, anchor: anchor)
         {
-            this.width = width;
-            this.height = height;
-            this.hits = hits;
+            Width = width;
+            Height = height;
+            Hits = hits;
 
-            Texture = new Texture2D(Pulsarc.graphics.GraphicsDevice, width, height);
+            Texture = new Texture2D(Pulsarc.Graphics.GraphicsDevice, width, height);
             Color[] graphBG = new Color[width * height];
 
-            JudgementValue miss = Judgement.getMiss();
+            JudgementValue miss = Judgement.GetMiss();
 
             // Draw the graph
             for (int x = 0; x < width; x++)
-            {
                 for (int y = 0; y < height; y++)
-                {
-                    graphBG[(y * width) + x] = Judgement.getErrorJudgementValue((int) Math.Abs(((y - (height / 2)) * miss.judge / (float) height * 2))).color * 0.3f;
-                }
-            }
+                    graphBG[(y * width) + x] = Judgement.GetJudgementValueByError((int) Math.Abs(((y - (height / 2)) * miss.Judge / (float) height * 2))).Color * 0.3f;
 
             /*
             hits = new List<KeyValuePair<long, int>>();
@@ -59,24 +58,25 @@ namespace Pulsarc.UI.Screens.Result.UI
             // Draw the hits
             if (hits.Count > 0)
             {
-                max_time = 0;
+                maxTime = 0;
+
                 foreach (KeyValuePair<double, int> hit in hits)
-                {
-                    max_time = max_time < hit.Key ? hit.Key : max_time;
-                }
-                max_time += 4000;
+                    maxTime = maxTime < hit.Key ? hit.Key : maxTime;
+
+                maxTime += 4000;
+
                 foreach (KeyValuePair<double, int> hit in hits)
                 {
                     KeyValuePair<Vector2, Color> info = getHitInfo(hit);
+
                     for (int yp = -1; yp < 2; yp++)
                     {
                         for (int xp = -1; xp < 2; xp++)
                         {
                             int pos = (int)((int)(info.Key.Y + yp) * width + (info.Key.X + xp));
+
                             if (pos >= 0 && pos < width * height)
-                            {
                                 graphBG[pos] = info.Value;
-                            }
                         }
                     }
                 }
@@ -92,12 +92,18 @@ namespace Pulsarc.UI.Screens.Result.UI
         /// <returns></returns>
         private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
         {
-            return new KeyValuePair<Vector2, Color>(new Vector2((float) ((2000+ hit.Key) / max_time * width), (-hit.Value / (float) Judgement.getMiss().judge * height / 2f) + height / 2), Judgement.getErrorJudgementValue(Math.Abs(hit.Value)).color);
+            return new KeyValuePair<Vector2, Color>(
+                new Vector2
+                (
+                    (float) ((2000+ hit.Key) / maxTime * Width),
+                    (-hit.Value / (float) Judgement.GetMiss().Judge * Height / 2f) + Height / 2
+                ),
+                Judgement.GetJudgementValueByError(Math.Abs(hit.Value)).Color);
         }
 
         public override void Draw()
         {
-            Pulsarc.spriteBatch.Draw(Texture, position: truePosition, rotation: rotation, origin: origin, color: Color.White);
+            Pulsarc.SpriteBatch.Draw(Texture, position: TruePosition, rotation: Rotation, origin: Origin, color: Color.White);
 
             /*
             foreach (KeyValuePair<long, Double> hit error in hits)

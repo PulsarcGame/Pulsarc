@@ -19,15 +19,22 @@ namespace Pulsarc.Utils.BeatmapConversion
         public int Mode { get; set; }
 
         // Metadata
-        public string Title { get; set; } // The song title
-        public string Artist { get; set; } // The artist of the song
-        public string Creator { get; set; } // The creator of the map
-        public string Version { get; set; } // The version of the map
+        // The song title
+        public string Title { get; set; }
+        // The artist of the song
+        public string Artist { get; set; }
+        // The creator of the map
+        public string Creator { get; set; }
+        // The version of the map
+        public string Version { get; set; }
 
         // Events
-        public List<string> Events { get; set; } // All non-gameplay events
-        public List<string> TimingPoints { get; set; } // A list of each TimingPoint (an event which changes BPM/SV/Kiai status)
-        public List<string> HitObjects { get; set; } // A list of each osu HitObject
+        // All non-gameplay events
+        public List<string> Events { get; set; }
+        // A list of each TimingPoint (an event which changes BPM/SV/KiaiTime)
+        public List<string> TimingPoints { get; set; }
+        // A list of each osu HitObject
+        public List<string> HitObjects { get; set; }
 
         /// <summary>
         /// Creates a new ManiaBeatmap using the filename provided.
@@ -47,10 +54,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                 if (line.Length > 0)
                 {
                     Queue<string> parts = new Queue<string>(line.Split(':'));
-                    if (parts.Count <= 1) // If there's no colons, it's probably seperated by commas instead 
-                    {
+                    
+                    // If there's no colons, it's probably seperated by commas instead
+                    if (parts.Count <= 1)
                         parts = new Queue<string>(line.Split(","));
-                    }
 
                     if (parts.Count > 1)
                     {
@@ -73,7 +80,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     catch
                                     {
-                                        Console.WriteLine("Incorrect value in field : " + key);
+                                        Console.WriteLine($"Incorrect value in field : {key}");
                                     }
                                     break;
                                 case "Mode":
@@ -84,7 +91,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     catch
                                     {
-                                        Console.WriteLine("Incorrect value in field : " + key);
+                                        Console.WriteLine($"Incorrect value in field : {key}");
                                     }
                                     break;
                             }
@@ -95,7 +102,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                             switch(state)
                             {
                                 case "[Events]":
-                                    state = addEvent(line, state);
+                                    state = AddEvent(line, state);
                                     break;
                                 case "[TimingPoints]":
                                     TimingPoints.Add(line);
@@ -125,9 +132,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                 break;
                             default:
                                 if (!line.Contains("//")) //Ignore comments
-                                {
                                     state = "";
-                                }
                                 break;
                         }
                     }
@@ -135,10 +140,12 @@ namespace Pulsarc.Utils.BeatmapConversion
             }
         }
 
-        private string addEvent(string line, string state)
+        private string AddEvent(string line, string state)
         {
             Events.Add(line);
-            return ""; // Temp: this is to change the map background, which is the first line
+            
+            // Temp: this is to change the map background, which is the first line
+            return "";
         }
     }
 }

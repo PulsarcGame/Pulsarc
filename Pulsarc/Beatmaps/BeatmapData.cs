@@ -11,52 +11,90 @@ namespace Pulsarc.Beatmaps
 {
     public class BeatmapData : SQLiteData
     {
-        public string path;
-        public string background_path;
-        public string audio_path;
-        public int audio_preview;
-        public string fileName;
-        public string title;
-        public string artist;
-        public string mapper;
-        public string version;
-        public int key_count;
-        public double difficulty;
+        // Path to the beatmap folder and background image
+        public string Path;
+        public string BackgroundPath;
 
+        // Path to the beatmap's audio
+        public string AudioPath;
+        // Time (in ms) that the preview should start from in the song select
+        public int AudioPreviewTime;
+
+        // Filename of the .psc
+        public string FileName;
+
+        // Metadata
+        public string Title;
+        public string Artist;
+        public string Mapper;
+        public string Version;
+
+        // Game data
+        public int KeyCount;
+        public double Difficulty;
+
+        /// <summary>
+        /// Make a new BeatmapData
+        /// </summary>
         public BeatmapData() : base() { }
 
+        /// <summary>
+        /// Make a new BeatmapData out of a DataReader
+        /// </summary>
+        /// <param name="data"></param>
         public BeatmapData(SQLiteDataReader data) : base(data) { }
 
+        /// <summary>
+        /// Make a new BeatmapData out of a Beatmap by loading
+        /// the Beatmap from the provided path.
+        /// </summary>
+        /// <param name="path">Path to the Beatmap folder.</param>
+        /// <param name="file">File name of the .psc Beatmap.</param>
         public BeatmapData(string path, string file) : this(BeatmapHelper.Load(path, file)) { }
 
+        /// <summary>
+        /// Make a new BeatmapData out of a Beatmap.
+        /// </summary>
+        /// <param name="beatmap">The Beatmap used to make this BeatmapData</param>
         public BeatmapData(Beatmap beatmap)
         {
-            path = beatmap.path;
-            background_path = beatmap.Background;
-            audio_path = beatmap.Audio;
-            audio_preview = beatmap.PreviewTime;
-            fileName = beatmap.fileName;
-            title = beatmap.Title;
-            artist = beatmap.Artist;
-            mapper = beatmap.Mapper;
-            version = beatmap.Version;
-            key_count = beatmap.KeyCount;
-            difficulty = beatmap.Difficulty;
+            Path = beatmap.Path;
+            BackgroundPath = beatmap.Background;
+            AudioPath = beatmap.Audio;
+            AudioPreviewTime = beatmap.PreviewTime;
+            FileName = beatmap.FileName;
+            Title = beatmap.Title;
+            Artist = beatmap.Artist;
+            Mapper = beatmap.Mapper;
+            Version = beatmap.Version;
+            KeyCount = beatmap.KeyCount;
+            Difficulty = beatmap.Difficulty;
         }
 
+        /// <summary>
+        /// The Beatmap as a string.
+        /// Format is "Artist - Title [Version] (Mapper)"
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return artist + " - " + title + " [" + version + "] (" + mapper + ")";
+            return $"{Artist} - {Title} [{Version}] ({Mapper})";
         }
 
-        public bool match(string search)
+        /// <summary>
+        /// Find if this beatmap matches the search query.
+        /// </summary>
+        /// <param name="search">The query to search for.</param>
+        /// <returns>True if search is found in this BeatmapData, false if not.</returns>
+        public bool Match(string search)
         {
-            if (artist.ToLower().Contains(search)) return true;
-            if (title.ToLower().Contains(search)) return true;
-            if (mapper.ToLower().Contains(search)) return true;
-            if (version.ToLower().Contains(search)) return true;
+            bool matching =
+                Artist.ToLower().Contains(search) ||
+                Title.ToLower().Contains(search)  ||
+                Mapper.ToLower().Contains(search) ||
+                Version.ToLower().Contains(search);
 
-            return false;
+            return matching;
         }
     }
 }

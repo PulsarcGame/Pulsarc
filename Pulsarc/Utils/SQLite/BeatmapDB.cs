@@ -1,9 +1,6 @@
 ﻿using Pulsarc.Beatmaps;
-using Pulsarc.UI.Screens.Gameplay;
-using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Text;
 
 namespace Pulsarc.Utils.SQLite
 {
@@ -11,30 +8,29 @@ namespace Pulsarc.Utils.SQLite
     {
         public BeatmapDB() : base("beatmap") { }
 
-        public override void initTables()
+        public override void InitTables()
         {
-            tables.Add(new BeatmapData());
+            Tables.Add(new BeatmapData());
         }
 
-        public void addBeatmap(BeatmapData map)
+        public void AddBeatmap(BeatmapData map)
         {
             map.SaveData(this);
         }
 
-        public void clearBeatmaps()
+        public void ClearBeatmaps()
         {
-            exec("DELETE FROM beatmapdata");
+            Exec("DELETE FROM beatmapdata");
         }
 
-        public List<BeatmapData> getBeatmaps()
+        public List<BeatmapData> GetBeatmaps()
         {
             List<BeatmapData> maps = new List<BeatmapData>();
 
-            SQLiteDataReader r = query("SELECT * FROM beatmapdata");
+            SQLiteDataReader r = Query("SELECT * FROM beatmapdata");
+
             while(r.Read())
-            {
                 maps.Add(new BeatmapData(r));
-            }
 
             return maps;
         }

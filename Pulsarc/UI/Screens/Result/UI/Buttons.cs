@@ -10,8 +10,7 @@ namespace Pulsarc.UI.Screens.Result.UI
     /// </summary>
     class ButtonAdvanced : Drawable
     {
-        public ButtonAdvanced(Vector2 position) : base(Skin.assets["result_button_advanced"], position)
-        {
-        }
+        public ButtonAdvanced(Vector2 position) : base(Skin.Assets["result_button_advanced"], position)
+        { }
     }
 }

@@ -15,34 +15,34 @@ namespace Pulsarc.UI.Screens.Result
 {
     class ResultScreenView : ScreenView
     {
-        public readonly string config = "result_screen";
-        public readonly string[] sections = { "Properties", "Metadata", "Judgements" };
+        private readonly string Config = "result_screen";
+        private readonly string[] Sections = { "Properties", "Metadata", "Judgements" };
 
-        ResultScreen GetResultScreen() { return (ResultScreen) Screen; }
+        private ResultScreen GetResultScreen() { return (ResultScreen)Screen; }
 
         // Buttons
-        RetryButton button_retry;
-        ReturnButton button_back;
-        ButtonAdvanced button_advanced;
+        private RetryButton buttonRetry;
+        private ReturnButton buttonBack;
+        private ButtonAdvanced buttonAdvanced;
 
-        Beatmap beatmap;
+        private Beatmap beatmap;
 
         // Play stats
-        List<TextDisplayElement> playStats = new List<TextDisplayElement>();
-        Grade grade;
+        private List<TextDisplayElement> playStats = new List<TextDisplayElement>();
+        private Grade grade;
 
         // Background and scorecard designs
-        ResultScorecard scorecard;
-        Background background;
-        Background mapBackground;
+        private ResultCard scorecard;
+        private Background background;
+        private Background mapBackground;
 
         // Metadata
-        List<TextDisplayElement> metadata = new List<TextDisplayElement>();
+        private List<TextDisplayElement> metadata = new List<TextDisplayElement>();
 
         // Judges and the TDE that tracks the amount of each
-        List<KeyValuePair<Judge,TextDisplayElement>> judgements;
+        private List<KeyValuePair<Judge,TextDisplayElement>> judgements;
 
-        HitErrorGraph hitErrorGraph;
+        private HitErrorGraph hitErrorGraph;
 
         /// <summary>
         /// ResultScreenView draws everything needed for the Result Screen.
@@ -56,47 +56,48 @@ namespace Pulsarc.UI.Screens.Result
             this.beatmap = beatmap;
 
             // TODO: Redesign ResultScorecard to work on other aspect ratios than 16:9
-            addScoreCard();
+            AddScoreCard();
 
-            addButtons();
+            AddButtons();
 
-            addBackgrounds(mapBackground);
+            AddBackgrounds(mapBackground);
 
-            addPlayStats(accuracy, grade);
+            AddPlayStats(accuracy, grade);
 
-            addMetadata();
+            AddMetadata();
 
-            addHitErrorGraph();
+            AddHitErrorGraph();
 
-            addJudges();
+            AddJudges();
         }
 
-        private void addScoreCard()
+        #region Setup Methods
+        private void AddScoreCard()
         {
-            Vector2 startPos = Skin.getConfigStartPosition(config, sections[0], "ScoreCardStartPos");
-            Anchor anchor = getSkinnablePropertyAnchor("ScoreCardAnchor");
+            Vector2 startPos = Skin.GetConfigStartPosition(Config, Sections[0], "ScoreCardStartPos");
+            Anchor anchor = GetSkinnablePropertyAnchor("ScoreCardAnchor");
 
-            scorecard = new ResultScorecard(startPos, anchor);
+            scorecard = new ResultCard(startPos, anchor);
 
-            int offsetX = getSkinnablePropertyInt("ScoreCardX");
-            int offsetY = getSkinnablePropertyInt("ScoreCardY");
+            int offsetX = GetSkinnablePropertyInt("ScoreCardX");
+            int offsetY = GetSkinnablePropertyInt("ScoreCardY");
 
-            scorecard.move(offsetX, offsetY);
+            scorecard.Move(offsetX, offsetY);
         }
 
-        private void addButtons()
+        private void AddButtons()
         {
-            button_back = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
-            button_retry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
-            button_advanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            buttonBack = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            buttonRetry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+            buttonAdvanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
 
             // Move the advanced button to the right spot
-            float width = button_advanced.Texture.Width;
-            float height = button_advanced.Texture.Height;
-            button_advanced.scaledMove(new Vector2(width, -height));
+            float width = buttonAdvanced.Texture.Width;
+            float height = buttonAdvanced.Texture.Height;
+            buttonAdvanced.ScaledMove(new Vector2(width, -height));
         }
 
-        private void addBackgrounds(Background mapBackground)
+        private void AddBackgrounds(Background mapBackground)
         {
             // Skinned Background
             background = new Background("result_background");
@@ -104,87 +105,86 @@ namespace Pulsarc.UI.Screens.Result
             // Map Background
             this.mapBackground = mapBackground;
 
-            float scale = getSkinnablePropertyFloat("MapBGScale") * Pulsarc.HeightScale;
-            Vector2 startPosition = Skin.getConfigStartPosition(config, sections[0], "MapBGStartPos", scorecard);
+            float scale = GetSkinnablePropertyFloat("MapBGScale") * Pulsarc.HeightScale;
+            Vector2 startPosition = Skin.GetConfigStartPosition(Config, Sections[0], "MapBGStartPos", scorecard);
 
-            int offsetX = getSkinnablePropertyInt("MapBGX");
-            int offsetY = getSkinnablePropertyInt("MapBGY");
+            int offsetX = GetSkinnablePropertyInt("MapBGX");
+            int offsetY = GetSkinnablePropertyInt("MapBGY");
 
-            mapBackground.changePosition(startPosition);
+            mapBackground.ChangePosition(startPosition);
 
-            mapBackground.move(offsetX, offsetY);
+            mapBackground.Move(offsetX, offsetY);
         }
 
-        private void addPlayStats(double accuracy, string grade)
+        private void AddPlayStats(double accuracy, string grade)
         {
             // Grade
-            Vector2 startPosition = Skin.getConfigStartPosition(config, sections[0], "GradeStartPos");
-            float scale = getSkinnablePropertyFloat("GradeScale");
-            Anchor anchor = getSkinnablePropertyAnchor("GradeAnchor");
+            Vector2 startPosition = Skin.GetConfigStartPosition(Config, Sections[0], "GradeStartPos");
+            float scale = GetSkinnablePropertyFloat("GradeScale");
+            Anchor anchor = GetSkinnablePropertyAnchor("GradeAnchor");
 
             this.grade = new Grade(grade, startPosition, scale, anchor);
 
-            int offsetX = getSkinnablePropertyInt("GradeX");
-            int offsetY = getSkinnablePropertyInt("GradeY");
+            int offsetX = GetSkinnablePropertyInt("GradeX");
+            int offsetY = GetSkinnablePropertyInt("GradeY");
 
-            this.grade.move(offsetX, offsetY);
+            this.grade.Move(offsetX, offsetY);
 
             // TDEs
-            playStats.Add(makeTextDisplayElement("Score", sections[0]));
-            playStats[0].Update(GetResultScreen().display_score.ToString("#,#0"));
+            playStats.Add(MakeTextDisplayElement("Score", Sections[0]));
+            playStats[0].Update(GetResultScreen().DisplayScore.ToString("#,#0"));
 
-            playStats.Add(makeTextDisplayElement("Acc", sections[0]));
+            playStats.Add(MakeTextDisplayElement("Acc", Sections[0]));
             playStats[1].Update(Math.Round(accuracy * 100, 2).ToString("#,##.00") + "%");
 
-            playStats.Add(makeTextDisplayElement("Combo", sections[0]));
-            playStats[2].Update(GetResultScreen().combo.ToString("#,#0") + "x");
+            playStats.Add(MakeTextDisplayElement("Combo", Sections[0]));
+            playStats[2].Update(GetResultScreen().Combo.ToString("#,#0") + "x");
         }
 
-        private void addMetadata()
+        private void AddMetadata()
         {
-            metadata.Add(makeTextDisplayElement("Title", sections[1]));
-            metadata[0].Update(GetResultScreen().beatmap.Title);
+            metadata.Add(MakeTextDisplayElement("Title", Sections[1]));
+            metadata[0].Update(GetResultScreen().Beatmap.Title);
 
-            metadata.Add(makeTextDisplayElement("Artist", sections[1]));
-            metadata[1].Update(GetResultScreen().beatmap.Artist);
+            metadata.Add(MakeTextDisplayElement("Artist", Sections[1]));
+            metadata[1].Update(GetResultScreen().Beatmap.Artist);
 
-            metadata.Add(makeTextDisplayElement("Version", sections[1]));
-            metadata[2].Update(GetResultScreen().beatmap.Version);
+            metadata.Add(MakeTextDisplayElement("Version", Sections[1]));
+            metadata[2].Update(GetResultScreen().Beatmap.Version);
 
-            metadata.Add(makeTextDisplayElement("Mapper", sections[1]));
-            metadata[3].Update(GetResultScreen().beatmap.Mapper);
+            metadata.Add(MakeTextDisplayElement("Mapper", Sections[1]));
+            metadata[3].Update(GetResultScreen().Beatmap.Mapper);
         }
 
-        private void addHitErrorGraph()
+        private void AddHitErrorGraph()
         {
             hitErrorGraph = new HitErrorGraph
             (
-                Skin.getConfigStartPosition(config, sections[0], "HitErrorStartPos", scorecard),
-                (int)(getSkinnablePropertyInt("HitErrorWidth") * Pulsarc.HeightScale),
-                (int)(getSkinnablePropertyInt("HitErrorHeight") * Pulsarc.HeightScale),
-                GetResultScreen().hits,
-                getSkinnablePropertyAnchor("HitErrorAnchor")
+                Skin.GetConfigStartPosition(Config, Sections[0], "HitErrorStartPos", scorecard),
+                (int)(GetSkinnablePropertyInt("HitErrorWidth") * Pulsarc.HeightScale),
+                (int)(GetSkinnablePropertyInt("HitErrorHeight") * Pulsarc.HeightScale),
+                GetResultScreen().Hits,
+                GetSkinnablePropertyAnchor("HitErrorAnchor")
             );
 
-            int offsetX = getSkinnablePropertyInt("HitErrorX");
-            int offsetY = getSkinnablePropertyInt("HitErrorY");
+            int offsetX = GetSkinnablePropertyInt("HitErrorX");
+            int offsetY = GetSkinnablePropertyInt("HitErrorY");
 
-            hitErrorGraph.scaledMove(offsetX, offsetY);
+            hitErrorGraph.ScaledMove(offsetX, offsetY);
         }
 
-        private void addJudges()
+        private void AddJudges()
         {
             judgements = new List<KeyValuePair<Judge, TextDisplayElement>>();
 
-            foreach (JudgementValue judge in Judgement.judgements)
-            {
-                addJudgeInfo(judge.name);
-            }
+            foreach (JudgementValue judge in Judgement.Judgements)
+                AddJudgeInfo(judge.Name);
+
             foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
-                string name = judgePair.Value.name;
-                judgePair.Value.name = "";
-                judgePair.Value.Update(GetResultScreen().judges_count[name].ToString("#,#0"));
+                string name = judgePair.Value.Name;
+                judgePair.Value.Name = "";
+                judgePair.Value.Update(GetResultScreen().JudgesCount[name].ToString("#,#0"));
             }
         }
 
@@ -192,41 +192,43 @@ namespace Pulsarc.UI.Screens.Result
         /// Add the judgement and the total of that judgement to the Result Screen.
         /// </summary>
         /// <param name="name">The name of the judgement.</param>
-        private void addJudgeInfo(string name)
+        private void AddJudgeInfo(string name)
         {
             string configName = char.ToUpper(name[0]) + name.Substring(1);
-            JudgementValue judgement = Judgement.getByName(name);
+            JudgementValue judgement = Judgement.GetJudgementValueByName(name);
 
             // Judge
-            Vector2 position = Skin.getConfigStartPosition(config, sections[2], configName + "StartPos", scorecard);
-            int offsetX = getSkinnableJudgementInt(configName + "X");
-            int offsetY = getSkinnableJudgementInt(configName + "Y");
-            float scale = getSkinnableJudgementFloat(configName + "Scale") * Pulsarc.HeightScale;
+            Vector2 position = Skin.GetConfigStartPosition(Config, Sections[2], $"{configName}StartPos", scorecard);
+            int offsetX = GetSkinnableJudgementInt($"{configName}X");
+            int offsetY = GetSkinnableJudgementInt($"{configName}Y");
+            float scale = GetSkinnableJudgementFloat($"{configName}Scale") * Pulsarc.HeightScale;
 
-            Judge judge = new Judge(judgement.score, position, scale);
+            Judge judge = new Judge(judgement.Score, position, scale);
 
-            judge.scaledMove(offsetX, offsetY);
+            judge.ScaledMove(offsetX, offsetY);
 
             // JudgeCount
-            TextDisplayElement text = makeTextDisplayElement(configName + "Count", sections[2]);
-            text.name = name;
-            text.color = judgement.color;
+            TextDisplayElement text = MakeTextDisplayElement($"{configName}Count", Sections[2]);
+            text.Name = name;
+            text.Color = judgement.Color;
 
             judgements.Add(new KeyValuePair<Judge, TextDisplayElement>(judge, text));
         }
+        #endregion
 
-        private TextDisplayElement makeTextDisplayElement(string typeName, string section)
+        private TextDisplayElement MakeTextDisplayElement(string typeName, string section)
         {
             // Find variables for the TDE
-            Vector2 position = Skin.getConfigStartPosition(config, section, typeName + "StartPos", scorecard);
-            int fontSize = Skin.getConfigInt(config, section, typeName + "FontSize");
-            Anchor textAnchor = Skin.getConfigAnchor(config, section, typeName + "Anchor");
+            Vector2 position = Skin.GetConfigStartPosition(Config, section, $"{typeName}StartPos", scorecard);
+            int fontSize = Skin.GetConfigInt(Config, section, $"{typeName}FontSize");
+            Anchor textAnchor = Skin.GetConfigAnchor(Config, section, $"{typeName}Anchor");
             Color textColor = Color.White;
 
-            // For judgement text, which finds colors from judgements.ini in addJudgeInfo()
+            // This Try Block is for the judgement text, which find their colors
+            // from judgements.ini in AddJudgeInfo() instead of result_screen.ini here
             try
             {
-                textColor = Skin.getConfigColor(config, section, typeName + "Color");
+                textColor = Skin.GetConfigColor(Config, section, $"{typeName}Color");
             }
             catch { }
 
@@ -235,22 +237,23 @@ namespace Pulsarc.UI.Screens.Result
 
             // Offset
             Vector2 offset = new Vector2(
-                Skin.getConfigInt(config, section, typeName + "X"),
-                Skin.getConfigInt(config, section, typeName + "Y"));
+                Skin.GetConfigInt(Config, section, $"{typeName}X"),
+                Skin.GetConfigInt(Config, section, $"{typeName}Y"));
 
-            text.scaledMove(offset);
+            text.ScaledMove(offset);
 
             return text;
         }
 
+        #region GetConfig Methods
         /// <summary>
         /// Find a float position from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePropertyFloat(string key)
+        private float GetSkinnablePropertyFloat(string key)
         {
-            return Skin.getConfigFloat(config, sections[0], key);
+            return Skin.GetConfigFloat(Config, Sections[0], key);
         }
 
         /// <summary>
@@ -258,9 +261,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnableMetadataFloat(string key)
+        private float GetSkinnableMetadataFloat(string key)
         {
-            return Skin.getConfigFloat(config, sections[1], key);
+            return Skin.GetConfigFloat(Config, Sections[1], key);
         }
 
         /// <summary>
@@ -268,9 +271,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnableJudgementFloat(string key)
+        private float GetSkinnableJudgementFloat(string key)
         {
-            return Skin.getConfigFloat(config, sections[2], key);
+            return Skin.GetConfigFloat(Config, Sections[2], key);
         }
 
         /// <summary>
@@ -278,9 +281,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePropertyInt(string key)
+        private int GetSkinnablePropertyInt(string key)
         {
-            return Skin.getConfigInt(config, sections[0], key);
+            return Skin.GetConfigInt(Config, Sections[0], key);
         }
 
         /// <summary>
@@ -288,9 +291,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnableMetadataInt(string key)
+        private int GetSkinnableMetadataInt(string key)
         {
-            return Skin.getConfigInt(config, sections[1], key);
+            return Skin.GetConfigInt(Config, Sections[1], key);
         }
 
         /// <summary>
@@ -298,9 +301,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnableJudgementInt(string key)
+        private int GetSkinnableJudgementInt(string key)
         {
-            return Skin.getConfigInt(config, sections[2], key);
+            return Skin.GetConfigInt(Config, Sections[2], key);
         }
 
         /// <summary>
@@ -308,9 +311,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePropertyAnchor(string key)
+        private Anchor GetSkinnablePropertyAnchor(string key)
         {
-            return Skin.getConfigAnchor(config, sections[0], key);
+            return Skin.GetConfigAnchor(Config, Sections[0], key);
         }
 
         /// <summary>
@@ -318,9 +321,9 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnableMetadataAnchor(string key)
+        private Anchor GetSkinnableMetadataAnchor(string key)
         {
-            return Skin.getConfigAnchor(config, sections[1], key);
+            return Skin.GetConfigAnchor(Config, Sections[1], key);
         }
 
         /// <summary>
@@ -328,10 +331,11 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnableJudgementAnchor(string key)
+        private Anchor GetSkinnableJudgementAnchor(string key)
         {
-            return Skin.getConfigAnchor(config, sections[2], key);
+            return Skin.GetConfigAnchor(Config, Sections[2], key);
         }
+        #endregion  
 
         public override void Destroy()
         {
@@ -347,28 +351,26 @@ namespace Pulsarc.UI.Screens.Result
             mapBackground.Draw();
             background.Draw();
 
-            button_advanced.Draw();
-            button_back.Draw();
-            button_retry.Draw();
+            buttonAdvanced.Draw();
+            buttonBack.Draw();
+            buttonRetry.Draw();
 
             scorecard.Draw();
 
             foreach (TextDisplayElement playStat in playStats)
-            {
                 playStat.Draw();
-            }
+
             grade.Draw();
 
             foreach (TextDisplayElement data in metadata)
-            {
                 data.Draw();
-            }
 
             foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
                 judgePair.Key.Draw();
                 judgePair.Value.Draw();
             }
+
             hitErrorGraph.Draw();
         }
 
@@ -379,28 +381,23 @@ namespace Pulsarc.UI.Screens.Result
         public override void Update(GameTime gameTime)
         {
             // If "escape" or "delete" was pressed, go back to the Song select
-            while (InputManager.keyboardPresses.Count > 0)
+            while (InputManager.KeyboardPresses.Count > 0)
             {
-                KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
-                {
                     ScreenManager.RemoveScreen(true);
-                }
             }
 
-            // See if the retry or back buttons were pressed.
-            if (InputManager.isLeftClick())
+            // Were the retry or back buttons clicked?
+            if (InputManager.IsLeftClick())
             {
-                Point pos = InputManager.lastMouseClick.Key.Position;
-                if (button_back.clicked(pos))
-                {
-                    button_back.onClick();
-                }
-                else if (button_retry.clicked(pos))
-                {
-                    button_retry.onClick(beatmap);
-                }
+                Point pos = InputManager.LastMouseClick.Key.Position;
+
+                if (buttonBack.Clicked(pos))
+                    buttonBack.OnClick();
+                else if (buttonRetry.Clicked(pos))
+                    buttonRetry.OnClick(beatmap);
             }
         }
     }

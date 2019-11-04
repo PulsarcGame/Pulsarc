@@ -17,14 +17,14 @@ namespace Pulsarc.UI.Screens.Settings
     {
         SettingsScreen GetSettingsScreen() { return (SettingsScreen)Screen; }
 
-        Background background;
-        ReturnButton button_back;
-        SaveButton button_save;
+        private Background background;
+        private ReturnButton button_back;
+        private SaveButton button_save;
 
-        public List<SettingsGroup> groups;
+        public List<SettingsGroup> Groups { get; private set; }
 
-        float currentFocus = 0;
-        float lastFocus = 0;
+        private float currentFocus = 0;
+        private float lastFocus = 0;
 
         public SettingsScreenView(Screen screen) : base(screen)
         {
@@ -32,25 +32,26 @@ namespace Pulsarc.UI.Screens.Settings
             button_back = new ReturnButton("settings_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
             button_save = new SaveButton("settings_button_save", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
 
-            groups = new List<SettingsGroup>();
+            Groups = new List<SettingsGroup>();
 
-            groups.Add(new GameplaySettings(new Vector2(400, getNextGroupPos())));
-            groups.Add(new AudioSettings(new Vector2(400, getNextGroupPos())));
-            groups.Add(new BindingsSettings(new Vector2(400, getNextGroupPos())));
+            Groups.Add(new GameplaySettings(new Vector2(400, GetNextGroupPos())));
+            Groups.Add(new AudioSettings(new Vector2(400, GetNextGroupPos())));
+            Groups.Add(new BindingsSettings(new Vector2(400, GetNextGroupPos())));
         }
 
         public override void Destroy()
-        {
-        }
+        { }
 
-        public int getNextGroupPos()
+        /// <summary>
+        /// Get the position for the next SettingsGroup to use.
+        /// </summary>
+        /// <returns></returns>
+        public int GetNextGroupPos()
         {
             int posY = 0;
              
-            foreach(SettingsGroup group in groups)
-            {
-                posY = (int) group.getNextPosition().Y;
-            }
+            foreach(SettingsGroup group in Groups)
+                posY = (int) group.GetNextPosition().Y;
 
             return posY;
         }
@@ -59,10 +60,8 @@ namespace Pulsarc.UI.Screens.Settings
         {
             background.Draw();
             
-            foreach(SettingsGroup settingsGroup in groups)
-            {
+            foreach(SettingsGroup settingsGroup in Groups)
                 settingsGroup.Draw();
-            }
 
             button_back.Draw();
             button_save.Draw();
@@ -70,9 +69,26 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Update(GameTime gameTime)
         {
-            float selectedFocus = GetSettingsScreen().selectedFocus;
-
             // Move Settings Groups if focus has changed.
+            updateFocus();
+
+            listenForKeys();
+
+            // Check if we released a previously held item
+            // TODO: only check when there was a held item
+            checkHeldItem();
+
+            // Handle Single click inputs
+            handleSingleClicks();
+
+            // Handle holding mouse inputs
+            handleMouseHoldInput();
+        }
+
+        private void updateFocus()
+        {
+            float selectedFocus = GetSettingsScreen().SelectedFocus;
+
             if (currentFocus != selectedFocus)
             {
                 currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
@@ -80,77 +96,57 @@ namespace Pulsarc.UI.Screens.Settings
                 float diff = lastFocus - currentFocus;
                 lastFocus = currentFocus;
 
-                foreach (SettingsGroup settings in groups)
-                {
-                    settings.move(new Vector2(0, 200 * diff));
-                }
+                foreach (SettingsGroup settings in Groups)
+                    settings.Move(new Vector2(0, 200 * diff));
             }
+        }
 
-            while (InputManager.keyboardPresses.Count > 0)
+        private void listenForKeys()
+        {
+            while (InputManager.KeyboardPresses.Count > 0)
             {
-                KeyValuePair<double, Keys> press = InputManager.keyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
-                {
                     ScreenManager.RemoveScreen(true);
-                }
 
-                foreach (SettingsGroup settingsGroup in groups)
-                {
-                    foreach (KeyValuePair<string, Setting> settingP in settingsGroup.settings)
-                    {
-                        if (settingP.Value.keyListen)
-                        {
-                            settingP.Value.handleKeyEvent(press.Value);
-                        }
-                    }
-                }
+                foreach (SettingsGroup settingsGroup in Groups)
+                    foreach (KeyValuePair<string, Setting> settingP in settingsGroup.Settings)
+                        if (settingP.Value.KeyListen)
+                            settingP.Value.HandleKeyEvent(press.Value);
             }
+        }
 
-            // Check if we released a previously held item
-            // TODO: only check when there was a held item
+        private void checkHeldItem()
+        {
             if (MouseManager.CurrentState.LeftButton == ButtonState.Released)
-            {
-                foreach (SettingsGroup settingsGroup in groups)
-                {
-                    if (settingsGroup.focusedHoldSetting != null)
-                    {
-                        settingsGroup.focusedHoldSetting = null;
-                    }
-                }
-            }
+                foreach (SettingsGroup settingsGroup in Groups)
+                    if (settingsGroup.FocusedHoldSetting != null)
+                        settingsGroup.ResetFocusedHoldSetting();
+        }
 
-            // Handle Single click inputs
+        private void handleSingleClicks()
+        {
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                if (button_back.clicked(MouseManager.CurrentState.Position))
-                {
-                    button_back.onClick();
-                }
-                if (button_save.clicked(MouseManager.CurrentState.Position))
-                {
-                    button_save.onClick(this);
-                }
-                foreach (SettingsGroup settingsGroup in groups)
-                {
-                    if (settingsGroup.clicked(MouseManager.CurrentState.Position))
-                    {
-                        settingsGroup.onClick(MouseManager.CurrentState.Position, false);
-                    }
-                }
-            }
+                if (button_back.Clicked(MouseManager.CurrentState.Position))
+                    button_back.OnClick();
 
-            // Handle holding mouse inputs
-            if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
-            {
-                foreach (SettingsGroup settingsGroup in groups)
-                {
-                    if (settingsGroup.clicked(MouseManager.CurrentState.Position))
-                    {
-                        settingsGroup.onClick(MouseManager.CurrentState.Position, true);
-                    }
-                }
+                if (button_save.Clicked(MouseManager.CurrentState.Position))
+                    button_save.OnClick(this);
+
+                foreach (SettingsGroup settingsGroup in Groups)
+                    if (settingsGroup.Clicked(MouseManager.CurrentState.Position))
+                        settingsGroup.OnClick(MouseManager.CurrentState.Position, false);
             }
+        }
+
+        private void handleMouseHoldInput()
+        {
+            if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
+                foreach (SettingsGroup settingsGroup in Groups)
+                    if (settingsGroup.Clicked(MouseManager.CurrentState.Position))
+                        settingsGroup.OnClick(MouseManager.CurrentState.Position, true);
         }
     }
 }

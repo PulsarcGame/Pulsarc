@@ -8,44 +8,54 @@ namespace Pulsarc.Utils.BeatmapConversion
     class IntralismBeatmap
     {
         // "Metadata"
-        public long configVersion; // Version 1 has less storyboard events, and may have different timing to config 2 maps.
-        public string name; // Map Title
-        public string info; // Map/Steam Workshop Description
+        // Version 1 has less storyboard events, and may have different timing to config 2 maps.
+        public long ConfigVersion { get; set; }
+        // Map Title
+        public string Name { get; set; }
+        // Map Description
+        public string Info { get; set; }
 
         // Intralism map ID and the filename of the image corresponding to that ID.
-        public List<Dictionary<string, string>> levelResources;
+        public List<Dictionary<string, string>> LevelResources { get; set; }
 
         // Map tags, used for Steam Workshop.
-        public List<string> tags;
+        public List<string> Tags { get; set; }
 
         // 1 or 2 crosshairs on screen, outdated feature
-        public long handCount;
+        public long HandCount { get; set; }
 
-        // Used for Steam Workshop
-        public string moreInfoURL;
+        // Used by the Steam Workshop
+        public string MoreInfoURL { get; set; }
 
         // Beatmap data
-        public long speed; // Base arc speed
-        public long lives; // Base life amount
-        public long maxLives; // Maximum life possible
-        public string musicFile; // The audio filename for the map
-        public double musicTime; // How long the song is
+        // Base arc speed
+        public long Speed { get; set; }
+        // Base life amount
+        public long Lives { get; set; }
+        // Maximum life possible
+        public long MaxLives { get; set; }
+        // The audio filename for the map
+        public string MusicFile { get; set; }
+        // How long the song is
+        public double MusicTime { get; set; }
 
         // The thumbnail for the map
-        public string iconFile;
+        public string IconFile { get; set; }
 
         // The base "Environmental Type", changes some base Storyboard events.
-        public long environmentType;
+        public long EnvironmentType { get; set; }
 
         // ¯\_(ツ)_/¯
-        public List<Dictionary<string, string>> unlockConditions; // Seemed to be used to "unlock" maps in an earlier version of Intralism
-        public bool hidden; // Probably related to above
+        // Seemed to be used to "unlock" maps in an earlier version of Intralism
+        public List<Dictionary<string, string>> UnlockConditions { get; set; }
+        // Probably related to above
+        public bool Hidden { get; set; }
 
         // The timing of checkpoints in the map
-        public List<double> checkpoints;
+        public List<double> Checkpoints { get; set; }
 
         // A list of all the Events in the map
-        public List<Event> events;
+        public List<Event> Events { get; set; }
     }
 
     /// <summary>
@@ -54,9 +64,9 @@ namespace Pulsarc.Utils.BeatmapConversion
     class Event
     {
         // The time of the event
-        public double time;
+        public double Time { get; set; }
 
         // A list of each part of the event data
-        public List<string> data;
+        public List<string> Data { get; set; }
     }
 }

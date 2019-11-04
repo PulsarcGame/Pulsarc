@@ -1,68 +1,79 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
+using Pulsarc.Utils.SQLite;
 using System;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     public class ScoreCard : Card
     {
-        public static Texture2D StaticTexture = Skin.assets["scorecard"];
+        public static Texture2D DefaultTexture => Skin.Assets["scorecard"];
 
-        ScoreData scoreData;
+        private ScoreData scoreData;
 
-        Grade grade;
+        private Grade grade;
 
-        public ScoreCard(ScoreData data, Vector2 position, int rankPosition, Anchor anchor = Anchor.TopLeft) : base(StaticTexture, position, anchor)
+        public ScoreCard(ScoreData data, Vector2 position, int rankPosition, Anchor anchor = Anchor.TopLeft)
+            : base(DefaultTexture, position, anchor)
         {
             // set scoredata
             scoreData = data;
 
             // set grade
-            float scale = getSkinnableFloat("GradeScale");
-
-            Vector2 startPos = Skin.getConfigStartPosition(config, section, "GradeStartPos", this);
-
-            Anchor gradeAnchor = getSkinnableAnchor("GradeAnchor");
-
-            grade = new Grade(scoreData.grade, startPos, scale, gradeAnchor);
-
-            int gradeXOffset = getSkinnableInt("GradeX");
-            int gradeYOffset = getSkinnableInt("GradeY");
-            grade.scaledMove(gradeXOffset, gradeYOffset);
+            setGrade();
 
             // set other data
-            addTextDisplayElement("Rank");
-            textElements[0].Update("#" + rankPosition);
-
-            addTextDisplayElement("Score");
-            textElements[1].Update(scoreData.score.ToString("#,##"));
-
-            addTextDisplayElement("Acc");
-            textElements[2].Update(Math.Round(scoreData.accuracy * 100, 2).ToString("#,##.00") + "%");
-
-            addTextDisplayElement("Combo");
-            textElements[3].Update("x" + scoreData.maxCombo);
+            setData(rankPosition);
         }
 
-        protected override void setConfigAndSection()
+        private void setGrade()
+        {
+            float scale = GetSkinnableFloat("GradeScale");
+
+            Vector2 startPos = Skin.GetConfigStartPosition(config, section, "GradeStartPos", this);
+
+            Anchor gradeAnchor = GetSkinnableAnchor("GradeAnchor");
+
+            grade = new Grade(scoreData.Grade, startPos, scale, gradeAnchor);
+
+            int gradeXOffset = GetSkinnableInt("GradeX");
+            int gradeYOffset = GetSkinnableInt("GradeY");
+            grade.ScaledMove(gradeXOffset, gradeYOffset);
+        }
+
+        private void setData(int rankPosition)
+        {
+            AddTextDisplayElement("Rank");
+            textElements[0].Update("#" + rankPosition);
+
+            AddTextDisplayElement("Score");
+            textElements[1].Update(scoreData.Score.ToString("#,##"));
+
+            AddTextDisplayElement("Acc");
+            textElements[2].Update(Math.Round(scoreData.Accuracy * 100, 2).ToString("#,##.00") + "%");
+
+            AddTextDisplayElement("Combo");
+            textElements[3].Update("x" + scoreData.MaxCombo);
+        }
+
+        protected override void SetConfigAndSection()
         {
             config = "song_select";
             section = "ScoreCardData";
         }
 
-        public override void move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool scaledPositioning = true)
         {
-            base.move(delta, scaledPositioning);
-            grade.move(delta, scaledPositioning);
+            base.Move(delta, scaledPositioning);
+            grade.Move(delta, scaledPositioning);
         }
 
-        public override void scaledMove(Vector2 delta)
+        public override void ScaledMove(Vector2 delta)
         {
-            base.scaledMove(delta);
-            grade.scaledMove(delta);
+            base.ScaledMove(delta);
+            grade.ScaledMove(delta);
         }
 
         public override void Draw()

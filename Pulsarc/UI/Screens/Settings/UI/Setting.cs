@@ -3,72 +3,106 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
     public abstract class Setting : Drawable
     {
-        public dynamic value;
-        public string type;
-        public string text;
-        public TextDisplayElement title;
-        public TextDisplayElement more;
+        // Current value of this setting
+        public dynamic Value { get; set; }
+
+        // Type of setting and the text for the setting
+        public string Type { get; protected set; }
+        public string Text { get; protected set; }
+
+        // The TDEs to display the text of this Setting
+        public TextDisplayElement Title { get; protected set; }
+        // NOTE: More isn't being used currently
+        public TextDisplayElement More { get; protected set; }
 
         // Whether this input needs constant input (true) or single click (false)
-        public bool hold = false;
+        public bool Hold { get; protected set; } = false;
 
-        // Wheter this input is able to handle a Key event
-        public bool keyListen = false;
+        // Whether this input is currently listening for a Key Event
+        public bool KeyListen { get; protected set; } = false;
 
-        public Setting(string title, string more, Vector2 position, Texture2D texture, float aspect, Anchor anchor, dynamic baseValue, string type) : base(texture, aspect, anchor)
+        /// <summary>
+        /// Initializes a setting that can change different options in Pulsarc.
+        /// </summary>
+        /// <param name="title">Name of the Setting</param>
+        /// <param name="more"></param>
+        /// <param name="position">Setting's position.</param>
+        /// <param name="texture">The texture for the Setting.</param>
+        /// <param name="anchor">The anchor position for this Setting.</param>
+        /// <param name="baseValue">The value this setting starts with.</param>
+        /// <param name="type">The type of variable this setting changes.</param>
+        public Setting(string title, string more, Vector2 position, Texture2D texture, Anchor anchor, dynamic baseValue, string type)
+            : base(texture, position, anchor: anchor)
         {
-            value = baseValue;
-            this.type = type;
-            Console.WriteLine(type.ToString() + " set for " + title);
-            this.text = title;
-            this.title = new TextDisplayElement(title, new Vector2(position.X - 50, position.Y), anchor: Anchor.CenterRight);
-            changePosition(position);
+            Value = baseValue;
+            Type = type;
+            Console.WriteLine($"{type} set for {title}");
+            Text = title;
+            Title = new TextDisplayElement(title, new Vector2(position.X - 50, position.Y), anchor: Anchor.CenterRight);
         }
-        public abstract void onClick(Point mousePosition);
+
+        /// <summary>
+        /// Method that checks whether this setting has been clicked on, and
+        /// what to do when clicked.
+        /// </summary>
+        /// <param name="mousePosition">The current mouse position to check if
+        /// this was clicked.</param>
+        public abstract void OnClick(Point mousePosition);
 
         public override void Draw()
         {
             base.Draw();
-            title.Draw();
+            Title.Draw();
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, scaledPositioning);
-            title.move(position, scaledPositioning);
+            base.Move(position, scaledPositioning);
+            Title.Move(position, scaledPositioning);
         }
 
+        /// <summary>
+        /// Save this setting into the config.ini file.
+        /// </summary>
+        /// <param name="category">Category to save under</param>
+        /// <param name="key">The key to modify.</param>
         public virtual void Save(string category, string key)
         {
-            switch(type)
+            switch(Type)
             {
                 case "float":
-                    Config.setFloat(category, key,(float) getSaveValue());
+                    Config.SetFloat(category, key,(float) GetSaveValue());
                     break;
                 case "int":
-                    Config.setInt(category, key,(int) getSaveValue());
+                    Config.SetInt(category, key,(int) GetSaveValue());
                     break;
                 case "double":
-                    Config.setDouble(category, key,(double) getSaveValue());
+                    Config.SetDouble(category, key,(double) GetSaveValue());
                     break;
                 case "bool":
-                    Config.setBool(category, key,(bool) getSaveValue());
+                    Config.SetBool(category, key,(bool) GetSaveValue());
                     break;
                 default:
-                    Console.WriteLine("Cannot save type " + type.ToString() + " in category "+category+" for setting "+key);
+                    Console.WriteLine("Cannot save type " + Type.ToString() + " in category "+category+" for setting "+key);
                     break;
             }
         }
 
-        public virtual void handleKeyEvent(Keys key) { }
+        /// <summary>
+        /// Handle a key event.
+        /// </summary>
+        /// <param name="key">The key to handle.</param>
+        public virtual void HandleKeyEvent(Keys key) { }
 
-        public abstract dynamic getSaveValue();
+        /// <summary>
+        /// Get the current value that can be saved.
+        /// </summary>
+        /// <returns>This setting's current value.</returns>
+        public abstract dynamic GetSaveValue();
     }
 }

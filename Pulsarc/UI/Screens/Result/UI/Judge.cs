@@ -8,7 +8,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 {
     class Judge : Drawable
     {
-        public Judge(int judge, Vector2 position, float scale) : base(Skin.judges[judge], position)
+        public Judge(int judge, Vector2 position, float scale) : base(Skin.Judges[judge], position)
         {
             Resize(Texture.Width * scale);
         }

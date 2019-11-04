@@ -5,7 +5,8 @@ namespace Pulsarc.Utils
 {
     static class PulsarcDiscord
     {
-        static RichPresence presence;
+        private static RichPresence presence;
+
         static public void Initialize()
         {
             DiscordManager.CreateClient("604680029439393812", Wobble.Discord.RPC.Logging.LogLevel.None);

@@ -14,13 +14,13 @@ namespace Pulsarc.UI.Screens.MainMenu
     class MenuView : ScreenView
     {
         // The background image of the main menu.
-        Background background;
+        private Background background;
 
         // The logo used for the main menu.
-        GameIcon gameIcon;
+        private GameIcon gameIcon;
 
         // The buttons used to navigate from the main menu.
-        public List<NavigationButton> navButtons;
+        private List<NavigationButton> navButtons;
 
         /// <summary>
         /// The Main Menu of Pulsarc
@@ -28,31 +28,31 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// <param name="screen">The screen to draw on.</param>
         public MenuView(Screen screen) : base(screen)
         {
-            setUpBackgroundAndIcon();
-            setUpNavigationButtons();
+            SetUpBackgroundAndIcon();
+            SetUpNavigationButtons();
         }
 
-        private void setUpBackgroundAndIcon()
+        private void SetUpBackgroundAndIcon()
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(Skin.getConfigStartPosition("main_menu", "Properties", "IconStartPos"), getSkinnablePropertyAnchor("IconAnchor"));
+            gameIcon = new GameIcon(Skin.GetConfigStartPosition("main_menu", "Properties", "IconStartPos"), GetSkinnablePropertyAnchor("IconAnchor"));
 
             Vector2 offset = new Vector2(
-                getSkinnablePropertyInt("IconX"),
-                getSkinnablePropertyInt("IconY"));
+                GetSkinnablePropertyInt("IconX"),
+                GetSkinnablePropertyInt("IconY"));
 
-            gameIcon.move(offset);
+            gameIcon.Move(offset);
         }
 
-        private void setUpNavigationButtons()
+        private void SetUpNavigationButtons()
         {
             navButtons = new List<NavigationButton>();
-            addNavButton(Pulsarc.songScreen, "Play");
-            addNavButton(new InProgressScreen(), "Multi");
-            addNavButton(new InProgressScreen(), "Editor");
-            addNavButton(new SettingsScreen(), "Settings");
-            addNavButton(new QuitScreen(), "Quit");
+            AddNavButton(Pulsarc.SongScreen, "Play");
+            AddNavButton(new InProgressScreen(), "Multi");
+            AddNavButton(new InProgressScreen(), "Editor");
+            AddNavButton(new SettingsScreen(), "Settings");
+            AddNavButton(new QuitScreen(), "Quit");
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePropertyFloat(string key)
+        private float GetSkinnablePropertyFloat(string key)
         {
-            return Skin.getConfigFloat("main_menu", "Properties", key);
+            return Skin.GetConfigFloat("main_menu", "Properties", key);
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePropertyInt(string key)
+        private int GetSkinnablePropertyInt(string key)
         {
-            return Skin.getConfigInt("main_menu", "Properties", key);
+            return Skin.GetConfigInt("main_menu", "Properties", key);
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePropertyAnchor(string key)
+        private Anchor GetSkinnablePropertyAnchor(string key)
         {
-            return Skin.getConfigAnchor("main_menu", "Properties", key);
+            return Skin.GetConfigAnchor("main_menu", "Properties", key);
         }
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string getSkinnablePropertyString(string key)
+        private string GetSkinnablePropertyString(string key)
         {
-            return Skin.getConfigString("main_menu", "Properties", key);
+            return Skin.GetConfigString("main_menu", "Properties", key);
         }
 
         /// <summary>
@@ -101,59 +101,54 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="screen">The Screen the nav button will move to.</param>
         /// <param name="typeName">The "typeName" of the button, or the prefix in the config.</param>
-        private void addNavButton(PulsarcScreen screen, string typeName)
+        private void AddNavButton(PulsarcScreen screen, string typeName)
         {
             // Find variables for TDE
-            string textStr = getSkinnablePropertyString(typeName + "Text"); // string text
-            Vector2 position = Skin.getConfigStartPosition("main_menu", "Properties", typeName + "StartPos"); // Vector2 position;
-            int fontSize = getSkinnablePropertyInt(typeName + "TextFontSize");
-            Anchor textAnchor = getSkinnablePropertyAnchor(typeName + "TextAnchor"); // Anchor textAnchor;
-            Color textColor = Skin.getConfigColor("main_menu", "Properties", typeName + "TextColor"); // Color textColor;
+            string textStr = GetSkinnablePropertyString($"{typeName}Text"); // string text
+            Vector2 position = Skin.GetConfigStartPosition("main_menu", "Properties", $"{typeName}StartPos"); // Vector2 position;
+            int fontSize = GetSkinnablePropertyInt($"{typeName}TextFontSize");
+            Anchor textAnchor = GetSkinnablePropertyAnchor($"{typeName}TextAnchor"); // Anchor textAnchor;
+            Color textColor = Skin.GetConfigColor("main_menu", "Properties", $"{typeName}TextColor"); // Color textColor;
 
             // Make TDE
             TextDisplayElement text = new TextDisplayElement(textStr, position, fontSize, textAnchor, textColor);
 
-            // Make NavButton
-            NavigationButton navButton = new NavigationButton(screen, getSkinnablePropertyInt(typeName + "Type"), position, text);
+            // Make NavButton that uses the TDE
+            NavigationButton navButton = new NavigationButton(screen, GetSkinnablePropertyInt($"{typeName}Type"), position, text);
 
-            // Offset
+            // Offset the button
             Vector2 offset = new Vector2(
-                getSkinnablePropertyInt(typeName + "X"),
-                getSkinnablePropertyInt(typeName + "Y"));
+                GetSkinnablePropertyInt($"{typeName}X"),
+                GetSkinnablePropertyInt($"{typeName}Y"));
 
-            navButton.move(offset);
+            navButton.Move(offset);
 
-            // Add
+            // Add the button
             navButtons.Add(navButton);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.isLeftClick())
+            if (InputManager.IsLeftClick())
             {
-                Point pos = InputManager.lastMouseClick.Key.Position;
+                Point pos = InputManager.LastMouseClick.Key.Position;
+
                 foreach (NavigationButton button in navButtons)
-                {
-                    if (button.clicked(pos))
-                    {
-                        button.navigate();
-                    }
-                }
+                    if (button.Clicked(pos))
+                        button.Navigate();
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
             background.Draw();
+
             foreach(NavigationButton button in navButtons)
-            {
                 button.Draw();
-            }
+
             gameIcon.Draw();
         }
 
-        public override void Destroy()
-        {
-        }
+        public override void Destroy() { }
     }
 }

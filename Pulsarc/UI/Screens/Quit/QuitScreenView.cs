@@ -8,20 +8,12 @@ namespace Pulsarc.UI.Screens.Quit
 {
     class QuitScreenView : ScreenView
     {
-        public QuitScreenView(Screen screen) : base(screen)
-        {
-        }
+        public QuitScreenView(Screen screen) : base(screen) { }
 
-        public override void Destroy()
-        {
-        }
+        public override void Destroy() { }
 
-        public override void Draw(GameTime gameTime)
-        {
-        }
+        public override void Draw(GameTime gameTime) { }
 
-        public override void Update(GameTime gameTime)
-        {
-        }
+        public override void Update(GameTime gameTime) { }
     }
 }

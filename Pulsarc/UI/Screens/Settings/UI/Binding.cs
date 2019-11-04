@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
@@ -10,55 +7,70 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     class Binding : Setting
     {
-        Drawable listening;
-        TextDisplayElement key;
+        private Drawable listening;
+        private TextDisplayElement key;
 
+        /// <summary>
+        /// Creates a new "Binding" Setting, a setting that keeps track of and
+        /// can rebind a key button to a specific action.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="more"></param>
+        /// <param name="position"></param>
+        /// <param name="startingValue"></param>
         public Binding(string title, string more, Vector2 position, string startingValue) : 
-            base(title, more, position, Skin.assets["settings_binding"], -1, Anchor.CenterLeft, startingValue, "string")
+            base(title, more, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "string")
         {
-            listening = new Drawable(Skin.assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
+            listening = new Drawable(Skin.Assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
 
-            key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
+            key = new TextDisplayElement("", new Vector2(position.X + listening.CurrentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
 
-            key.Update(getSaveValue());
+            key.Update(GetSaveValue());
 
         }
-        public override dynamic getSaveValue()
+
+        public override dynamic GetSaveValue()
         {
-            return value;
+            return Value;
         }
 
-        public override void handleKeyEvent(Keys pressed) 
+        public override void HandleKeyEvent(Keys pressed) 
         {
-            if(keyListen)
+            if (KeyListen)
             {
-                value = pressed.ToString();
-                key.Update(getSaveValue());
-                Config.setValue("Bindings", text, getSaveValue());
-                Config.addBinding(text);
-                keyListen = false;
+                Value = pressed.ToString();
+                key.Update(GetSaveValue());
+                Config.SetValue("Bindings", Text, GetSaveValue());
+                Config.AddBinding(Text);
+                KeyListen = false;
             }
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, scaledPositioning);
-            listening.move(position, scaledPositioning);
-            key.move(position, scaledPositioning);
+            base.Move(position, scaledPositioning);
+            listening.Move(position, scaledPositioning);
+            key.Move(position, scaledPositioning);
         }
 
-        public override void onClick(Point mousePosition)
+        /// <summary>
+        /// When this is clicked, reverse the KeyListen state
+        /// to record or exit the key binding state.
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        public override void OnClick(Point mousePosition)
         {
-            keyListen = !keyListen;
+            KeyListen = !KeyListen;
         }
 
         public override void Draw()
         {
-            if(keyListen)
+            if (KeyListen)
             {
                 listening.Draw();
-                title.Draw();
-            } else
+                Title.Draw();
+            }
+            else
             {
                 base.Draw();
                 key.Draw();

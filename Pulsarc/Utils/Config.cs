@@ -8,111 +8,105 @@ namespace Pulsarc.Utils
 {
     static class Config
     {
+        public static FileIniDataParser Parser;
+        public static IniData Get;
 
-        static public FileIniDataParser parser;
-        static public IniData get;
+        public static Dictionary<string, Keys> Bindings;
 
-        static public Dictionary<string, Keys> bindings;
+        private static Type keyType = Keys.A.GetType();
 
-        static private Type keyType = Keys.A.GetType();
-
-        static public void Initialize()
+        public static void Initialize()
         {
-            parser = new FileIniDataParser();
-            bindings = new Dictionary<string, Keys>();
+            Parser = new FileIniDataParser();
+            Bindings = new Dictionary<string, Keys>();
 
-            get = parser.ReadFile("config.ini");
+            Get = Parser.ReadFile("config.ini");
 
+            AddBinding("Left");
+            AddBinding("Up");
+            AddBinding("Down");
+            AddBinding("Right");
 
-            addBinding("Left");
-            addBinding("Up");
-            addBinding("Down");
-            addBinding("Right");
-
-            addBinding("Pause");
-            addBinding("Continue");
-            addBinding("Retry");
-            addBinding("Convert");
+            AddBinding("Pause");
+            AddBinding("Continue");
+            AddBinding("Retry");
+            AddBinding("Convert");
         }
 
-        static public void Reload()
+        public static void Reload()
         {
-            bindings.Clear();
-            get = parser.ReadFile("config.ini");
+            Bindings.Clear();
+            Get = Parser.ReadFile("config.ini");
 
+            AddBinding("Left");
+            AddBinding("Up");
+            AddBinding("Down");
+            AddBinding("Right");
 
-            addBinding("Left");
-            addBinding("Up");
-            addBinding("Down");
-            addBinding("Right");
-
-            addBinding("Pause");
-            addBinding("Continue");
-            addBinding("Retry");
-            addBinding("Convert");
+            AddBinding("Pause");
+            AddBinding("Continue");
+            AddBinding("Retry");
+            AddBinding("Convert");
         }
 
 
-        static public void addBinding(string key)
+        public static void AddBinding(string key)
         {
-            if(bindings.ContainsKey(key))
-            {
-                bindings[key] = (Keys)Enum.Parse(keyType, get["Bindings"][key]);
-            } else
-            {
-                bindings.Add(key, (Keys)Enum.Parse(keyType, get["Bindings"][key]));
-            }
+            if (Bindings.ContainsKey(key))
+                Bindings[key] = (Keys)Enum.Parse(keyType, Get["Bindings"][key]);
+            else
+                Bindings.Add(key, (Keys)Enum.Parse(keyType, Get["Bindings"][key]));
         }
 
-        static public int getInt(string category, string key)
+        public static int GetInt(string category, string key)
         {
-            return int.Parse(get[category][key]);
+            return int.Parse(Get[category][key]);
         }
 
-        static public void setInt(string category, string key, int value)
+        public static void SetInt(string category, string key, int value)
         {
-            setValue(category, key, value);
+            SetValue(category, key, value);
         }
 
-        static public double getDouble(string category, string key)
+        public static double GetDouble(string category, string key)
         {
-            return double.Parse(get[category][key]);
+            return double.Parse(Get[category][key]);
         }
 
-        static public void setDouble(string category, string key, double value)
+        public static void SetDouble(string category, string key, double value)
         {
-            setValue(category, key, value);
+            SetValue(category, key, value);
         }
 
-        static public float getFloat(string category, string key)
+        public static float GetFloat(string category, string key)
         {
-            return float.Parse(get[category][key]);
+            return float.Parse(Get[category][key]);
         }
 
-        static public void setFloat(string category, string key, float value)
+        public static void SetFloat(string category, string key, float value)
         {
-            setValue(category, key, value);
+            SetValue(category, key, value);
         }
 
-        static public bool getBool(string category, string key)
+        public static bool GetBool(string category, string key)
         {
-            return bool.Parse(get[category][key]);
+            return bool.Parse(Get[category][key]);
         }
         
-        static public void setBool(string category, string key, bool value)
+        public static void SetBool(string category, string key, bool value)
         {
-            setValue(category, key, value);
+            SetValue(category, key, value);
         }
 
-        static public void setValue(string category, string key, Object value)
+        public static void SetValue(string category, string key, object value)
         {
-            Console.WriteLine("Set " + category + " " + key + " to " + value.ToString());
-            get[category][key] = value.ToString();
+            Console.WriteLine($"Set {category} {key} to {value.ToString()}");
+            Get[category][key] = value.ToString();
         }
 
-        static public void saveConfig()
+        public static void SaveConfig()
         {
-            parser.WriteFile("config.ini", get);
+            Parser.WriteFile("config.ini", Get);
             Console.WriteLine("Saved config");
         }
     }

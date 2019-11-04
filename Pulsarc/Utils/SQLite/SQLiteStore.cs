@@ -1,95 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Data.SQLite;
 using System.Reflection;
-using Pulsarc.UI.Screens.Gameplay;
 
 namespace Pulsarc.Utils.SQLite
 {
     public abstract class SQLiteStore
     {
-        static public bool logging = true;
-        SQLiteConnection db;
-        string filename;
-        public List<SQLiteData> tables;
+        public static bool Logging = true;
+
+        private SQLiteConnection db;
+        private string filename;
+
+        public List<SQLiteData> Tables { get; protected set; }
 
         public SQLiteStore(string name_)
         {
             filename = name_ + ".db";
 
-            tables = new List<SQLiteData>();
+            Tables = new List<SQLiteData>();
 
-            initTables(); 
+            InitTables(); 
 
-            if (!File.Exists(filename)) {
-                SQLiteConnection.CreateFile(filename);
-                connect();
-                initDB();
-            } else
+            if (!File.Exists(filename))
             {
-                connect();
+                SQLiteConnection.CreateFile(filename);
+                Connect();
+                InitDB();
             }
+            else
+                Connect();
         }
 
-        public abstract void initTables();
+        public abstract void InitTables();
 
-        public void connect()
+        public void Connect()
         {
-            db = new SQLiteConnection("Data Source="+ filename +";Version=3;");
+            db = new SQLiteConnection($"Data Source={filename};Version=3;");
             db.Open();
         }
 
-        public void exec(string sql)
+        public void Exec(string sql)
         {
-            if (logging) Console.WriteLine(sql);
-            new SQLiteCommand(sql, db).ExecuteNonQuery();
+            if (Logging)
+                Console.WriteLine(sql);
+
+            // Note, scores.db isn't working properly atm, this is to catch
+            // All ScoreDB related errors and keep the game running.
+            try
+            {
+                new SQLiteCommand(sql, db).ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"SQL ERROR:\n{e.Message}");
+            }
         }
 
-        public SQLiteDataReader query(string sql)
+        public SQLiteDataReader Query(string sql)
         {
-            if (logging) Console.WriteLine(sql);
-            return new SQLiteCommand(sql, db).ExecuteReader();
+            if (Logging)
+                Console.WriteLine(sql);
+
+            // Note, scores.db isn't working properly atm, this is to catch
+            // All ScoreDB related errors and keep the game running.
+            try
+            {
+                return new SQLiteCommand(sql, db).ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.Write($"SQL ERROR:\n{e.Message}");
+                return null;
+            }
         }
 
         public List<object> queryFirst(string sql)
         {
             List<object> res = new List<object>();
-            SQLiteDataReader reader = query(sql);
+            SQLiteDataReader reader = Query(sql);
+
             reader.Read();
             res.Add(reader);
+            
             return res;
         }
 
-        public void close()
+        public void Close()
         {
             db.Close();
-            tables.Clear();
+            Tables.Clear();
         }
 
-        public void initDB()
+        public void InitDB()
         {
-            foreach(SQLiteData data in tables)
+            foreach(SQLiteData data in Tables)
             {
-                string r = "CREATE TABLE " + data.GetType().Name.ToLower() + " (";
+                string r = $"CREATE TABLE {data.GetType().Name.ToLower()} (";
 
                 bool first = true;
                 foreach (FieldInfo prop in data.GetType().GetFields())
                 {
                     if(first)
-                    {
                         first = false;
-                    } else
-                    {
+                    else
                         r += ",";
-                    }
+
                     r += prop.Name.ToLower() + " " + prop.FieldType.Name.ToString().ToLower();
                 }
 
                 r += ")";
 
-                exec(r);
+                Exec(r);
             }
         }
     }

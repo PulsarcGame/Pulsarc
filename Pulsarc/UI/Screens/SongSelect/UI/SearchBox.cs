@@ -8,30 +8,29 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     class SearchBox : Drawable
     {
-        TextDisplayElement textDisplay;
-        int offsetX;
-        int offsetY;
+        private TextDisplayElement textDisplay;
 
-        public SearchBox(string search, Vector2 position, Anchor anchor = Anchor.TopLeft) : base(Skin.assets["searchbox"], position, anchor: anchor)
+        public SearchBox(string search, Vector2 position, Anchor anchor = Anchor.TopLeft)
+            : base(Skin.Assets["searchbox"], position, anchor: anchor)
         {
             string config = "song_select";
             string section = "Properties";
             string name = "SearchBarText";
 
-            Anchor textAnchor = Skin.getConfigAnchor(config, section, name + "Anchor");
+            Anchor textAnchor = Skin.GetConfigAnchor(config, section, $"{name}Anchor");
 
-            Vector2 startPos = Skin.getConfigStartPosition(config, section, name + "StartPos", this);
+            Vector2 startPos = Skin.GetConfigStartPosition(config, section, $"{name}StartPos", this);
 
-            int fontSize = Skin.getConfigInt(config, section, name + "FontSize");
+            int fontSize = Skin.GetConfigInt(config, section, $"{name}FontSize");
 
-            Color textColor = Skin.getConfigColor(config, section, name + "Color");
+            Color textColor = Skin.GetConfigColor(config, section, $"{name}Color");
 
-            offsetX = Skin.getConfigInt(config, section, name + "X");
-            offsetY = Skin.getConfigInt(config, section, name + "Y");
+            int offsetX = Skin.GetConfigInt(config, section, $"{name}X");
+            int offsetY = Skin.GetConfigInt(config, section, $"{name}Y");
 
             textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
-            textDisplay.scaledMove(offsetX, offsetY);
-            textDisplay.processedPosition = textDisplay.truePosition;
+            textDisplay.ScaledMove(offsetX, offsetY);
+            textDisplay.ProcessedPosition = textDisplay.TruePosition;
         }
 
         public void Update(string text)
@@ -39,24 +38,24 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             textDisplay.Update(text);
         }
 
-        public void addText(string c)
+        public void AddText(string c)
         {
-            textDisplay.text.Append(c);
+            textDisplay.Text.Append(c);
         }
 
-        public void removeLast()
+        public void RemoveLast()
         {
-            textDisplay.text.Length--;
+            textDisplay.Text.Length--;
         }
 
-        public void clear()
+        public void Clear()
         {
-            textDisplay.text.Clear();
+            textDisplay.Text.Clear();
         }
 
-        public string getText()
+        public string GetText()
         {
-            return textDisplay.text.ToString();
+            return textDisplay.Text.ToString();
         }
 
         public override void Draw()

@@ -9,96 +9,116 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     public class SettingsGroup : Drawable
     {
-        public string name;
-        public Drawable icon;
-        public Dictionary<String, Setting> settings;
-        public Setting focusedHoldSetting;
+        // Name of this group
+        public string Name { get; protected set; }
+        
+        // The icon to use for this group.
+        public Drawable Icon { get; protected set; }
+        
+        // Each setting and the key they change
+        public Dictionary<string, Setting> Settings { get; protected set; }
+        
+        //
+        public Setting FocusedHoldSetting { get; protected set; }
 
         public SettingsGroup(string name, Vector2 position)
         {
-            this.name = name;
-            settings = new Dictionary<String, Setting>();
-            icon = new Drawable(Skin.assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200,200),anchor: Anchor.Center);
-            changePosition(position);
-            drawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
+            Name = name;
+            Settings = new Dictionary<string, Setting>();
+            Icon = new Drawable(Skin.Assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200,200),anchor: Anchor.Center);
+            ChangePosition(position);
+            DrawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
         }
 
-        public void addSetting(string key, Setting setting)
+        /// <summary>
+        /// Add a new setting to this group.
+        /// </summary>
+        /// <param name="key">The Key to modify in the config.</param>
+        /// <param name="setting">The setting object itself.</param>
+        public void AddSetting(string key, Setting setting)
         {
-            settings.Add(key, setting);
-            drawnPart.Height += setting.drawnPart.Height;
+            Settings.Add(key, setting);
+
+            Rectangle drawnPart = DrawnPart;
+            drawnPart.Height += setting.DrawnPart.Height;
+
+            DrawnPart = drawnPart;
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, scaledPositioning);
-            icon.move(position, scaledPositioning);
+            base.Move(position, scaledPositioning);
+            Icon.Move(position, scaledPositioning);
 
-            foreach(KeyValuePair<string, Setting> settp in settings)
-            {
-                settp.Value.move(position);
-            }
+            foreach (KeyValuePair<string, Setting> settp in Settings)
+                settp.Value.Move(position);
         }
 
-        public Vector2 getNextPosition()
+        /// <summary>
+        /// Get the next position for a setting to use.
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetNextPosition()
         {
-            return new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
+            return new Vector2(TruePosition.X, TruePosition.Y + DrawnPart.Height);
         }
 
         public override void Draw()
         {
-            icon.Draw();
+            Icon.Draw();
 
-            foreach(KeyValuePair<string, Setting> entry in settings)
-            {
+            foreach (KeyValuePair<string, Setting> entry in Settings)
                 entry.Value.Draw();
-            }
         }
 
-        public void resetFocusedHoldSetting()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ResetFocusedHoldSetting()
         {
-            focusedHoldSetting = null;
+            FocusedHoldSetting = null;
         }
 
-        public void onClick(Point mousePosition, bool hold)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        /// <param name="hold"></param>
+        public void OnClick(Point mousePosition, bool hold)
         {
-            foreach (KeyValuePair<string, Setting> entry in settings)
+            foreach (KeyValuePair<string, Setting> entry in Settings)
             {
                 // Check if this setting corresponds to the current input type
-                if(entry.Value.hold == hold)
+                if (entry.Value.Hold == hold)
                 {
                     // Single Input
-                    if(!hold)
+                    if (!hold)
                     {
-                        if (entry.Value.clicked(mousePosition))
-                        {
-                            entry.Value.onClick(mousePosition);
-                        }
-                    } else
+                        if (entry.Value.Clicked(mousePosition))
+                            entry.Value.OnClick(mousePosition);
+                    }
                     // Hold Input
+                    else
                     {
                         // Start to hold this item, keep it in memory
-                        if (entry.Value.clicked(mousePosition) && focusedHoldSetting == null)
-                        {
-                            focusedHoldSetting = entry.Value;
-                        }
+                        if (entry.Value.Clicked(mousePosition) && FocusedHoldSetting == null)
+                            FocusedHoldSetting = entry.Value;
 
                         // Continue to update the held item, even if out of range
-                        if (focusedHoldSetting == entry.Value)
-                        {
-                            entry.Value.onClick(mousePosition);
-                        }
+                        if (FocusedHoldSetting == entry.Value)
+                            entry.Value.OnClick(mousePosition);
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Save all the settings into the config.ini
+        /// </summary>
         public void Save()
         {
-            foreach (KeyValuePair<string, Setting> entry in settings)
-            {
-                entry.Value.Save(name, entry.Key);
-            }
+            foreach (KeyValuePair<string, Setting> entry in Settings)
+                entry.Value.Save(Name, entry.Key);
         }
     }
 }

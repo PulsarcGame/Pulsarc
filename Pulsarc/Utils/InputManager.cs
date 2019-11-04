@@ -10,23 +10,23 @@ namespace Pulsarc.Utils
 {
     static class InputManager
     {
-        static Thread inputThread;
-        public static Queue<KeyValuePair<double, Keys>> keyboardPresses;
-        public static Queue<KeyValuePair<double, Keys>> keyboardReleases;
-        public static List<Keys> pressedKeys;
-        public static KeyboardState keyboardState;
-        public static MouseState mouseState;
-        public static KeyVal<MouseState, int> lastMouseClick;
+        private static Thread inputThread;
+        public static Queue<KeyValuePair<double, Keys>> KeyboardPresses;
+        public static Queue<KeyValuePair<double, Keys>> KeyboardReleases;
+        public static List<Keys> PressedKeys;
+        public static KeyboardState KeyboardState;
+        public static MouseState MouseState;
+        public static KeyVal<MouseState, int> LastMouseClick;
 
-        public static bool capsLock = false;
-        public static bool caps = false;
+        public static bool CapsLock = false;
+        public static bool Caps = false;
 
         static public void StartThread()
         {
-            pressedKeys = new List<Keys>();
-            keyboardPresses = new Queue<KeyValuePair<double, Keys>>();
-            keyboardReleases = new Queue<KeyValuePair<double, Keys>>();
-            lastMouseClick = new KeyVal<MouseState, int>(Mouse.GetState(),0);
+            PressedKeys = new List<Keys>();
+            KeyboardPresses = new Queue<KeyValuePair<double, Keys>>();
+            KeyboardReleases = new Queue<KeyValuePair<double, Keys>>();
+            LastMouseClick = new KeyVal<MouseState, int>(Mouse.GetState(),0);
 
             inputThread = new Thread(new ThreadStart(InputUpdater));
             inputThread.Start();
@@ -50,81 +50,76 @@ namespace Pulsarc.Utils
                         MouseManager.Update();
                         KeyboardManager.Update();
 
-                        keyboardState = Keyboard.GetState();
-                        mouseState = Mouse.GetState();
+                        KeyboardState = Keyboard.GetState();
+                        MouseState = Mouse.GetState();
 
-                        if (keyboardState.GetPressedKeys().Count() > 0)
-                        {
-                            foreach (Keys key in keyboardState.GetPressedKeys())
+                        if (KeyboardState.GetPressedKeys().Count() > 0)
+                            foreach (Keys key in KeyboardState.GetPressedKeys())
                             {
-                                if (!pressedKeys.Contains(key))
+                                if (!PressedKeys.Contains(key))
                                 {
-                                    keyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.getTime(), key));
-                                    pressedKeys.Add(key);
+                                    KeyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.GetTime(), key));
+                                    PressedKeys.Add(key);
 
                                     if (key == Keys.CapsLock)
                                     {
-                                        capsLock = !capsLock;
-                                        caps = capsLock;
+                                        CapsLock = !CapsLock;
+                                        Caps = CapsLock;
                                     }
 
-                                    if(key == Keys.LeftShift || key == Keys.RightShift)
-                                    {
-                                        caps = !capsLock;
-                                    }
+                                    if (key == Keys.LeftShift || key == Keys.RightShift)
+                                        Caps = !CapsLock;
                                 }
                             }
-                        }
 
-                        for (int i = 0; i < pressedKeys.Count; i++)
+                        for (int i = 0; i < PressedKeys.Count; i++)
                         {
-                            Keys key = pressedKeys[i];
+                            Keys key = PressedKeys[i];
 
-                            if (!keyboardState.IsKeyDown(key))
+                            if (!KeyboardState.IsKeyDown(key))
                             {
                                 // Used if LN handling
                                 //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
-                                pressedKeys.RemoveAt(i);
+                                PressedKeys.RemoveAt(i);
                                 i--;
 
 
                                 if (key == Keys.LeftShift || key == Keys.RightShift)
-                                {
-                                    caps = capsLock;
-                                }
+                                    Caps = CapsLock;
                             }
                         }
 
-                        if(lastMouseClick.Value == 0 && mouseState.LeftButton == ButtonState.Pressed)
+                        if (LastMouseClick.Value == 0 && MouseState.LeftButton == ButtonState.Pressed)
                         {
-                            lastMouseClick.Key = mouseState;
-                            lastMouseClick.Value = 1;
-                        } else if (lastMouseClick.Value == 1 && mouseState.LeftButton == ButtonState.Released)
-                        {
-                            lastMouseClick.Key = mouseState;
-                            lastMouseClick.Value = 2;
+                            LastMouseClick.Key = MouseState;
+                            LastMouseClick.Value = 1;
                         }
-                    } catch
-                    {
+                        else if (LastMouseClick.Value == 1 && MouseState.LeftButton == ButtonState.Released)
+                        {
+                            LastMouseClick.Key = MouseState;
+                            LastMouseClick.Value = 2;
+                        }
                     }
+                    catch { }
                 }
             }
         }
 
-        static public bool isLeftClick()
+        static public bool IsLeftClick()
         {
-            if(lastMouseClick.Value == 2)
+            if (LastMouseClick.Value == 2)
             {
                 // Consome click if we send it
-                lastMouseClick.Value = 0;
+                LastMouseClick.Value = 0;
                 return true;
             }
+
             return false;
         }
 
         static public void Reset()
         {
-            keyboardPresses.Clear();
+            KeyboardPresses.Clear();
         }
     }
 }

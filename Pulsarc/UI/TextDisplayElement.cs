@@ -8,17 +8,17 @@ namespace Pulsarc.UI
 {
     public class TextDisplayElement : Drawable
     {
-        public string name;
+        public string Name { get; set; }
 
-        // Text
-        SpriteFont font;
-        public StringBuilder text;
-        float fontScale;
-        public Color color;
+        // Text data
+        private SpriteFont font => AssetsManager.Fonts["DefaultFont"];
+        private float fontScale;
+        public StringBuilder Text { get; protected set; }
+        public Color Color { get; set; }
 
-        public Vector2 processedPosition;
+        public Vector2 ProcessedPosition;
 
-        bool caught = false;
+        private bool caught = false;
 
         /// <summary>
         /// A text-based Drawable.
@@ -31,16 +31,15 @@ namespace Pulsarc.UI
         /// <param name="color">The color of the text, default is White.</param>
         public TextDisplayElement(string name, Vector2 position, int fontSize = 18, Anchor anchor = Anchor.CenterLeft, Color? color = null)
         {
-            this.name = name;
-            this.anchor = anchor;
-            this.color = color ?? Color.White;
-            text = new StringBuilder(20);
+            Name = name;
+            Anchor = anchor;
+            Color = color ?? Color.White;
+            Text = new StringBuilder(20);
 
-            font = AssetsManager.Fonts["DefaultFont"];
-            fontScale = fontSize / 64f * (Pulsarc.getDimensions().Y / Pulsarc.yBaseRes);
+            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight);
 
-            changePosition(position);
-            processedPosition = truePosition;
+            ChangePosition(position);
+            ProcessedPosition = TruePosition;
             Update("");
         }
 
@@ -50,9 +49,9 @@ namespace Pulsarc.UI
         /// <param name="value">The text to change to</param>
         public void Update(string value)
         {
-            text.Clear();
-            text.Append(name).Append(value);
-            reprocessPosition();
+            Text.Clear();
+            Text.Append(Name).Append(value);
+            ReprocessPosition();
 
             caught = false;
         }
@@ -60,16 +59,16 @@ namespace Pulsarc.UI
         /// <summary>
         /// Reprocess the position of this TDE.
         /// </summary>
-        public void reprocessPosition()
+        public void ReprocessPosition()
         {
 
-            float newX = truePosition.X;
-            float newY = truePosition.Y;
-            Vector2 size = font.MeasureString(text) * fontScale;
-            size.X *= Pulsarc.getDimensions().X / Pulsarc.xBaseRes;
-            size.Y *= Pulsarc.getDimensions().Y / Pulsarc.yBaseRes;
+            float newX = TruePosition.X;
+            float newY = TruePosition.Y;
+            Vector2 size = font.MeasureString(Text) * fontScale;
+            size.X *= Pulsarc.GetDimensions().X / Pulsarc.BaseWidth;
+            size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight;
 
-            switch (anchor)
+            switch (Anchor)
             {
                 case Anchor.Center:
                     newX -= size.X / 2;
@@ -104,31 +103,32 @@ namespace Pulsarc.UI
                     break;
             }
 
-            processedPosition.X = newX;
-            processedPosition.Y = newY;
+            ProcessedPosition.X = newX;
+            ProcessedPosition.Y = newY;
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, scaledPositioning);
-            reprocessPosition();
+            float x = position.X / Pulsarc.WidthScale;
+            float y = position.Y * Pulsarc.HeightScale;
+
+            base.Move(new Vector2(x, y), scaledPositioning);
+            ReprocessPosition();
         }
 
         public override void Draw()
         {
             if (caught)
-            {
                 return;
-            }
 
             try
             {
-                Pulsarc.spriteBatch.DrawString(font, text, processedPosition, color, 0, origin, fontScale, SpriteEffects.None, 0);
+                Pulsarc.SpriteBatch.DrawString(font, Text, ProcessedPosition, Color, 0, Origin, fontScale, SpriteEffects.None, 0);
             }
             catch
             {
-                Logger.Error("Could not write " + text + ", Aborting draw() of this TextDisplayElement.", LogType.Runtime);
-                caught = true; // Don't need to spam the console
+                Logger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
+                caught = true; // Don't need to spam the console with Errors
             }
         }
     }

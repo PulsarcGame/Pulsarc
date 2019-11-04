@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -15,21 +12,20 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="skinAsset"></param>
         /// <param name="position">The position of the Save Button.</param>
         /// <param name="anchor">The anchor of the Save Button. Defaults to BottomRight instead of TopLeft.</param>
-        public SaveButton(string skinAsset, Vector2 position, Anchor anchor = Anchor.BottomRight) : base(Skin.assets[skinAsset], position, anchor: anchor)
-        {
-        }
+        public SaveButton(string skinAsset, Vector2 position, Anchor anchor = Anchor.BottomRight)
+            : base(Skin.Assets[skinAsset], position, anchor: anchor)
+        { }
 
         /// <summary>
-        /// This method is called when the SaveButton, initiating the saving process for all settings group.
+        /// This method is called when the SaveButton is clicked, initiating the saving process for all settings groups.
         /// </summary>
         /// <param name="settings">The Settings View containing the current settings states.</param>
-        public void onClick(SettingsScreenView settings)
+        public void OnClick(SettingsScreenView settings)
         {
-            foreach(SettingsGroup group in settings.groups)
-            {
+            foreach (SettingsGroup group in settings.Groups)
                 group.Save();
-            }
-            Config.saveConfig();
+
+            Config.SaveConfig();
         }
     }
 }

@@ -8,9 +8,9 @@ namespace Pulsarc.UI.Common
 {
     public class Background : Drawable
     {
-        public Drawable dimTexture;
+        public Drawable DimTexture { get; protected set; }
 
-        public bool dim = false;
+        public bool Dimmed { get; set; } = false;
 
         public override Texture2D Texture
         {
@@ -20,25 +20,26 @@ namespace Pulsarc.UI.Common
             {
                 base.Texture = value;
 
+                if (Texture == Skin.DefaultTexture)
+                    Texture = GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black);
+                
                 // Make dimTexture
-                if (dimTexture != null)
-                {
-                    makeDimTexture(dimTexture.opacity);
-                }
+                if (DimTexture != null)
+                    MakeDimTexture(DimTexture.Opacity);
             }
         }
 
-        public override bool HeightScaled { get => !Pulsarc.isWiderThan16by9(); }
+        public override bool HeightScaled { get => WiderThanOrSameAsPulsarc(); }
 
         /// <summary>
         /// Create a background using the Skin-asset name to find the image.
         /// </summary>
         /// <param name="skinAsset">The name of the asset this background will use.</param>
         /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
-        public Background(string skinAsset, float dim = 0f) : base(Skin.assets[skinAsset], anchor: Anchor.Center)
+        public Background(string skinAsset, float dim = 0f) : base(Skin.Assets[skinAsset], anchor: Anchor.Center)
         {
-            makeDimTexture(dim);
-            changeBackground(Texture);
+            MakeDimTexture(dim);
+            ChangeBackground(Texture);
         }
 
         /// <summary>
@@ -47,21 +48,21 @@ namespace Pulsarc.UI.Common
         /// <param name="dim">Optional parameter to change the background dim. 0 is no dim, 1 is full dim.</param>
         public Background(float dim = 0f) : base(Skin.DefaultTexture, anchor: Anchor.Center)
         {
-            makeDimTexture(dim);
-            changeBackground(Texture);
+            MakeDimTexture(dim);
+            ChangeBackground(Texture);
         }
         
         /// <summary>
         /// Makes the dim texture if needed for this Background instance.
         /// </summary>
         /// <param name="dim">The amount of background dim to use. 0 is no dim, 1 is full dim.</param>
-        private void makeDimTexture(float dim)
+        private void MakeDimTexture(float dim)
         {
             if (dim > 0)
             {
-                this.dim = true;
-                dimTexture = new Drawable(GraphicsUtils.CreateFillTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
-                dimTexture.opacity = dim;
+                Dimmed = true;
+                DimTexture = new Drawable(GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
+                DimTexture.Opacity = dim;
             }
         }
 
@@ -69,38 +70,37 @@ namespace Pulsarc.UI.Common
         /// Change this background's texture to a new texture.
         /// </summary>
         /// <param name="newBackground">The texture to use for the background</param>
-        public void changeBackground(Texture2D newBackground)
+        public void ChangeBackground(Texture2D newBackground)
         {
             Texture = newBackground;
 
             if (!HeightScaled)
-            {
                 Resize(Pulsarc.CurrentWidth);
-            }
             else
-            {
                 Resize(Pulsarc.CurrentHeight);
-            }
 
-            changePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
+            ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
+        }
+
+        private bool WiderThanOrSameAsPulsarc()
+        {
+            return Texture.Width / Texture.Height >= Pulsarc.CurrentAspectRatio;
         }
 
         public override void Resize(Vector2 size)
         {
             base.Resize(size);
-            if (dim)
-            {
-                dimTexture.Resize(size);
-            }
+
+            if (Dimmed)
+                DimTexture.Resize(size);
         }
 
         public override void Draw()
         {
             base.Draw();
-            if (dim)
-            {
-                dimTexture.Draw();
-            }
+
+            if (Dimmed)
+                DimTexture.Draw();
         }
     }
 }

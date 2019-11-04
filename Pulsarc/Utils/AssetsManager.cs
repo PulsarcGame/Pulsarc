@@ -9,14 +9,14 @@ namespace Pulsarc.Utils
 {
     static class AssetsManager
     {
-        static public double TextureExpireTimeMs = 600000;
+        public static double TextureExpireTimeMs = 600000;
 
-        static public ContentManager Content;
-        static public Dictionary<String, SpriteFont> Fonts { get; set; }
+        public static ContentManager Content { get; private set; }
+        public static Dictionary<string, SpriteFont> Fonts { get; set; }
 
-        static public Dictionary<String, KeyValuePair<Texture2D, double>> StoredTexture { get; set; }
+        public static Dictionary<string, KeyValuePair<Texture2D, double>> StoredTexture { get; set; }
 
-        static public void Initialize(ContentManager content)
+        public static void Initialize(ContentManager content)
         {
             Content = content;
 
@@ -29,17 +29,16 @@ namespace Pulsarc.Utils
             StoredTexture = new Dictionary<String, KeyValuePair<Texture2D, double>>();
         }
 
-        static public Texture2D Load(string path)
+        public static Texture2D Load(string path)
         {
             if (StoredTexture.ContainsKey(path) && StoredTexture[path].Value + TextureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
-            {
                 return StoredTexture[path].Key;
-            }
 
             Texture2D newTexture = null;
 
-            if (File.Exists(path)) {
-                newTexture = Texture2D.FromStream(Pulsarc.graphics.GraphicsDevice, File.OpenRead(path));
+            if (File.Exists(path))
+            {
+                newTexture = Texture2D.FromStream(Pulsarc.Graphics.GraphicsDevice, File.OpenRead(path));
                 StoredTexture.Add(path, new KeyValuePair<Texture2D, double>(newTexture, PulsarcTime.CurrentElapsedTime));
             }
 

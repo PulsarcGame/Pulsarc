@@ -9,65 +9,62 @@ namespace Pulsarc.Utils
 {
     static class AudioManager
     {
-        static public bool running = false;
-        static public bool initialized = false;
-        static public bool active = false;
-        static public bool activeThreadLimiterWatch = false;
-        static public bool paused = false;
-        static public string song_path = "";
-        static public double offset = 35;
-        static public double startDelayMs = 1000;
-        static public float audioRate = 1;
+        public static bool Running = false;
+        public static bool Initialized = false;
+        public static bool Active = false;
+        public static bool ActiveThreadLimiterWatch = false;
+        public static bool Paused = false;
+        public static string SongPath = "";
+        public static double Offset = 35;
+        public static double StartDelayMs = 1000;
+        public static float AudioRate = 1;
 
-        static Thread audioThread;
-        static AudioTrack song;
-        static Stopwatch threadLimiterWatch;
+        private static Thread audioThread;
+        private static AudioTrack song;
+        private static Stopwatch threadLimiterWatch;
 
         /// <summary>
         /// Start playing audio
         /// </summary>
-        static public void StartLazyPlayer()
+        public static void StartLazyPlayer()
         {
             Stop();
 
             // Keep trying to initialize the Audio Manager
-            if (!initialized)
-            {
-                while (!initialized)
+            if (!Initialized)
+                while (!Initialized)
                 {
                     try
                     {
                         Wobble.Audio.AudioManager.Initialize(null, null);
-                        initialized = true;
+                        Initialized = true;
                     }
                     catch
                     {
                         Console.WriteLine("BASS failed to initialize, retrying...");
                     }
                 }
-            }
 
-            if (song_path == "")
-            {
+            if (SongPath == "")
                 return;
-            }
 
             // Initialize the song
-            song = new AudioTrack(song_path, false)
+            song = new AudioTrack(SongPath, false)
             {
-                Rate = audioRate,
+                Rate = AudioRate,
+                Volume = Config.GetInt("Audio", "MusicVolume"),
             };
-            song.Volume = Config.getInt("Audio", "MusicVolume");
-            song.ApplyRate(Config.getBool("Audio", "RatePitch"));
+
+            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
 
             song.Play();
-            active = true;
+            Active = true;
         }
 
         /// <summary>
         /// Start playing gameplay audio on a new thread
         /// </summary>
-        static public void StartGamePlayer()
+        public static void StartGamePlayer()
         {
             audioThread = new Thread(new ThreadStart(GameAudioPlayer));
             audioThread.Start();
@@ -76,69 +73,64 @@ namespace Pulsarc.Utils
         /// <summary>
         /// Initializes the GameAudioPlayer
         /// </summary>
-        static public void GameAudioPlayer()
+        public static void GameAudioPlayer()
         {
             // Initialize variables
             threadLimiterWatch = new Stopwatch();
             threadLimiterWatch.Start();
-            activeThreadLimiterWatch = true;
+            ActiveThreadLimiterWatch = true;
 
-            if (song_path == "")
-            {
+            if (SongPath == "")
                 return;
-            }
 
             // Keep trying to initialize the Audio Manager
-            if (!initialized)
-            {
-                while (!initialized)
+            if (!Initialized)
+                while (!Initialized)
                 {
                     try
                     {
                         Wobble.Audio.AudioManager.Initialize(null, null);
-                        initialized = true;
+                        Initialized = true;
                     }
                     catch
                     {
                         Console.WriteLine("BASS failed to initialize, retrying...");
                     }
                 }
-            }
 
-            running = true;
+            Running = true;
             var threadTime = new Stopwatch();
 
             // Initialize the song
-            song = new AudioTrack(song_path, false)
+            song = new AudioTrack(SongPath, false)
             {
-                Rate = audioRate,
+                Rate = AudioRate,
+                Volume = Config.GetInt("Audio", "MusicVolume"),
             };
-            song.Volume = Config.getInt("Audio", "MusicVolume");
-            song.ApplyRate(Config.getBool("Audio", "RatePitch"));
+
+            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
 
             threadLimiterWatch.Start();
 
             // Add a delay
-            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
+            while (threadLimiterWatch.ElapsedMilliseconds < StartDelayMs - Offset) { }
 
             // Start playing if the gameplay engine is active
-            if (GameplayEngine.active)
+            if (GameplayEngine.Active)
             {
                 threadLimiterWatch.Restart();
 
                 song.Play();
                 threadTime.Start();
 
-                active = true;
+                Active = true;
 
-                while (running)
-                {
+                while (Running)
                     if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                     {
                         threadLimiterWatch.Restart();
                         Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
                     }
-                }
             }
         }
 
@@ -146,64 +138,60 @@ namespace Pulsarc.Utils
         /// Get the current time of the audio playing
         /// </summary>
         /// <returns>The current time of the audio (in ms)</returns>
-        static public double getTime()
+        public static double GetTime()
         {
-            if(active && song.StreamLoaded) { 
-                return song.Position - offset;
-            } else
-            {
-                return -startDelayMs + (activeThreadLimiterWatch ? threadLimiterWatch.ElapsedMilliseconds : 0);
-            }
+            if (Active && song.StreamLoaded)
+                return song.Position - Offset;
+            else
+                return -StartDelayMs + (ActiveThreadLimiterWatch ? threadLimiterWatch.ElapsedMilliseconds : 0);
         }
 
         /// <summary>
         /// Move the audio position forward or backward in time
         /// </summary>
         /// <param name="time">The amount of time to move</param>
-        static public void deltaTime(long time)
+        public static void DeltaTime(long time)
         {
-            if(active)
-            {
+            if (Active)
                 song.Seek(song.Position + time);
-            }
         }
 
         /// <summary>
         /// Pause the audio
         /// </summary>
-        static public void Pause()
+        public static void Pause()
         {
-            if (active && !paused && song.IsPlaying)
+            if (Active && !Paused && song.IsPlaying)
             {
                 song.Pause();
-                paused = true;
+                Paused = true;
             }
         }
 
         /// <summary>
         /// Resume the audio
         /// </summary>
-        static public void Resume()
+        public static void Resume()
         {
-            if (active && paused && !song.IsPlaying)
+            if (Active && Paused && !song.IsPlaying)
             {
                 song.Play();
-                paused = false;
+                Paused = false;
             }
         }
 
         /// <summary>
         /// Stop the audio
         /// </summary>
-        static public void Stop()
+        public static void Stop()
         {
-            if (active)
+            if (Active)
             {
                 Pause();
+
                 if (song.IsPlaying)
-                {
                     song.Stop();
-                }
+
                 song = null;
                 Reset();
             }
@@ -212,35 +200,32 @@ namespace Pulsarc.Utils
         /// <summary>
         /// Reset the audio
         /// </summary>
-        static public void Reset()
+        public static void Reset()
         {
-            active = false;
-            paused = false;
-            running = false;
+            Active = false;
+            Paused = false;
+            Running = false;
+
             if (threadLimiterWatch != null)
-            {
                 threadLimiterWatch.Reset();
-            }
         }
 
-        static public void updateRate()
+        public static void updateRate()
         {
-            if (active)
+            if (Active)
             {
-                double time = getTime();
-                string audio = song_path;
+                double time = GetTime();
+                string audio = SongPath;
                 Stop();
 
-                song_path = audio;
-                audioRate = Config.getFloat("Gameplay", "SongRate");
+                SongPath = audio;
+                AudioRate = Config.GetFloat("Gameplay", "SongRate");
                 StartLazyPlayer();
 
                 if (time != 0)
-                {
-                    deltaTime((long)time);
-                }
+                    DeltaTime((long)time);
 
-                Console.WriteLine("Now Playing: " + song_path + " at " + audioRate + " rate");
+                Console.WriteLine($"Now Playing: {SongPath} at {AudioRate} rate");
             }
         }
 
@@ -248,9 +233,9 @@ namespace Pulsarc.Utils
         /// Has the song finished playing?
         /// </summary>
         /// <returns>Whether the song has finished (not stopped or paused)</returns>
-        static public bool FinishedPlaying()
+        public static bool FinishedPlaying()
         {
-            return !paused && !song.IsPlaying && song.IsStopped;
+            return !Paused && !song.IsPlaying && song.IsStopped;
         }
     }
 }

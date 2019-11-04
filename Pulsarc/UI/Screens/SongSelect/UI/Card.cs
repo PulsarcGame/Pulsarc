@@ -22,39 +22,33 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         public Card(Texture2D texture, Vector2 position, Anchor anchor)
             : base(texture, position, anchor: anchor)
         {
-            setConfigAndSection();
+            SetConfigAndSection();
         }
 
-        protected abstract void setConfigAndSection();
+        protected abstract void SetConfigAndSection();
 
         public override void Draw()
         {
             base.Draw();
 
             foreach (TextDisplayElement tde in textElements)
-            {
                 tde.Draw();
-            }
         }
 
-        public override void move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool scaledPositioning = true)
         {
-            base.move(delta, scaledPositioning);
+            base.Move(delta, scaledPositioning);
 
             foreach (TextDisplayElement tde in textElements)
-            {
-                tde.move(delta, scaledPositioning);
-            }
+                tde.Move(delta, scaledPositioning);
         }
 
-        public override void scaledMove(Vector2 delta)
+        public override void ScaledMove(Vector2 delta)
         {
-            base.scaledMove(delta);
+            base.ScaledMove(delta);
 
             foreach (TextDisplayElement tde in textElements)
-            {
-                tde.scaledMove(delta);
-            }
+                tde.ScaledMove(delta);
         }
 
         /// <summary>
@@ -62,36 +56,37 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// determine their positioning and other properties.
         /// </summary>
         /// <param name="typeName">The "typeName" of the button, or the prefix in the config.</param>
-        protected virtual void addTextDisplayElement(string typeName)
+        protected virtual void AddTextDisplayElement(string typeName)
         {
             // Find variables for TDE
-            Vector2 position = Skin.getConfigStartPosition(config, section, typeName + "StartPos", this); // Vector2 position;
-            int fontSize = getSkinnableInt(typeName + "FontSize"); // int fontSize
-            Anchor anchor = getSkinnableAnchor(typeName + "Anchor"); // Anchor textAnchor;
-            Color color = Skin.getConfigColor(config, section, typeName + "Color"); // Color textColor;
+            Vector2 position = Skin.GetConfigStartPosition(config, section, typeName + "StartPos", this); // Vector2 position;
+            int fontSize = GetSkinnableInt(typeName + "FontSize"); // int fontSize
+            Anchor anchor = GetSkinnableAnchor(typeName + "Anchor"); // Anchor textAnchor;
+            Color color = Skin.GetConfigColor(config, section, typeName + "Color"); // Color textColor;
 
             // Make TDE
             TextDisplayElement text = new TextDisplayElement("", position, fontSize, anchor, color);
 
             // Offset
             Vector2 offset = new Vector2(
-                getSkinnableInt(typeName + "X"),
-                getSkinnableInt(typeName + "Y"));
+                GetSkinnableInt(typeName + "X"),
+                GetSkinnableInt(typeName + "Y"));
 
-            text.scaledMove(offset);
+            text.Move(offset);
 
             //Add TDE
             textElements.Add(text);
         }
 
+        #region GeSkinnable Methods
         /// <summary>
         /// Find a float from the Metadata section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        protected float getSkinnableFloat(string key)
+        protected float GetSkinnableFloat(string key)
         {
-            return Skin.getConfigFloat(config, section, key);
+            return Skin.GetConfigFloat(config, section, key);
         }
 
         /// <summary>
@@ -99,9 +94,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        protected int getSkinnableInt(string key)
+        protected int GetSkinnableInt(string key)
         {
-            return Skin.getConfigInt(config, section, key);
+            return Skin.GetConfigInt(config, section, key);
         }
 
         /// <summary>
@@ -109,9 +104,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        protected Anchor getSkinnableAnchor(string key)
+        protected Anchor GetSkinnableAnchor(string key)
         {
-            return Skin.getConfigAnchor(config, section, key);
+            return Skin.GetConfigAnchor(config, section, key);
         }
 
         /// <summary>
@@ -119,9 +114,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        protected string getSkinnableString(string key)
+        protected string GetSkinnableString(string key)
         {
-            return Skin.getConfigString(config, section, key);
+            return Skin.GetConfigString(config, section, key);
         }
+        #endregion
     }
 }

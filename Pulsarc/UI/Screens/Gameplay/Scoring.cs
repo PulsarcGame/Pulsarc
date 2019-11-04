@@ -1,164 +1,113 @@
 ﻿using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
     static class Scoring
     {
-        static public int max_score = 1000000;
-        static public int max_combo_multiplier = 100;
+        // Max visible score
+        static public int MaxScore { get; private set; } = 1000000;
+        
+        // Max hidden combo multiplier
+        static public int MaxComboMultiplier { get; private set; } = 100;
 
-        static public int getMaxScore(int objectsCount)
+        static public int GetMaxScore(int objectsCount)
         {
             // Simple formula due to the combo system starting at max and being capped
             // Changing it wrongly would require parsing and other stuff
 
-            return objectsCount * Judgement.judgements[0].score * max_combo_multiplier;
+            return objectsCount * Judgement.Judgements[0].Score * MaxComboMultiplier;
         }
 
-        static public KeyValuePair<long, int> processHitResults(JudgementValue judge, long currentScore, int currentComboMultiplier)
+        static public KeyValuePair<long, int> ProcessHitResults(JudgementValue judge, long currentScore, int currentComboMultiplier)
         {
             // Get the next score from a score and a new hit
+            long score = currentScore + judge.Score * currentComboMultiplier;
+            int comboMultiplier = currentComboMultiplier + judge.ComboAddition;
 
-            long score = currentScore + judge.score * currentComboMultiplier;
-            int comboMultiplier = currentComboMultiplier + judge.combo_addition;
-
-            if(comboMultiplier > max_combo_multiplier)
-            {
-                comboMultiplier = max_combo_multiplier;
-            } else if (comboMultiplier < 1)
-            {
+            if(comboMultiplier > MaxComboMultiplier)
+                comboMultiplier = MaxComboMultiplier;
+            else if (comboMultiplier < 1)
                 comboMultiplier = 1;
-            }
 
             return new KeyValuePair<long, int>(score, comboMultiplier);
         }
 
-        static public string getGrade(ScoreData score)
+        /// <summary>
+        /// Find the grade based on accuracy, judge hits, etc.
+        /// </summary>
+        /// <param name="score">ScoreData of the play</param>
+        /// <returns></returns>
+        static public string GetGrade(ScoreData score)
         {
-            if (score.accuracy >= 0.975)
+            // If acc is over 97.5%
+            if (score.Accuracy >= 0.975)
             {
-                if(score.miss >= 1)
-                {
+                // If made at least one miss, get AAA
+                if (score.Miss >= 1)
                     return "AAA";
-                } else
+                // But if no misses
+                else
                 {
-                    if(score.great + score.good + score.bad == 0)
+                    // And no Greats, Goods, or Bads
+                    if (score.Great + score.Good + score.Bad == 0)
                     {
-                        if(score.perfect == 0)
-                        {
+                        // And no Perfects, get X
+                        if (score.Perfect == 0)
                             return "X";
-                        } else
+                        // Otherwise
+                        else
                         {
-                            if(score.max / score.perfect >= 10)
-                            {
+                            // If the ratio between MAX and Perfect hits is 10:1 or greater
+                            // Get SSS
+                            if (score.Max / score.Perfect >= 10)
                                 return "SSS";
-                            } else
-                            {
+                            // Otherwise get SS
+                            else
                                 return "SS";
-                            }
                         }
-                    } else
+                    }
+                    // If there is at least one Great, Good, or Bad
+                    else
                     {
-                        if(score.great >= 10)
-                        {
+                        // If there's more than 10 Greats, get AAA
+                        if (score.Great >= 10)
                             return "AAA";
-                        } else
+                        // But if there's less than 10 greats
+                        else
                         {
-                            if(score.perfect == 0 || score.max / score.perfect >= 10)
-                            {
+                            // And there's no perfects
+                            // OR the MAX : Perfect ratio is 10:1 or greater
+                            // Get SS
+                            if (score.Perfect == 0 || score.Max / score.Perfect >= 10)
                                 return "SS";
-                            } else
-                            {
+                            // Otherwise get S
+                            else
                                 return "S";
-                            }
                         }
-
                     }
                 }
-
             }
-            if (score.accuracy >= 0.95)
-            {
+
+            // If acc is greater than 95%, get AA
+            if (score.Accuracy >= 0.95)
                 return "AA";
-            }
-            if (score.accuracy >= 0.9)
-            {
+
+            // If acc is greater than 90%, get A
+            if (score.Accuracy >= 0.9)
                 return "A";
-            }
-            if (score.accuracy >= 0.8)
-            {
+
+            // If acc is greater than 80%, get B
+            if (score.Accuracy >= 0.8)
                 return "B";
-            }
-            if (score.accuracy >= 0.7)
-            {
+
+            // If acc is greater than 70%, get C
+            if (score.Accuracy >= 0.7)
                 return "C";
-            }
+
+            // If acc is lower than 70%, get D
             return "D";
-        }
-    }
-
-    public class ScoreData : SQLiteData
-    {
-        public string map;
-        public string dateT;
-        public int score;
-        public double accuracy;
-        public int maxCombo;
-        public string grade;
-        public int max;
-        public int perfect;
-        public int great;
-        public int good;
-        public int bad;
-        public int miss;
-
-        public ScoreData() : base() { }
-
-        public ScoreData(SQLiteDataReader data) : base(data) { }
-
-        public ScoreData(string map_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_) : 
-            this(map_, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), score_, accuracy_, maxcombo_, grade_, max_, perfect_, great_, good_, bad_, miss_) { }
-
-        public ScoreData(string map_, string datet_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
-        {
-            map = map_;
-            dateT = datet_;
-            score = score_;
-            accuracy = accuracy_;
-            maxCombo = maxcombo_;
-            grade = grade_;
-            max = max_;
-            perfect = perfect_;
-            great = great_;
-            good = good_;
-            bad = bad_;
-            miss = miss_;
-        }
-
-        public override string ToString()
-        {
-            double acc = Math.Round(accuracy * 100, 2);
-
-            return $"{dateT} - {score} | {acc}% | x{maxCombo}";
-        }
-    }
-
-    public class ReplayData : SQLiteData
-    {
-        public string map;
-        public string replaydata;
-
-        public ReplayData() : base() { }
-
-        public ReplayData(SQLiteDataReader data) : base(data) { }
-
-        public ReplayData(string map_, string replaydata_)
-        {
-            map = map_;
-            replaydata = replaydata_;
         }
     }
 }

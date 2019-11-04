@@ -1,20 +1,25 @@
 ﻿
 namespace Pulsarc.Beatmaps
 {
+    /// <summary>
+    /// A class that represents a "TimingPoint", or when the BPM in a song changes.
+    /// </summary>
     public class TimingPoint
     {
-        public int time;
-        public int bpm;
+        // The Time this TimingPoint activates
+        public int Time { get; private set; }
+        // The BPM set by this TimingPoint
+        public int Bpm { get; private set; }
 
         public TimingPoint(int time, int bpm)
         {
-            this.time = time;
-            this.bpm = bpm;
+            Time = time;
+            Bpm = bpm;
         }
 
         public override string ToString()
         {
-            return time + "," + bpm;
+            return $"{Time},{Bpm}";
         }
     }
 }

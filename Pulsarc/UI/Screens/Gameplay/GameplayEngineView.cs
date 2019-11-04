@@ -11,15 +11,13 @@ namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngineView : ScreenView
     {
-
         // UI Elements
-        List<TextDisplayElementFixedSize> uiElements = new List<TextDisplayElementFixedSize>();
+        private List<TextDisplayElementFixedSize> uiElements = new List<TextDisplayElementFixedSize>();
+        private JudgeBox judgeBox;
+        private AccuracyMeter accMeter;
+        private Crosshair crosshair;
 
-        JudgeBox judgeBox;
-        AccuracyMeter accMeter;
-        public Crosshair crosshair;
-
-        Background background;
+        private Background background;
 
         private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
 
@@ -35,62 +33,68 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init()
         {
             // Initialize UI depending on skin config
-            crosshair = GetGameplayEngine().crosshair;
+            crosshair = GetGameplayEngine().Crosshair;
 
-            addTextDisplayElement("Score");
-            addTextDisplayElement("Acc");
-            addTextDisplayElement("Combo");
+            AddTextDisplayElement("Score");
+            AddTextDisplayElement("Acc");
+            AddTextDisplayElement("Combo");
 
-            setUpJudgeBox();
+            SetUpJudgeBox();
 
-            setUpAccMeter();
+            SetUpAccMeter();
 
-            background = GetGameplayEngine().background;
+            background = GetGameplayEngine().Background;
         }
 
-        private void setUpJudgeBox()
+        /// <summary>
+        /// Create the Judge Box according to the skin config.
+        /// </summary>
+        private void SetUpJudgeBox()
         {
-            Vector2 startPos = Skin.getConfigStartPosition("gameplay", "Properties", "JudgeStartPos");
-            Anchor anchor = getSkinnablePropertyAnchor("JudgeAnchor");
+            Vector2 startPos = Skin.GetConfigStartPosition("gameplay", "Properties", "JudgeStartPos");
+            Anchor anchor = GetSkinnablePropertyAnchor("JudgeAnchor");
 
             judgeBox = new JudgeBox(startPos, anchor);
 
-            int offsetX = getSkinnablePropertyInt("JudgeX");
-            int offsetY = getSkinnablePropertyInt("JudgeY");
+            int offsetX = GetSkinnablePropertyInt("JudgeX");
+            int offsetY = GetSkinnablePropertyInt("JudgeY");
 
-            judgeBox.move(offsetX, offsetY);
+            judgeBox.Move(offsetX, offsetY);
         }
 
-        private void setUpAccMeter()
+        /// <summary>
+        /// Create the Accuracy Meter according to the skin config.
+        /// </summary>
+        private void SetUpAccMeter()
         {
-            Vector2 startPos = Skin.getConfigStartPosition("gameplay", "Properties", "AccMeterStartPos");
-            Anchor anchor = getSkinnablePropertyAnchor("AccMeterAnchor");
+            Vector2 startPos = Skin.GetConfigStartPosition("gameplay", "Properties", "AccMeterStartPos");
+            Anchor anchor = GetSkinnablePropertyAnchor("AccMeterAnchor");
 
             Vector2 size = new Vector2(
-                getSkinnablePropertyInt("AccMeterWidth"),
-                getSkinnablePropertyInt("AccMeterHeight")
+                GetSkinnablePropertyInt("AccMeterWidth"),
+                GetSkinnablePropertyInt("AccMeterHeight")
             );
 
             accMeter = new AccuracyMeter(startPos, size, anchor);
 
-            int offsetX = getSkinnablePropertyInt("AccMeterX");
-            int offsetY = getSkinnablePropertyInt("AccMeterY");
+            int offsetX = GetSkinnablePropertyInt("AccMeterX");
+            int offsetY = GetSkinnablePropertyInt("AccMeterY");
 
-            accMeter.move(offsetX, offsetY);
+            accMeter.Move(offsetX, offsetY);
         }
 
         /// <summary>
-        /// Add a navigation button to the main menu, using the config to
+        /// Add TDEs to the gameplay engine, using the config to
         /// determine their positioning and other properties.
         /// </summary>
         /// <param name="typeName">The "typeName" of the button, or the prefix in the config.</param>
-        private void addTextDisplayElement(string typeName)
+        private void AddTextDisplayElement(string typeName)
         {
             // Find variables for TDE
-            Vector2 position = Skin.getConfigStartPosition("gameplay", "Properties", typeName + "StartPos"); // Vector2 position;
-            int fontSize = getSkinnablePropertyInt(typeName + "TextFontSize");
-            Anchor textAnchor = getSkinnablePropertyAnchor(typeName + "Anchor"); // Anchor textAnchor;
-            Color textColor = Skin.getConfigColor("gameplay", "Properties", typeName + "TextColor"); // Color textColor;
+            Vector2 position = Skin.GetConfigStartPosition("gameplay", "Properties", $"{typeName}StartPos"); // Vector2 position;
+            int fontSize = GetSkinnablePropertyInt($"{typeName}TextFontSize");
+            Anchor textAnchor = GetSkinnablePropertyAnchor($"{typeName}Anchor"); // Anchor textAnchor;
+            Color textColor = Skin.GetConfigColor("gameplay", "Properties", $"{typeName}TextColor"); // Color textColor;
 
             // Make TDE
             // If this is the combo, change append to "x", if acc change it to "%"
@@ -99,14 +103,14 @@ namespace Pulsarc.UI.Screens.Gameplay
             string numberFormat = typeName.Equals("Acc") ? "#,##.00" : "#,#0";
 
             TextDisplayElementFixedSize text = new TextDisplayElementFixedSize("", position, append, fontSize, textAnchor, textColor);
-            text.numberFormat = numberFormat;
+            text.NumberFormat = numberFormat;
 
             // Offset
             Vector2 offset = new Vector2(
-                getSkinnablePropertyInt(typeName + "X"),
-                getSkinnablePropertyInt(typeName + "Y"));
+                GetSkinnablePropertyInt($"{typeName}X"),
+                GetSkinnablePropertyInt($"{typeName}Y"));
 
-            text.move(offset);
+            text.Move(offset);
 
             // Add
             uiElements.Add(text);
@@ -117,9 +121,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePropertyFloat(string key)
+        private float GetSkinnablePropertyFloat(string key)
         {
-            return Skin.getConfigFloat("gameplay", "Properties", key);
+            return Skin.GetConfigFloat("gameplay", "Properties", key);
         }
 
         /// <summary>
@@ -127,9 +131,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePropertyInt(string key)
+        private int GetSkinnablePropertyInt(string key)
         {
-            return Skin.getConfigInt("gameplay", "Properties", key);
+            return Skin.GetConfigInt("gameplay", "Properties", key);
         }
 
         /// <summary>
@@ -137,9 +141,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePropertyAnchor(string key)
+        private Anchor GetSkinnablePropertyAnchor(string key)
         {
-            return Skin.getConfigAnchor("gameplay", "Properties", key);
+            return Skin.GetConfigAnchor("gameplay", "Properties", key);
         }
 
         /// <summary>
@@ -147,9 +151,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string getSkinnablePropertyString(string key)
+        private string GetSkinnablePropertyString(string key)
         {
-            return Skin.getConfigString("gameplay", "Properties", key);
+            return Skin.GetConfigString("gameplay", "Properties", key);
         }
 
         /// <summary>
@@ -158,10 +162,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="time">The time of the hit.</param>
         /// <param name="error">The error of the hit (deltaTime / audio rate)</param>
         /// <param name="judge">The base score of the judgement.</param>
-        public void addHit(double time, int error, int judge)
+        public void AddHit(double time, int error, int judge)
         {
-            accMeter.addError(time, error);
-            addJudge(time, judge);
+            accMeter.AddError(time, error);
+            AddJudge(time, judge);
         }
 
         /// <summary>
@@ -169,7 +173,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="time">The time of the judgement.</param>
         /// <param name="judge">The base score of the judgement.</param>
-        public void addJudge(double time, int judge)
+        public void AddJudge(double time, int judge)
         {
             judgeBox.Add(time, judge);
         }
@@ -177,90 +181,86 @@ namespace Pulsarc.UI.Screens.Gameplay
         public override void Update(GameTime gameTime)
         {
             // Score
-            uiElements[0].Update(GetGameplayEngine().score_display);
+            uiElements[0].Update(GetGameplayEngine().scoreDisplay);
 
             // Acc
             double accuracyTotal = 0;
-            foreach (JudgementValue judge in GetGameplayEngine().judgements)
-            {
-                accuracyTotal += judge.acc;
-            }
+
+            foreach (JudgementValue judge in GetGameplayEngine().Judgements)
+                accuracyTotal += judge.Acc;
 
             // If no judgements have happened, 100%, otherwise, find the acc
             double value = 100d;
 
-            int count = GetGameplayEngine().judgements.Count;
+            int count = GetGameplayEngine().Judgements.Count;
+
             if (count > 0)
-            {
                 value *= accuracyTotal / count;
-            }
 
             value = Math.Round(value, 2);
 
             if (value < 1)
-            {
-                uiElements[1].Update("0" + value.ToString(uiElements[1].numberFormat));
-            }
+                uiElements[1].Update("0" + value.ToString(uiElements[1].NumberFormat));
             else
-            {
                 uiElements[1].Update(value);
-            }
 
             // Combo
-            uiElements[2].Update(GetGameplayEngine().combo);
+            uiElements[2].Update(GetGameplayEngine().Combo);
 
-            judgeBox.Update(GetGameplayEngine().time);
-            accMeter.Update(GetGameplayEngine().time);
+            judgeBox.Update(GetGameplayEngine().Time);
+            accMeter.Update(GetGameplayEngine().Time);
         }
 
+        /// <summary>
+        /// Draw Everything
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Draw(GameTime gameTime)
         {
-            if (!GameplayEngine.active) return;
-
-            // Draw everything
+            if (!GameplayEngine.Active)
+                return;
 
             // Don't bother drawing the background if dim is 100%
-            if (background.dim && background.dimTexture.opacity != 1f || !background.dim)
-            {
+            if (background.Dimmed && background.DimTexture.Opacity != 1f || !background.Dimmed)
                 background.Draw();
-            }
 
             crosshair.Draw();
-            drawArcs();
+            DrawArcs();
 
             foreach (TextDisplayElementFixedSize tdef in uiElements)
-            {
                 tdef.Draw();
-            }
 
             judgeBox.Draw();
             accMeter.Draw();
         }
 
-        private void drawArcs()
+        private void DrawArcs()
         {
             bool skip;
-            for (int i = 0; i < GetGameplayEngine().keys; i++)
+
+            // Go through each key
+            for (int i = 0; i < GetGameplayEngine().Keys; i++)
             {
                 skip = false;
-                for (int k = 0; k < GetGameplayEngine().columns[i].updateHitObjects.Count && !skip; k++)
-                {
 
-                    if (GetGameplayEngine().columns[i].updateHitObjects[k].Value.IsSeen())
-                    {
-                        GetGameplayEngine().columns[i].updateHitObjects[k].Value.Draw();
-                    }
-                    if (GetGameplayEngine().columns[i].updateHitObjects[k].Key - GetGameplayEngine().msIgnore > GetGameplayEngine().time)
-                    {
+                // Go through the arcs in each column
+                for (int k = 0; k < GetGameplayEngine().Columns[i].UpdateHitObjects.Count && !skip; k++)
+                {
+                    // If the arc is on screen, draw it.
+                    if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.IsSeen())
+                        GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.Draw();
+
+                    // If the arc is inside the "IgnoreTime" window, stop bothering to
+                    // look at the rest of the arcs in this column.
+                    if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Key - GetGameplayEngine().IgnoreTime > GetGameplayEngine().Time)
                         skip = true;
-                    }
                 }
             }
         }
 
-        public bool isActive()
+        public bool IsActive()
         {
-            return GameplayEngine.active;
+            return GameplayEngine.Active;
         }
 
         public override void Destroy()

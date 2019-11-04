@@ -7,11 +7,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
     class JudgeBox : Drawable
     {
         // The stats of the current Judge being drawn
-        int judgeKey = -1;
-        double time = 0;
+        private int judgeKey = -1;
+        private double time = 0;
 
         // A list of each judge type.
-        Dictionary<int, Judge> judges;
+        private Dictionary<int, Judge> judges;
 
         /// <summary>
         /// Container for displaying the obtained Judges in gameplay
@@ -23,10 +23,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             Texture = null;
 
             judges = new Dictionary<int, Judge>();
-            foreach (JudgementValue judge in Judgement.judgements)
-            {
-                judges.Add(judge.score,new Judge(judge.score, new Vector2(position.X, position.Y)));
-            }
+
+            foreach (JudgementValue judge in Judgement.Judgements)
+                judges.Add(judge.Score,new Judge(judge.Score, new Vector2(position.X, position.Y)));
         }
 
         /// <summary>
@@ -50,9 +49,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             int judgeDisplayTimeMs = 100;
            
             if(this.time + judgeDisplayTimeMs < time)
-            { 
                 judgeKey = -1;
-            }
         }
 
         /// <summary>
@@ -61,9 +58,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public override void Draw()
         {
             if (judgeKey >= 0)
-            {
                 judges[judgeKey].Draw();
-            }
         }
     }
 }

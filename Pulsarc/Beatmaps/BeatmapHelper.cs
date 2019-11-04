@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
@@ -16,16 +16,12 @@ namespace Pulsarc.Beatmaps
         static public Beatmap Load(string path, string fileName)
         {
             Beatmap parsed = new Beatmap();
-            parsed.path = path;
-            parsed.fileName = fileName;
+            parsed.Path = path;
+            parsed.FileName = fileName;
 
             var state = "";
 
-            var lines = File.ReadLines(path + "\\" + fileName);
-
-            // Event indices *May not be needed*
-            // int zoomIndex = 0;
-            // int speedVariationIndex = 0;
+            var lines = File.ReadLines($"{path}/{fileName}");
 
             foreach (var line in lines)
             {
@@ -56,7 +52,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Unknown beatmap field : " + type);
+                                    Console.WriteLine($"Unknown beatmap field : {type}");
                                 }
                                 break;
                             case "Background":
@@ -67,7 +63,7 @@ namespace Pulsarc.Beatmaps
                                     }
                                     catch
                                     {
-                                        Console.WriteLine("Unknown beatmap field : " + type);
+                                        Console.WriteLine($"Unknown beatmap field : {type}");
                                     }
                                     break;
                                 }
@@ -79,7 +75,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Unknown beatmap field : " + type);
+                                    Console.WriteLine($"Unknown beatmap field : {type}");
                                 }
                                 break;
                             case "Difficulty":
@@ -89,7 +85,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Unknown beatmap field : " + type);
+                                    Console.WriteLine($"Unknown beatmap field : {type}");
                                 }
                                 break;
                             case "Events":
@@ -99,7 +95,7 @@ namespace Pulsarc.Beatmaps
                                 state = type;
                                 break;
                             default:
-                                Console.WriteLine("Unknown beatmap field : " + type);
+                                Console.WriteLine($"Unknown beatmap field : {type}");
                                 break;
                         }
                     }
@@ -116,38 +112,36 @@ namespace Pulsarc.Beatmaps
                                 {
                                     int type = int.Parse(eventParts[(int)EventIndex.Type]);
 
-                                    Event evnt = makeEvent(line);
-                                    if (evnt != null) parsed.events.Add(evnt);
-                                    //string[] parameters = new string[] { line };
-                                    //parsed.events.Add((Event) Activator.CreateInstance(Type.GetType(eventParts[1]), parameters));
+                                    Event evnt = MakeEvent(line, (EventType)type);
+                                    if (evnt != null) parsed.Events.Add(evnt);
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Invalid Event : " + line);
+                                    Console.WriteLine($"Invalid Event : {line}");
                                 }
                                 break;
                             case "TimingPoints":
                                 try
                                 {
-                                    parsed.timingPoints.Add(new TimingPoint(Convert.ToInt32(eventParts[0]), Convert.ToInt32(eventParts[1])));
+                                    parsed.TimingPoints.Add(new TimingPoint(Convert.ToInt32(eventParts[0]), Convert.ToInt32(eventParts[1])));
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Invalid TimingPoint : " + line);
+                                    Console.WriteLine($"Invalid TimingPoint : {line}");
                                 }
                                 break;
                             case "Arcs":
                                 try
                                 {
-                                    parsed.arcs.Add(new Arc(Convert.ToInt32(eventParts[0]), Convert.ToInt32(eventParts[1], 2)));
+                                    parsed.Arcs.Add(new Arc(Convert.ToInt32(eventParts[0]), Convert.ToInt32(eventParts[1], 2)));
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Invalid Arc : " + line);
+                                    Console.WriteLine($"Invalid Arc : {line}");
                                 }
                                 break;
                             default:
-                                Console.WriteLine("Invalid state : " + state);
+                                Console.WriteLine($"Invalid state : {line}");
                                 break;
 
                         }
@@ -155,34 +149,46 @@ namespace Pulsarc.Beatmaps
                 }
             }
 
-            // If no difficulty has been provided in the game file, process it.
+            // If no difficulty has been provided in the game file, process it now.
             if(parsed.Difficulty == 0)
-            {
                 parsed.Difficulty = DifficultyCalculation.GetDifficulty(parsed);
-            }
 
-            parsed.fullyLoaded = true;
+            parsed.FullyLoaded = true;
 
             return parsed;
         }
 
-        static public Beatmap LoadLight(BeatmapData data)
+        /// <summary>
+        /// Load a Beatmap from a BeatmapData that should have all the data needed
+        /// to make up a Beatmap.
+        /// </summary>
+        /// <param name="data">The BeatmapData object to load from.</param>
+        /// <returns>The beatmap created from the BeatmapData</returns>
+        public static Beatmap LoadLight(BeatmapData data)
         {
-
             Beatmap parsed = new Beatmap();
-            parsed.fullyLoaded = false;
-            parsed.path = data.path;
-            parsed.fileName = data.fileName;
-            parsed.Background = data.background_path;
-            parsed.Audio = data.audio_path;
-            parsed.PreviewTime = data.audio_preview;
+            parsed.FullyLoaded = false;
 
-            parsed.Artist = data.artist;
-            parsed.Title = data.title;
-            parsed.Version = data.version;
-            parsed.Mapper = data.mapper;
-            parsed.KeyCount = data.key_count;
-            parsed.Difficulty = data.difficulty;
+            // Path names
+            parsed.Path = data.Path;
+            parsed.FileName = data.FileName;
+
+            // Background
+            parsed.Background = data.BackgroundPath;
+
+            // Audio
+            parsed.Audio = data.AudioPath;
+            parsed.PreviewTime = data.AudioPreviewTime;
+
+            // Metadata
+            parsed.Artist = data.Artist;
+            parsed.Title = data.Title;
+            parsed.Version = data.Version;
+            parsed.Mapper = data.Mapper;
+
+            // Game Data
+            parsed.KeyCount = data.KeyCount;
+            parsed.Difficulty = data.Difficulty;
 
             return parsed;
         }
@@ -194,89 +200,88 @@ namespace Pulsarc.Beatmaps
         /// <param name="file_path">The filepath this Beatmap Should be saved to.</param>
         static public void Save(Beatmap beatmap, string file_path)
         {
-            using (StreamWriter file =
-                new StreamWriter(file_path))
+            using (StreamWriter file = new StreamWriter(file_path))
             {
-                writeProperty(file, beatmap, "FormatVersion");
-                writeProperty(file, beatmap, "Title");
-                writeProperty(file, beatmap, "Artist");
-                writeProperty(file, beatmap, "Mapper");
-                writeProperty(file, beatmap, "Version");
-                writeProperty(file, beatmap, "Audio");
-                writeProperty(file, beatmap, "PreviewTime");
-                writeProperty(file, beatmap, "Background");
+                // Write Game data/Metadata
+                WriteProperty(file, beatmap, "FormatVersion");
+                WriteProperty(file, beatmap, "Title");
+                WriteProperty(file, beatmap, "Artist");
+                WriteProperty(file, beatmap, "Mapper");
+                WriteProperty(file, beatmap, "Version");
+                WriteProperty(file, beatmap, "Audio");
+                WriteProperty(file, beatmap, "PreviewTime");
+                WriteProperty(file, beatmap, "Background");
 
                 file.WriteLine("");
-                writeProperty(file, beatmap, "KeyCount");
-                writeProperty(file, beatmap, "Difficulty");
+                WriteProperty(file, beatmap, "KeyCount");
+                WriteProperty(file, beatmap, "Difficulty");
 
+                // Write Events
                 file.WriteLine("");
                 file.WriteLine("Events:");
 
-                foreach (Event evt in beatmap.events)
-                {
+                foreach (Event evt in beatmap.Events)
                     file.WriteLine(evt.ToString());
-                }
 
+                // Write Timing Points
                 file.WriteLine("");
                 file.WriteLine("TimingPoints:");
 
-                foreach (TimingPoint timingPoint in beatmap.timingPoints)
-                {
+                foreach (TimingPoint timingPoint in beatmap.TimingPoints)
                     file.WriteLine(timingPoint.ToString());
-                }
 
+                // Write Speed Variations
                 file.WriteLine("");
                 file.WriteLine("SpeedVariations:");
 
-                foreach (SpeedVariation speedVariation in beatmap.speedVariations)
-                {
-                    file.WriteLine(speedVariation.ToString());
-                }
-
+                // Write Arcs
                 file.WriteLine("");
                 file.WriteLine("Arcs:");
 
-                foreach (Arc arc in beatmap.arcs)
-                {
+                foreach (Arc arc in beatmap.Arcs)
                     file.WriteLine(arc.ToString());
-                }
             }
         }
 
         /// <summary>
-        /// 
+        /// Write a property to file
         /// </summary>
         /// <param name="file"></param>
         /// <param name="beatmap"></param>
         /// <param name="property"></param>
-        static private void writeProperty(StreamWriter file, Beatmap beatmap, string property)
+        static private void WriteProperty(StreamWriter file, Beatmap beatmap, string property)
         {
             try
             {
-                // Use reflection to write any property. The property need to implement ToString()
+                // Use reflection to write any property. The property needs to implement ToString()
                 file.WriteLine(property + ": " + beatmap.GetType().GetProperty(property).GetValue(beatmap, null));
             }
             catch
             {
-                Console.WriteLine("Trying to write invalid property " + property);
+                Console.WriteLine($"Trying to write invalid property {property}");
             }
         }
 
         /// <summary>
         /// Use bitwise enumeration to determine if an arc is on the specified column
         /// </summary>
-        /// <param name="arc"></param>
-        /// <param name="k"></param>
+        /// <param name="arc">The arc to check</param>
+        /// <param name="column">The column to check in (in binary format)</param>
         /// <returns></returns>
-        static public bool isColumn(Arc arc, int k)
+        static public bool IsColumn(Arc arc, int column)
         {
-            return ((arc.type >> k) & 1) != 0;
+            return ((arc.Type >> column) & 1) != 0;
         }
 
-        static private Event makeEvent(string line)
+        /// <summary>
+        /// Makes a new Event based on the data found in line
+        /// </summary>
+        /// <param name="line">A line from the .psc to read from.</param>
+        /// <returns>A new event corresponding to the EventType index of line, using the
+        /// data in "line" to make the event. Or null if none was found.</returns>
+        static private Event MakeEvent(string line, EventType type)
         {
-            switch (Event.GetEventType(int.Parse(line.Split(',')[(int)EventIndex.Type])))
+            switch (type)
             {
                 case EventType.Zoom:
                     return new ZoomEvent(line);

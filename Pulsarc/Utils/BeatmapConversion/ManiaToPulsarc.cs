@@ -8,7 +8,7 @@ namespace Pulsarc.Utils.BeatmapConversion
     class ManiaToPulsarc : BeatmapConverter
     {
         // Estimated offset difference between osu!mania and Pulsarc
-        int msOffset = 0;
+        private const int msOffset = 0;
 
         /// <summary>
         /// Convert an osu!mania beatmap to a Pulsarc beatmap
@@ -42,10 +42,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                         // Remove the "0,0,"" and "",0,0" on the background line.
                         string backgroundName = maniaBeatmap.Events[0];
                         string[] charsToRemove = new string[] { ",", "\"", "0" };
+
                         foreach (string c in charsToRemove)
-                        {
                             backgroundName = backgroundName.Replace(c, "");
-                        }
+
                         result.Background = backgroundName;
                     }
 
@@ -72,7 +72,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                         }
 
                         int time = Int32.Parse(parts[2]) + msOffset;
-                        result.arcs.Add(new Arc(time, arc));
+                        result.Arcs.Add(new Arc(time, arc));
                     }
                     results.Add(result);
                 }
@@ -91,35 +91,31 @@ namespace Pulsarc.Utils.BeatmapConversion
             {
                 if (map.Audio != null)
                 {
-                    string audioPath = folder_path + "/" + map.Audio;
+                    string audioPath = $"{folder_path}/{map.Audio}";
+
                     if (File.Exists(audioPath))
                     {
                         int id = 0;
                         // The folder name will look like "0 - Artist - SongTitle - (Mapper)"
-                        string folderName = string.Join("_", (id + " - " + map.Artist + " - " + map.Title + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
-                        string dirName = "Songs/" + folderName;
+                        string folderName = string.Join("_", ($"{id} - {map.Artist} - {map.Title} ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
+                        string dirName = $"Songs/{folderName}";
 
                         if (!Directory.Exists(dirName))
-                        {
                             Directory.CreateDirectory(dirName);
-                        }
 
-                        File.Copy(audioPath, dirName + "/" + map.Audio, true);
+                        File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
 
-                        string backgroundPath = folder_path + "/" + map.Background;
+                        string backgroundPath = $"{folder_path}/{map.Background}";
+                        
                         if (File.Exists(backgroundPath))
-                        {
-                            File.Copy(backgroundPath, dirName + "/" + map.Background, true);
-                        }
+                            File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
                         else
-                        {
                             map.Background = "";
-                        }
 
                         // The file name will look like "Artist - SongTitle [Converted] (Mapper).psc"
-                        string difficultyFileName = string.Join("_", (map.Artist + " - " + map.Title + " [" + map.Version + "]" + " (" + map.Mapper + ")").Split(Path.GetInvalidFileNameChars()));
+                        string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
 
-                        BeatmapHelper.Save(map, dirName + "/" + difficultyFileName + ".psc");
+                        BeatmapHelper.Save(map, $"{dirName}/{difficultyFileName}.psc");
                     }
                 }
             }

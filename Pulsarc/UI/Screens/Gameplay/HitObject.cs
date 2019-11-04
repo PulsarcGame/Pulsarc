@@ -8,54 +8,61 @@ namespace Pulsarc.UI.Screens.Gameplay
     public class HitObject : Drawable
     {
         // Whether or not this HitObject can be hit
-        public bool hittable = true;
+        public bool Hittable { get; protected set; } = true;
 
         // Whether or not this HitObject should fade before reaching the crosshair
-        public bool hidden = false;
+        public bool Hidden { get; protected set; } = false;
 
         // The time (in ms) from the start of the audio to a Perfect hit
-        public int time;
+        public int Time { get; protected set; }
 
         // The direction this HitObject is "falling" from.
-        internal double angle;
+        public double Angle { get; protected set; }
 
-        // The theoritical z-axis poisition of this arc to assist with imitating a "falling" effect from the screen to the crosshair.
-        internal double zLocation;
+        // The theoritical z-axis poisition of this arc.
+        // Used to imitate a "falling" effect from the screen to the crosshair.
+        public double ZLocation { get; protected set; }
 
         // The user-defined base speed.
-        internal double baseSpeed;
+        public double BaseSpeed { get; protected set; }
 
         // Optimization
         // Whether this hitobject is marked for destruction in gameplay
-        public bool erase;
+        public bool ToErase { get; set; } = false;
 
         /// <summary>
         /// HitObject is an "Arc", the main gameplay element for Pulsarc.
+        /// They move from the outer edges of the screen towards the center to
+        /// the crosshair. The player can press corresponding keys to "hit" these arcs.
         /// </summary>
         /// <param name="time">The time (in ms) from the start of the audio to a Perfect hit</param>
         /// <param name="angle">The direction this HitObject is "falling" from.</param>
         /// <param name="keys">How many keys are in the current Beatmap. Only 4 keys is working right now.</param>
         /// <param name="baseSpeed">The user-defined base speed for this arc.</param>
         /// <param name="hidden">Whether or not this arc should fade before reaching the crosshair.</param>
-        public HitObject(int time, double angle, int keys, double baseSpeed, bool hidden) : base(Skin.assets["arcs"])
+        public HitObject(int time, double angle, int keys, double baseSpeed, bool hidden) : base(Skin.Assets["arcs"])
         {
-            this.time = time;
-            this.angle = angle;
-            this.baseSpeed = baseSpeed;
-            this.hidden = hidden;
-            erase = false;
+            Time = time;
+            Angle = angle;
+            BaseSpeed = baseSpeed;
+            Hidden = hidden;
 
             // Find the origin (center) of this Crosshair
             int width = Pulsarc.CurrentWidth;
             int height = Pulsarc.CurrentHeight;
 
-            origin.X = (width / 2) + ((Texture.Width - width) / 2);
-            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
+            Vector2 origin = new Vector2
+            (
+                (width / 2) + ((Texture.Width - width) / 2),
+                (height / 2) + ((Texture.Height - height) / 2)
+            );
 
             // Position this HitOjbect
-            changePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
+            ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
 
             // What part of this HitObject should be drawn?
+            Rectangle drawnPart = DrawnPart;
+
             drawnPart.Width = Texture.Width / 2;
             drawnPart.Height = Texture.Height / 2;
 
@@ -79,12 +86,15 @@ namespace Pulsarc.UI.Screens.Gameplay
                     break;
             }
 
+            Origin = origin;
+            DrawnPart = drawnPart;
+
             // Set the rotation of the object
             // TODO: Make this customizeable by the beatmap.
-            rotation = (float)(45 * (Math.PI / 180));
+            Rotation = (float)(45 * (Math.PI / 180));
 
             // Set the HitObject's position
-            changePosition(truePosition);
+            ChangePosition(TruePosition);
         }
 
         /// <summary>
@@ -96,11 +106,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// the start ofthe audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        public virtual void recalcPos(int currentTime, double speedModifier, double crosshairZLoc)
+        public virtual void RecalcPos(int currentTime, double speedModifier, double crosshairZLoc)
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
-            setZLocation(currentTime, speedModifier * baseSpeed, crosshairZLoc);
-            Resize(findArcRadius());
+            SetZLocation(currentTime, speedModifier * BaseSpeed, crosshairZLoc);
+            Resize(FindArcRadius());
         }
 
         /// <summary>
@@ -110,27 +120,36 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        private void setZLocation(int currentTime, double speed, double crosshairZLoc)
+        protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc)
         {
-            zLocation = calcZLocation(currentTime, speed, crosshairZLoc);
+            ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
 
-            // Set hidden status here
-            if (hidden)
+            HandleHiddenState(crosshairZLoc);
+        }
+
+        /// <summary>
+        /// Set the current transparency of the HitObject if Hidden is activated.
+        /// </summary>
+        /// <param name="crosshairZLoc">Current crosshair Z-Location</param>
+        protected virtual void HandleHiddenState(double crosshairZLoc)
+        {
+            if (Hidden)
             {
+                // When arcs are fully hidden, currently at the 2/3rds mark (between first being seen and being hit)
                 double fullFadeLocation = crosshairZLoc - (crosshairZLoc / 3);
-                float newOpacity = (float)(fullFadeLocation - zLocation) / (float)(fullFadeLocation);
 
-                if (zLocation > fullFadeLocation)
-                {
+                // New opacity is calculated by looking at how far the arc has gone.
+               float newOpacity = (float)(fullFadeLocation - ZLocation) / (float)(fullFadeLocation);
+
+               if (ZLocation > fullFadeLocation)
                     newOpacity = 0f;
-                }
-                // This is for zooms, which can make hitobjects gain opacity which hurts reading.
-                else if (newOpacity > opacity)
-                {
-                    newOpacity = opacity;
-                }
+                // This is for playing with Hidden. Zooms can make 
+                // the arcs more opaque with the current implementation
+                // of hidden. This makes sure that arcs don't gain opacity.
+                else if (newOpacity > Opacity)
+                    newOpacity = Opacity;
 
-                opacity = newOpacity;
+                Opacity = newOpacity;
             }
         }
 
@@ -140,9 +159,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        protected virtual double calcZLocation(int currentTime, double speed, double crosshairZLoc)
+        protected virtual double CalcZLocation(int currentTime, double speed, double crosshairZLoc)
         {
-            int deltaTime = currentTime - time;
+            int deltaTime = currentTime - Time;
 
             double zLocation = deltaTime * speed + speed + crosshairZLoc;
 
@@ -152,11 +171,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Find this object's current arc radius using its current z-axis position.
         /// </summary>
-        public float findArcRadius()
+        public float FindArcRadius()
         {
-            Vector2 screen = Pulsarc.getDimensions();
+            Vector2 screen = Pulsarc.GetDimensions();
 
-            float radius = (float)(960 / zLocation * (screen.X / 2));
+            float radius = (float)(960 / ZLocation * (screen.X / 2));
 
             return radius;
         }
@@ -171,16 +190,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
         public int IsSeenAt(double speed, double crosshairZLoc)
         {
-            // Reverse formula for determining when an arc will first appear on screen
-            return (int)(time - (crosshairZLoc / speed));
+            return (int)(Time - (crosshairZLoc / speed));
         }
 
         /// <summary>
-        /// Returns whether this HitObject is currently being drawn.
+        /// Returns whether this HitObject can be drawn.
         /// </summary>
         public bool IsSeen()
         {
-            return zLocation > 0;
+            return ZLocation > 0;
         }
     }
 }

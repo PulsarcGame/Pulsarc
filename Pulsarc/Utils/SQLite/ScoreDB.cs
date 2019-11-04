@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Text;
 
 namespace Pulsarc.Utils.SQLite
 {
@@ -10,36 +9,34 @@ namespace Pulsarc.Utils.SQLite
     {
         public ScoreDB() : base("scores") { }
 
-        public override void initTables()
+        public override void InitTables()
         {
-            tables.Add(new ScoreData());
-            tables.Add(new ReplayData());
+            Tables.Add(new ScoreData());
+            Tables.Add(new ReplayData());
         }
 
-        public void addScore(ScoreData score)
+        public void AddScore(ScoreData score)
         {
             score.SaveData(this);
         }
 
-        public void addReplay(ReplayData replay)
+        public void AddReplay(ReplayData replay)
         {
             replay.SaveData(this);
         }
 
-        public List<ScoreData> getScores(string map)
+        public List<ScoreData> GetScores(string map)
         {
             List<ScoreData> scores = new List<ScoreData>();
 
-            SQLiteDataReader r = query("SELECT * FROM scoredata WHERE map = '" + map + "' ORDER BY score DESC, datet ASC");
-            while(r.Read())
-            {
-                scores.Add(new ScoreData(r));
-            }
+            SQLiteDataReader r = Query($"SELECT * FROM scoredata WHERE map = '{map}' ORDER BY score DESC, datet ASC");
 
-            foreach(ScoreData score in scores)
-            {
+            // r can be null due to the current issues with ScoreDB
+            while (r != null && r.Read())
+                scores.Add(new ScoreData(r));
+
+            foreach (ScoreData score in scores)
                 Console.WriteLine(score.ToString());
-            }
 
             return scores;
         }

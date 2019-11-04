@@ -6,16 +6,22 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     public class Slider : Setting
     {
-        public SliderSelector selector = new SliderSelector();
+        // The Selector "Knob" for this slider.
+        public SliderSelector Selector { get; protected set; } = new SliderSelector();
 
-        public int minValue;
-        public int maxValue;
-        public int step;
-        public int displayDivider;
-        public int displayPrecision;
+        // Min/Max Slider values
+        public int MinValue { get; protected set; }
+        public int MaxValue { get; protected set; }
+        
+        // How much each pixel of selector movement changes the value.
+        public int Step { get; protected set; }
+
+        //
+        public int DisplayDivider { get; protected set; }
+        public int DisplayPrecision { get; protected set; }
 
         // How far away (in pixels) from the edges the SliderSelector needs to stop at.
-        public int edgeOffset;
+        public int EdgeOffset { get; protected set; }
 
         /// <summary>
         /// 
@@ -23,20 +29,21 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="startingValue"></param>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
-        public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15) : base(title, more, position, Skin.assets["slider"], -1, Anchor.CenterLeft, startingValue, type)
+        public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15)
+            : base(title, more, position, Skin.Assets["slider"], Anchor.CenterLeft, startingValue, type)
         {
-            selector.Resize(50);
+            Selector.Resize(50);
 
-            value = startingValue;
-            this.step = step;
-            this.displayDivider = displayDivider;
-            this.displayPrecision = displayPrecision;
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-            this.edgeOffset = edgeOffset;
+            Value = startingValue;
+            Step = step;
+            DisplayDivider = displayDivider;
+            DisplayPrecision = displayPrecision;
+            MinValue = minValue;
+            MaxValue = maxValue;
+            EdgeOffset = edgeOffset;
 
-            hold = true;
-            setSelector();
+            Hold = true;
+            SetSelector();
             Update();
         }
 
@@ -45,43 +52,48 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Moves the selector to the provided value, and changes the current value of this slider to that value.
         /// </summary>
         /// <param name="value">The value to move the selector to.</param>
-        public void setSelector(int value)
+        public void SetSelector(int value)
         {
-            int stepdist = this.value - value;
-            if(Math.Abs(stepdist) >= step/2)
+            int stepdist = Value - value;
+
+            if (Math.Abs(stepdist) >= Step/2)
             {
-                this.value -= step * (stepdist / step);
+                Value -= Step * (stepdist / Step);
                 Update();
             }
-            float percentagePosition = findSelectorPosition();
 
-            int rangeMin = edgeOffset;
-            int rangeMax = (int)currentSize.X - edgeOffset;
+            float percentagePosition = FindSelectorPosition();
+
+            int rangeMin = EdgeOffset;
+            int rangeMax = (int)CurrentSize.X - EdgeOffset;
 
             int selectorRange = rangeMax - rangeMin;
 
             int position = (int)(percentagePosition * selectorRange);
 
-            selector.changePosition(new Vector2(anchorPosition.X + edgeOffset + position, anchorPosition.Y));
+            Selector.ChangePosition(new Vector2(AnchorPosition.X + EdgeOffset + position, AnchorPosition.Y));
         }
 
+        /// <summary>
+        /// Update this slider.
+        /// </summary>
         public void Update()
         {
-            title.Update(" : " + Math.Round(value / (float)displayDivider, displayPrecision).ToString());
+            Title.Update(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
         }
 
-        public void setSelectorPercent(float percent)
+        public void SetSelectorPercent(float percent)
         {
             Console.WriteLine(percent);
-            setSelector((int) (minValue + (maxValue - minValue) * percent));
+            SetSelector((int) (MinValue + (MaxValue - MinValue) * percent));
         }
 
         /// <summary>
         /// Moves the selector to the current value
         /// </summary>
-        public void setSelector()
+        public void SetSelector()
         {
-            setSelector(value);
+            SetSelector(Value);
         }
 
         /// <summary>
@@ -89,11 +101,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="value">The value to find the position for.</param>
         /// <returns>A float between 0f and 1f that represents the position the Selector should be in relative to the Slider.</returns>
-        public float findSelectorPosition(int value)
+        public float FindSelectorPosition(int value)
         {
-            int range = maxValue - minValue;
+            int range = MaxValue - MinValue;
 
-            float position = (value - minValue) / (float)range;
+            float position = (value - MinValue) / (float)range;
 
             // If position is greater than 1, return 1, else if its lower than 0, return 0
             // If neither of those, return position
@@ -105,31 +117,31 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// This instance of the method uses the currentValue of this slider.
         /// </summary>
         /// <returns>A float between 0f and 1f that represents the position the Selector should be in relation to the size of the Slider.</returns>
-        public float findSelectorPosition()
+        public float FindSelectorPosition()
         {
-            return findSelectorPosition(value);
+            return FindSelectorPosition(Value);
         }
 
-        public override dynamic getSaveValue()
+        public override dynamic GetSaveValue()
         {
-            return value / (float) displayDivider;
+            return Value / (float) DisplayDivider;
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 position, bool scaledPositioning = true)
         {
-            base.move(position, scaledPositioning);
-            selector.move(position, scaledPositioning);
+            base.Move(position, scaledPositioning);
+            Selector.Move(position, scaledPositioning);
         }
 
         public override void Draw()
         {
             base.Draw();
-            selector.Draw();
+            Selector.Draw();
         }
 
-        public override void onClick(Point mousePosition)
+        public override void OnClick(Point mousePosition)
         {
-            setSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * scale));
+            SetSelectorPercent((mousePosition.X - TruePosition.X) / ((Texture.Width) * Scale));
         }
     }
 }

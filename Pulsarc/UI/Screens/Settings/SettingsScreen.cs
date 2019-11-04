@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Wobble.Screens;
 
@@ -11,8 +8,8 @@ namespace Pulsarc.UI.Screens.Settings
     {
         public override ScreenView View { get; protected set; }
 
-        public float selectedFocus = 0;
-        int lastScrollValue = 0;
+        public float SelectedFocus { get; private set; } = 0;
+        private int lastScrollValue = 0;
 
         public override void Init()
         {
@@ -27,17 +24,17 @@ namespace Pulsarc.UI.Screens.Settings
             View?.Update(gameTime);
         }
 
+        /// <summary>
+        /// Change the focus when the mouse wheel scrolls.
+        /// </summary>
+        /// <param name="ms">The mouse state.</param>
         private void changeFocus(MouseState ms)
         {
             // If the scroll wheel's state has changed, change the focus
             if (ms.ScrollWheelValue < lastScrollValue)
-            {
-                selectedFocus -= 0.3f;
-            }
+                SelectedFocus -= 0.3f;
             else if (ms.ScrollWheelValue > lastScrollValue)
-            {
-                selectedFocus += 0.3f;
-            }
+                SelectedFocus += 0.3f;
 
             lastScrollValue = ms.ScrollWheelValue;
         }

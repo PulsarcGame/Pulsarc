@@ -1,6 +1,6 @@
 ﻿using Pulsarc.Beatmaps.Events;
-using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
+using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,14 +11,11 @@ namespace Pulsarc.Beatmaps
 {
     public class Beatmap
     {
-        // Beatmap folder path
-        public string path;
-
-        // Beatmap filename
-        public string fileName;
+        // Beatmap folder path and file
+        public string Path { get; set; }
+        public string FileName { get; set; }
 
         // Metadata
-
         // The format version of this Beatmap.
         public string FormatVersion { get; set; } = "1";
 
@@ -44,27 +41,22 @@ namespace Pulsarc.Beatmaps
         public string Background { get; set; }
 
         // General
-
         // How many keys this Beatmap uses.
         public int KeyCount { get; set; } = 4;
 
         // The calculated difficulty of this Beatmap.
         public double Difficulty { get; set; } = 0;
 
-
         // Events
-        
         // All the events in this Beatmap (storyboard, zoom, etc.)
-        public List<Event> events;
+        public List<Event> Events;
 
         // Gameplay
-
-        public List<SpeedVariation> speedVariations;
-        public List<TimingPoint> timingPoints;
-        public List<Arc> arcs;
+        public List<TimingPoint> TimingPoints;
+        public List<Arc> Arcs;
 
         // Performance
-        public bool fullyLoaded = false;
+        public bool FullyLoaded { get; set; } = false;
 
         /// <summary>
         /// A collection of arcs, timing points, speed variations,
@@ -72,49 +64,73 @@ namespace Pulsarc.Beatmaps
         /// </summary>
         public Beatmap()
         {
-            arcs = new List<Arc>();
-            timingPoints = new List<TimingPoint>();
-            speedVariations = new List<SpeedVariation>();
-            events = new List<Event>();
+            Arcs = new List<Arc>();
+            TimingPoints = new List<TimingPoint>();
+            Events = new List<Event>();
         }
-
-        public string getHash()
+        
+        /// <summary>
+        /// Get the hash value for this beatmap, hash generated from data in the beatmap.
+        /// </summary>
+        /// <returns>The Hash value for this beatmap.</returns>
+        public string GetHash()
         {
             // The hash is modified for any metadata or arc/sv change
-            int a = 0;
-            foreach (Arc arc in arcs)
-            {
-                a += arc.time + arc.type;
-            }
-            int t = 0;
-            foreach (SpeedVariation sv in speedVariations)
-            {
-                t += sv.time + sv.time + (int) sv.type;
-            }
-            string uniqueMapDescriptor = Artist + Title + Mapper + Version + a + ',' + t;
-            return BitConverter.ToString(((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(new UTF8Encoding().GetBytes(uniqueMapDescriptor)))
-                   // without dashes
-                   .Replace("-", string.Empty)
-                   // make lowercase
-                   .ToLower();
+            int arcCount = 0;
+            foreach (Arc arc in Arcs)
+                arcCount += arc.Time + arc.Type;
+
+            int eventCount = 0;
+            foreach (Event evnt in Events)
+                eventCount += evnt.Time + evnt.Time + (int)evnt.Type;
+
+            string uniqueMapDescriptor = Artist + Title + Mapper + Version + arcCount + ',' + eventCount;
+            return BitConverter.ToString(
+                ((HashAlgorithm)CryptoConfig.CreateFromName("MD5"))
+                    .ComputeHash(new UTF8Encoding()
+                    .GetBytes(uniqueMapDescriptor)))
+                    // without dashes
+                    .Replace("-", string.Empty)
+                    // make lowercase
+                    .ToLower();
         }
 
-        public List<ScoreData> getLocalScores()
+        /// <summary>
+        /// Get the locally saved scores for this beatmap.
+        /// </summary>
+        /// <returns></returns>
+        public List<ScoreData> GetLocalScores()
         {
-            return DataManager.scoreDB.getScores(getHash());
+            return DataManager.ScoreDB.GetScores(GetHash());
         }
 
-        public string getFullAudioPath()
+        /// <summary>
+        /// Get the audio path to this beatmap's audio file.
+        /// </summary>
+        /// <returns></returns>
+        public string GetFullAudioPath()
         {
-            return Directory.GetParent(path) // Get the path to "\Songs"
-                                                   .FullName.Replace("\\Songs", "") + // Get rid of the extra "\Songs"
-                                                   "\\" + path + // Add the beatmap path.
-                                                   "\\" + Audio; // Add the audio name.
+            return
+                // Get the path to "/Songs"
+                Directory.GetParent(Path)
+                // Get rid of the extra "\Songs"
+                .FullName.Replace("\\Songs", "")
+                // Replace "\" with "/" for cross platform support
+                .Replace("\\", "/") +
+                // Add the beatmap path.
+                $"/{Path}" +
+                // Add the audio name.
+                $"/{Audio}";
         }
 
+        /// <summary>
+        /// This Beatmap as a string.
+        /// Format is "Artist - Title [Version] (Mapper)"
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return Artist + " - " + Title + " [" + Version + "] (" + Mapper + ")";
+            return $"{Artist} - {Title} [{Version}] ({Mapper})";
         }
     }
 }

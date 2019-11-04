@@ -8,20 +8,20 @@ namespace Pulsarc.Utils
     static public class DataManager
     {
         // DBs
-        static public ScoreDB scoreDB;
-        static public BeatmapDB beatmapDB;
+        public static ScoreDB ScoreDB;
+        public static BeatmapDB BeatmapDB;
 
-        static public void Initialize()
+        public static void Initialize()
         {
             // Setup DBs
-            scoreDB = new ScoreDB();
-            beatmapDB = new BeatmapDB();
+            ScoreDB = new ScoreDB();
+            BeatmapDB = new BeatmapDB();
         }
 
-        static public void Clean()
+        public static void Clean()
         {
-            scoreDB.close();
-            beatmapDB.close();
+            ScoreDB.Close();
+            BeatmapDB.Close();
         }
     }
 }

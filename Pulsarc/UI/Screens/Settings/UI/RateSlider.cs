@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Pulsarc.Skinning;
 using Pulsarc.Utils;
-using System;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -12,11 +10,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             base(title, more, position, type, startingValue, minValue, maxValue, step, displayDivider, displayPrecision, edgeOffset)
         { }
 
-        public override void onClick(Point mousePosition)
+        public override void OnClick(Point mousePosition)
         {
-            base.onClick(mousePosition);
+            base.OnClick(mousePosition);
         }
-
 
         public override void Save(string category, string key)
         {

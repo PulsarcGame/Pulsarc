@@ -7,7 +7,7 @@ namespace Pulsarc.Utils
     /// <summary>
     /// A static class used to find the position of a particular Anchor point.
     /// </summary>
-    static public class AnchorUtil
+    public static class AnchorUtil
     {
         /// <summary>
         /// Finds the position of the provided anchor on the provided drawable.
@@ -15,13 +15,13 @@ namespace Pulsarc.Utils
         /// <param name="anchor">The anchor of the drawable to find the position of.</param>
         /// <param name="drawable">The drawable to find the anchorposition of.</param>
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the provided drawable.</returns>
-        static public Vector2 FindDrawablePosition(Anchor anchor, Drawable drawable)
+        public static Vector2 FindDrawablePosition(Anchor anchor, Drawable drawable)
         {
-            float x = drawable.truePosition.X;
-            float y = drawable.truePosition.Y;
+            float x = drawable.TruePosition.X;
+            float y = drawable.TruePosition.Y;
 
-            float width = drawable.currentSize.X;
-            float height = drawable.currentSize.Y;
+            float width = drawable.CurrentSize.X;
+            float height = drawable.CurrentSize.Y;
 
             switch (anchor)
             {
@@ -72,7 +72,7 @@ namespace Pulsarc.Utils
         /// </summary>
         /// <param name="anchor">The anchor of the screen to find the position of.</param>
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
-        static public Vector2 FindScreenPosition(Anchor anchor)
+        public static Vector2 FindScreenPosition(Anchor anchor)
         {
             float x;
             float y;
@@ -130,13 +130,13 @@ namespace Pulsarc.Utils
         /// </summary>
         /// <param name="anchor">The anchor of the screen to find the position of.</param>
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the current screen.</returns>
-        static public Vector2 FindBaseScreenPosition(Anchor anchor)
+        public static Vector2 FindBaseScreenPosition(Anchor anchor)
         {
             float x;
             float y;
 
-            int xBaseRes = Pulsarc.xBaseRes;
-            int yBaseRes = Pulsarc.yBaseRes;
+            int xBaseRes = Pulsarc.BaseWidth;
+            int yBaseRes = Pulsarc.BaseHeight;
 
             switch (anchor)
             {

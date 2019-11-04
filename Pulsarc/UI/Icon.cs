@@ -7,6 +7,6 @@ namespace Pulsarc.UI
 {
     class Icon : Drawable
     {
-        public Icon(string name) : base(Skin.assets[name]) { }
+        public Icon(string name) : base(Skin.Assets[name]) { }
     }
 }

@@ -9,38 +9,46 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     class Checkbox : Setting
     {
-        Drawable cross;
+        /// <summary>
+        /// The X that signifies if this option is activated or not.
+        /// </summary>
+        private Drawable cross;
+
         public Checkbox(string title, string more, Vector2 position, string type, bool startingValue) : 
-            base(title, more, position, Skin.assets["settings_checkbox"], -1, Anchor.CenterLeft, startingValue, type)
+            base(title, more, position, Skin.Assets["settings_checkbox"], Anchor.CenterLeft, startingValue, type)
         {
-            cross = new Drawable(Skin.assets["settings_checkbox_cross"], position, anchor: Anchor.CenterLeft);
+            cross = new Drawable(Skin.Assets["settings_checkbox_cross"], position, anchor: Anchor.CenterLeft);
 
-            cross.changePosition(position);
-        }
-        public override dynamic getSaveValue()
-        {
-            return value;
+            cross.ChangePosition(position);
         }
 
-        public override void onClick(Point mousePosition)
+        public override dynamic GetSaveValue()
         {
-            value = !(bool) value;
-            Console.WriteLine("click " + value);
+            return Value;
         }
 
-        public override void move(Vector2 position, bool scaledPositioning = true)
+        /// <summary>
+        /// When this is click reverse the state of the value,
+        /// from true to false or false to true.
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        public override void OnClick(Point mousePosition)
         {
-            base.move(position, scaledPositioning);
-            cross.move(position, scaledPositioning);
+            Value = !(bool) Value;
+        }
+
+        public override void Move(Vector2 position, bool scaledPositioning = true)
+        {
+            base.Move(position, scaledPositioning);
+            cross.Move(position, scaledPositioning);
         }
 
         public override void Draw()
         {
             base.Draw();
-            if(value)
-            {
+            
+            if (Value)
                 cross.Draw();
-            }
         }
     }
 }
