@@ -51,7 +51,7 @@ namespace Pulsarc
         public static SongSelection SongScreen;
 
         // FPS
-        public static FPS FPSDisplay { get; private set; } = new FPS(new Vector2());
+        public static FPS FPSDisplay { get; private set; }
 
         // Map Converting Flag
         private bool converting = false;
@@ -129,6 +129,9 @@ namespace Pulsarc
             
             // Start our time and frame-time tracker
             PulsarcTime.Start();
+
+            // FPS
+            FPSDisplay = new FPS(Vector2.Zero);
             
             // Initialize the game camera
             gameCamera = new Camera(Graphics.GraphicsDevice.Viewport, (int) GetDimensions().X, (int)GetDimensions().Y, 1);
