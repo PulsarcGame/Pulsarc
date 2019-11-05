@@ -4,6 +4,7 @@ using Pulsarc.Beatmaps;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Input;
+using Pulsarc.Utils.SQLite;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

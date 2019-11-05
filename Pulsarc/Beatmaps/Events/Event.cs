@@ -57,15 +57,15 @@ namespace Pulsarc.Beatmaps.Events
 
         // The list of all events of this type for the beatmap
         // Legacy?
-        protected List<Event> SimilarEvents = new List<Event>();
-        protected bool SimilarEventsCalled = false;
-        protected List<Event> FutureEvents = new List<Event>();
-        protected bool FutureEventsCalled = false;
+        protected List<Event> similarEvents = new List<Event>();
+        protected bool similarEventsCalled = false;
+        protected List<Event> futureEvents = new List<Event>();
+        protected bool futureEventsCalled = false;
 
         // The next similar event in gameplay according to Time
         // Set in FindNextEvent
-        protected Event NextEvent;
-        protected bool FoundNextEvent = false;
+        protected Event nextEvent;
+        protected bool foundNextEvent = false;
 
         // Whether or not this event is currently being handled
         public bool Active { get; set; } = false;
@@ -195,13 +195,13 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplayEngine to look through</param>
         protected void FindNextEvent(GameplayEngine gameplayEngine)
         {
-            if (FoundNextEvent)
+            if (foundNextEvent)
                 return;
 
             FindAllSimilarEvents(gameplayEngine);
 
-            NextEvent = gameplayEngine.CurrentBeatmap.Events.Find(GreaterEventTime);
-            FoundNextEvent = true;
+            nextEvent = gameplayEngine.CurrentBeatmap.Events.Find(GreaterEventTime);
+            foundNextEvent = true;
         }
 
         /// <summary>
@@ -222,11 +222,11 @@ namespace Pulsarc.Beatmaps.Events
         protected void FindAllSimilarEvents(GameplayEngine gameplayEngine)
         {
             // Only need to call this once, inherited classes can set similarEventsCalled to false if they want to call again.
-            if (SimilarEventsCalled)
+            if (similarEventsCalled)
                 return;
 
-            SimilarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
-            SimilarEventsCalled = true;
+            similarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
+            similarEventsCalled = true;
         }
 
         /// <summary>
@@ -237,13 +237,13 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplayEngine to look through</param>
         protected void FindAllSimilarFutureEvents(GameplayEngine gameplayEngine)
         {
-            if (FutureEventsCalled)
+            if (futureEventsCalled)
                 return;
 
             FindAllSimilarEvents(gameplayEngine);
 
-            FutureEvents = SimilarEvents.FindAll(GreaterEventTime);
-            FutureEventsCalled = true;
+            futureEvents = similarEvents.FindAll(GreaterEventTime);
+            futureEventsCalled = true;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
-    interface BeatmapConverter
+    interface IBeatmapConverter
     {
         /// <summary>
         /// Convert a folder of beatmaps to Pulsarc-compatible beatmaps

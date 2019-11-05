@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
-    class ManiaToPulsarc : BeatmapConverter
+    class ManiaToPulsarc : IBeatmapConverter
     {
         // Estimated offset difference between osu!mania and Pulsarc
         private const int msOffset = 0;

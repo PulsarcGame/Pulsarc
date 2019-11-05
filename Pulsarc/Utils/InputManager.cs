@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,15 +10,15 @@ namespace Pulsarc.Utils
     static class InputManager
     {
         private static Thread inputThread;
-        public static Queue<KeyValuePair<double, Keys>> KeyboardPresses;
-        public static Queue<KeyValuePair<double, Keys>> KeyboardReleases;
-        public static List<Keys> PressedKeys;
-        public static KeyboardState KeyboardState;
-        public static MouseState MouseState;
-        public static KeyVal<MouseState, int> LastMouseClick;
+        public static Queue<KeyValuePair<double, Keys>> KeyboardPresses { get; private set; }
+        public static Queue<KeyValuePair<double, Keys>> KeyboardReleases { get; private set; }
+        public static List<Keys> PressedKeys { get; private set; }
+        public static KeyboardState KeyboardState { get; private set; }
+        public static MouseState MouseState { get; private set; }
+        public static KeyVal<MouseState, int> LastMouseClick { get; private set; }
 
-        public static bool CapsLock = false;
-        public static bool Caps = false;
+        public static bool CapsLock { get; private set; } = false;
+        public static bool Caps { get; private set; } = false;
 
         static public void StartThread()
         {

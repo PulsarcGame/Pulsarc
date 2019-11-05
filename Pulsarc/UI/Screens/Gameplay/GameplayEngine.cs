@@ -51,7 +51,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public int Keys { get; private set; }
 
         // Background
-        public Background Background;
+        public Background Background { get; private set; }
 
         // Events
         // Indexes
@@ -175,7 +175,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void LoadConfig()
         {
             // Set the offset for each play before starting audio
-            AudioManager.Offset = Config.GetInt("Audio", "GlobalOffset");
+            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
 
             Keys = 4;
 
@@ -188,7 +188,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap"></param>
         private void InitializeVariables(Beatmap beatmap)
         {
-            AudioManager.AudioRate = Rate;
+            AudioManager.audioRate = Rate;
 
             CurrentSpeedMultiplier = UserSpeed;
             CurrentArcsSpeed = 1;
@@ -220,7 +220,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Background.ChangeBackground(GraphicsUtils.LoadFileTexture(beatmap.Path + "/" + beatmap.Background));
 
             // Set the path of the song to be played later on
-            AudioManager.SongPath = beatmap.GetFullAudioPath();
+            AudioManager.songPath = beatmap.GetFullAudioPath();
 
             CurrentBeatmap = beatmap;
         }
@@ -324,11 +324,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             HandleEngineInputs();
 
             // If paused, don't handle anything else
-            if (AudioManager.Paused)
+            if (AudioManager.paused)
                 return;
 
             // Quit gameplay when nothing is left to play, or if the audio finished playing
-            if ((AudioManager.Active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + endDelay))
+            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + endDelay))
             {                
                 EndGameplay(true);
                 return;
@@ -631,7 +631,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Background.Dimmed = false;
 
             // Stop audio
-            if (AudioManager.Running)
+            if (AudioManager.running)
                 AudioManager.Stop();
 
             // Save rplay data if this is a valid play

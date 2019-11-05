@@ -103,7 +103,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
         public override void Draw()
         {
-            Pulsarc.SpriteBatch.Draw(Texture, position: TruePosition, rotation: Rotation, origin: Origin, color: Color.White);
+            Pulsarc.SpriteBatch.Draw(Texture, position: truePosition, rotation: Rotation, origin: origin, color: Color.White);
 
             /*
             foreach (KeyValuePair<long, Double> hit error in hits)

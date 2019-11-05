@@ -8,12 +8,12 @@ namespace Pulsarc.Utils
 {
     static class Config
     {
-        public static FileIniDataParser Parser;
-        public static IniData Get;
+        public static FileIniDataParser Parser { get; private set; }
+        public static IniData Get { get; private set; }
 
-        public static Dictionary<string, Keys> Bindings;
+        public static Dictionary<string, Keys> Bindings { get; private set; }
 
-        private static Type keyType = Keys.A.GetType();
+        private static readonly Type keyType = Keys.A.GetType();
 
         public static void Initialize()
         {

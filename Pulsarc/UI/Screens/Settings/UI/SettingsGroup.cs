@@ -27,7 +27,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Settings = new Dictionary<string, Setting>();
             Icon = new Drawable(Skin.Assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200,200),anchor: Anchor.Center);
             ChangePosition(position);
-            DrawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
+            drawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
         }
 
         /// <summary>
@@ -39,10 +39,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             Settings.Add(key, setting);
 
-            Rectangle drawnPart = DrawnPart;
-            drawnPart.Height += setting.DrawnPart.Height;
-
-            DrawnPart = drawnPart;
+            drawnPart.Height += setting.drawnPart.Height;
         }
 
         public override void Move(Vector2 position, bool scaledPositioning = true)
@@ -60,7 +57,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <returns></returns>
         public Vector2 GetNextPosition()
         {
-            return new Vector2(TruePosition.X, TruePosition.Y + DrawnPart.Height);
+            return new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
         }
 
         public override void Draw()

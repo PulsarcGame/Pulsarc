@@ -32,7 +32,7 @@ namespace Pulsarc.UI.Buttons
             GameplayEngine gameplay = new GameplayEngine();
             gameplay.Init(beatmap);
 
-            // Show the gameplay screen.
+            // Add the new gameplay screen.
             ScreenManager.AddScreen(gameplay);
         }
     }

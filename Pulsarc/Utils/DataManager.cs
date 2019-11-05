@@ -1,15 +1,12 @@
 ﻿using Pulsarc.Utils.SQLite;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.Utils
 {
     static public class DataManager
     {
         // DBs
-        public static ScoreDB ScoreDB;
-        public static BeatmapDB BeatmapDB;
+        public static ScoreDB ScoreDB { get; private set; }
+        public static BeatmapDB BeatmapDB { get; private set; }
 
         public static void Initialize()
         {

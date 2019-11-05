@@ -10,7 +10,7 @@ using Pulsarc.Skinning;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
-    class IntralismToPulsarc : BeatmapConverter
+    class IntralismToPulsarc : IBeatmapConverter
     {
         // A value needed to properly convert Intralism's PlayerDistance to Pulsarc's ZLocation
         // It is the "x" in the equation: "IntralismPlayerDistance * x = PulsarcZLocation"

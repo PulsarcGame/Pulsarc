@@ -30,7 +30,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
             textDisplay.ScaledMove(offsetX, offsetY);
-            textDisplay.ProcessedPosition = textDisplay.TruePosition;
+            textDisplay.processedPosition = textDisplay.truePosition;
         }
 
         public void Update(string text)

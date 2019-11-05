@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.Utils.SQLite;
 
 namespace Pulsarc.Beatmaps
 {
@@ -170,25 +171,25 @@ namespace Pulsarc.Beatmaps
             parsed.FullyLoaded = false;
 
             // Path names
-            parsed.Path = data.Path;
-            parsed.FileName = data.FileName;
+            parsed.Path = data.path;
+            parsed.FileName = data.fileName;
 
             // Background
-            parsed.Background = data.BackgroundPath;
+            parsed.Background = data.backgroundPath;
 
             // Audio
-            parsed.Audio = data.AudioPath;
-            parsed.PreviewTime = data.AudioPreviewTime;
+            parsed.Audio = data.audioPath;
+            parsed.PreviewTime = data.audioPreviewTime;
 
             // Metadata
-            parsed.Artist = data.Artist;
-            parsed.Title = data.Title;
-            parsed.Version = data.Version;
-            parsed.Mapper = data.Mapper;
+            parsed.Artist = data.artist;
+            parsed.Title = data.title;
+            parsed.Version = data.version;
+            parsed.Mapper = data.mapper;
 
             // Game Data
-            parsed.KeyCount = data.KeyCount;
-            parsed.Difficulty = data.Difficulty;
+            parsed.KeyCount = data.keyCount;
+            parsed.Difficulty = data.difficulty;
 
             return parsed;
         }

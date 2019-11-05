@@ -16,7 +16,7 @@ namespace Pulsarc.UI
         public StringBuilder Text { get; protected set; }
         public Color Color { get; set; }
 
-        public Vector2 ProcessedPosition;
+        public Vector2 processedPosition;
 
         private bool caught = false;
 
@@ -39,7 +39,7 @@ namespace Pulsarc.UI
             fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight);
 
             ChangePosition(position);
-            ProcessedPosition = TruePosition;
+            processedPosition = truePosition;
             Update("");
         }
 
@@ -62,8 +62,8 @@ namespace Pulsarc.UI
         public void ReprocessPosition()
         {
 
-            float newX = TruePosition.X;
-            float newY = TruePosition.Y;
+            float newX = truePosition.X;
+            float newY = truePosition.Y;
             Vector2 size = font.MeasureString(Text) * fontScale;
             size.X *= Pulsarc.GetDimensions().X / Pulsarc.BaseWidth;
             size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight;
@@ -103,8 +103,8 @@ namespace Pulsarc.UI
                     break;
             }
 
-            ProcessedPosition.X = newX;
-            ProcessedPosition.Y = newY;
+            processedPosition.X = newX;
+            processedPosition.Y = newY;
         }
 
         public override void Move(Vector2 position, bool scaledPositioning = true)
@@ -123,7 +123,7 @@ namespace Pulsarc.UI
 
             try
             {
-                Pulsarc.SpriteBatch.DrawString(font, Text, ProcessedPosition, Color, 0, Origin, fontScale, SpriteEffects.None, 0);
+                Pulsarc.SpriteBatch.DrawString(font, Text, processedPosition, Color, 0, origin, fontScale, SpriteEffects.None, 0);
             }
             catch
             {

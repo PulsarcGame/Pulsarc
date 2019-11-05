@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.Result.UI
         {
             suffixGrades = new List<Grade>();
 
-            Resize(CurrentSize.X * scale);
+            Resize(currentSize.X * scale);
 
             // For each extra letter, add another suffix to suffixGrades
             for (int i = 0; i < grade_.Length - 1; i++)
@@ -26,10 +26,10 @@ namespace Pulsarc.UI.Screens.Result.UI
 
                 if (i % 2 == 0)
                     foreach (Grade suffixGrade in suffixGrades)
-                        suffixGrade.Move(new Vector2(CurrentSize.X / 2.5f, 0));
+                        suffixGrade.Move(new Vector2(currentSize.X / 2.5f, 0));
             }
 
-            ChangePosition(new Vector2(position.X - CurrentSize.X / 2, position.Y - CurrentSize.Y / 2));
+            ChangePosition(new Vector2(position.X - currentSize.X / 2, position.Y - currentSize.Y / 2));
         }
 
         public override void Move(Vector2 position, bool scaledPositioning = true)

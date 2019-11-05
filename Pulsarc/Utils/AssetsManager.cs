@@ -9,7 +9,7 @@ namespace Pulsarc.Utils
 {
     static class AssetsManager
     {
-        public static double TextureExpireTimeMs = 600000;
+        private static double textureExpireTimeMs = 600000;
 
         public static ContentManager Content { get; private set; }
         public static Dictionary<string, SpriteFont> Fonts { get; set; }
@@ -31,7 +31,7 @@ namespace Pulsarc.Utils
 
         public static Texture2D Load(string path)
         {
-            if (StoredTexture.ContainsKey(path) && StoredTexture[path].Value + TextureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
+            if (StoredTexture.ContainsKey(path) && StoredTexture[path].Value + textureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
                 return StoredTexture[path].Key;
 
             Texture2D newTexture = null;

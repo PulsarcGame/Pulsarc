@@ -15,8 +15,8 @@ namespace Pulsarc.UI.Screens.Result
 {
     class ResultScreenView : ScreenView
     {
-        private readonly string Config = "result_screen";
-        private readonly string[] Sections = { "Properties", "Metadata", "Judgements" };
+        private string Config => "result_screen";
+        private string[] Sections => new string[] { "Properties", "Metadata", "Judgements" };
 
         private ResultScreen GetResultScreen() { return (ResultScreen)Screen; }
 

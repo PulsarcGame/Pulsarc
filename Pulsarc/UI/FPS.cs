@@ -7,9 +7,9 @@ namespace Pulsarc.UI
     public class FPS : TextDisplayElementFixedSize
     {
         private Stopwatch fpsWatch;
-        
-        public static int FPSResolution { get; set; }
-        public static int Frames { get; private set; } = 0;
+
+        private static int fpsResolution;
+        private static int frames = 0;
 
         /// <summary>
         /// A little tracker in the corner of the screen that gives an
@@ -22,7 +22,7 @@ namespace Pulsarc.UI
             : base("", position, "fps", fontSize, anchor)
         {
             // TODO? Make FPSResolution customizeable by player
-            FPSResolution = 10;
+            fpsResolution = 10;
 
             fpsWatch = new Stopwatch();
             fpsWatch.Start();
@@ -30,13 +30,13 @@ namespace Pulsarc.UI
 
         public override void Draw()
         {
-            Frames++;
+            frames++;
 
-            if (fpsWatch.ElapsedMilliseconds > 1000 / FPSResolution)
+            if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)
             {
-                Update(Frames * FPSResolution);
+                Update(frames * fpsResolution);
 
-                Frames = 0;
+                frames = 0;
                 fpsWatch.Restart();
             }
 

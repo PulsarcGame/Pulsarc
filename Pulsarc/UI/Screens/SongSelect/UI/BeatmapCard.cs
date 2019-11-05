@@ -154,16 +154,16 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             {
                 string path = Beatmap.GetFullAudioPath();
 
-                if (AudioManager.SongPath != path)
+                if (AudioManager.songPath != path)
                 {
-                    AudioManager.SongPath = Beatmap.GetFullAudioPath();
-                    AudioManager.AudioRate = Config.GetFloat("Gameplay", "SongRate");
+                    AudioManager.songPath = Beatmap.GetFullAudioPath();
+                    AudioManager.audioRate = Config.GetFloat("Gameplay", "SongRate");
                     AudioManager.StartLazyPlayer();
 
                     if (Beatmap.PreviewTime != 0)
                         AudioManager.DeltaTime(Beatmap.PreviewTime);
 
-                    Console.WriteLine("Now Playing: " + AudioManager.SongPath);
+                    Console.WriteLine("Now Playing: " + AudioManager.songPath);
                 }
             }
         }

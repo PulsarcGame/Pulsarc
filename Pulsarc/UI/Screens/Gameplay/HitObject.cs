@@ -51,17 +51,11 @@ namespace Pulsarc.UI.Screens.Gameplay
             int width = Pulsarc.CurrentWidth;
             int height = Pulsarc.CurrentHeight;
 
-            Vector2 origin = new Vector2
-            (
-                (width / 2) + ((Texture.Width - width) / 2),
-                (height / 2) + ((Texture.Height - height) / 2)
-            );
+            origin.X = (width / 2) + ((Texture.Width - width) / 2);
+            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
 
             // Position this HitOjbect
             ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
-
-            // What part of this HitObject should be drawn?
-            Rectangle drawnPart = DrawnPart;
 
             drawnPart.Width = Texture.Width / 2;
             drawnPart.Height = Texture.Height / 2;
@@ -86,15 +80,12 @@ namespace Pulsarc.UI.Screens.Gameplay
                     break;
             }
 
-            Origin = origin;
-            DrawnPart = drawnPart;
-
             // Set the rotation of the object
             // TODO: Make this customizeable by the beatmap.
             Rotation = (float)(45 * (Math.PI / 180));
 
             // Set the HitObject's position
-            ChangePosition(TruePosition);
+            ChangePosition(truePosition);
         }
 
         /// <summary>

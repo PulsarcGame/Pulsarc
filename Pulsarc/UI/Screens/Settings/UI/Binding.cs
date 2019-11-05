@@ -23,7 +23,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             listening = new Drawable(Skin.Assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
 
-            key = new TextDisplayElement("", new Vector2(position.X + listening.CurrentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
+            key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
 
             key.Update(GetSaveValue());
 

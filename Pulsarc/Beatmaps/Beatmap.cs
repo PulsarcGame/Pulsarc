@@ -49,11 +49,11 @@ namespace Pulsarc.Beatmaps
 
         // Events
         // All the events in this Beatmap (storyboard, zoom, etc.)
-        public List<Event> Events;
+        public List<Event> Events { get; set; }
 
         // Gameplay
-        public List<TimingPoint> TimingPoints;
-        public List<Arc> Arcs;
+        public List<TimingPoint> TimingPoints { get; set; }
+        public List<Arc> Arcs { get; set; }
 
         // Performance
         public bool FullyLoaded { get; set; } = false;
@@ -111,16 +111,14 @@ namespace Pulsarc.Beatmaps
         public string GetFullAudioPath()
         {
             return
-                // Get the path to "/Songs"
-                Directory.GetParent(Path)
-                // Get rid of the extra "\Songs"
-                .FullName.Replace("\\Songs", "")
+                // Get the full path to "/Songs"
+                (Directory.GetParent(Path)
+                // Get rid of "\Songs", Path has an extra "/Songs" in it.
+                .FullName.Replace("\\Songs", "") +
+                // Add the beatmap path and audio filename.
+                $"/{Path}/{Audio}")
                 // Replace "\" with "/" for cross platform support
-                .Replace("\\", "/") +
-                // Add the beatmap path.
-                $"/{Path}" +
-                // Add the audio name.
-                $"/{Audio}";
+                .Replace("\\", "/");
         }
 
         /// <summary>

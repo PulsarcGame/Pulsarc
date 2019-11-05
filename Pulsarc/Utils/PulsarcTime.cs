@@ -6,7 +6,7 @@ namespace Pulsarc.Utils
     public static class PulsarcTime
     {
         // Whether or not this Class is keeping track of time.
-        public static bool IsRunning = false;
+        public static bool IsRunning { get; private set; } = false;
         
         // Delta Time (in ms) that is smoothed in a similar fashion to Unity's Time.SmoothDeltaTime
         public static double SmoothDeltaTime { get; private set; }
