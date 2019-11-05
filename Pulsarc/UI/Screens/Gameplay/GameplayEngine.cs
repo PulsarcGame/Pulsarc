@@ -14,7 +14,7 @@ using Pulsarc.Utils.SQLite;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
-    public class GameplayEngine : Screen
+    public class GameplayEngine : PulsarcScreen
     {
         public override ScreenView View { get; protected set; }
         private GameplayEngineView GetGameplayView() { return (GameplayEngineView)View; }
@@ -154,6 +154,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
             // TODO: disable GC while in gameplay
             GC.Collect();
+
+            Init();
         }
 
         /// <summary>
