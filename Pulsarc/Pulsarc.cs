@@ -34,12 +34,12 @@ namespace Pulsarc
         // Base Dimensions
         public const int BaseWidth = 1920;
         public const int BaseHeight = 1080;
-        public const float BaseAspectRatio = 16 / 9f;
+        public const float BaseAspectRatio = 16f / 9f;
 
         // Current Dimensions
         public static int CurrentWidth => Config.GetInt("Graphics", "ResolutionWidth");
         public static int CurrentHeight => Config.GetInt("Graphics", "ResolutionHeight");
-        public static float CurrentAspectRatio => CurrentWidth / CurrentHeight;
+        public static float CurrentAspectRatio => (float)CurrentWidth / CurrentHeight;
 
         // Scales for moving/resizing Drawables accurately on different dimensions.
         public static float HeightScale => (float)CurrentHeight / BaseHeight;

@@ -84,7 +84,7 @@ namespace Pulsarc.UI.Common
 
         private bool WiderThanOrSameAsPulsarc()
         {
-            return Texture.Width / Texture.Height >= Pulsarc.CurrentAspectRatio;
+            return (float)Texture.Width / Texture.Height >= Pulsarc.CurrentAspectRatio;
         }
 
         public override void Resize(Vector2 size)
