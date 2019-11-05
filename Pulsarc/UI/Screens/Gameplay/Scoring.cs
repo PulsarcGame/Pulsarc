@@ -42,26 +42,26 @@ namespace Pulsarc.UI.Screens.Gameplay
         static public string GetGrade(ScoreData score)
         {
             // If acc is over 97.5%
-            if (score.Accuracy >= 0.975)
+            if (score.accuracy >= 0.975)
             {
                 // If made at least one miss, get AAA
-                if (score.Miss >= 1)
+                if (score.miss >= 1)
                     return "AAA";
                 // But if no misses
                 else
                 {
                     // And no Greats, Goods, or Bads
-                    if (score.Great + score.Good + score.Bad == 0)
+                    if (score.great + score.good + score.bad == 0)
                     {
                         // And no Perfects, get X
-                        if (score.Perfect == 0)
+                        if (score.perfect == 0)
                             return "X";
                         // Otherwise
                         else
                         {
                             // If the ratio between MAX and Perfect hits is 10:1 or greater
                             // Get SSS
-                            if (score.Max / score.Perfect >= 10)
+                            if (score.max / score.perfect >= 10)
                                 return "SSS";
                             // Otherwise get SS
                             else
@@ -72,7 +72,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     else
                     {
                         // If there's more than 10 Greats, get AAA
-                        if (score.Great >= 10)
+                        if (score.great >= 10)
                             return "AAA";
                         // But if there's less than 10 greats
                         else
@@ -80,7 +80,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                             // And there's no perfects
                             // OR the MAX : Perfect ratio is 10:1 or greater
                             // Get SS
-                            if (score.Perfect == 0 || score.Max / score.Perfect >= 10)
+                            if (score.perfect == 0 || score.max / score.perfect >= 10)
                                 return "SS";
                             // Otherwise get S
                             else
@@ -91,19 +91,19 @@ namespace Pulsarc.UI.Screens.Gameplay
             }
 
             // If acc is greater than 95%, get AA
-            if (score.Accuracy >= 0.95)
+            if (score.accuracy >= 0.95)
                 return "AA";
 
             // If acc is greater than 90%, get A
-            if (score.Accuracy >= 0.9)
+            if (score.accuracy >= 0.9)
                 return "A";
 
             // If acc is greater than 80%, get B
-            if (score.Accuracy >= 0.8)
+            if (score.accuracy >= 0.8)
                 return "B";
 
             // If acc is greater than 70%, get C
-            if (score.Accuracy >= 0.7)
+            if (score.accuracy >= 0.7)
                 return "C";
 
             // If acc is lower than 70%, get D

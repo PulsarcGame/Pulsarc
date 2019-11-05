@@ -114,7 +114,7 @@ namespace Pulsarc.Beatmaps.Events
             // This is similar to how Intralism handles PlayerDistance, where it has a
             // local PlayerDistance that is what the player sees, and a semi-constant "PlayerDistance"
             // That is changed by the most recent SetPlayerDistance map event.
-            Active = !(NextEvent.Time < gameplayEngine.Time);
+            Active = !(NextEvent != null && NextEvent.Time < gameplayEngine.Time);
 
             // Get smoothDeltaTime and return if there was no change in deltaTime
             double smoothDeltaTime = PulsarcTime.SmoothDeltaTime;

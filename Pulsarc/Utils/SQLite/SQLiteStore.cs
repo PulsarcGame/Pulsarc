@@ -46,16 +46,7 @@ namespace Pulsarc.Utils.SQLite
             if (Logging)
                 Console.WriteLine(sql);
 
-            // Note, scores.db isn't working properly atm, this is to catch
-            // All ScoreDB related errors and keep the game running.
-            try
-            {
-                new SQLiteCommand(sql, db).ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"SQL ERROR:\n{e.Message}");
-            }
+            new SQLiteCommand(sql, db).ExecuteNonQuery();
         }
 
         public SQLiteDataReader Query(string sql)
@@ -63,17 +54,7 @@ namespace Pulsarc.Utils.SQLite
             if (Logging)
                 Console.WriteLine(sql);
 
-            // Note, scores.db isn't working properly atm, this is to catch
-            // All ScoreDB related errors and keep the game running.
-            try
-            {
-                return new SQLiteCommand(sql, db).ExecuteReader();
-            }
-            catch (Exception e)
-            {
-                Console.Write($"SQL ERROR:\n{e.Message}");
-                return null;
-            }
+            return new SQLiteCommand(sql, db).ExecuteReader();
         }
 
         public List<object> queryFirst(string sql)

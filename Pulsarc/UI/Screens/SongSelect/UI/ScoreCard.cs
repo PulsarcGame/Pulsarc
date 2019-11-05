@@ -36,7 +36,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             Anchor gradeAnchor = GetSkinnableAnchor("GradeAnchor");
 
-            grade = new Grade(scoreData.Grade, startPos, scale, gradeAnchor);
+            grade = new Grade(scoreData.grade, startPos, scale, gradeAnchor);
 
             int gradeXOffset = GetSkinnableInt("GradeX");
             int gradeYOffset = GetSkinnableInt("GradeY");
@@ -49,13 +49,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             textElements[0].Update("#" + rankPosition);
 
             AddTextDisplayElement("Score");
-            textElements[1].Update(scoreData.Score.ToString("#,##"));
+            textElements[1].Update(scoreData.score.ToString("#,##"));
 
             AddTextDisplayElement("Acc");
-            textElements[2].Update(Math.Round(scoreData.Accuracy * 100, 2).ToString("#,##.00") + "%");
+            textElements[2].Update(Math.Round(scoreData.accuracy * 100, 2).ToString("#,##.00") + "%");
 
             AddTextDisplayElement("Combo");
-            textElements[3].Update("x" + scoreData.MaxCombo);
+            textElements[3].Update("x" + scoreData.maxCombo);
         }
 
         protected override void SetConfigAndSection()

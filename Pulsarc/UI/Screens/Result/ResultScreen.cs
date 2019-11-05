@@ -71,13 +71,13 @@ namespace Pulsarc.UI.Screens.Result
 
             // Determine the grade achieved.
             ScoreData scoreData = new ScoreData(Beatmap.GetHash(), DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
-            scoreData.Grade = Scoring.GetGrade(scoreData);
+            scoreData.grade = Scoring.GetGrade(scoreData);
 
             // Save the score locally
             if (newScore)
                 DataManager.ScoreDB.AddScore(scoreData);
 
-            View = new ResultScreenView(this, accuracyTotal, scoreData.Grade, Beatmap, mapBackground);
+            View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
         }
     }
 }

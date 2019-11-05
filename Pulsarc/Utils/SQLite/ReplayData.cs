@@ -4,8 +4,8 @@ namespace Pulsarc.Utils.SQLite
 {
     public class ReplayData : SQLiteData
     {
-        public string Map { get; private set; }
-        public string Replaydata { get; private set; }
+        public string map;
+        public string replaydata;
 
         public ReplayData() : base() { }
 
@@ -13,8 +13,8 @@ namespace Pulsarc.Utils.SQLite
 
         public ReplayData(string map_, string replaydata_)
         {
-            Map = map_;
-            Replaydata = replaydata_;
+            map = map_;
+            replaydata = replaydata_;
         }
     }
 }
