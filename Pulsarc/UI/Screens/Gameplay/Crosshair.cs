@@ -23,8 +23,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             int width = Pulsarc.CurrentWidth;
             int height = Pulsarc.CurrentHeight;
 
-            origin.X = (width / 2) + (Texture.Width - width / 2);
-            origin.Y = (height / 2) + (Texture.Height - height / 2);
+            origin.X = (width / 2) + ((Texture.Width - width) / 2);
+            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
 
             // Set the diameter and resize
             Resize(baseCrosshairDiameter * Pulsarc.HeightScale);
