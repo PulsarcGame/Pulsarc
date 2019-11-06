@@ -199,7 +199,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap"></param>
         private void InitializeVariables(Beatmap beatmap)
         {
-            AudioManager.audioRate = Rate;
+            AudioManager.AudioRate = Rate;
 
             CurrentSpeedMultiplier = UserSpeed;
             CurrentArcsSpeed = 1;

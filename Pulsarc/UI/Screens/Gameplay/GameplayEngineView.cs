@@ -122,6 +122,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             uiElements.Add(text);
         }
 
+        #region GetSkinnable Methods
         /// <summary>
         /// Find a float from the Properties section of the Song Select config.
         /// </summary>
@@ -161,6 +162,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             return Skin.GetConfigString("gameplay", "Properties", key);
         }
+        #endregion
 
         /// <summary>
         /// Add a hit and its judgement.

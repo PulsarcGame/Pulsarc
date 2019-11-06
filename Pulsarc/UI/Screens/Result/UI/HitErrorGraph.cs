@@ -41,20 +41,10 @@ namespace Pulsarc.UI.Screens.Result.UI
             // Draw the graph
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
-                    graphBG[(y * width) + x] = Judgement.GetJudgementValueByError((int) Math.Abs(((y - (height / 2)) * miss.Judge / (float) height * 2))).Color * 0.3f;
-
-            /*
-            hits = new List<KeyValuePair<long, int>>();
-            int t = 1;
-            for (int j = -Judgement.getMiss().judge; j <= Judgement.getMiss().judge; j++)
-            {
-                hits.Add(new KeyValuePair<long, int>(t++, j));
-            }
-            for (int j = Judgement.getMiss().judge; j >= -Judgement.getMiss().judge; j--)
-            {
-                hits.Add(new KeyValuePair<long, int>(t++, j));
-            }
-            */
+                {
+                    int error = (int)Math.Abs((y - (height / 2)) * miss.Judge / (float)height * 2);
+                    graphBG[(y * width) + x] = Judgement.GetJudgementValueByError(error).Color * 0.3f;
+                }
 
             // Draw the hits
             if (hits.Count > 0)
@@ -68,7 +58,7 @@ namespace Pulsarc.UI.Screens.Result.UI
 
                 foreach (KeyValuePair<double, int> hit in hits)
                 {
-                    KeyValuePair<Vector2, Color> info = getHitInfo(hit);
+                    KeyValuePair<Vector2, Color> info = GetHitInfo(hit);
 
                     for (int yp = -1; yp < 2; yp++)
                     {
@@ -91,14 +81,12 @@ namespace Pulsarc.UI.Screens.Result.UI
         /// </summary>
         /// <param name="hit"></param>
         /// <returns></returns>
-        private KeyValuePair<Vector2, Color> getHitInfo(KeyValuePair<double, int> hit)
+        private KeyValuePair<Vector2, Color> GetHitInfo(KeyValuePair<double, int> hit)
         {
             return new KeyValuePair<Vector2, Color>(
-                new Vector2
-                (
+                new Vector2(
                     (float) ((2000+ hit.Key) / maxTime * Width),
-                    (-hit.Value / (float) Judgement.GetMiss().Judge * Height / 2f) + Height / 2
-                ),
+                    (-hit.Value / (float) Judgement.GetMiss().Judge * Height / 2f) + Height / 2),
                 Judgement.GetJudgementValueByError(Math.Abs(hit.Value)).Color);
         }
 

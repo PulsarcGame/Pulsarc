@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public override void Save(string category, string key)
         {
             base.Save(category, key);
-            AudioManager.UpdateRate();
+            AudioManager.UpdateRateToConfigRate();
         }
     }
 }
