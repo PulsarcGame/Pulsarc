@@ -64,9 +64,26 @@ namespace Pulsarc.Beatmaps.Events
             if (Type != EventType.Zoom)
                 ThrowWrongEventTypeException(this, EventType.Zoom);
 
+            // Find the remaining values using the List<string> Parameters
+            // that was created in the base constructor.
             ZoomType = (ZoomType)int.Parse(Parameters[(int)ZoomParameter.ZoomType]);
             ZoomLevel = float.Parse(Parameters[(int)ZoomParameter.ZoomLevel]) * Pulsarc.HeightScale;
             EndTime = int.Parse(Parameters[(int)ZoomParameter.EndPoint]);
+        }
+
+        /// <summary>
+        /// Initializes a ZoomEvent on the spot.
+        /// </summary>
+        /// <param name="time">The time this event is activated.</param>
+        /// <param name="zoomType">The type of zoom this is.</param>
+        /// <param name="zoomLevel">The amount of zoom to go to.</param>
+        /// <param name="endTime">The deactivation time of this zoom event.</param>
+        public ZoomEvent(int time, ZoomType zoomType, float zoomLevel, int endTime)
+            : base(time, EventType.Zoom)
+        {
+            ZoomType = zoomType;
+            ZoomLevel = zoomLevel * Pulsarc.HeightScale;
+            EndTime = endTime;
         }
 
         /// <summary>
@@ -180,6 +197,17 @@ namespace Pulsarc.Beatmaps.Events
             // Active as long as currentZoom hasn't reached zoom level
             // The above if-block makes sure that currentZoom will equal ZoomLevel eventually.
             Active = currentZoom != ZoomLevel;
+        }
+
+        /// <summary>
+        /// Returns what this event looks like in the .psc beatmap
+        /// file.
+        /// Format is: [Time (ms)],1,[ZoomType],[ZoomLevel],[EndTime (ms)]"
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Time},1,{(int)ZoomType},{ZoomLevel / Pulsarc.HeightScale},{EndTime}";
         }
     }
 }

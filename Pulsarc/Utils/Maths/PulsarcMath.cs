@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,9 +14,27 @@ namespace Pulsarc.Utils.Maths
         /// <param name="secondFloat"></param>
         /// <param name="by"></param>
         /// <returns></returns>
-        static public float Lerp(float firstFloat, float secondFloat, float by)
+        public static float Lerp(float firstFloat, float secondFloat, float by)
         {
             return firstFloat + (secondFloat - firstFloat) * by;
+        }
+
+        /// <summary>
+        /// Linear Interpolation between two colors.
+        /// Useful for gradients.
+        /// </summary>
+        /// <param name="firstColor"></param>
+        /// <param name="secondColor"></param>
+        /// <param name="by"></param>
+        /// <returns></returns>
+        public static Color Lerp(Color firstColor, Color secondColor, float by)
+        {
+            int r = (int)Math.Round(Lerp(firstColor.R, secondColor.R, by));
+            int g = (int)Math.Round(Lerp(firstColor.G, secondColor.G, by));
+            int b = (int)Math.Round(Lerp(firstColor.B, secondColor.B, by));
+            int a = (int)Math.Round(Lerp(firstColor.A, secondColor.A, by));
+
+            return new Color(r, g, b, a);
         }
 
         /// <summary>

@@ -84,13 +84,11 @@ namespace Pulsarc.Beatmaps.Events
         }
 
         /// <summary>
-        /// Currently not used. Keeping in case it proves useful in the future.
         /// Creates a new Event using the time and type provided.
-        /// Used by other Events that need a "nextEvent" for calculations.
         /// </summary>
         /// <param name="time">The this event activates</param>
         /// <param name="type">The type of event this is.</param>
-        private Event(int time, EventType type)
+        public Event(int time, EventType type)
         {
             Time = time;
             Type = type;
