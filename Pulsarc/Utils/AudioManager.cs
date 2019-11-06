@@ -18,6 +18,21 @@ namespace Pulsarc.Utils
         public static double startDelayMs = 1000;
         public static float audioRate = 1;
 
+        // The current speed that the audio is playing at.
+        private static float _audioRate;
+        public static float AudioRate
+        {
+            // If song hasn't been initialized yet, default to 1
+            // Otherwise get the song's rate.
+            get => song == null ? _audioRate : song.Rate;
+            // When we change AudioRate we'll use the SetRate method.
+            set
+            {
+                _audioRate = value;
+                SetRate();
+            }
+        }
+
         private static Thread audioThread;
         private static AudioTrack song;
         private static Stopwatch threadLimiterWatch;
@@ -50,7 +65,7 @@ namespace Pulsarc.Utils
             // Initialize the song
             song = new AudioTrack(songPath, false)
             {
-                Rate = audioRate,
+                Rate = _audioRate,
                 Volume = Config.GetInt("Audio", "MusicVolume"),
             };
 
@@ -236,6 +251,17 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void UpdateRate()
         {
+            AudioRate = Config.GetFloat("Gameplay", "SongRate");
+
+            Console.WriteLine($"Now Playing: {songPath} at {AudioRate} rate");
+        }
+
+        /// <summary>
+        /// Change the audio rate to the one provided.
+        /// </summary>
+        /// <param name="rate"></param>
+        private static void SetRate()
+        {
             if (active)
             {
                 // Save the position and audio path.
@@ -243,7 +269,6 @@ namespace Pulsarc.Utils
                 string audio = songPath;
                 Stop();
 
-                // Find the audio rate.
                 songPath = audio;
                 audioRate = Config.GetFloat("Gameplay", "SongRate");
                 StartLazyPlayer();
