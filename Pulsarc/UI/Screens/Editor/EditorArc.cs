@@ -1,22 +1,34 @@
+using Microsoft.Xna.Framework.Graphics;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Screens.Editor
 {
-    public abstract class EditorHitObject : HitObject
+    public class EditorArc : HitObject, IEditorHitObject
     {
         private int lastFrameTime = 0;
         private double lastFrameScale = 0;
         private double lastFrameCrosshairZLoc = 0;
 
-        public EditorHitObject(int time, double angle, int keys)
+        private static Texture2D defaultTexture = Skin.Assets["arcs"];
+        private static Texture2D selected = PulsarcDrawing.SelectDimTexture(defaultTexture);
+
+        public EditorArc(int time, double angle, int keys)
             : base(time, angle, keys, 0, false)
         {
             Hittable = false;
-            SetLayoutTexture();
         }
 
-        // Set the texture of this HitObject based on the layout of the Editor
-        public abstract void SetLayoutTexture();
+        public void Select()
+        {
+            Texture = selected;
+        }
+
+        public void Deselect()
+        {
+            Texture = defaultTexture;
+        }
 
         public override void RecalcPos(int currentTime, double currentScale, double crosshairZLoc)
         {
@@ -28,7 +40,7 @@ namespace Pulsarc.UI.Screens.Editor
             Resize(FindArcRadius());
         }
 
-        public bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
+        private bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
         {
             // The conditionals we're looking at
             bool timeSame = time == lastFrameTime;

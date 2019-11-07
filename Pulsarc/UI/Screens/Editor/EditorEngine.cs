@@ -8,11 +8,16 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Editor
 {
-    abstract class EditorEngine : PulsarcScreen, IEditor
+    public abstract class EditorEngine : PulsarcScreen, IEditor
     {
         public override ScreenView View { get; protected set; }
 
+        // A list of objects that were copy or cut onto the clipboard
+        // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
+        // each object that matches the .psc format.
         protected List<object> editorClipboard = new List<object>();
+
+        // The currently selected items in the editor.
         protected List<object> selectedItems = new List<object>();
 
         // A collection of each action that has happened.
@@ -111,9 +116,9 @@ namespace Pulsarc.UI.Screens.Editor
 
         public abstract void AddEvent(int time, EventType eventType);
 
-        public abstract void AddHitObject(EditorHitObject hitObject);
+        public abstract void AddHitObject(IEditorHitObject hitObject);
 
-        public abstract void AddHitObject(int time, double angle, int keys);
+        public abstract void AddHitObject(int time);
 
         public abstract void AddTimingPoint(TimingPoint timingPoint);
 

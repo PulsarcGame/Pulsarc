@@ -27,8 +27,7 @@ namespace Pulsarc.UI.Screens.Editor
         void AddZoomEvent(ZoomEvent zoomEvent);
         void AddZoomEvent(int time, ZoomType zoomType, float zoomLevel, int endTime);
 
-        void AddHitObject(EditorHitObject hitObject);
-        void AddHitObject(int time, double angle, int keys);
+        void AddHitObject(IEditorHitObject hitObject);
         #endregion
 
         #region Shortcutable Methods
@@ -49,6 +48,8 @@ namespace Pulsarc.UI.Screens.Editor
         void Select(object item);
         void AddToSelection(object item);
         void RemoveFromSelection(object item);
+
+        //void DragSelected();
         #endregion
     }
 }

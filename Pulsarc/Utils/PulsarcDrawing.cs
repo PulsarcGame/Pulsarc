@@ -32,14 +32,16 @@ namespace Pulsarc.Utils
         /// <param name="fillColor">The color of the rectangle.</param>
         /// <param name="outlineColor">The color of the outline.</param>
         /// <returns></returns>
-        public static Texture2D DrawRectangle(int width, int height, int outlineThickness, OutlineStyle outlineStyle, Color fillColor, Color outlineColor)
+        public static Texture2D DrawRectangle(int width, int height, int outlineThickness, OutlineStyle outlineStyle, Color fillColor, Color? outlineColor)
         {
-            // Ignore outline thickness if we were told to have no outline.
-            if (outlineStyle == OutlineStyle.NoOutline)
-                outlineThickness = 0;
-            // Ignore outline style if outline thickness is 0
-            else if (outlineThickness == 0)
+            // If there's no outline, reset the values just in case.
+            bool noOutline = outlineStyle == OutlineStyle.NoOutline || outlineThickness == 0 || outlineColor == null || outlineColor == Color.Transparent;
+            if (noOutline)
+            {
                 outlineStyle = OutlineStyle.NoOutline;
+                outlineThickness = 0;
+                outlineColor = null;
+            }
 
             // Find out how much the outline adds to the proportions.
             int extraWidth, extraHeight;
@@ -72,11 +74,18 @@ namespace Pulsarc.Utils
             for (int x = 0; x < fullWidth; x++)
                 for (int y = 0; y < fullHeight; y++)
                 {
-                    // If the point is on the outline, draw the outline color, otherwise draw the fill color.
-                    data[(y * fullWidth) + x] =
-                        IsPointOnRectangleInsideOutline(x, y, fullWidth, fullHeight, outlineThickness) ?
-                        outlineColor :
-                        fillColor;
+                    bool insideOutline = IsPointOnRectangleInsideOutline(x, y, fullWidth, fullHeight, outlineThickness);
+                    int i = (y * fullWidth) + x;
+
+                    // If there is no fill, don't worry about filling with "Transparent"
+                    if (fillColor == Color.Transparent && insideOutline)
+                        data[i] = (Color)outlineColor;
+                    // If there is no outline, don't worry about filling the outline areas with "Transparent"
+                    else if (noOutline && !insideOutline)
+                        data[i] = fillColor;
+                    else
+                        // If the point is on the outline, draw the outline color, otherwise draw the fill color.
+                        data[i] = insideOutline ? (Color)outlineColor : fillColor;
                 }
 
             texture.SetData(data);
@@ -210,6 +219,7 @@ namespace Pulsarc.Utils
         #region Circles and Eclipses
         /// <summary>
         /// Creates a Texture2D of a circle with an outline.
+        /// TODO: Improve optimization. Maybe there's a better method than manually placing colors?
         /// </summary>
         /// <param name="radius">The radius of the circle, ignoring the outline.</param>
         /// <param name="outlineThickness">The thickness of the outline around the circle.</param>
@@ -217,14 +227,16 @@ namespace Pulsarc.Utils
         /// <param name="fillColor">The color of the circle.</param>
         /// <param name="outlineColor">The color of the outline.</param>
         /// <returns></returns>
-        public static Texture2D DrawCircle(int radius, int outlineThickness, OutlineStyle outlineStyle, Color fillColor, Color outlineColor)
+        public static Texture2D DrawCircle(int radius, int outlineThickness, OutlineStyle outlineStyle, Color fillColor, Color? outlineColor)
         {
-            // Ignore outline thickness if we were told to have no outline.
-            if (outlineStyle == OutlineStyle.NoOutline)
-                outlineThickness = 0;
-            // Ignore outline style if outline thickness is 0
-            else if (outlineThickness == 0)
+            // If there's no outline, reset the values just in case.
+            bool noOutline = outlineStyle == OutlineStyle.NoOutline || outlineThickness == 0 || outlineColor == null || outlineColor == Color.Transparent;
+            if (noOutline)
+            {
                 outlineStyle = OutlineStyle.NoOutline;
+                outlineThickness = 0;
+                outlineColor = null;
+            }
 
             // Find out how much the outline adds to the proportions.
             int extraRadius;
@@ -255,11 +267,18 @@ namespace Pulsarc.Utils
                 for (int y = 0; y < diameter; y++)
                     if (IsPointInsideCircle(x, y, fullRadius))
                     {
-                        // If the point is on the outline, draw the outline color, otherwise draw the fill color.
-                        data[(y * diameter) + x] =
-                            IsPointOnCircleInsideOutline(x, y, outlineThickness, fullRadius) ?
-                            outlineColor :
-                            fillColor;
+                        bool insideOutline = IsPointOnCircleInsideOutline(x, y, fullRadius, outlineThickness);
+                        int i = (y * diameter) + x;
+
+                        // If there is no fill, don't worry about filling with "Transparent"
+                        if (fillColor == Color.Transparent && insideOutline)
+                            data[i] = (Color)outlineColor;
+                        // If there is no outline, don't worry about filling the outline areas with "Transparent"
+                        else if (noOutline && !insideOutline)
+                            data[i] = fillColor;
+                        else
+                            // If the point is on the outline, draw the outline color, otherwise draw the fill color.
+                            data[i] = insideOutline ? (Color)outlineColor : fillColor;
                     }
                     else
                         data[(y * diameter) + x] = Color.Transparent;
@@ -348,5 +367,48 @@ namespace Pulsarc.Utils
             return distanceFromCenter < radius;
         }
         #endregion
+
+        public static Texture2D DimTexture(Texture2D textureToDim, Color dimColor, float dimAmount = .3f)
+        {
+            int width = textureToDim.Width;
+            int height = textureToDim.Height;
+
+            Color[] data = new Color[width * height];
+            textureToDim.GetData(data, 0, data.Length);
+
+            // Dim each pixel by the color and the amount desired
+            for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
+                {
+                    // The index of data we're at right now.
+                    int i = (y * width) + x;
+
+                    // Get the color of this index
+                    Color color = data[i];
+
+                    // If it's full transparent, don't bother doing anything to it.
+                    if (color == Color.Transparent)
+                        continue;
+
+                    // Lerp the original color by the dim color and set the index to that color
+                    data[i] = Color.Lerp(color, dimColor, dimAmount);
+                }
+
+            // Create a new texture, set its data to the new data and return it.
+            Texture2D texture = new Texture2D(Pulsarc.Graphics.GraphicsDevice, width, height);
+            texture.SetData(data);
+
+            return texture;
+        }
+
+        public static Texture2D DimTexture(Texture2D textureToDim, float dimAmount = .3f)
+        {
+            return DimTexture(textureToDim, Color.Black, dimAmount);
+        }
+
+        public static Texture2D SelectDimTexture(Texture2D textureToDim)
+        {
+            return DimTexture(textureToDim, Color.Blue, .5f);
+        }
     }
 }

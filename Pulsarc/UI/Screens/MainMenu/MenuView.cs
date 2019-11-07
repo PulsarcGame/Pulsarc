@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
+using Pulsarc.UI.Screens.Editor;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
@@ -56,7 +57,8 @@ namespace Pulsarc.UI.Screens.MainMenu
             navButtons = new List<NavigationButton>();
             AddNavButton(Pulsarc.SongScreen, "Play");
             AddNavButton(new InProgressScreen(), "Multi");
-            AddNavButton(new InProgressScreen(), "Editor");
+            AddNavButton(new DebugEditor(null), "Editor");
+            //AddNavButton(new InProgressScreen(), "Editor");
             AddNavButton(new SettingsScreen(), "Settings");
             AddNavButton(new QuitScreen(), "Quit");
         }
