@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 
@@ -164,9 +163,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public float FindArcRadius()
         {
-            Vector2 screen = Pulsarc.GetDimensions();
-
-            float radius = (float)(960 / ZLocation * (screen.X / 2));
+            float radius = (float)(960 / ZLocation * (Pulsarc.CurrentHeight / 2));
 
             return radius;
         }
@@ -176,7 +173,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// when this HitObject should first be drawn.
         /// </summary>
         /// <param name="speed">Arc Speed TODO: Figure out if this needs to consider
-        /// all speed changes before, or if it only needs to consider the speed of
+        /// all speed changes before, or if it only needs to consider the speed during
         /// the HitObject's time.</param>
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
         public int IsSeenAt(double speed, double crosshairZLoc)

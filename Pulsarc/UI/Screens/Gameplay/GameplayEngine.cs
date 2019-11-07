@@ -11,8 +11,8 @@ using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
 using System.Linq;
 using Pulsarc.Utils.SQLite;
-using Pulsarc.Utils.Audio;
-
+using Pulsarc.Utils.Audio;
+
 namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngine : PulsarcScreen
@@ -73,8 +73,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Crosshair Crosshair { get; private set; }
 
         // User-defined base speed
-        // "5d" is used to give more choice in config for speed;
-        public double UserSpeed => Config.GetDouble("Gameplay", "ApproachSpeed") / 5d / Rate;
+        // How HitObject ZLocation was changed from using Pulsarc.CurrentWidth to Pulsarc.CurrentHeight
+        // speedAdjustment makes sure that speed feels the same before and after this change.
+        private const float speedAdjustment = 9f / 16f;
+        // "5f" is used to give more choice in config for speed;
+        public double UserSpeed => Config.GetInt("Gameplay", "ApproachSpeed") / 5f / Rate * speedAdjustment;
 
         // Current speed modifier defined by the Beatmap
         public double CurrentSpeedMultiplier { get; set; }
@@ -110,10 +113,10 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
-        public int IgnoreTime { get; private set; } = 500;
-
-        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
-        private int notesSinceLastMiss;
+        public int IgnoreTime { get; private set; } = 500;
+
+        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
+        private int notesSinceLastMiss;
         public bool MissSoundThresholdCrossed => notesSinceLastMiss >= hitSoundComboThreshold;
 
         /// <summary>
@@ -207,8 +210,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             eventIndex = 0;
 
             // If there are events, make nextEvent the first event, otherwise make it null
-            NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
-
+            NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
+
             notesSinceLastMiss = hitSoundComboThreshold;
         }
 
@@ -482,9 +485,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 // If no judge is obtained, it is a ghost hit and is ignored score-wise
                 if (judge == null) { continue; }
-
-                SampleManager.PlayHitSound(judge);
-                notesSinceLastMiss++;
+
+                SampleManager.PlayHitSound(judge);
+                notesSinceLastMiss++;
 
                 ProcessHit(press, column, ref pressed, error, judge);
             }
@@ -587,15 +590,15 @@ namespace Pulsarc.UI.Screens.Gameplay
                         score = hitResult.Key;
                         comboMultiplier = hitResult.Value;
                         GetGameplayView().AddJudge(Time, miss.Score);
-                        Judgements.Add(miss);
-
-                        notesSinceLastMiss++;
-
-                        if (MissSoundThresholdCrossed)
-                        {
-                            notesSinceLastMiss = 0;
-                            SampleManager.PlayMissSound();
-                        }
+                        Judgements.Add(miss);
+
+                        notesSinceLastMiss++;
+
+                        if (MissSoundThresholdCrossed)
+                        {
+                            notesSinceLastMiss = 0;
+                            SampleManager.PlayMissSound();
+                        }
                     }
                 }
             }
