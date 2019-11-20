@@ -1,5 +1,4 @@
-﻿using IniParser;
-using IniParser.Model;
+﻿using IniFileParser.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
@@ -82,7 +81,7 @@ namespace Pulsarc.Skinning
         #region Loading Methods
         private static void LoadConfigs(string skinFolder)
         {
-            FileIniDataParser parser = new FileIniDataParser();
+            IniFileParser.IniFileParser parser = new IniFileParser.IniFileParser();
 
             Configs.Add("skin",             parser.ReadFile($"{skinFolder}skin.ini"));
             Configs.Add("gameplay",         parser.ReadFile($"{skinFolder}Gameplay/gameplay.ini"));

@@ -1,5 +1,4 @@
-﻿using IniParser;
-using IniParser.Model;
+﻿using IniFileParser.Model;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ namespace Pulsarc.Utils
 {
     static class Config
     {
-        public static FileIniDataParser Parser { get; private set; }
+        public static IniFileParser.IniFileParser Parser { get; private set; }
         public static IniData Get { get; private set; }
 
         public static Dictionary<string, Keys> Bindings { get; private set; }
@@ -17,7 +16,7 @@ namespace Pulsarc.Utils
 
         public static void Initialize()
         {
-            Parser = new FileIniDataParser();
+            Parser = new IniFileParser.IniFileParser();
             Bindings = new Dictionary<string, Keys>();
 
             Get = Parser.ReadFile("config.ini");
