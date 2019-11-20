@@ -101,12 +101,14 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Update the size of the object depending on how close (in time) it is from reaching the HitPosition
             SetZLocation(currentTime, speedModifier * BaseSpeed, crosshairZLoc);
+
+            HandleHiddenState(crosshairZLoc);
+
             Resize(FindArcRadius());
         }
 
         /// <summary>
         /// Calculate and set the current z-axis position for this object.
-        /// Also sets transparency if Hidden is activated.
         /// </summary>
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
@@ -114,34 +116,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc)
         {
             ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
-
-            HandleHiddenState(crosshairZLoc);
-        }
-
-        /// <summary>
-        /// Set the current transparency of the HitObject if Hidden is activated.
-        /// </summary>
-        /// <param name="crosshairZLoc">Current crosshair Z-Location</param>
-        protected virtual void HandleHiddenState(double crosshairZLoc)
-        {
-            if (Hidden)
-            {
-                // When arcs are fully hidden, currently at the 2/3rds mark (between first being seen and being hit)
-                double fullFadeLocation = crosshairZLoc - (crosshairZLoc / 3);
-
-                // New opacity is calculated by looking at how far the arc has gone.
-               float newOpacity = (float)(fullFadeLocation - ZLocation) / (float)(fullFadeLocation);
-
-               if (ZLocation > fullFadeLocation)
-                    newOpacity = 0f;
-                // This is for playing with Hidden. Zooms can make 
-                // the arcs more opaque with the current implementation
-                // of hidden. This makes sure that arcs don't gain opacity.
-                else if (newOpacity > Opacity)
-                    newOpacity = Opacity;
-
-                Opacity = newOpacity;
-            }
         }
 
         /// <summary>
@@ -157,6 +131,32 @@ namespace Pulsarc.UI.Screens.Gameplay
             double zLocation = deltaTime * speed + speed + crosshairZLoc;
 
             return zLocation;
+        }
+
+        /// <summary>
+        /// Set the current transparency of the HitObject if Hidden is activated.
+        /// </summary>
+        /// <param name="crosshairZLoc">Current crosshair Z-Location</param>
+        protected virtual void HandleHiddenState(double crosshairZLoc)
+        {
+            if (Hidden)
+            {
+                // When arcs are fully hidden, currently at the 2/3rds mark (between first being seen and being hit)
+                double fullFadeLocation = crosshairZLoc - (crosshairZLoc / 3);
+
+                // New opacity is calculated by looking at how far the arc has gone.
+                float newOpacity = (float)(fullFadeLocation - ZLocation) / (float)(fullFadeLocation);
+
+                if (ZLocation > fullFadeLocation)
+                    newOpacity = 0f;
+                // This is for playing with Hidden. Zooms can make 
+                // the arcs more opaque with the current implementation
+                // of hidden. This makes sure that arcs don't gain opacity.
+                else if (newOpacity > Opacity)
+                    newOpacity = Opacity;
+
+                Opacity = newOpacity;
+            }
         }
         
         /// <summary>

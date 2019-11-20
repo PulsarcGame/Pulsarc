@@ -61,13 +61,13 @@ namespace Pulsarc.UI.Screens.SongSelect
             OldBackground = DefaultBackground;
 
             // Beatmap Card stats
-            setBeatmapCardStats();
+            SetBeatmapCardStats();
 
-            // Score Card statss
-            setScoreCardStats();
+            // Score Card stats
+            SetScoreCardStats();
 
             // Set up beatmap cards
-            createBeatmapCards(beatmaps);
+            CreateBeatmapCards(beatmaps);
 
             // Select a random map by default in the song selection.
             if (GetSongSelection().Cards.Count > 0)
@@ -91,7 +91,10 @@ namespace Pulsarc.UI.Screens.SongSelect
             button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
         }
 
-        private void setBeatmapCardStats()
+        /// <summary>
+        /// Initialize required Beatmap Card variables.
+        /// </summary>
+        private void SetBeatmapCardStats()
         {
             beatmapCardWidth = BeatmapCard.DefaultTexture.Width;
             beatapCardHeight = BeatmapCard.DefaultTexture.Height;
@@ -100,7 +103,10 @@ namespace Pulsarc.UI.Screens.SongSelect
             beatmapCardTotalHeight = beatapCardHeight + beatmapCardMargin;
         }
 
-        private void setScoreCardStats()
+        /// <summary>
+        /// Initialize required Score Card variables
+        /// </summary>
+        private void SetScoreCardStats()
         {
             scoreCardWidth = ScoreCard.DefaultTexture.Width;
             scoreCardHeight = ScoreCard.DefaultTexture.Height;
@@ -109,7 +115,12 @@ namespace Pulsarc.UI.Screens.SongSelect
             scoreCardTotalHeight = scoreCardHeight + scoreCardMargin;
         }
 
-        private void createBeatmapCards(List<Beatmap> beatmaps)
+        /// <summary>
+        /// Create each beatmapcard out of the List of Beatmaps
+        /// provided
+        /// </summary>
+        /// <param name="beatmaps"></param>
+        private void CreateBeatmapCards(List<Beatmap> beatmaps)
         {
             int i = 0;
             Vector2 beatmapCardStartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "BeatmapCardStartPos");
@@ -176,6 +187,11 @@ namespace Pulsarc.UI.Screens.SongSelect
         }
         #endregion
 
+        /// <summary>
+        /// Select a card and change the focus of
+        /// the Song Select screen accordingly.
+        /// </summary>
+        /// <param name="card">The card to focus on.</param>
         public void FocusCard(BeatmapCard card)
         {
             GetSongSelection().SelectedFocus = -4f;
@@ -197,14 +213,18 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                     StartChangingBackground(backgroundTexture);
 
-                    // ScoreCard Stuff
-                    ScoreCardStuff(card);
+                    UpdateScoreCard(card);
                     break;
                 }
             }
         }
 
-        private void ScoreCardStuff(BeatmapCard card)
+        /// <summary>
+        /// Finish the selecting process for the card we're
+        /// focusing on.
+        /// </summary>
+        /// <param name="card">The card we're focusing on.</param>
+        private void UpdateScoreCard(BeatmapCard card)
         {
             scores.Clear();
 
@@ -230,7 +250,12 @@ namespace Pulsarc.UI.Screens.SongSelect
                 scores.Add(new ScoreCard(score, position, rank));
             }
         }
-                
+              
+        /// <summary>
+        /// Start changing backgrounds from the old to the
+        /// new provided one.
+        /// </summary>
+        /// <param name="newBackground">The background to change to.</param>
         private void StartChangingBackground(Texture2D newBackground)
         {
             if (newBackground != null)
@@ -255,6 +280,10 @@ namespace Pulsarc.UI.Screens.SongSelect
         public override void Destroy()
         { }
 
+        /// <summary>
+        /// Draw everything.
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Draw(GameTime gameTime)
         {
             DrawBackgrounds();
@@ -274,6 +303,9 @@ namespace Pulsarc.UI.Screens.SongSelect
             SearchBox.Draw();
         }
 
+        /// <summary>
+        /// Draw any backgrounds on screen and calculate opacity changes.
+        /// </summary>
         private void DrawBackgrounds()
         {
             if (ChangingBackground && CurrentBackground.Opacity < 1)
@@ -291,6 +323,10 @@ namespace Pulsarc.UI.Screens.SongSelect
             CurrentBackground.Draw();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             float selectedFocus = GetSongSelection().SelectedFocus;

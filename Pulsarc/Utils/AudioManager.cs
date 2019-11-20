@@ -83,19 +83,18 @@ namespace Pulsarc.Utils
                 return;
 
             // Keep trying to initialize the Audio Manager
-            if (!initialized)
-                while (!initialized)
+            while (!initialized)
+            {
+                try
                 {
-                    try
-                    {
-                        Wobble.Audio.AudioManager.Initialize(null, null);
-                        initialized = true;
-                    }
-                    catch
-                    {
-                        Console.WriteLine("BASS failed to initialize, retrying...");
-                    }
+                    Wobble.Audio.AudioManager.Initialize(null, null);
+                    initialized = true;
                 }
+                catch
+                {
+                    Console.WriteLine("BASS failed to initialize, retrying...");
+                }
+            }
 
             running = true;
             var threadTime = new Stopwatch();
@@ -112,7 +111,8 @@ namespace Pulsarc.Utils
             threadLimiterWatch.Start();
 
             // Add a delay
-            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset) { }
+            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset)
+            { }
 
             // Start playing if the gameplay engine is active
             if (GameplayEngine.Active)
@@ -146,13 +146,34 @@ namespace Pulsarc.Utils
         }
 
         /// <summary>
-        /// Move the audio position forward or backward in time
+        /// Move the audio position forward or backward by the time
+        /// provided
         /// </summary>
         /// <param name="time">The amount of time to move</param>
         public static void DeltaTime(long time)
         {
             if (active)
-                song.Seek(song.Position + time);
+                Seek(song.Position + time);
+        }
+
+        /// <summary>
+        /// Move the audio position to the provided time.
+        /// </summary>
+        /// <param name="time">The time to jump to in the audio.</param>
+        public static void Seek(double time)
+        {
+            bool withinRange = time >= -1 && time <= song.Length;
+
+            // If audio is active and the time was within range,
+            // seek to that time
+            if (active && withinRange)
+                song.Seek(time);
+            // Otherwise seek to the beginning or end.
+            else if (active)
+                if (time < -1)
+                    song.Seek(-1);
+                else
+                    song.Seek(song.Length);
         }
 
         /// <summary>
@@ -209,18 +230,25 @@ namespace Pulsarc.Utils
                 threadLimiterWatch.Reset();
         }
 
-        public static void updateRate()
+        /// <summary>
+        /// Change the the audio rate to the one defined
+        /// in the config.
+        /// </summary>
+        public static void UpdateRate()
         {
             if (active)
             {
+                // Save the position and audio path.
                 double time = GetTime();
                 string audio = songPath;
                 Stop();
 
+                // Find the audio rate.
                 songPath = audio;
                 audioRate = Config.GetFloat("Gameplay", "SongRate");
                 StartLazyPlayer();
 
+                // Play the rate-changed song at the time saved earlier.
                 if (time != 0)
                     DeltaTime((long)time);
 
