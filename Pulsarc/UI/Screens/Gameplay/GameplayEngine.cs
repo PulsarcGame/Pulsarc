@@ -641,7 +641,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 DataManager.ScoreDB.AddReplay(new ReplayData(CurrentBeatmap.GetHash(), string.Join(",", rawInputs)));
 
             // Create the result screen before exiting gameplay
-            ResultScreen next = new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, CurrentBeatmap, Background, !AutoPlay && save);
+            ResultScreen next = new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, Rate, 0, CurrentBeatmap, Background, !AutoPlay && save);
             Pulsarc.DisplayCursor = true;
             Reset();
             // Switch to results screen
