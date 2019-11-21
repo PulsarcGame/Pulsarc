@@ -19,17 +19,6 @@ namespace Pulsarc.Beatmaps
 
         private const double weightSlope = 0.9;
         private const double weightBase = 0.6;
-
-        static readonly double[] keyDiff = {
-            // Left
-            1,
-            // Up
-            1.15,
-            // Down
-            1.15,
-            // Right
-            1,
-        };
         
         const double maxSections = minLength / (sectionLength / 1000f);
 
@@ -43,7 +32,6 @@ namespace Pulsarc.Beatmaps
         static public double GetSectionDifficulty(List<List<Arc>> columns, double previousStrain)
         {
             double diff = 0;
-            int key = 0;
 
             List<double> diffs = new List<double>();
 
@@ -58,14 +46,12 @@ namespace Pulsarc.Beatmaps
 
                     double stdDiff = PulsarcMath.CalcStdDeviation(times);
 
-                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff) * keyDiff[key];
+                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff);
                     diff += c;
                     diffs.Add(c);
                 }
                 else
                     diffs.Add(0);
-
-                key++;
             }
 
             var std = diffs.Count > 0 ? PulsarcMath.CalcStdDeviation(diffs) : 0;
