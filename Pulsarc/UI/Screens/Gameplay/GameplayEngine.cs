@@ -541,18 +541,13 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private void HandleActiveEvents()
         {
-            List<Event> inactiveEvents = new List<Event>();
-
-            foreach (Event activeEvent in ActiveEvents)
+            for(int i = 0; i < ActiveEvents.Count; i++)
                 // If the event is active, handle it
-                if (activeEvent.Active)
-                    activeEvent.Handle(this);
+                if (ActiveEvents[i].Active)
+                    ActiveEvents[i].Handle(this);
                 // Otherwise, add this to a list of events to remove from active events
                 else
-                    inactiveEvents.Add(activeEvent);
-
-            // Remove all inactive events
-            ActiveEvents = ActiveEvents.Except(inactiveEvents).ToList();
+                    ActiveEvents.RemoveAt(i--);
         }
 
         /// <summary>

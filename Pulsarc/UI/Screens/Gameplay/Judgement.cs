@@ -81,7 +81,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <returns></returns>
         static public JudgementValue GetPreviousJudgementValue(JudgementValue judgement)
         {
-            JudgementValue result = new JudgementValue();
+            JudgementValue result = JudgementValue.GetBaseJudgementValue();
 
             for (int i = 0; i < Judgements.Count; i++)
                 if (Judgements[i].Judge >= judgement.Judge)
@@ -133,6 +133,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         // The color associated with this Judgementvalue
         public Color Color { get; private set; }
 
+        // oooooooooooooooooooooooooooooooooooooooooooooo
+        private static JudgementValue baseJudgementValue;
+
         /// <summary>
         /// A JudgementValue used to determine the judgement of a hit arc.
         /// </summary>
@@ -165,6 +168,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             Score = 0;
             ComboAddition = 0;
             Color = Color.White;
+        }
+
+        public static JudgementValue GetBaseJudgementValue()
+        {
+            if(baseJudgementValue == null)
+            {
+                baseJudgementValue = new JudgementValue();
+            }
+            return baseJudgementValue;
         }
     }
 }
