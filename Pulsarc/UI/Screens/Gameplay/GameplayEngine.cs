@@ -541,18 +541,13 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private void HandleActiveEvents()
         {
-            List<Event> inactiveEvents = new List<Event>();
-
-            foreach (Event activeEvent in ActiveEvents)
+            for(int i = 0; i < ActiveEvents.Count; i++)
                 // If the event is active, handle it
-                if (activeEvent.Active)
-                    activeEvent.Handle(this);
-                // Otherwise, add this to a list of events to remove from active events
+                if (ActiveEvents[i].Active)
+                    ActiveEvents[i].Handle(this);
+                // Otherwise, add remove it
                 else
-                    inactiveEvents.Add(activeEvent);
-
-            // Remove all inactive events
-            ActiveEvents = ActiveEvents.Except(inactiveEvents).ToList();
+                    ActiveEvents.RemoveAt(i--);
         }
 
         /// <summary>
@@ -641,7 +636,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 DataManager.ScoreDB.AddReplay(new ReplayData(CurrentBeatmap.GetHash(), string.Join(",", rawInputs)));
 
             // Create the result screen before exiting gameplay
-            ResultScreen next = new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, CurrentBeatmap, Background, !AutoPlay && save);
+            ResultScreen next = new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, Rate, 0, CurrentBeatmap, Background, !AutoPlay && save);
             Pulsarc.DisplayCursor = true;
             Reset();
             // Switch to results screen

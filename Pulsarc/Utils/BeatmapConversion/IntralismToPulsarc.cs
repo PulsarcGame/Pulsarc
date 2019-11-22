@@ -30,8 +30,10 @@ namespace Pulsarc.Utils.BeatmapConversion
             List<Beatmap> results = new List<Beatmap>();
             Beatmap result = new Beatmap();
 
+            string backgroundImage = Config.Get["Converting"]["BGImage"];
+
             // See if the provided path exists
-            if(Directory.Exists(folder_path))
+            if (Directory.Exists(folder_path))
             {
                 string configPath = $"{folder_path}/config.txt";
 
@@ -40,6 +42,20 @@ namespace Pulsarc.Utils.BeatmapConversion
                 {
                     // Convert the config file to an IntrlaismBeatmap
                     IntralismBeatmap beatmap = JsonConvert.DeserializeObject<IntralismBeatmap>(File.ReadAllText(configPath, Encoding.UTF8));
+
+                    string name = "";
+
+                    // If the user specified an image path to use, use that path.
+                    if (backgroundImage != null && !backgroundImage.Equals(""))
+                        name = backgroundImage;
+
+                    // If there's an average of 1 image per 10 seconds of map time or less
+                    // and the user-defined path doesn't exist, grab the first image path in 
+                    // the beatmap.
+                    if (!File.Exists($"{folder_path}/{name}") && beatmap.LevelResources.Count < Math.Ceiling(beatmap.MusicTime / 10))
+                        beatmap.LevelResources[0].TryGetValue("path", out name);
+
+                    result.Background = name;
 
                     // Fill in the missing metadata
                     result.FormatVersion = "1";
@@ -134,7 +150,7 @@ namespace Pulsarc.Utils.BeatmapConversion
         {
             Beatmap map = Convert(folder_path).First();
 
-            if(map.Audio != null)
+            if (map.Audio != null)
             {
                 string audioPath = $"{folder_path}/{map.Audio}";
 
@@ -148,7 +164,17 @@ namespace Pulsarc.Utils.BeatmapConversion
                     if (!Directory.Exists(dirName))
                         Directory.CreateDirectory(dirName);
 
+                    // Copy Audio File
                     File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
+
+                    // Copy Background Image
+                    string backgroundPath = $"{folder_path}/{map.Background}";
+
+                    if (File.Exists(backgroundPath))
+                        File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                    else
+                        map.Background = "";
+
 
                     // The file name will look like "Unknown - MapTitle [Converted] (Mapper).psc"
                     string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));

@@ -91,8 +91,18 @@ namespace Pulsarc.Utils
         {
             return bool.Parse(Get[category][key]);
         }
-        
+
         public static void SetBool(string category, string key, bool value)
+        {
+            SetValue(category, key, value);
+        }
+
+        public static string GetString(string category, string key)
+        {
+            return Get[category][key];
+        }
+
+        public static void SetString(string category, string key, string value)
         {
             SetValue(category, key, value);
         }

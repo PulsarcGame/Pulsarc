@@ -41,7 +41,7 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="displayScore">The score to be displayed.</param>
         /// <param name="combo">The maximum combo achieved from the play.</param>
         /// <param name="beatmap">The beatmap that was played.</param>
-        public ResultScreen(List<JudgementValue> judgements, List<KeyValuePair<double, int>> hits, int displayScore, int combo, Beatmap beatmap, Background mapBackground, bool newScore = false)
+        public ResultScreen(List<JudgementValue> judgements, List<KeyValuePair<double, int>> hits, int displayScore, int combo, double rate, int mods, Beatmap beatmap, Background mapBackground, bool newScore = false)
         {
             // Add all the judgement names to judges_count
             JudgesCount = new Dictionary<string, int>();
@@ -70,7 +70,7 @@ namespace Pulsarc.UI.Screens.Result
             FullCombo = JudgesCount["miss"] == 0;
 
             // Determine the grade achieved.
-            ScoreData scoreData = new ScoreData(Beatmap.GetHash(), DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
+            ScoreData scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
             scoreData.grade = Scoring.GetGrade(scoreData);
 
             // Save the score locally

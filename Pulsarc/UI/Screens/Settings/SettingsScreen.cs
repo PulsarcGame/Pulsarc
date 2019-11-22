@@ -32,9 +32,9 @@ namespace Pulsarc.UI.Screens.Settings
         {
             // If the scroll wheel's state has changed, change the focus
             if (ms.ScrollWheelValue < lastScrollValue)
-                SelectedFocus -= 0.3f;
-            else if (ms.ScrollWheelValue > lastScrollValue)
                 SelectedFocus += 0.3f;
+            else if (ms.ScrollWheelValue > lastScrollValue)
+                SelectedFocus -= 0.3f;
 
             lastScrollValue = ms.ScrollWheelValue;
         }

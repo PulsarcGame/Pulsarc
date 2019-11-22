@@ -56,6 +56,12 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             AddTextDisplayElement("Combo");
             textElements[3].Update("x" + scoreData.maxCombo);
+
+            AddTextDisplayElement("Rate");
+            textElements[4].Update("x"+Math.Round(scoreData.rate, 2).ToString("#.00"));
+
+            AddTextDisplayElement("Username");
+            textElements[5].Update(scoreData.username);
         }
 
         protected override void SetConfigAndSection()

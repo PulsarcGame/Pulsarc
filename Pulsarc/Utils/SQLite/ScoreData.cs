@@ -8,6 +8,11 @@ namespace Pulsarc.Utils.SQLite
         // Play Data
         public string map;
         public string dateT;
+        public string username;
+
+        // Player modifiers
+        public double rate;
+        public int mods;
 
         // Play Results
         public int score;
@@ -27,14 +32,17 @@ namespace Pulsarc.Utils.SQLite
 
         public ScoreData(SQLiteDataReader data) : base(data) { }
 
-        public ScoreData(string map_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_) :
-            this(map_, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), score_, accuracy_, maxcombo_, grade_, max_, perfect_, great_, good_, bad_, miss_)
+        public ScoreData(string map_, string username_, double rate_, int mods_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_) :
+            this(map_, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), username_, rate_, mods_, score_, accuracy_, maxcombo_, grade_, max_, perfect_, great_, good_, bad_, miss_)
         { }
 
-        public ScoreData(string map_, string datet_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
+        public ScoreData(string map_, string datet_, string username_, double rate_, int mods_, int score_, double accuracy_, int maxcombo_, string grade_, int max_, int perfect_, int great_, int good_, int bad_, int miss_)
         {
             map = map_;
             dateT = datet_;
+            username = username_;
+            rate = rate_;
+            mods = mods_;
             score = score_;
             accuracy = accuracy_;
             maxCombo = maxcombo_;

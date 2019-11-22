@@ -103,8 +103,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                         if (!Directory.Exists(dirName))
                             Directory.CreateDirectory(dirName);
 
+                        // Copy Audio File
                         File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
 
+                        // Copy Background Image
                         string backgroundPath = $"{folder_path}/{map.Background}";
                         
                         if (File.Exists(backgroundPath))
