@@ -545,7 +545,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 // If the event is active, handle it
                 if (ActiveEvents[i].Active)
                     ActiveEvents[i].Handle(this);
-                // Otherwise, add this to a list of events to remove from active events
+                // Otherwise, add remove it
                 else
                     ActiveEvents.RemoveAt(i--);
         }
