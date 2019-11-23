@@ -52,7 +52,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
 
-                View = new SongSelectionView(this, beatmaps, keyword);
+            View = new SongSelectionView(this, beatmaps, keyword);
         }
 
         /// <summary>
