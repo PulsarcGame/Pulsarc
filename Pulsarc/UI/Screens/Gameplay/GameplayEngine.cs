@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
-using System.Linq;
 using Pulsarc.Utils.SQLite;
 using Pulsarc.Utils.Audio;
 
@@ -73,7 +72,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Crosshair Crosshair { get; private set; }
 
         // User-defined base speed
-        // How HitObject ZLocation was changed from using Pulsarc.CurrentWidth to Pulsarc.CurrentHeight
+        // How HitObject ZLocation was determined changed from using Pulsarc.CurrentWidth to Pulsarc.CurrentHeight
         // speedAdjustment makes sure that speed feels the same before and after this change.
         private const float speedAdjustment = 9f / 16f;
         // "5f" is used to give more choice in config for speed;

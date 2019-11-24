@@ -17,6 +17,8 @@ namespace Pulsarc.UI.Screens.Editor
 
         Vector2 beatCircleCenter = AnchorUtil.FindScreenPosition(Anchor.Center);
 
+        public Crosshair Crosshair { get; protected set; }
+
         List<BeatCircle> circles = new List<BeatCircle>()
         {
             new BeatCircle(Beat.Whole, 1, 1),
@@ -29,9 +31,10 @@ namespace Pulsarc.UI.Screens.Editor
             //new BeatCircle(Beat.Sixteenth, 1, 1),
         };
 
-        Background bg = new Background("menu_background");
-
-        public DebugEditor(Beatmap beatmap) : base(beatmap) { }
+        public DebugEditor(Beatmap beatmap) : base(beatmap)
+        {
+            Background = new Background("menu_background");
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -49,7 +52,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         public override void Draw(GameTime gameTime)
         {
-            bg.Draw();
+            base.Draw(gameTime);
 
             foreach (BeatCircle circle in circles)
                 circle.Draw();

@@ -1,7 +1,10 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Editor.UI;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,6 +15,7 @@ namespace Pulsarc.UI.Screens.Editor
     public abstract class EditorEngine : PulsarcScreen, IEditor
     {
         public override ScreenView View { get; protected set; }
+        private EditorView GetEditorView() { return (EditorView)View; }
 
         // A list of objects that were copy or cut onto the clipboard
         // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
@@ -41,6 +45,32 @@ namespace Pulsarc.UI.Screens.Editor
 
         // Current beatmap being edited
         public Beatmap Beatmap { get; protected set; }
+
+        // All the "tracks" or "directions" EditorHitObjects can come from
+        public Column[] Columns { get; protected set; }
+
+        // Used to store the key-style of the current map (4k, 7k, etc.)
+        public int Keys { get; protected set; }
+
+        // Background
+        public Background Background { get; protected set; }
+
+        // Unsure if needed, keeping just in case
+        protected int EventIndex;
+        public Event NextEvent { get; protected set; }
+
+        // Events that are currently being handled
+        public List<Event> ActiveEvents { get; private set; } = new List<Event>();
+
+        // Current speed modifier. Effects can be toggled on or off
+        public virtual double CurrentSpeedMultiplier { get; set; }
+        public virtual double CurrentArcSpeed { get; set; }
+
+        // Current zoom. Effects can be toggled on or off.
+        public virtual double CurrentZoomLevel { get; set; }
+
+        // Key bindinggs
+        protected Dictionary<Keys, int> Bindings { get; private set; }
 
         // Current Time
         public double Time
@@ -76,6 +106,11 @@ namespace Pulsarc.UI.Screens.Editor
         public override void Update(GameTime gameTime)
         {
 
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            Background.Draw();
         }
 
         public void SetFirstOffset(TimingPoint timingPoint)
