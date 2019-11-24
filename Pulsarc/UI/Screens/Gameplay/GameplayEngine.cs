@@ -14,7 +14,7 @@ using Pulsarc.Utils.Audio;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
-    public class GameplayEngine : PulsarcScreen
+    public class GameplayEngine : PulsarcScreen, IEventHandleable
     {
         public override ScreenView View { get; protected set; }
         private GameplayEngineView GetGameplayView() { return (GameplayEngineView)View; }
@@ -355,8 +355,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void StartGameplay()
         {
             AudioManager.StartGamePlayer();
-
-
             GameplayEngine.Active = true;
             Pulsarc.DisplayCursor = false;
         }
@@ -761,5 +759,30 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public override void UpdateDiscord()
             => PulsarcDiscord.SetStatus("Playing Singleplayer", CurrentBeatmap.Title);
+
+        /// <summary>
+        /// Returns the current beatmap.
+        /// Used for event handling.
+        /// </summary>
+        /// <returns></returns>
+        public Beatmap GetCurrentBeatmap()
+        {
+            return CurrentBeatmap;
+        }
+
+        public bool HasCrosshair()
+        {
+            return true;
+        }
+
+        public Crosshair GetCrosshair()
+        {
+            return Crosshair;
+        }
+
+        public double GetCurrentTime()
+        {
+            return Time;
+        }
     }
 }

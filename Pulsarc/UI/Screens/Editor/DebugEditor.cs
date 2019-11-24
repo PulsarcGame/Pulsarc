@@ -97,5 +97,20 @@ namespace Pulsarc.UI.Screens.Editor
         {
             throw new System.NotImplementedException();
         }
+
+        protected override void CreateColumns()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool HasCrosshair()
+        {
+            return true;
+        }
+
+        public override Crosshair GetCrosshair()
+        {
+            return Crosshair;
+        }
     }
 }

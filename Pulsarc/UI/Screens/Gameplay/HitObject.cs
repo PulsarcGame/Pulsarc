@@ -176,7 +176,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// all speed changes before, or if it only needs to consider the speed during
         /// the HitObject's time.</param>
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
-        public int IsSeenAt(double speed, double crosshairZLoc)
+        public virtual int IsSeenAt(double speed, double crosshairZLoc)
         {
             return (int)(Time - (crosshairZLoc / speed));
         }
@@ -184,7 +184,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Returns whether this HitObject can be drawn.
         /// </summary>
-        public bool IsSeen()
+        public virtual bool IsSeen()
         {
             return ZLocation > 0;
         }

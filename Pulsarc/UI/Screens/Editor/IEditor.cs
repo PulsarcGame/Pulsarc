@@ -3,7 +3,7 @@ using Pulsarc.Beatmaps.Events;
 
 namespace Pulsarc.UI.Screens.Editor
 {
-    public interface IEditor
+    public interface IEditor : IEventHandleable
     {
         // These methods may not be needed.
         void SetFirstOffset(TimingPoint timingPoint);

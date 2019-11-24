@@ -1,5 +1,5 @@
 ﻿using System;
-using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.UI.Screens;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -17,7 +17,7 @@ namespace Pulsarc.Beatmaps.Events
                 ThrowWrongEventTypeException(this, EventType.SpeedVariation);
         }
 
-        public override void Handle(GameplayEngine gameplayEngine)
+        public override void Handle(IEventHandleable engine)
         {
             throw new NotImplementedException();
         }

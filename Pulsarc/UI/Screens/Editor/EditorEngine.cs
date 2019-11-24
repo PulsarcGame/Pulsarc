@@ -6,6 +6,7 @@ using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Editor.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Graphics;
 using System;
 using System.Collections.Generic;
 using Wobble.Screens;
@@ -15,7 +16,10 @@ namespace Pulsarc.UI.Screens.Editor
     public abstract class EditorEngine : PulsarcScreen, IEditor
     {
         public override ScreenView View { get; protected set; }
-        private EditorView GetEditorView() { return (EditorView)View; }
+        private EditorEngineView GetEditorView() { return (EditorEngineView)View; }
+
+        // Whether or not an Editor engine is currently running
+        public static bool Active { get; protected set; } = false;
 
         // A list of objects that were copy or cut onto the clipboard
         // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
@@ -62,11 +66,14 @@ namespace Pulsarc.UI.Screens.Editor
         // Events that are currently being handled
         public List<Event> ActiveEvents { get; private set; } = new List<Event>();
 
-        // Current speed modifier. Effects can be toggled on or off
+        // Toggle Events on or off
+        public virtual bool EventsOn { get; set; }
+
+        // Current Event modifiers. Effects can be toggled on or off
+        // These need to be tracked even if not in a Gameplay Style editor
         public virtual double CurrentSpeedMultiplier { get; set; }
         public virtual double CurrentArcSpeed { get; set; }
 
-        // Current zoom. Effects can be toggled on or off.
         public virtual double CurrentZoomLevel { get; set; }
 
         // Key bindinggs
@@ -91,7 +98,10 @@ namespace Pulsarc.UI.Screens.Editor
         // The higher the scale, the farther the arcs are from each other
         public float Scale { get; protected set; }
 
-        public Beat BeatLock { get; protected set; } = Beat.Whole;
+        public Beat BeatLockInterval { get; protected set; } = Beat.Whole;
+
+        // Time distance (in ms) from which hitobjects are neither updated nor drawn.
+        public int IgnoreTime { get; private set; } = 500;
 
         public EditorEngine(Beatmap beatmap)
         {
@@ -100,17 +110,97 @@ namespace Pulsarc.UI.Screens.Editor
 
         public void Init(Beatmap beatmap)
         {
+            if (beatmap == null)
+                return;
 
+            if (!beatmap.FullyLoaded)
+                beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+
+            EventIndex = 0;
+            NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[EventIndex] : null;
+
+            Keys = 4;
+            Columns = new Column[Keys];
+
+            Bindings = new Dictionary<Keys, int>();
+
+            Background = new Background(Config.GetInt("Editor", "BackgroundDim") / 100f);
+            Background.ChangeBackground(GraphicsUtils.LoadFileTexture($"{beatmap.Path}/{beatmap.Background}"));
+
+            AudioManager.songPath = beatmap.GetFullAudioPath();
+
+            Beatmap = beatmap;
+
+            CreateColumns();
+
+            foreach (Column col in Columns)
+                col.SortUpdateHitObjects();
+
+            GetEditorView().Init();
+
+            StartEditor();
+
+            Init();
+        }
+
+        // How columns are created depends on the style of Editor we're using.
+        protected abstract void CreateColumns();
+
+        protected void StartEditor()
+        {
+            AudioManager.StartEditorPlayer();
+            EditorEngine.Active = true;
         }
 
         public override void Update(GameTime gameTime)
         {
+            // If not active, don't update.
+            if (!Active)
+                return;
+
+            HandleInputs();
+            
+            HandleEvents();
+        }
+
+        protected virtual void HandleInputs()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void HandleEvents()
+        {
+            if (Beatmap == null || !EventsOn)
+                return;
+
 
         }
 
-        public override void Draw(GameTime gameTime)
+        protected void ActivateNextEvent()
         {
-            Background.Draw();
+            // If the current event Index is within range, and the next event time is less than or equal to the current time
+            if (Beatmap.Events.Count > EventIndex && NextEvent.Time <= Time)
+            {
+                // Start handling the current event, and increase the event index
+                NextEvent.Active = true;
+                ActiveEvents.Add(NextEvent);
+                EventIndex++;
+
+                // Get ready for the next event, if it exists
+                if (Beatmap.Events.Count > EventIndex)
+                    NextEvent = Beatmap.Events[EventIndex];
+            }
+        }
+
+        protected void HandleActiveEvents()
+        {
+            for (int i = 0; i < ActiveEvents.Count; i++)
+                // If the event is active, handle it
+                if (ActiveEvents[i].Active)
+                    ActiveEvents[i].Handle(this);
+                // Otherwise, add remove it
+                else
+                    ActiveEvents.RemoveAt(i--);
         }
 
         public void SetFirstOffset(TimingPoint timingPoint)
@@ -240,5 +330,23 @@ namespace Pulsarc.UI.Screens.Editor
             selectedItems.Remove(item);
         }
         #endregion
+
+        /// <summary>
+        /// Returns the current beatmap.
+        /// Used for event handling.
+        /// </summary>
+        /// <returns></returns>
+        public Beatmap GetCurrentBeatmap()
+        {
+            return Beatmap;
+        }
+
+        public abstract bool HasCrosshair();
+        public abstract Crosshair GetCrosshair();
+
+        public double GetCurrentTime()
+        {
+            return Time;
+        }
     }
 }

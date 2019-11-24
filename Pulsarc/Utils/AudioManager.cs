@@ -1,3 +1,4 @@
+using Pulsarc.UI.Screens.Editor;
 using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Diagnostics;
@@ -73,6 +74,73 @@ namespace Pulsarc.Utils
 
             song.Play();
             active = true;
+        }
+
+        public static void StartEditorPlayer()
+        {
+            audioThread = new Thread(new ThreadStart(EditorAudioPlayer));
+            audioThread.Start();
+        }
+
+        public static void EditorAudioPlayer()
+        {
+            // Initialize variables
+            threadLimiterWatch = new Stopwatch();
+            threadLimiterWatch.Start();
+            activeThreadLimiterWatch = true;
+
+            if (songPath == "")
+                return;
+
+            // Keep trying to initialize the Audio Manager
+            while (!initialized)
+            {
+                try
+                {
+                    Wobble.Audio.AudioManager.Initialize(null, null);
+                    initialized = true;
+                }
+                catch
+                {
+                    Console.WriteLine("BASS failed to initialize, retrying...");
+                }
+            }
+
+            running = true;
+            var threadTime = new Stopwatch();
+
+            // Initialize the song
+            song = new AudioTrack(songPath, false)
+            {
+                Rate = 1f,
+                Volume = Config.GetInt("Audio", "MusicVolume"),
+            };
+
+            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+
+            threadLimiterWatch.Start();
+
+            // Add a delay
+            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset)
+            { }
+
+            // Start playing if the Editor engine is active
+            if (EditorEngine.Active)
+            {
+                threadLimiterWatch.Restart();
+
+                song.Play();
+                threadTime.Start();
+
+                active = true;
+
+                while (running)
+                    if (threadLimiterWatch.ElapsedMilliseconds >= 1)
+                    {
+                        threadLimiterWatch.Restart();
+                        Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
+                    }
+            }
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using Pulsarc.UI.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
@@ -91,26 +92,30 @@ namespace Pulsarc.Beatmaps.Events
         /// </summary>
         /// <param name="gameplayEngine">The currently playing Gameplay Engine to modify the zoom of.</param>
         /// <exception cref="WrongEventTypeException"></exception>
-        public override void Handle(GameplayEngine gameplayEngine)
+        public override void Handle(IEventHandleable engine)
         {
+            // If the current engine doesn't have a crosshair, don't bother.
+            if (!engine.HasCrosshair())
+                return;
+
             // if the startZoomLevel hasn't been set, set it now.
             if (startZoomLevel == -1)
-                startZoomLevel = gameplayEngine.Crosshair.Diameter;
+                startZoomLevel = engine.GetCrosshair().Diameter;
 
-            currentZoomLevel = gameplayEngine.Crosshair.Diameter;
+            currentZoomLevel = engine.GetCrosshair().Diameter;
 
             // Use the correct handling method depending on this
             // ZoomEvent's ZoomType
             switch (ZoomType)
             {
                 case ZoomType.Intralizoom:
-                    HandleIntralizooms(gameplayEngine);
+                    HandleIntralizooms(engine);
                     break;
                 case ZoomType.Step:
-                    HandleStepZoom(gameplayEngine);
+                    HandleStepZoom(engine);
                     break;
                 case ZoomType.Linear:
-                    HandleLinearZooms(gameplayEngine);
+                    HandleLinearZooms(engine);
                     break;
                 default:
                     throw new WrongEventTypeException($"Invalid zoom type! ZoomTypes can be from -1 to 1, and the type called was {(int)ZoomType}!");
@@ -121,9 +126,9 @@ namespace Pulsarc.Beatmaps.Events
         /// Zooms the gameplay to imitate Intralism's zoom method.
         /// </summary>
         /// <param name="gameplayEngine">The gameplay engine to modify.</param>
-        private void HandleIntralizooms(GameplayEngine gameplayEngine)
+        private void HandleIntralizooms(IEventHandleable engine)
         {
-            FindNextEvent(gameplayEngine);
+            FindNextEvent(engine);
 
             // If the next event is less than the current time
             // then deactivate this event as it is no longer needed.
@@ -131,7 +136,7 @@ namespace Pulsarc.Beatmaps.Events
             // This is similar to how Intralism handles PlayerDistance, where it has a
             // local PlayerDistance that is what the player sees, and a semi-constant "PlayerDistance"
             // That is changed by the most recent SetPlayerDistance map event.
-            Active = !(nextEvent != null && nextEvent.Time < gameplayEngine.Time);
+            Active = !(nextEvent != null && nextEvent.Time < engine.GetCurrentTime());
 
             // Get smoothDeltaTime and return if there was no change in deltaTime
             double smoothDeltaTime = PulsarcTime.SmoothDeltaTime;
@@ -140,7 +145,7 @@ namespace Pulsarc.Beatmaps.Events
                 return;
 
             // Resize the crosshair
-            gameplayEngine.Crosshair.Resize(
+            engine.GetCrosshair().Resize(
                 PulsarcMath.Lerp(
                     // Starting position (current position)
                     currentZoomLevel,
@@ -154,9 +159,9 @@ namespace Pulsarc.Beatmaps.Events
         /// Zooms the gameplay instantaneously to this ZoomEvents zoom level
         /// </summary>
         /// <param name="gameplayEngine">The gameplay engine to modify.</param>
-        private void HandleStepZoom(GameplayEngine gameplayEngine)
+        private void HandleStepZoom(IEventHandleable engine)
         {
-            gameplayEngine.Crosshair.Resize(ZoomLevel);
+            engine.GetCrosshair().Resize(ZoomLevel);
             Active = false;
         }
 
@@ -164,7 +169,7 @@ namespace Pulsarc.Beatmaps.Events
         /// Zooms the gameplay linearly from the starting position to the end position.
         /// </summary>
         /// <param name="gameplayEngine">The gameplay engine to modify.</param>
-        private void HandleLinearZooms(GameplayEngine gameplayEngine)
+        private void HandleLinearZooms(IEventHandleable engine)
         {
             // Find the amount of time between the activation time to the end time.
             double deltaTime = EndTime - Time;
@@ -173,7 +178,7 @@ namespace Pulsarc.Beatmaps.Events
             float deltaZoom = ZoomLevel - startZoomLevel;
 
             // Find the amount of time between now and the event time
-            double deltaCurrentTime = gameplayEngine.Time - Time;
+            double deltaCurrentTime = engine.GetCurrentTime() - Time;
 
             // Find the percentage of time that has past between the event time and the end time
             double zoomFactor = 1 - ((deltaTime - deltaCurrentTime) / deltaTime);
@@ -192,7 +197,7 @@ namespace Pulsarc.Beatmaps.Events
                 currentZoom = ZoomLevel;
 
             // Resize the crosshair
-            gameplayEngine.Crosshair.Resize(currentZoom);
+            engine.GetCrosshair().Resize(currentZoom);
 
             // Active as long as currentZoom hasn't reached zoom level
             // The above if-block makes sure that currentZoom will equal ZoomLevel eventually.

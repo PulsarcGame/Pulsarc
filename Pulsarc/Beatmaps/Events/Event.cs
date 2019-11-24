@@ -1,4 +1,4 @@
-﻿using Pulsarc.UI.Screens.Gameplay;
+﻿using Pulsarc.UI.Screens;
 using System;
 using System.Collections.Generic;
 
@@ -183,22 +183,22 @@ namespace Pulsarc.Beatmaps.Events
         /// <summary>
         /// An abstract method for how this Event should act while it's being handled.
         /// </summary>
-        /// <param name="gameplayEngine">The currently running GameplayEngine this event being handled in.</param>
-        public abstract void Handle(GameplayEngine gameplayEngine);
+        /// <param name="engine">The currently running engine this event is being handled in.</param>
+        public abstract void Handle(IEventHandleable engine);
 
         /// <summary>
-        /// Find the next event in gameplayEngine that shares the same type as this Event
+        /// Find the next event in engine that shares the same type as this Event
         /// and has a greater time than this event.
         /// </summary>
-        /// <param name="gameplayEngine">The gameplayEngine to look through</param>
-        protected void FindNextEvent(GameplayEngine gameplayEngine)
+        /// <param name="engine">The engine to look through</param>
+        protected void FindNextEvent(IEventHandleable engine)
         {
             if (foundNextEvent)
                 return;
 
-            FindAllSimilarEvents(gameplayEngine);
+            FindAllSimilarEvents(engine);
 
-            nextEvent = gameplayEngine.CurrentBeatmap.Events.Find(GreaterEventTime);
+            nextEvent = engine.GetCurrentBeatmap().Events.Find(GreaterEventTime);
             foundNextEvent = true;
         }
 
@@ -214,31 +214,31 @@ namespace Pulsarc.Beatmaps.Events
 
         /// <summary>
         /// Currently not used. Keeping in case it proves useful in the future.
-        /// Find all events in gameplayEngine that share the same type as this Event.
+        /// Find all events in engine that share the same type as this Event.
         /// </summary>
-        /// <param name="gameplayEngine">The gameplayEngine to look through</param>
-        protected void FindAllSimilarEvents(GameplayEngine gameplayEngine)
+        /// <param name="engine">The engine to look through</param>
+        protected void FindAllSimilarEvents(IEventHandleable engine)
         {
             // Only need to call this once, inherited classes can set similarEventsCalled to false if they want to call again.
             if (similarEventsCalled)
                 return;
 
-            similarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
+            similarEvents = engine.GetCurrentBeatmap().Events.FindAll(SameEventType);
             similarEventsCalled = true;
         }
 
         /// <summary>
         /// Currently not used. Keeping in case it proves useful in the future.
-        /// Find all events in gameplayEngine that share the same type as this Event
+        /// Find all events in engine that share the same type as this Event
         /// and have a greater time than this event.
         /// </summary>
-        /// <param name="gameplayEngine">The gameplayEngine to look through</param>
-        protected void FindAllSimilarFutureEvents(GameplayEngine gameplayEngine)
+        /// <param name="engine">The engine to look through</param>
+        protected void FindAllSimilarFutureEvents(IEventHandleable engine)
         {
             if (futureEventsCalled)
                 return;
 
-            FindAllSimilarEvents(gameplayEngine);
+            FindAllSimilarEvents(engine);
 
             futureEvents = similarEvents.FindAll(GreaterEventTime);
             futureEventsCalled = true;

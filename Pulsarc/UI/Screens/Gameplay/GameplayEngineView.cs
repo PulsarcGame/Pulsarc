@@ -260,15 +260,11 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private void DrawArcs()
         {
-            bool skip;
-
             // Go through each key
             for (int i = 0; i < GetGameplayEngine().KeyCount; i++)
             {
-                skip = false;
-
                 // Go through the arcs in each column
-                for (int k = 0; k < GetGameplayEngine().Columns[i].UpdateHitObjects.Count && !skip; k++)
+                for (int k = 0; k < GetGameplayEngine().Columns[i].UpdateHitObjects.Count; k++)
                 {
                     // If the arc is on screen, draw it.
                     if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.IsSeen())
@@ -277,7 +273,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     // If the arc is inside the "IgnoreTime" window, stop bothering to
                     // look at the rest of the arcs in this column.
                     if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Key - GetGameplayEngine().IgnoreTime > GetGameplayEngine().Time)
-                        skip = true;
+                        break;
                 }
             }
         }
