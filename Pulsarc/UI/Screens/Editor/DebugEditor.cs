@@ -1,37 +1,56 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Editor.UI;
 using Pulsarc.UI.Screens.Gameplay;
+using Pulsarc.Utils;
 using System.Collections.Generic;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Editor
 {
     public class DebugEditor : EditorEngine
     {
+        int lastScrollValue = 0;
+
+        Vector2 beatCircleCenter = AnchorUtil.FindScreenPosition(Anchor.Center);
+
         List<BeatCircle> circles = new List<BeatCircle>()
         {
             new BeatCircle(Beat.Whole, 1, 1),
-            /*new BeatCircle(Beat.Half, 0, 1),
-            new BeatCircle(Beat.Third, 0, 1),
-            new BeatCircle(Beat.Fourth, 0, 1),
-            new BeatCircle(Beat.Sixth, 0, 1),
-            new BeatCircle(Beat.Eighth, 0, 1),
-            new BeatCircle(Beat.Twelveth, 0, 1),*/
+            //new BeatCircle(Beat.Half, 1, 1),
+            //new BeatCircle(Beat.Third, 1, 1),
+            //new BeatCircle(Beat.Fourth, 1, 1),
+            //new BeatCircle(Beat.Sixth, 1, 1),
+            //new BeatCircle(Beat.Eighth, 1, 1),
+            //new BeatCircle(Beat.Twelveth, 1, 1),
+            //new BeatCircle(Beat.Sixteenth, 1, 1),
         };
 
-        public DebugEditor(Beatmap beatmap) : base(beatmap)
-        {
-        }
+        Background bg = new Background("menu_background");
+
+        public DebugEditor(Beatmap beatmap) : base(beatmap) { }
 
         public override void Update(GameTime gameTime)
         {
-            foreach (BeatCircle circle in circles)
-                circle.RecalcPos(1, 1, new Crosshair().GetZLocation());
+            MouseState ms = Mouse.GetState();
+
+            if (ms.ScrollWheelValue < lastScrollValue)
+                foreach (BeatCircle circle in circles)
+                    circle.Resize(circle.currentSize.X - 10);
+            else if (ms.ScrollWheelValue > lastScrollValue)
+                foreach (BeatCircle circle in circles)
+                    circle.Resize(circle.currentSize.X + 10);
+
+            lastScrollValue = ms.ScrollWheelValue;
         }
 
         public override void Draw(GameTime gameTime)
         {
+            bg.Draw();
+
             foreach (BeatCircle circle in circles)
                 circle.Draw();
         }

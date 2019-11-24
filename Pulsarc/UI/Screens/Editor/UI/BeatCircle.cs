@@ -1,24 +1,28 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Pulsarc.Skinning;
 using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Screens.Editor.UI
 {
     public class BeatCircle : BeatDisplay
     {
-        private static Texture2D wholeBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 4, WholeBeatColor);
-        private static Texture2D halfBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, HalfBeatColor);
-        private static Texture2D thirdBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, ThirdBeatColor);
-        private static Texture2D fourthBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, FourthBeatColor);
-        private static Texture2D sixthBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, SixthBeatColor);
-        private static Texture2D eighthBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, EightBeatColor);
-        private static Texture2D twelvethBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, TwelvethBeatColor);
-        private static Texture2D sixteenthBeat = PulsarcDrawing.DrawCircle(Pulsarc.BaseWidth, 2, SixteenthBeatColor);
+        private static readonly Texture2D DefaultTexture = Skin.Assets["beat_circle"];
+        private static float TintAmount => 1f;
+
+        private static readonly Texture2D wholeBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, WholeBeatColor, TintAmount);
+        private static readonly Texture2D halfBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, HalfBeatColor, TintAmount);
+        private static readonly Texture2D thirdBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, ThirdBeatColor, TintAmount);
+        private static readonly Texture2D fourthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, FourthBeatColor, TintAmount);
+        private static readonly Texture2D sixthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, SixthBeatColor, TintAmount);
+        private static readonly Texture2D eighthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, EighthBeatColor, TintAmount);
+        private static readonly Texture2D twelvethBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, TwelvethBeatColor, TintAmount);
+        private static readonly Texture2D sixteenthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, SixteenthBeatColor, TintAmount);
 
         private int lastFrameTime = 0;
         private double lastFrameScale = 0;
         private double lastFrameCrosshairZLoc = 0;
 
-        // The theoretical z-axis position of this arc.
+        // The theoretical z-axis position of this BeatCircle.
         // Used to imitate a falling effect from the screen to the crosshair.
         public double ZLocation { get; protected set; }
 
@@ -34,39 +38,39 @@ namespace Pulsarc.UI.Screens.Editor.UI
             // Position this BeatCircle
             // TODO: This currently assumes that the Editor display is using the whole screen
             // This should be more dynamic as the editor becomes more dynamic.
-            ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
+            ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center), true);
         }
 
-        /// <summary>
-        /// Set the texture of this BeatCircle to the appropriate texture.
-        /// </summary>
         protected override void SetBeatTexture()
         {
             switch (Beat)
             {
                 case Beat.Whole:
-                    Texture = wholeBeat;
+                    Texture = wholeBeatTexture;
                     break;
                 case Beat.Half:
-                    Texture = halfBeat;
+                    Texture = halfBeatTexture;
                     break;
                 case Beat.Third:
-                    Texture = thirdBeat;
+                    Texture = thirdBeatTexture;
                     break;
                 case Beat.Fourth:
-                    Texture = fourthBeat;
+                    Texture = fourthBeatTexture;
                     break;
                 case Beat.Sixth:
-                    Texture = sixthBeat;
+                    Texture = sixthBeatTexture;
                     break;
                 case Beat.Eighth:
-                    Texture = eighthBeat;
+                    Texture = eighthBeatTexture;
                     break;
                 case Beat.Twelveth:
-                    Texture = twelvethBeat;
+                    Texture = twelvethBeatTexture;
                     break;
                 case Beat.Sixteenth:
-                    Texture = sixteenthBeat;
+                    Texture = sixteenthBeatTexture;
+                    break;
+                default:
+                    Texture = DefaultTexture;
                     break;
             }
         }

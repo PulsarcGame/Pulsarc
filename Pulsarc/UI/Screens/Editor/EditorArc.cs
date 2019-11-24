@@ -12,7 +12,7 @@ namespace Pulsarc.UI.Screens.Editor
         private double lastFrameCrosshairZLoc = 0;
 
         private static Texture2D defaultTexture = Skin.Assets["arcs"];
-        private static Texture2D selected = PulsarcDrawing.SelectDimTexture(defaultTexture);
+        private static Texture2D selected = PulsarcDrawing.CreateSelectTexture(defaultTexture);
 
         public EditorArc(int time, double angle, int keys)
             : base(time, angle, keys, 0, false)

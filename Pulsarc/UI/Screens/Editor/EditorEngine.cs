@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.Editor.UI;
 using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         // A list of objects that were copy or cut onto the clipboard
         // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
-        // each object that matches the .psc format.
+        // each object so it matches the .psc format.
         protected List<object> editorClipboard = new List<object>();
 
         // The currently selected items in the editor.
@@ -59,6 +60,8 @@ namespace Pulsarc.UI.Screens.Editor
         // The lower the scale, the closer the arcs are from each other
         // The higher the scale, the farther the arcs are from each other
         public float Scale { get; protected set; }
+
+        public Beat BeatLock { get; protected set; } = Beat.Whole;
 
         public EditorEngine(Beatmap beatmap)
         {

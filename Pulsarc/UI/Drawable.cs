@@ -109,7 +109,6 @@ namespace Pulsarc.UI
         // The angle of this Drawable.
         public float Rotation { get; protected set; } = 0;
 
-
         /// <summary>
         /// A 2D object that can be rendered on screen.
         /// </summary>
