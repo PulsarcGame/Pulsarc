@@ -28,7 +28,7 @@ namespace Pulsarc.UI.Screens.Editor
         private void DrawEditorHitObjects()
         {
             // Go through each key
-            for (int i = 0; i < GetEditorEngine().Keys; i++)
+            for (int i = 0; i < GetEditorEngine().KeyCount; i++)
             {
                 // Go through the arcs in each column
                 for (int k = 0; k < GetEditorEngine().Columns[i].UpdateHitObjects.Count; k++)

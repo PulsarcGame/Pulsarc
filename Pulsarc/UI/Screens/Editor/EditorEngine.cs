@@ -24,10 +24,10 @@ namespace Pulsarc.UI.Screens.Editor
         // A list of objects that were copy or cut onto the clipboard
         // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
         // each object so it matches the .psc format.
-        protected List<object> editorClipboard = new List<object>();
+        protected List<Drawable> editorClipboard = new List<Drawable>();
 
         // The currently selected items in the editor.
-        protected List<object> selectedItems = new List<object>();
+        protected List<Drawable> selectedItems = new List<Drawable>();
 
         // A collection of each action that has happened.
         // Used for Undo/Redo functions.
@@ -54,7 +54,7 @@ namespace Pulsarc.UI.Screens.Editor
         public Column[] Columns { get; protected set; }
 
         // Used to store the key-style of the current map (4k, 7k, etc.)
-        public int Keys { get; protected set; }
+        public int KeyCount { get; protected set; }
 
         // Background
         public Background Background { get; protected set; }
@@ -76,8 +76,18 @@ namespace Pulsarc.UI.Screens.Editor
 
         public virtual double CurrentZoomLevel { get; set; }
 
-        // Key bindinggs
-        protected Dictionary<Keys, int> Bindings { get; private set; }
+        // Whether time is paused. This doesn't prevent moving through time.
+        public static bool Paused
+        {
+            get => AudioManager.paused;
+            set
+            {
+                if (AudioManager.paused && value == false))
+                    AudioManager.Resume();
+                else if (!AudioManager.paused && value == true)
+                    AudioManager.Pause();
+            }
+        }
 
         // Current Time
         public double Time
@@ -98,10 +108,19 @@ namespace Pulsarc.UI.Screens.Editor
         // The higher the scale, the farther the arcs are from each other
         public float Scale { get; protected set; }
 
-        public Beat BeatLockInterval { get; protected set; } = Beat.Whole;
+        // Current interval for Beat Snapping (1/1, 1/2, 1/3, 1/4, etc.)
+        public Beat BeatSnapInterval { get; protected set; } = Beat.Whole;
+
+        // Whether added notes should snap to the closest BeatDisplay or not.
+        public bool BeatLocked { get; protected set; } = true;
+
+        // Whether the Editor is in the state to add HitObjects with a mouse click.
+        public bool CanAddHitObjects { get; protected set; } = true;
 
         // Time distance (in ms) from which hitobjects are neither updated nor drawn.
         public int IgnoreTime { get; private set; } = 500;
+
+        protected int LastScrollValue { get; set; } = 0;
 
         public EditorEngine(Beatmap beatmap)
         {
@@ -119,10 +138,8 @@ namespace Pulsarc.UI.Screens.Editor
             EventIndex = 0;
             NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[EventIndex] : null;
 
-            Keys = 4;
-            Columns = new Column[Keys];
-
-            Bindings = new Dictionary<Keys, int>();
+            KeyCount = 4;
+            Columns = new Column[KeyCount];
 
             Background = new Background(Config.GetInt("Editor", "BackgroundDim") / 100f);
             Background.ChangeBackground(GraphicsUtils.LoadFileTexture($"{beatmap.Path}/{beatmap.Background}"));
@@ -143,6 +160,7 @@ namespace Pulsarc.UI.Screens.Editor
             Init();
         }
 
+        #region Init Methods
         // How columns are created depends on the style of Editor we're using.
         protected abstract void CreateColumns();
 
@@ -151,6 +169,7 @@ namespace Pulsarc.UI.Screens.Editor
             AudioManager.StartEditorPlayer();
             EditorEngine.Active = true;
         }
+        #endregion
 
         public override void Update(GameTime gameTime)
         {
@@ -159,13 +178,89 @@ namespace Pulsarc.UI.Screens.Editor
                 return;
 
             HandleInputs();
-            
+
             HandleEvents();
         }
 
+        #region Update Methods
         protected virtual void HandleInputs()
         {
-            throw new NotImplementedException();
+            HandleKeyboard();
+            HandleMouse();
+        }
+
+        protected virtual void HandleKeyboard()
+        {
+            // TODO: Add a timer that prevents endless actions when holding shortcuts down.
+
+            KeyboardState ks = Keyboard.GetState();
+
+            // Pause/Resume
+            if (ks.IsKeyDown(Keys.Space))
+                if (Paused)
+                    Resume();
+                else
+                    Pause();
+
+            // Move time with arrow keys
+            // Currently moves the current scale per second
+            if (ks.IsKeyDown(Keys.Left))
+                ScrollTime(-Scale / 1000 * PulsarcTime.DeltaTime);
+            else if (ks.IsKeyDown(Keys.Right))
+                ScrollTime(Scale / 1000 * PulsarcTime.DeltaTime);
+
+            // Delete with delete or backspace
+            if (ks.IsKeyDown(Keys.Delete) || ks.IsKeyDown(Keys.Back))
+                DeleteSelection();
+
+            // Copy/Cut/Paste
+            if (ks.IsKeyDown(Keys.LeftControl) || ks.IsKeyDown(Keys.RightControl))
+                if (ks.IsKeyDown(Keys.C))
+                    Copy();
+                else if (ks.IsKeyDown(Keys.X))
+                    Cut();
+                else if (ks.IsKeyDown(Keys.V))
+                    Paste(FindTime(Mouse.GetState().Position));
+
+            // Undo/Redo
+            if (ks.IsKeyDown(Keys.LeftControl) || ks.IsKeyDown(Keys.RightControl))
+                if (ks.IsKeyDown(Keys.Z))
+                    Undo();
+                else if (ks.IsKeyDown(Keys.Y))
+                    Redo();
+
+            // Save/Save As/Open
+            if (ks.IsKeyDown(Keys.LeftControl) || ks.IsKeyDown(Keys.RightControl))
+                if (ks.IsKeyDown(Keys.S))
+                    Save();
+                else if (ks.IsKeyDown(Keys.S) &&
+                        (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift)))
+                    SaveAs();
+                else if (ks.IsKeyDown(Keys.O))
+                    Open();
+        }
+
+        protected virtual void HandleMouse()
+        {
+            MouseState ms = Mouse.GetState();
+
+            // Move time with mouse wheel
+            // TODO: Find X and change to "ScrollTime(Scale * X)"
+            if (ms.ScrollWheelValue < LastScrollValue)
+                ScrollTime(-Scale);
+            else if (ms.ScrollWheelValue > LastScrollValue)
+                ScrollTime(Scale);
+            LastScrollValue = ms.ScrollWheelValue;
+
+            // Add HitObject
+            if (ms.LeftButton == ButtonState.Pressed)
+            {
+                Drawable clickedItem;
+                if (ClickedAnObject(ms.Position, out clickedItem))
+                    Select(clickedItem);
+                else if (CanAddHitObjects)
+                    AddHitObject(FindTime(ms.Position), FindClosestColumn(ms.Position));
+            }
         }
 
         protected virtual void HandleEvents()
@@ -173,10 +268,12 @@ namespace Pulsarc.UI.Screens.Editor
             if (Beatmap == null || !EventsOn)
                 return;
 
+            ActivateNextEvent();
 
+            HandleActiveEvents();
         }
 
-        protected void ActivateNextEvent()
+        protected virtual void ActivateNextEvent()
         {
             // If the current event Index is within range, and the next event time is less than or equal to the current time
             if (Beatmap.Events.Count > EventIndex && NextEvent.Time <= Time)
@@ -192,7 +289,7 @@ namespace Pulsarc.UI.Screens.Editor
             }
         }
 
-        protected void HandleActiveEvents()
+        protected virtual void HandleActiveEvents()
         {
             for (int i = 0; i < ActiveEvents.Count; i++)
                 // If the event is active, handle it
@@ -202,13 +299,14 @@ namespace Pulsarc.UI.Screens.Editor
                 else
                     ActiveEvents.RemoveAt(i--);
         }
+        #endregion
 
         public void SetFirstOffset(TimingPoint timingPoint)
         {
             // If there's a special window/tool used to find the
             // first offset, it will be here.
             // ...
-            
+
             AddTimingPoint(timingPoint);
         }
 
@@ -240,13 +338,14 @@ namespace Pulsarc.UI.Screens.Editor
         #endregion
 
         #region Add Item Methods
+        public abstract int FindTime(Point mousePosition);
+        public abstract int FindClosestColumn(Point mousePos);
+
         public abstract void AddEvent(Event evnt);
 
         public abstract void AddEvent(int time, EventType eventType);
 
-        public abstract void AddHitObject(IEditorHitObject hitObject);
-
-        public abstract void AddHitObject(int time);
+        public abstract void AddHitObject(int time, int columnIndex);
 
         public abstract void AddTimingPoint(TimingPoint timingPoint);
 
@@ -258,7 +357,6 @@ namespace Pulsarc.UI.Screens.Editor
         #endregion
 
         #region Shortcutable Methods
-
         public void DeleteSelection()
         {
             // Remove Selection from the editor.
@@ -266,7 +364,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             actions.Add(new EditorAction(selectedItems, false));
 
-            selectedItems = new List<object>();
+            selectedItems = new List<Drawable>();
         }
 
         public void Copy()
@@ -315,38 +413,62 @@ namespace Pulsarc.UI.Screens.Editor
         #endregion
 
         #region Selection Methods
-        public void Select(object item)
+        /// <summary>
+        /// Returns true if the mouse clicked an object on screen.
+        /// </summary>
+        /// <param name="mousePos">The position of the mouse (assumed mouse already clicked)</param>
+        /// <param name="clicked">If this method returns true, clicked will be changed to the object clicked.</param>
+        /// <returns></returns>
+        protected abstract bool ClickedAnObject(Point mousePos, out Drawable clicked);
+
+        public void Select(Drawable item)
         {
-            selectedItems = new List<object>() { item };
+            selectedItems = new List<Drawable>() { item };
         }
 
-        public void AddToSelection(object item)
+        public void Select(List<Drawable> items)
+        {
+            selectedItems = items;
+        }
+
+        public void AddToSelection(Drawable item)
         {
             selectedItems.Add(item);
         }
 
-        public void RemoveFromSelection(object item)
+        public void AddToSelection(List<Drawable> items)
         {
-            selectedItems.Remove(item);
+            selectedItems.AddRange(items);
+        }
+
+        public void RemoveFromSelection(Drawable item)
+        {
+            if (selectedItems.Contains(item))
+                selectedItems.Remove(item);
+        }
+
+        public void RemoveFromSelection(List<Drawable> items)
+        {
+            for (int i = 0; i < items.Count; i++)
+                RemoveFromSelection(items[i]);
         }
         #endregion
 
-        /// <summary>
-        /// Returns the current beatmap.
-        /// Used for event handling.
-        /// </summary>
-        /// <returns></returns>
+        #region IEventHandleable Methods
         public Beatmap GetCurrentBeatmap()
         {
             return Beatmap;
         }
 
-        public abstract bool HasCrosshair();
-        public abstract Crosshair GetCrosshair();
-
         public double GetCurrentTime()
         {
             return Time;
         }
+
+        // Depending on the Editor style, there may not be a crosshair
+        // for zoom events to handle.
+        public abstract bool HasCrosshair();
+        public abstract Crosshair GetCrosshair();
+        #endregion
     }
 }

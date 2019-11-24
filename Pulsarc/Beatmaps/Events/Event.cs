@@ -213,7 +213,6 @@ namespace Pulsarc.Beatmaps.Events
         }
 
         /// <summary>
-        /// Currently not used. Keeping in case it proves useful in the future.
         /// Find all events in engine that share the same type as this Event.
         /// </summary>
         /// <param name="engine">The engine to look through</param>
@@ -245,7 +244,6 @@ namespace Pulsarc.Beatmaps.Events
         }
 
         /// <summary>
-        /// Currently not used. Keeping in case it proves useful in the future.
         /// Whether or not the provided event has the same type as this event.
         /// </summary>
         /// <param name="evt">The event to compare to</param>

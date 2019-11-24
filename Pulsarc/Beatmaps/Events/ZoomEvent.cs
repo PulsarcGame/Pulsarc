@@ -98,7 +98,7 @@ namespace Pulsarc.Beatmaps.Events
             if (!engine.HasCrosshair())
                 return;
 
-            // if the startZoomLevel hasn't been set, set it now.
+            // If the startZoomLevel hasn't been set, set it now.
             if (startZoomLevel == -1)
                 startZoomLevel = engine.GetCrosshair().Diameter;
 
@@ -118,7 +118,7 @@ namespace Pulsarc.Beatmaps.Events
                     HandleLinearZooms(engine);
                     break;
                 default:
-                    throw new WrongEventTypeException($"Invalid zoom type! ZoomTypes can be from -1 to 1, and the type called was {(int)ZoomType}!");
+                    throw new WrongEventTypeException($"Invalid zoom type! ZoomTypes can be from {(int)ZoomType.Intralizoom} to {(int)ZoomType.Linear}, and the type called was {(int)ZoomType}!");
             }
         }
 

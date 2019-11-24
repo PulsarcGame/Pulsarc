@@ -765,6 +765,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Used for event handling.
         /// </summary>
         /// <returns></returns>
+        #region IEventHandleable Methods
         public Beatmap GetCurrentBeatmap()
         {
             return CurrentBeatmap;
@@ -784,5 +785,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             return Time;
         }
+        #endregion
     }
 }

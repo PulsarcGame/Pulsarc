@@ -5,16 +5,16 @@ namespace Pulsarc.UI.Screens.Editor
     public class EditorAction
     {
         // The states of the items affected during this change before and after.
-        public List<object> OriginalStates { get; private set; } = new List<object>();
-        public List<object> ChangedStates { get; private set; } = new List<object>();
+        public List<Drawable> OriginalStates { get; private set; } = new List<Drawable>();
+        public List<Drawable> ChangedStates { get; private set; } = new List<Drawable>();
 
-        public EditorAction(List<object> added, List<object> removed)
+        public EditorAction(List<Drawable> added, List<Drawable> removed)
         {
             OriginalStates = added;
             ChangedStates = removed;
         }
 
-        public EditorAction(List<object> items, bool added)
+        public EditorAction(List<Drawable> items, bool added)
         {
             // OriginalStates is a blank list, meaning these items were added.
             if (added)
@@ -29,7 +29,7 @@ namespace Pulsarc.UI.Screens.Editor
         /// Before this EditorAction. These are stored in OriginalStates
         /// </summary>
         /// <returns></returns>
-        public List<object> Undo()
+        public List<Drawable> Undo()
         {
             return OriginalStates;
         }
@@ -39,7 +39,7 @@ namespace Pulsarc.UI.Screens.Editor
         /// EditorAction. These are stored in ChangedStates.
         /// </summary>
         /// <returns></returns>
-        public List<object> Redo()
+        public List<Drawable> Redo()
         {
             return ChangedStates;
         }

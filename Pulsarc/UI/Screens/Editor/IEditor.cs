@@ -1,5 +1,6 @@
 ﻿using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Editor
 {
@@ -27,7 +28,7 @@ namespace Pulsarc.UI.Screens.Editor
         void AddZoomEvent(ZoomEvent zoomEvent);
         void AddZoomEvent(int time, ZoomType zoomType, float zoomLevel, int endTime);
 
-        void AddHitObject(IEditorHitObject hitObject);
+        void AddHitObject(int time, int columnIndex);
         #endregion
 
         #region Shortcutable Methods
@@ -45,9 +46,14 @@ namespace Pulsarc.UI.Screens.Editor
         #endregion
 
         #region Selection Methods
-        void Select(object item);
-        void AddToSelection(object item);
-        void RemoveFromSelection(object item);
+        void Select(Drawable item);
+        void Select(List<Drawable> items);
+
+        void AddToSelection(Drawable item);
+        void AddToSelection(List<Drawable> items);
+        
+        void RemoveFromSelection(Drawable item);
+        void RemoveFromSelection(List<Drawable> items);
 
         //void DragSelected();
         #endregion
