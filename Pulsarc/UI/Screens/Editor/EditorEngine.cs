@@ -82,7 +82,7 @@ namespace Pulsarc.UI.Screens.Editor
             get => AudioManager.paused;
             set
             {
-                if (AudioManager.paused && value == false))
+                if (AudioManager.paused && value == false)
                     AudioManager.Resume();
                 else if (!AudioManager.paused && value == true)
                     AudioManager.Pause();
