@@ -129,14 +129,14 @@ namespace Pulsarc.UI.Screens.Settings
         {
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                if (button_back.Clicked(MouseManager.CurrentState.Position))
+                if (button_back.Hovered(MouseManager.CurrentState.Position))
                     button_back.OnClick();
 
-                if (button_save.Clicked(MouseManager.CurrentState.Position))
+                if (button_save.Hovered(MouseManager.CurrentState.Position))
                     button_save.OnClick(this);
 
                 foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.Clicked(MouseManager.CurrentState.Position))
+                    if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
                         settingsGroup.OnClick(MouseManager.CurrentState.Position, false);
             }
         }
@@ -145,7 +145,7 @@ namespace Pulsarc.UI.Screens.Settings
         {
             if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
                 foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.Clicked(MouseManager.CurrentState.Position))
+                    if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
                         settingsGroup.OnClick(MouseManager.CurrentState.Position, true);
         }
     }

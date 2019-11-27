@@ -218,7 +218,7 @@ namespace Pulsarc.UI
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Logger.Debug("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString(), LogType.Runtime);
+                Logger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
 
                 currentSize = oldSize;
                 return;
@@ -251,7 +251,7 @@ namespace Pulsarc.UI
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Logger.Debug("Invalid aspect ratio : " + currentSize.X + "x" + currentSize.Y + " isn't " + aspect.ToString(), LogType.Runtime);
+                Logger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
 
                 currentSize = oldSize;
                 return;
@@ -420,7 +420,7 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="mousePos">The position of the cursor.</param>
         /// <returns>True if clicked, false if not clicked.</returns>
-        public bool Clicked(Vector2 mousePos)
+        public bool Hovered(Vector2 mousePos)
         {
             return  mousePos.X >= truePosition.X && 
                     mousePos.X <= truePosition.X + (drawnPart.Width * Scale) &&
@@ -433,9 +433,9 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="mousePos">The position of the cursor.</param>
         /// <returns>True if clicked, false if not clicked.</returns>
-        public bool Clicked(Point mousePos)
+        public bool Hovered(Point mousePos)
         {
-            return Clicked(mousePos.X, mousePos.Y);
+            return Hovered(mousePos.X, mousePos.Y);
         }
 
         /// <summary>
@@ -444,9 +444,29 @@ namespace Pulsarc.UI
         /// <param name="mouseX">The X position of the mouse.</param>
         /// <param name="mouseY">The Y position of the mouse.</param>
         /// <returns>True if clicked, false if not clicked.</returns>
-        public bool Clicked(float mouseX, float mouseY)
+        public bool Hovered(float mouseX, float mouseY)
         {
-            return Clicked(new Vector2(mouseX, mouseY));
+            return Hovered(new Vector2(mouseX, mouseY));
+        }
+
+        public bool Hovered(MouseState mouseState)
+        {
+            return Hovered(mouseState.X, mouseState.Y);
+        }
+
+        public bool Pressed(MouseState mouseState)
+        {
+            return mouseState.LeftButton == ButtonState.Pressed && Hovered(mouseState);
+        }
+
+        public bool Released(MouseState mouseState)
+        {
+            return mouseState.LeftButton == ButtonState.Released && Hovered(mouseState);
+        }
+
+        public bool Clicked(MouseState firstState, MouseState secondState)
+        {
+            return Pressed(firstState) && Released(secondState);
         }
 
         /// <summary>
@@ -455,7 +475,8 @@ namespace Pulsarc.UI
         /// <returns>True if on screen, false if not on screen.</returns>
         public bool OnScreen()
         {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height).Intersects(new Rectangle(0, 0, (int)Pulsarc.GetDimensions().X, (int)Pulsarc.GetDimensions().Y));
+            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
+                    .Intersects(Pulsarc.ScreenSpace);
         }
 
         /// <summary>
@@ -466,8 +487,7 @@ namespace Pulsarc.UI
         public bool Intersects(Drawable drawable)
         {
             return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
-                .Intersects(
-                    new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, drawable.Texture.Width, drawable.Texture.Height));
+                    .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, drawable.Texture.Width, drawable.Texture.Height));
         }
 
         /// <summary>
@@ -481,7 +501,7 @@ namespace Pulsarc.UI
             Pulsarc.SpriteBatch.Draw(Texture, truePosition, drawnPart, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
 
             // If this item is hovered by the mouse, display the hover drawable.
-            if (Hover != null && Clicked(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+            if (Hover != null && Hovered(Mouse.GetState()))
                 Hover.Draw();
         }
 

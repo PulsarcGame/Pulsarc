@@ -31,24 +31,24 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
             base.Draw();
 
-            foreach (TextDisplayElement tde in textElements)
-                tde.Draw();
+            for (int i = 0; i < textElements.Count; i++)
+                textElements[i].Draw();
         }
 
         public override void Move(Vector2 delta, bool scaledPositioning = true)
         {
             base.Move(delta, scaledPositioning);
 
-            foreach (TextDisplayElement tde in textElements)
-                tde.Move(delta, scaledPositioning);
+            for (int i = 0; i < textElements.Count; i++)
+                textElements[i].Move(delta, scaledPositioning);
         }
 
         public override void ScaledMove(Vector2 delta)
         {
             base.ScaledMove(delta);
 
-            foreach (TextDisplayElement tde in textElements)
-                tde.ScaledMove(delta);
+            for (int i = 0; i < textElements.Count; i++)
+                textElements[i].ScaledMove(delta);
         }
 
         /// <summary>

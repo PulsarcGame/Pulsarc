@@ -134,7 +134,7 @@ namespace Pulsarc.UI.Screens.MainMenu
                 Point pos = InputManager.LastMouseClick.Key.Position;
 
                 foreach (NavigationButton button in navButtons)
-                    if (button.Clicked(pos))
+                    if (button.Hovered(pos))
                         button.Navigate();
             }
         }

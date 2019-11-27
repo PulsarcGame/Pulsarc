@@ -43,13 +43,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             Beatmap = beatmap;
 
             // set diffbar
-            setDiffBar();
+            SetDiffBar();
 
             // set metadata
-            setMetadata();
+            SetMetadata();
         }
 
-        private void setDiffBar()
+        private void SetDiffBar()
         {
             float percent = (float)(Beatmap.Difficulty / 10f);
 
@@ -70,7 +70,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             diffBar.ScaledMove(diffBarXOffset, diffBarYOffset);
         }
 
-        private void setMetadata()
+        private void SetMetadata()
         {
             AddTextDisplayElement("Title");
             textElements[0].Update(Beatmap.Title);

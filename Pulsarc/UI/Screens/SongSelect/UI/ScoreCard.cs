@@ -22,13 +22,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             scoreData = data;
 
             // set grade
-            setGrade();
+            SetGrade();
 
             // set other data
-            setData(rankPosition);
+            SetData(rankPosition);
         }
 
-        private void setGrade()
+        private void SetGrade()
         {
             float scale = GetSkinnableFloat("GradeScale");
 
@@ -43,7 +43,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             grade.ScaledMove(gradeXOffset, gradeYOffset);
         }
 
-        private void setData(int rankPosition)
+        private void SetData(int rankPosition)
         {
             AddTextDisplayElement("Rank");
             textElements[0].Update("#" + rankPosition);
