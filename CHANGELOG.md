@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Display current status through Discord RPC (Playing maps, browsing menus, etc.)
+
 ## [1.0.1-alpha] - 2019-11-22
 
 ### Added
