@@ -110,6 +110,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Time distance (in ms) from which hitobjects are neither updated not drawn
         public int IgnoreTime { get; private set; } = 500;
 
+        public override string DiscordDetails => $"Playing Singleplayer";
+
+        public override string DiscordState => CurrentBeatmap.Title;
+
+        //public override int DiscordTimer => CurrentBeatmap.Arcs[CurrentBeatmap.Arcs.Count -1].Time;
+        public override bool DiscordTimer => true;
+
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
         /// </summary>
@@ -316,6 +323,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="gameTime">The current GameTime</param>
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             // If not active, don't update.
             if (!Active)
                 return;

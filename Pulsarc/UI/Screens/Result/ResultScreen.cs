@@ -3,12 +3,13 @@ using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.SQLite;
+using System;
 using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Result
 {
-    class ResultScreen : Screen
+    class ResultScreen : PulsarcScreen
     {
         public override ScreenView View { get; protected set; }
 
@@ -76,6 +77,9 @@ namespace Pulsarc.UI.Screens.Result
             // Save the score locally
             if (newScore)
                 DataManager.ScoreDB.AddScore(scoreData);
+
+            DiscordDetails = $"Finished {beatmap.Title}";
+            DiscordState = $"Grade: {scoreData.grade} | Max Combo: {combo} | Acc = {Math.Round(accuracyTotal * 100, 2)}%";
 
             View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
         }

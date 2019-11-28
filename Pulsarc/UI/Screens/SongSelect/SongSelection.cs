@@ -33,6 +33,9 @@ namespace Pulsarc.UI.Screens.SongSelect
         public override void Init()
         {
             base.Init();
+
+            DiscordDetails = "Browsing Maps";
+
             RefreshBeatmaps();
         }
 
@@ -105,6 +108,8 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             HandleKeyboardPresses();
             HandleMouseInput();
             

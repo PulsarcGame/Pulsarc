@@ -14,10 +14,10 @@ namespace Pulsarc.Utils
         // The amount of time (in ms) between the last two frames
         public static double DeltaTime { get; private set; }
 
-        // The amount of time since this timer started, as of last frame.
+        // The amount of time (in ms) since this timer started, as of last frame.
         public static double PrevFrameElapsedTime { get; private set; }
 
-        // The amount of time since this timer was started.
+        // The amount of time (in ms) since this timer was started.
         public static double CurrentElapsedTime => stopwatch.ElapsedMilliseconds;
 
         // The stopwatch doing most of the work for us.
