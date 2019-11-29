@@ -24,7 +24,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         private int lastScrollValue = 0;
         private bool leftClicking = false;
         private MouseState leftClickedState;
-        public float SelectedFocus { get; set; } = 0;
+        public float SelectedFocus = 0;
         public BeatmapCard FocusedCard { get; set; }
 
         public SongSelection()

@@ -40,7 +40,7 @@ namespace Pulsarc
         public static int CurrentWidth => Config.GetInt("Graphics", "ResolutionWidth");
         public static int CurrentHeight => Config.GetInt("Graphics", "ResolutionHeight");
         public static float CurrentAspectRatio => (float)CurrentWidth / CurrentHeight;
-        public static Rectangle ScreenSpace { get; } = new Rectangle(0, 0, CurrentWidth, CurrentHeight);
+        public static Rectangle ScreenSpace { get; private set; } = new Rectangle(0, 0, CurrentWidth, CurrentHeight);
 
         // Scales for moving/resizing Drawables accurately on different dimensions.
         public static float HeightScale => (float)CurrentHeight / BaseHeight;

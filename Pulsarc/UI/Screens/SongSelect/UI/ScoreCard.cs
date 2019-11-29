@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Result.UI;
@@ -15,8 +15,19 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         private Grade grade;
 
-        public ScoreCard(ScoreData data, Vector2 position, int rankPosition, Anchor anchor = Anchor.TopLeft)
-            : base(DefaultTexture, position, anchor)
+        // Stats
+        public static readonly Anchor DefaultAnchor = Skin.GetConfigAnchor("song_select", "Properties", "ScoreCardAnchor");
+
+        private static readonly int OffsetX = Skin.GetConfigInt("song_select", "Properties", "ScoreCardX");
+        private static readonly int OffsetY = Skin.GetConfigInt("song_select", "Properties", "ScoreCardY");
+        public static readonly Vector2 StartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "ScoreCardStartPos") + new Vector2(OffsetX, OffsetY);
+
+        public static readonly int Margin = Skin.GetConfigInt("song_select", "Properties", "ScoreCardMargin");
+        public static readonly int TotalHeight = DefaultTexture.Height + Margin;
+        public static readonly int TotalWidth = DefaultTexture.Width + Margin;
+
+        public ScoreCard(ScoreData data, int rankPosition)
+            : base(DefaultTexture, StartPosition, DefaultAnchor)
         {
             // set scoredata
             scoreData = data;
@@ -32,7 +43,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
             float scale = GetSkinnableFloat("GradeScale");
 
-            Vector2 startPos = Skin.GetConfigStartPosition(config, section, "GradeStartPos", this);
+            Vector2 startPos = Skin.GetConfigStartPosition(Config, Section, "GradeStartPos", this);
 
             Anchor gradeAnchor = GetSkinnableAnchor("GradeAnchor");
 
@@ -46,28 +57,28 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         private void SetData(int rankPosition)
         {
             AddTextDisplayElement("Rank");
-            textElements[0].Update("#" + rankPosition);
+            TextElements[0].Update("#" + rankPosition);
 
             AddTextDisplayElement("Score");
-            textElements[1].Update(scoreData.score.ToString("#,##"));
+            TextElements[1].Update(scoreData.score.ToString("#,##"));
 
             AddTextDisplayElement("Acc");
-            textElements[2].Update(Math.Round(scoreData.accuracy * 100, 2).ToString("#,##.00") + "%");
+            TextElements[2].Update(Math.Round(scoreData.accuracy * 100, 2).ToString("#,##.00") + "%");
 
             AddTextDisplayElement("Combo");
-            textElements[3].Update("x" + scoreData.maxCombo);
+            TextElements[3].Update("x" + scoreData.maxCombo);
 
             AddTextDisplayElement("Rate");
-            textElements[4].Update("x"+Math.Round(scoreData.rate, 2).ToString("#.00"));
+            TextElements[4].Update("x"+Math.Round(scoreData.rate, 2).ToString("#.00"));
 
             AddTextDisplayElement("Username");
-            textElements[5].Update(scoreData.username);
+            TextElements[5].Update(scoreData.username);
         }
 
         protected override void SetConfigAndSection()
         {
-            config = "song_select";
-            section = "ScoreCardData";
+            Config = "song_select";
+            Section = "ScoreCardData";
         }
 
         public override void Move(Vector2 delta, bool scaledPositioning = true)

@@ -300,12 +300,12 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="position">The coordinates of this Drawables new position.
         /// New positon = (position.X, position.Y)</param>
-        /// <param name="truePositioning">Whether this should consider the Anchor
+        /// <param name="topLeftPositioning">Whether this should consider the Anchor
         /// when positioning, or just the raw position provided. If true the
         /// positioning acts as if the Anchor was TopLeft.</param>
-        public void ChangePosition(Vector2 position, bool truePositioning = false)
+        public virtual void ChangePosition(Vector2 position, bool topLeftPositioning = false)
         {
-            if (truePositioning)
+            if (topLeftPositioning)
             {
                 truePosition = position;
                 FindAnchorPosition();
@@ -356,23 +356,29 @@ namespace Pulsarc.UI
         /// </summary>
         /// <param name="x">The X coordinate of this Drawables new position.</param>
         /// <param name="y">The Y coordinate of this Drawables new position.</param>
-        public void ChangePosition(float x, float y)
+        /// <param name="topLeftPositioning">Whether this should consider the Anchor
+        /// when positioning, or just the raw position provided. If true the
+        /// positioning acts as if the Anchor was TopLeft.</param>
+        public void ChangePosition(float x, float y, bool topLeftPositioning = false)
         {
-            ChangePosition(new Vector2(x, y));
+            ChangePosition(new Vector2(x, y), topLeftPositioning);
         }
 
         /// <summary>
-        /// Move this Drawable from its current coordinate by the amount provided.
+        /// Move this Drawable from its current coordinate by the amount provided. Movement
+        /// is scaled in one axis.
+        /// TODO: Change Move() to scale in both axis for consistency (i.e, act like ScaledMove()
+        /// This will require a rewrite of everything that uses Move().
         /// </summary>
         /// <param name="position">How much this Drawable should move.</param>
-        /// <param name="scaledPositioning">Whether or not this Drawable should move according
-        /// to the Height/Width scaling.</param>
-        public virtual void Move(Vector2 position, bool scaledPositioning = true)
+        /// <param name="followScale">Whether or not this Drawable should move according
+        /// to the current Height/Width scaling. Default is true.</param>
+        public virtual void Move(Vector2 position, bool followScale = true)
         {
             // If Hover exists, move it.
-            Hover?.Move(position, scaledPositioning);
+            Hover?.Move(position, followScale);
 
-            if (!scaledPositioning)
+            if (!followScale)
             {
                 truePosition += position;
                 FindAnchorPosition();
@@ -388,17 +394,25 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
-        /// Move this Drawable from its current coordinate by the amount provided.
+        /// Move this Drawable from its current coordinate by the amount provided. Movement
+        /// is scaled in one axis.
+        /// TODO: Change Move() to scale in both axis for consistency (i.e, act like ScaledMove()
+        /// This will require a rewrite of everything that uses Move().
         /// </summary>
         /// <param name="xDelta">How much this Drawable should move on the X coordinate.</param>
         /// <param name="yDelta">How much this Drawable should move on the Y coordinate.</param>
-        /// <param name="scaledPositioning">Whether or not this Drawable should move according
-        /// to the Height/Width scaling.</param>
-        public void Move(float xDelta, float yDelta, bool scaledPositioning = true)
+        /// <param name="followScale">Whether or not this Drawable should move according
+        /// to the current Height/Width scaling. Default is true.</param>
+        public void Move(float xDelta, float yDelta, bool followScale = true)
         {
-            Move(new Vector2(xDelta, yDelta), scaledPositioning);
+            Move(new Vector2(xDelta, yDelta), followScale);
         }
 
+        /// <summary>
+        /// Move this Drawab le from its current coordinate by the amount provided,
+        /// movement is scaled in both axis.
+        /// </summary>
+        /// <param name="position"></param>
         public virtual void ScaledMove(Vector2 position)
         {
             // If height scaled, scale movement by height scale, otherwise by width scale
@@ -475,7 +489,7 @@ namespace Pulsarc.UI
         /// <returns>True if on screen, false if not on screen.</returns>
         public bool OnScreen()
         {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
+            return new Rectangle((int)truePosition.X, (int)truePosition.Y, (int)currentSize.X, (int)currentSize.Y)
                     .Intersects(Pulsarc.ScreenSpace);
         }
 
@@ -487,7 +501,7 @@ namespace Pulsarc.UI
         public bool Intersects(Drawable drawable)
         {
             return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
-                    .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, drawable.Texture.Width, drawable.Texture.Height));
+                    .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, (int)drawable.currentSize.X, (int)drawable.currentSize.Y));
         }
 
         /// <summary>
