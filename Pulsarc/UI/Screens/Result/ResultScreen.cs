@@ -79,7 +79,7 @@ namespace Pulsarc.UI.Screens.Result
                 DataManager.ScoreDB.AddScore(scoreData);
 
             DiscordDetails = $"Finished {beatmap.Title}";
-            DiscordState = $"Grade: {scoreData.grade} | Max Combo: {combo} | Acc = {Math.Round(accuracyTotal * 100, 2)}%";
+            DiscordState = $"Grade: {scoreData.grade} | Score: {scoreData.score} | Acc = {Math.Round(accuracyTotal * 100, 2)}%";
 
             View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
         }
