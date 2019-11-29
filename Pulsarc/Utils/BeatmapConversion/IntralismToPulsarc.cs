@@ -52,7 +52,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                     // If there's an average of 1 image per 10 seconds of map time or less
                     // and the user-defined path doesn't exist, grab the first image path in 
                     // the beatmap.
-                    if (!File.Exists($"{folder_path}/{name}") && beatmap.LevelResources.Count < Math.Ceiling(beatmap.MusicTime / 10))
+                    if (!File.Exists($"{folder_path}/{name}") && beatmap.LevelResources.Count > 0 && beatmap.LevelResources.Count < Math.Ceiling(beatmap.MusicTime / 10))
                         beatmap.LevelResources[0].TryGetValue("path", out name);
 
                     result.Background = name;

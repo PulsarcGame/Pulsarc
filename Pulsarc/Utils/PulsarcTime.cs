@@ -14,10 +14,10 @@ namespace Pulsarc.Utils
         // The amount of time (in ms) between the last two frames
         public static double DeltaTime { get; private set; }
 
-        // The amount of time since this timer started, as of last frame.
+        // The amount of time (in ms) since this timer started, as of last frame.
         public static double PrevFrameElapsedTime { get; private set; }
 
-        // The amount of time since this timer was started.
+        // The amount of time (in ms) since this timer was started.
         public static double CurrentElapsedTime => stopwatch.ElapsedMilliseconds;
 
         // The stopwatch doing most of the work for us.
@@ -77,7 +77,7 @@ namespace Pulsarc.Utils
             DeltaTime = currentFrameTime - PrevFrameElapsedTime;
             PrevFrameElapsedTime = currentFrameTime;
 
-            SmoothDeltaTime = findSmoothDeltaTime();
+            SmoothDeltaTime = FindSmoothDeltaTime();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Pulsarc.Utils
         /// 2 hours of internet searching <_<
         /// </summary>
         /// <returns>The SmoothDeltaTime for the last frame</returns>
-        private static double findSmoothDeltaTime()
+        private static double FindSmoothDeltaTime()
         {
             double smoothAmount = .8;
 

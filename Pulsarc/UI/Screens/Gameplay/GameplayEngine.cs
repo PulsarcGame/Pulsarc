@@ -48,7 +48,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private int arcFadeTime => Config.GetInt("Gameplay", "FadeTime");
 
         // Used to store the key-style of the current map (4k, 7k, etc.)
-        public int Keys { get; private set; }
+        public int KeyCount { get; private set; }
 
         // Background
         public Background Background { get; private set; }
@@ -109,6 +109,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
         public int IgnoreTime { get; private set; } = 500;
+
+        public override string DiscordDetails => $"Playing Singleplayer";
+
+        public override string DiscordState => CurrentBeatmap.Title;
+
+        //public override int DiscordTimer => CurrentBeatmap.Arcs[CurrentBeatmap.Arcs.Count -1].Time;
+        public override bool DiscordTimer => true;
 
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
@@ -179,7 +186,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Set the offset for each play before starting audio
             AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
 
-            Keys = 4;
+            KeyCount = 4;
 
             Crosshair = new Crosshair();
         }
@@ -207,7 +214,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap"></param>
         private void InitializeGameplay(Beatmap beatmap)
         {
-            Columns = new Column[Keys];
+            Columns = new Column[KeyCount];
             Judgements = new List<JudgementValue>();
             errors = new List<KeyValuePair<double, int>>();
             rawInputs = new List<KeyValuePair<double, int>>();
@@ -233,27 +240,25 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap"></param>
         private void CreateColumns(Beatmap beatmap)
         {
-            for (int i = 1; i <= Keys; i++)
+            for (int i = 1; i <= KeyCount; i++)
                 Columns[i - 1] = new Column(i);
 
             int objectCount = 0;
 
             // Add arcs to the columns
             foreach (Arc arc in CurrentBeatmap.Arcs)
-                for (int i = 0; i < Keys; i++)
+                for (int i = 0; i < KeyCount; i++)
                     if (BeatmapHelper.IsColumn(arc, i))
                     {
-                        Columns[i].AddHitObject
-                        (
-                            new HitObject(arc.Time, (int)(i / (float)Keys * 360), Keys, CurrentArcsSpeed, Hidden),
-                            CurrentArcsSpeed * CurrentSpeedMultiplier,
-                            Crosshair.GetZLocation()
-                        );
+                        Columns[i].AddHitObject(new HitObject(arc.Time, (int)(i / (float)KeyCount * 360), KeyCount, CurrentArcsSpeed, Hidden),
+                                                CurrentArcsSpeed * CurrentSpeedMultiplier,
+                                                Crosshair.GetZLocation());
 
                         objectCount++;
                     }
 
-            // Compute the beatmap's highest possible score, for displaying the current display_score later on
+            // Compute the beatmap's highest possible score,
+            // for displaying the current display_score later on
             maxScore = Scoring.GetMaxScore(objectCount);
         }
 
@@ -284,7 +289,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
 
-                for (int i = 0; i < Keys; i++)
+                for (int i = 0; i < KeyCount; i++)
                     foreach (HitObject arc in Columns[i].HitObjects)
                         if (autoPlayAddRandomness)
                             // If enabled, add some randomness to the autoplay inputs. Legacy.
@@ -318,6 +323,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="gameTime">The current GameTime</param>
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             // If not active, don't update.
             if (!Active)
                 return;
@@ -362,7 +369,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void HandleEngineInputs()
         {
             // End the gameplay with the "escape" key TODO: make this key bindable.
-            if (Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 EndGameplay();
                 return;
@@ -396,13 +403,13 @@ namespace Pulsarc.UI.Screens.Gameplay
                 if(bindings.ContainsKey(press.Value))
                 {
                     HitObject pressed = null;
-                    var column = bindings[press.Value];
+                    int column = bindings[press.Value];
                     rawInputs.Add(new KeyValuePair<double, int>(press.Key, column));
 
                     // Check the first hitobject of the corresponding column if there is >= one
                     if (Columns[column].HitObjects.Count > 0 && Columns[column].HitObjects.Exists(x => x.Hittable))
                     {
-                        pressed = Columns[column].HitObjects.Find(x => x.Hittable);
+                        pressed = Columns[column].HitObjects.Find(hO => hO.Hittable);
 
                         int error = (int)((pressed.Time - press.Key) / Rate);
 
@@ -417,7 +424,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                             // Add a Fading HitObject, and mark the pressed HitObject for removal.
                             if (!pressed.Hidden)
-                                Columns[column].AddHitObject(new HitObjectFade(pressed, arcFadeTime, Keys), CurrentArcsSpeed * CurrentSpeedMultiplier, Crosshair.GetZLocation());
+                                Columns[column].AddHitObject(   new HitObjectFade(pressed, arcFadeTime, KeyCount),
+                                                                CurrentArcsSpeed * CurrentSpeedMultiplier,
+                                                                Crosshair.GetZLocation());
 
                             pressed.ToErase = true;
 
@@ -456,34 +465,42 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             AtLeastOneLeft = false;
 
-            for (int i = 0; i < Keys; i++)
+            for (int i = 0; i < KeyCount; i++)
             {
                 bool updatedAll = false;
 
-                for (int k = 0; k < Columns[i].UpdateHitObjects.Count && !updatedAll; k++)
+                // For readability
+                ref Column currentColumn = ref Columns[i];
+
+                for (int k = 0; k < currentColumn.UpdateHitObjects.Count && !updatedAll; k++)
                 {
+                    // For readability
+                    // can't ref properties, but this doesn't hurt performance
+                    // when compared to the old: "Columns[i].UpdateHitObjects[k].Value"
+                    HitObject currentHitObject = currentColumn.UpdateHitObjects[k].Value;
+
                     // Remove the hitobject if it is marked for removal
-                    if (Columns[i].UpdateHitObjects[k].Value.ToErase)
+                    if (currentHitObject.ToErase)
                     {
-                        Columns[i].UpdateHitObjects.RemoveAt(k);
+                        currentColumn.UpdateHitObjects.RemoveAt(k);
                         continue;
                     }
 
                     // Process the new position of this object
-                    Columns[i].UpdateHitObjects[k].Value.RecalcPos((int)Time, CurrentSpeedMultiplier, Crosshair.GetZLocation());
+                    currentHitObject.RecalcPos((int)Time, CurrentSpeedMultiplier, Crosshair.GetZLocation());
                     AtLeastOneLeft = true;
 
                     // Ignore the following objects if we have reached the ignored distance
-                    if (Columns[i].UpdateHitObjects[k].Key - IgnoreTime > Time)
+                    if (currentColumn.UpdateHitObjects[k].Key - IgnoreTime > Time)
                         updatedAll = true;
 
                     // Determine whether or not this note has been missed by the user, and take action if so
-                    if (Columns[i].UpdateHitObjects[k].Value.Time + (Judgement.GetMiss().Judge * Rate) < Time
-                        && Columns[i].UpdateHitObjects[k].Value.Hittable)
+                    if (currentHitObject.Time + (Judgement.GetMiss().Judge * Rate) < Time
+                        && currentHitObject.Hittable)
                     {
                         // Remove the hitobject and reset the combo
-                        Columns[i].HitObjects.Remove(Columns[i].UpdateHitObjects[k].Value);
-                        Columns[i].UpdateHitObjects.RemoveAt(k);
+                        currentColumn.HitObjects.Remove(currentHitObject);
+                        currentColumn.UpdateHitObjects.RemoveAt(k);
                         k--;
                         Combo = 0;
 

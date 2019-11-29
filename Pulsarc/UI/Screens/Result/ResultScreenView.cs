@@ -394,9 +394,9 @@ namespace Pulsarc.UI.Screens.Result
             {
                 Point pos = InputManager.LastMouseClick.Key.Position;
 
-                if (buttonBack.Clicked(pos))
+                if (buttonBack.Hovered(pos))
                     buttonBack.OnClick();
-                else if (buttonRetry.Clicked(pos))
+                else if (buttonRetry.Hovered(pos))
                     buttonRetry.OnClick(beatmap);
             }
         }

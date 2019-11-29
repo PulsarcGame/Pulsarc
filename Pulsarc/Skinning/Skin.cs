@@ -300,19 +300,40 @@ namespace Pulsarc.Skinning
         /// <param name="config">The config to look in.</param>
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
+        /// <param name="parent">The parant Drawable to base the start position off of.
+        /// Default value is null for screen-based positioning.</param>
         /// <returns>
         /// The position found using the provided parameters.
-        /// Currently only ScreenAnchor and pre-determined parent position finding is supported.
         /// </returns>
-        public static Vector2 GetConfigStartPosition(string config, string section, string key, Drawable parent = null)
+        public static Vector2 GetConfigStartPosition(string config, string section, string key, in Drawable parent = null)
         {
-            string anchorString = GetConfigString(config, section, key);
+            Anchor anchor = Anchor.TopLeft;
+
+            return GetConfigStartPosition(config, section, key, out anchor, parent);
+        }
+
+        /// <summary>
+        /// Find the config provided, go to the section provided, and return the start position of the
+        /// key provided. If parent is not null, the start position will be based on the parent.
+        /// If parent is null, start position will be based on the screen.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <param name="parent">The parant Drawable to base the start position off of.</param>
+        /// <param name="anchor">Out reference anchor if whatever calling this needs it.</param>
+        /// <returns>
+        /// The position found using the provided parameters.
+        /// </returns>
+        public static Vector2 GetConfigStartPosition(string config, string section, string key, out Anchor anchor, in Drawable parent = null)
+        {
+            anchor = GetConfigAnchor(config, section, key);
 
             // If there's a parent, return the start position relative to the parent,
             // otherwise find the start position relative to the screen.
             return parent == null
-                ? AnchorUtil.FindScreenPosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString))
-                : AnchorUtil.FindDrawablePosition((Anchor)Enum.Parse(Anchor.TopLeft.GetType(), anchorString), parent);
+                ? AnchorUtil.FindScreenPosition(anchor)
+                : AnchorUtil.FindDrawablePosition(anchor, parent);
         }
 
         /// <summary>

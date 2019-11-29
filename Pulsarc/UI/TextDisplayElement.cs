@@ -38,7 +38,9 @@ namespace Pulsarc.UI
 
             fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight);
 
-            ChangePosition(position);
+            // Calling ReprocessPosition() too early causes a crash
+            // base.ChangePosition() avoids this crash.
+            base.ChangePosition(position);
             processedPosition = truePosition;
             Update("");
         }
@@ -61,7 +63,6 @@ namespace Pulsarc.UI
         /// </summary>
         public void ReprocessPosition()
         {
-
             float newX = truePosition.X;
             float newY = truePosition.Y;
             Vector2 size = font.MeasureString(Text) * fontScale;
@@ -109,10 +110,18 @@ namespace Pulsarc.UI
 
         public override void Move(Vector2 position, bool scaledPositioning = true)
         {
+            // I don't remember why this is here, but it's working so...
+            // I'll clean this up when I rewrite Move() - FRUP
             float x = position.X / Pulsarc.WidthScale;
             float y = position.Y * Pulsarc.HeightScale;
 
             base.Move(new Vector2(x, y), scaledPositioning);
+            ReprocessPosition();
+        }
+
+        public override void ChangePosition(Vector2 position, bool topLeftPositioning = false)
+        {
+            base.ChangePosition(position, topLeftPositioning);
             ReprocessPosition();
         }
 

@@ -239,7 +239,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             bool skip;
 
             // Go through each key
-            for (int i = 0; i < GetGameplayEngine().Keys; i++)
+            for (int i = 0; i < GetGameplayEngine().KeyCount; i++)
             {
                 skip = false;
 
