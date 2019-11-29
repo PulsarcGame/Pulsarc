@@ -77,7 +77,7 @@ namespace Pulsarc.Utils
             DeltaTime = currentFrameTime - PrevFrameElapsedTime;
             PrevFrameElapsedTime = currentFrameTime;
 
-            SmoothDeltaTime = findSmoothDeltaTime();
+            SmoothDeltaTime = FindSmoothDeltaTime();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Pulsarc.Utils
         /// 2 hours of internet searching <_<
         /// </summary>
         /// <returns>The SmoothDeltaTime for the last frame</returns>
-        private static double findSmoothDeltaTime()
+        private static double FindSmoothDeltaTime()
         {
             double smoothAmount = .8;
 

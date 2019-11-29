@@ -23,8 +23,8 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Used for determining the position of all the cards and moving them with mouse scrolling
         private int lastScrollValue = 0;
         private bool leftClicking = false;
-        private Vector2 leftClickingPos;
-        public float SelectedFocus { get; set; } = 0;
+        private MouseState leftClickedState;
+        public float SelectedFocus = 0;
         public BeatmapCard FocusedCard { get; set; }
 
         public SongSelection()
@@ -48,9 +48,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             List<Beatmap> beatmaps = new List<Beatmap>();
             Cards = new List<BeatmapCard>();
 
-            foreach (BeatmapData data in DataManager.BeatmapDB.GetBeatmaps())
-                if (keyword == "" || data.Match(keyword))
-                    beatmaps.Add(BeatmapHelper.LoadLight(data));
+            List<BeatmapData> data = DataManager.BeatmapDB.GetBeatmaps();
+
+            for (int i = 0; i < data.Count; i++)
+                if (keyword == "" || data[i].Match(keyword))
+                    beatmaps.Add(BeatmapHelper.LoadLight(data[i]));
 
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
@@ -66,13 +68,16 @@ namespace Pulsarc.UI.Screens.SongSelect
             List<Beatmap> beatmaps = new List<Beatmap>();
 
             DataManager.BeatmapDB.ClearBeatmaps();
-            foreach (string dir in Directory.GetDirectories("Songs/"))
+
+            string[] directories = Directory.GetDirectories("Songs/");
+
+            for (int i = 0; i < directories.Length; i++)
             {
-                foreach (string file in Directory.GetFiles(dir, "*.psc")
-                                     .Select(Path.GetFileName)
-                                     .ToArray())
+                string[] files = Directory.GetFiles(directories[i], "*.psc").Select(Path.GetFileName).ToArray();
+
+                for (int j = 0; j < files.Length; j++)
                 {
-                    BeatmapData debugData = new BeatmapData(BeatmapHelper.Load(dir, file));
+                    BeatmapData debugData = new BeatmapData(BeatmapHelper.Load(directories[i], files[j]));
                     DataManager.BeatmapDB.AddBeatmap(debugData);
                 }
             }
@@ -180,26 +185,28 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (!leftClicking && ms.LeftButton == ButtonState.Pressed)
             {
                 leftClicking = true;
-                leftClickingPos = new Vector2(ms.Position.X, ms.Position.Y);
+                leftClickedState = ms;
             }
             // If a non-focused card is clicked, focus that clicked card
             else if (leftClicking && ms.LeftButton == ButtonState.Released)
             {
                 leftClicking = false;
-                Vector2 leftReleasePos = new Vector2(ms.Position.X, ms.Position.Y);
+                MouseState leftRelease = ms;
 
-                foreach (BeatmapCard card in Cards)
-                    if (card.Clicked(leftClickingPos) && card.Clicked(leftReleasePos))
+                for (int i = 0; i < Cards.Count; i++)
+                {
+                    if (Cards[i].Clicked(leftClickedState, leftRelease))
                     {
-                        if (FocusedCard != card)
+                        if (FocusedCard != Cards[i])
                         {
                             FocusedCard.SetClicked(false);
-                            FocusedCard = card;
+                            FocusedCard = Cards[i];
                         }
 
-                        card.OnClick();
-                        GetSongSelectionView().FocusCard(card);
+                        Cards[i].OnClick();
+                        GetSongSelectionView().FocusCard(Cards[i]);
                     }
+                }
             }
         }
     }

@@ -91,14 +91,14 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     // Single Input
                     if (!hold)
                     {
-                        if (entry.Value.Clicked(mousePosition))
+                        if (entry.Value.Hovered(mousePosition))
                             entry.Value.OnClick(mousePosition);
                     }
                     // Hold Input
                     else
                     {
                         // Start to hold this item, keep it in memory
-                        if (entry.Value.Clicked(mousePosition) && FocusedHoldSetting == null)
+                        if (entry.Value.Hovered(mousePosition) && FocusedHoldSetting == null)
                             FocusedHoldSetting = entry.Value;
 
                         // Continue to update the held item, even if out of range
