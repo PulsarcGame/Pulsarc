@@ -16,7 +16,7 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
-    class SongSelectionView : ScreenView
+    public class SongSelectionView : ScreenView
     {
         SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
@@ -136,13 +136,19 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// the Song Select screen accordingly.
         /// </summary>
         /// <param name="card">The card to focus on.</param>
-        public void FocusCard(BeatmapCard card)
+        public void FocusCard(in BeatmapCard card, bool restart = false)
         {
             if (cards[card.Index] != card)
                 return;
 
             songSelectScreen.SelectedFocus = card.Index - 3;
-            
+
+            if (restart)
+            {
+                FocusCard(cards[0]);
+                cards[0].SetClicked(false);
+            }
+
             // Set to "selected" state
             card.SetClicked(true);
 
@@ -157,27 +163,24 @@ namespace Pulsarc.UI.Screens.SongSelect
             UpdateScoreCard(card);
         }
 
+        public void RefocusCurrentCard()
+        {
+            UpdateScoreCard(GetSongSelection().FocusedCard);
+        }
+
         /// <summary>
         /// Finish the selecting process for the card we're
         /// focusing on.
         /// </summary>
         /// <param name="card">The card we're focusing on.</param>
-        private void UpdateScoreCard(BeatmapCard card)
+        private void UpdateScoreCard(in BeatmapCard card)
         {
             scores.Clear();
-
-            // ScoreCard Position Setup
-            // Get start position
-            Vector2 startPos = Skin.GetConfigStartPosition("song_select", "Properties", "ScoreCardStartPos");
-
-            float offsetX = getSkinnablePropertyFloat("ScoreCardX");
-            float offsetY = getSkinnablePropertyFloat("ScoreCardY");
-
-            int rank = 0;
 
             // Make a ScoreCard for each score.
             List<ScoreData> scoresInMap = card.Beatmap.GetLocalScores();
 
+            int rank = 1;
             for (int i = 0; i < scoresInMap.Count; i++)
                 scores.Add(new ScoreCard(scoresInMap[i], rank++));
         }

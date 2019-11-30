@@ -17,5 +17,13 @@ namespace Pulsarc.UI.Screens
         }
 
         public abstract void UpdateDiscord();
+
+        /// <summary>
+        /// This method is called by Pulsarc.CheckScreen() whenever a screen is entered or reentered.
+        /// </summary>
+        public virtual void EnteredScreen()
+        {
+            UpdateDiscord();
+        }
     }
 }

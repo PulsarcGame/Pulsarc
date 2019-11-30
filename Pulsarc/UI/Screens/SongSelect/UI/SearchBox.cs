@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    class SearchBox : Drawable
+    public class SearchBox : Drawable
     {
         private TextDisplayElement textDisplay;
 

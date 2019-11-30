@@ -26,11 +26,22 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         public static readonly int TotalHeight = DefaultTexture.Height + Margin;
         public static readonly int TotalWidth = DefaultTexture.Width + Margin;
 
+        public int Index { get; private set; }
+
+        public Vector2 PersonalStartPosition => StartPosition + personalStartPosOffset;
+        private Vector2 personalStartPosOffset;
+
         public ScoreCard(ScoreData data, int rankPosition)
             : base(DefaultTexture, StartPosition, DefaultAnchor)
         {
             // set scoredata
             scoreData = data;
+
+            // Set proper position
+            Index = rankPosition - 1;
+            personalStartPosOffset = new Vector2(0, TotalHeight * Pulsarc.HeightScale * Index);
+
+            ChangePosition(PersonalStartPosition);
 
             // set grade
             SetGrade();

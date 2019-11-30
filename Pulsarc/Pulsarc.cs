@@ -226,7 +226,7 @@ namespace Pulsarc
 
             PulsarcTime.Update();
 
-            CheckDiscord();
+            CheckScreen();
 
             cursor.SetPos(MouseManager.CurrentState.Position);
 
@@ -262,14 +262,14 @@ namespace Pulsarc
             base.Update(gameTime);
         }
 
-        private void CheckDiscord()
+        private void CheckScreen()
         {
             if (ScreenManager.Screens.Peek() != lastScreen)
             {
                 PulsarcScreen currentScreen = (PulsarcScreen)ScreenManager.Screens.Peek();
                 lastScreen = currentScreen;
 
-                currentScreen.UpdateDiscord();
+                currentScreen.EnteredScreen();
             }
         }
 

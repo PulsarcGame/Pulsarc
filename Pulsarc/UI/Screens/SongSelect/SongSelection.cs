@@ -118,6 +118,18 @@ namespace Pulsarc.UI.Screens.SongSelect
             View?.Update(gameTime);
         }
 
+        /// <summary>
+        /// Refocus the current card in SongSelectionView to refresh leaderboards.
+        /// </summary>
+        public override void EnteredScreen()
+        {
+            UpdateDiscord();
+
+            // Since this UpdateDiscord() is called every time
+            // We re-enter the song select screen, reload leaderboards just in case.
+            GetSongSelectionView().RefocusCurrentCard();
+        }
+
         public override void UpdateDiscord()
         {
             PulsarcDiscord.SetStatus("", "Browsing Maps");
