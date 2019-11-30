@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Leaderboard card positioning
 - Close button or ALT+F4 not closing the game.
+- Certain Intralism Map backgrounds crashing the game during conversion.
 
 ## Changed
 - How static variables work in Pulsarc.cs, fixes some issues with the game.

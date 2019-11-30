@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.Skinning;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
@@ -177,7 +178,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                         }
                         catch
                         {
-                            Logger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);)
+                            Logger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
                         }
                     else
                         map.Background = "";
