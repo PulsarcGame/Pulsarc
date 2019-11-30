@@ -4,7 +4,7 @@ namespace Pulsarc.UI
 {
     public class VersionCounter : TextDisplayElement
     {
-        private const string VERSION_NAME = "v1.1.2-alpha";
+        private const string VERSION_NAME = "v1.2.0-alpha";
 
         
         // Temporary until we fix font shit.

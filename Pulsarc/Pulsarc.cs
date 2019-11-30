@@ -102,8 +102,8 @@ namespace Pulsarc
             // Force the game to update at fixed time intervals
             IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
 
+            // Set the time interval to match the FPSLimit
             if (IsFixedTimeStep)
-                // Set the time interval to match the FPSLimit
                 TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
 
             Content.RootDirectory = "Content";
