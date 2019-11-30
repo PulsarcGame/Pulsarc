@@ -175,6 +175,9 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="card">The card we're focusing on.</param>
         private void UpdateScoreCard(in BeatmapCard card)
         {
+            if (card == null)
+                return;
+
             scores.Clear();
 
             // Make a ScoreCard for each score.
