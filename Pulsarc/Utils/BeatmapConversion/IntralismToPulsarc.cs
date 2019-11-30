@@ -171,7 +171,14 @@ namespace Pulsarc.Utils.BeatmapConversion
                     string backgroundPath = $"{folder_path}/{map.Background}";
 
                     if (File.Exists(backgroundPath))
-                        File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        try
+                        {
+                            File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        }
+                        catch
+                        {
+                            Logger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);)
+                        }
                     else
                         map.Background = "";
 
