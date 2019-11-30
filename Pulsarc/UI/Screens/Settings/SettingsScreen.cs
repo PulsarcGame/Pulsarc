@@ -22,8 +22,6 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             handleMouseInput();
 
             View?.Update(gameTime);

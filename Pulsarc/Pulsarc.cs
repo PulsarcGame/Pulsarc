@@ -219,6 +219,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            Thread.Yield();
             PulsarcTime.Update();
 
             cursor.SetPos(MouseManager.CurrentState.Position);

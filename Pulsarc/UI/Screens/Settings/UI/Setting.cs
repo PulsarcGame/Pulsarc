@@ -85,7 +85,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     Config.SetDouble(category, key,(double) GetSaveValue());
                     break;
                 case "bool":
-                    Config.SetBool(category, key,(bool) GetSaveValue());
+                    Config.SetBool(category, key, (bool)GetSaveValue());
+                    break;
+                case "string":
+                    Config.SetString(category, key, (string)GetSaveValue());
                     break;
                 default:
                     Console.WriteLine("Cannot save type " + Type.ToString() + " in category "+category+" for setting "+key);

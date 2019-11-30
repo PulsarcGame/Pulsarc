@@ -323,8 +323,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="gameTime">The current GameTime</param>
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             // If not active, don't update.
             if (!Active)
                 return;
