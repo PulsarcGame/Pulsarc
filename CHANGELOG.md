@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Leaderboard update after completing a map.
+- Version counter to the main menu
+
+### Fixed
+- Leaderboard card positioning
+
 ## [1.1.1-alpha] - 2019-11-29
 
 ### Fixed

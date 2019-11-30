@@ -22,6 +22,8 @@ namespace Pulsarc.UI.Screens.MainMenu
         // The buttons used to navigate from the main menu.
         private List<NavigationButton> navButtons;
 
+        private VersionCounter version;
+
         /// <summary>
         /// The Main Menu of Pulsarc
         /// </summary>
@@ -36,13 +38,17 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background = new Background("menu_background");
 
-            gameIcon = new GameIcon(Skin.GetConfigStartPosition("main_menu", "Properties", "IconStartPos"), GetSkinnablePropertyAnchor("IconAnchor"));
+            gameIcon = new GameIcon(
+                Skin.GetConfigStartPosition("main_menu", "Properties", "IconStartPos"),
+                GetSkinnablePropertyAnchor("IconAnchor"));
 
             Vector2 offset = new Vector2(
                 GetSkinnablePropertyInt("IconX"),
                 GetSkinnablePropertyInt("IconY"));
 
             gameIcon.Move(offset);
+
+            version = new VersionCounter(AnchorUtil.FindScreenPosition(Anchor.BottomRight));
         }
 
         private void SetUpNavigationButtons()
@@ -147,6 +153,8 @@ namespace Pulsarc.UI.Screens.MainMenu
                 button.Draw();
 
             gameIcon.Draw();
+
+            version.Draw();
         }
 
         public override void Destroy() { }
