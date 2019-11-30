@@ -15,15 +15,11 @@ namespace Pulsarc.UI.Screens.Settings
         {
             base.Init();
 
-            DiscordDetails = "In the menus";
-
             View = new SettingsScreenView(this);
         }
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             handleMouseInput();
 
             View?.Update(gameTime);
@@ -50,5 +46,7 @@ namespace Pulsarc.UI.Screens.Settings
 
             changeFocus(ms);
         }
+
+        public override void UpdateDiscord() { }
     }
 }

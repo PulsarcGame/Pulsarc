@@ -40,6 +40,7 @@ namespace Pulsarc.Utils
 
             while (running)
             {
+                Thread.Yield();
                 if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                 {
                     threadLimiterWatch.Restart();

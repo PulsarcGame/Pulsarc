@@ -31,8 +31,11 @@ namespace Pulsarc.Utils
 
         public static Texture2D Load(string path)
         {
-            if (StoredTexture.ContainsKey(path) && StoredTexture[path].Value + textureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
-                return StoredTexture[path].Key;
+            if (StoredTexture.ContainsKey(path))
+                if (StoredTexture[path].Value + textureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
+                    return StoredTexture[path].Key;
+                else
+                    StoredTexture.Remove(path);
 
             Texture2D newTexture = null;
 

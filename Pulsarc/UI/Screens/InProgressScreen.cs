@@ -13,9 +13,12 @@ namespace Pulsarc.UI.Screens
         {
             View = new InProgressScreenView(this);
         }
+
         public override void Init()
         {
             ScreenManager.RemoveScreen();
         }
+
+        public override void UpdateDiscord() { }
     }
 }

@@ -20,5 +20,7 @@ namespace Pulsarc.UI.Screens.Quit
             Pulsarc.Exit();
             Environment.Exit(0);
         }
+
+        public override void UpdateDiscord() { }
     }
 }
