@@ -73,24 +73,19 @@ namespace Pulsarc
             // Load user config
             Config.Initialize();
 
-            bool widthIsZero = false;
             // Set default resolution if not set, and fullscreen when at least one isn't set.
             if (Config.GetInt("Graphics", "ResolutionWidth") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
-                Config.SetInt("Graphics", "FullScreen", 1);
-
-                widthIsZero = true;
+                Config.SetInt("Graphics", "FullScreen", 2);
             }
 
             bool heightIsZero = false;
             if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
-                Config.SetInt("Graphics", "FullScreen", 1);
-
-                heightIsZero = true;
-            }
+                Config.SetInt("Graphics", "FullScreen", 2);
+            }   
 
             // Create the game's application window
             Graphics = new GraphicsDeviceManager(this);
@@ -100,7 +95,7 @@ namespace Pulsarc
             Graphics.PreferredBackBufferHeight = Config.GetInt("Graphics", "ResolutionHeight");
 
             Graphics.IsFullScreen = Config.GetInt("Graphics", "FullScreen") >= 1;
-            Window.IsBorderless = (widthIsZero && heightIsZero) || Config.GetInt("Graphics", "FullScreen") >= 2;
+            Window.IsBorderless = Config.GetInt("Graphics", "FullScreen") >= 2;
 
             Graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
 

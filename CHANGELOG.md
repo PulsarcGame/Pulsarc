@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Leaderboard update after completing a map.
+- Leaderboards update after completing a map.
 - Version counter to the main menu
+- Borderless Fullscreen option. Makes alt-tabbing from Fullscreen smoother. When `FullScreen = 2` in config.ini or the Resolution is set to 0, this is enabled.
 
 ### Fixed
 - Leaderboard card positioning
+- Close button or ALT+F4 not closing the game.
+
+## Changed
+- How static variables work in Pulsarc.cs, fixes some issues with the game.
 
 ## [1.1.1-alpha] - 2019-11-29
 
