@@ -135,8 +135,8 @@ namespace Pulsarc.Utils
             float x;
             float y;
 
-            int xBaseRes = Pulsarc.BaseWidth;
-            int yBaseRes = Pulsarc.BaseHeight;
+            int xBaseRes = Pulsarc.BASE_WIDTH;
+            int yBaseRes = Pulsarc.BASE_HEIGHT;
 
             switch (anchor)
             {

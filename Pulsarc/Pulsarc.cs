@@ -18,86 +18,39 @@ using Wobble.Screens;
 
 namespace Pulsarc
 {
-    public static class Pulsarc
+    /// <summary>
+    /// Main game object
+    /// </summary>
+    public class Pulsarc : Game
     {
-        private static PulsarcGame pulsarc = new PulsarcGame();
+        private static Pulsarc pulsarc;
+        public static SpriteBatch SpriteBatch { get; private set; }
+        public static GraphicsDeviceManager Graphics { get; private set; }
 
-        public static void Run()
-        {
-            pulsarc.Run();
-        }
-
-        public static void Exit()
-        {
-            pulsarc.Exit();
-        }
+        // Whether or not the Cursor is shown.
+        public static bool DisplayCursor { get; set; } = true;
+        private Cursor cursor;
 
         // Base Dimensions
-        public const int BaseWidth = 1920;
-        public const int BaseHeight = 1080;
-        public const float BaseAspectRatio = 16f / 9f;
+        public const int BASE_WIDTH = 1920;
+        public const int BASE_HEIGHT = 1080;
+        public const float BASE_ASPECT_RATIO = 16f / 9f;
 
         // Current Dimensions
         public static int CurrentWidth => Config.GetInt("Graphics", "ResolutionWidth");
         public static int CurrentHeight => Config.GetInt("Graphics", "ResolutionHeight");
         public static float CurrentAspectRatio => (float)CurrentWidth / CurrentHeight;
-        public static Rectangle ScreenSpace { get; private set; } = new Rectangle(0, 0, CurrentWidth, CurrentHeight);
+        public static Rectangle ScreenSpace => new Rectangle(0, 0, CurrentWidth, CurrentHeight);
 
         // Scales for moving/resizing Drawables accurately on different dimensions.
-        public static float HeightScale => (float)CurrentHeight / BaseHeight;
-        public static float WidthScale => (float)CurrentWidth / BaseWidth;
-
-        // Whether or not the Cursor is shown.
-        public static bool DisplayCursor { get; set; } = true;
-
-        // The SongScreen needs to be loaded to play music.
-        public static SongSelection SongScreen => pulsarc.songScreen;
-        
-        // Graphics
-        public static SpriteBatch SpriteBatch => pulsarc.spriteBatch;
-        public static GraphicsDeviceManager Graphics => pulsarc.graphics;
-
-        /// <summary>
-        /// Used for getting the game's base screen dimensions currently (1920x1080)
-        /// in a Vector2 Object
-        /// </summary>
-        static public Vector2 GetBaseScreenDimensions()
-        {
-            return new Vector2(BaseWidth, BaseHeight);
-        }
-
-        /// <summary>
-        /// Sees if the current aspect ratio is wider than 16:9.
-        /// </summary>
-        /// <returns></returns>
-        static public bool IsPulsarcWiderThan16by9()
-        {
-            return CurrentAspectRatio > BaseAspectRatio;
-        }
-
-        /// <summary>
-        /// Used for getting the game's current dimensions in a Vector2 object
-        /// </summary>
-        static public Vector2 GetDimensions()
-        {
-            return new Vector2(CurrentWidth, CurrentHeight);
-        }
-    }
-
-    /// <summary>
-    /// Main game object
-    /// </summary>
-    internal class PulsarcGame : Game
-    {
-        internal SpriteBatch spriteBatch;
-        internal GraphicsDeviceManager graphics;
-        private Cursor cursor;
+        public static float HeightScale => (float)CurrentHeight / BASE_HEIGHT;
+        public static float WidthScale => (float)CurrentWidth / BASE_WIDTH;
 
         // The camera controlling the game's viewport
         private Camera gameCamera;
 
         // Static song selection screen for playing and managing user audio everywhere
-        internal SongSelection songScreen;
+        public static SongSelection SongScreen;
 
         // Whether or not the cursor should be displayed
         private bool displayCursor => Pulsarc.DisplayCursor;
@@ -110,35 +63,46 @@ namespace Pulsarc
 
         private PulsarcScreen lastScreen = null;
 
-        public PulsarcGame()
+        public Pulsarc()
         {
+            pulsarc = this;
+
             // Set up stored Data access
             DataManager.Initialize();
 
             // Load user config
             Config.Initialize();
 
+            bool widthIsZero = false;
             // Set default resolution if not set, and fullscreen when at least one isn't set.
             if (Config.GetInt("Graphics", "ResolutionWidth") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
                 Config.SetInt("Graphics", "FullScreen", 1);
+
+                widthIsZero = true;
             }
 
+            bool heightIsZero = false;
             if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
                 Config.SetInt("Graphics", "FullScreen", 1);
+
+                heightIsZero = true;
             }
 
             // Create the game's application window
-            graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
 
             // Set Graphics preferences according to config.ini
-            graphics.PreferredBackBufferWidth = Config.GetInt("Graphics", "ResolutionWidth");
-            graphics.PreferredBackBufferHeight = Config.GetInt("Graphics", "ResolutionHeight");
-            graphics.IsFullScreen = Config.GetInt("Graphics", "FullScreen") == 1;
-            graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
+            Graphics.PreferredBackBufferWidth = Config.GetInt("Graphics", "ResolutionWidth");
+            Graphics.PreferredBackBufferHeight = Config.GetInt("Graphics", "ResolutionHeight");
+
+            Graphics.IsFullScreen = Config.GetInt("Graphics", "FullScreen") >= 1;
+            Window.IsBorderless = (widthIsZero && heightIsZero) || Config.GetInt("Graphics", "FullScreen") >= 2;
+
+            Graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
 
             // Force the game to update at fixed time intervals
             IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
@@ -179,12 +143,12 @@ namespace Pulsarc
             fpsDisplay = new FPS(Vector2.Zero);
 
             // Initialize the game camera
-            gameCamera = new Camera(graphics.GraphicsDevice.Viewport, (int)Pulsarc.GetDimensions().X, (int)Pulsarc.GetDimensions().Y, 1);
-            gameCamera.Pos = new Vector2(Pulsarc.GetDimensions().X / 2, Pulsarc.GetDimensions().Y / 2);
+            gameCamera = new Camera(Graphics.GraphicsDevice.Viewport, (int)GetDimensions().X, (int)GetDimensions().Y, 1);
+            gameCamera.Pos = new Vector2(GetDimensions().X / 2, GetDimensions().Y / 2);
 
             // Start the song selection in the background to have music when entering the game
-            songScreen = new SongSelection();
-            songScreen.Init();
+            SongScreen = new SongSelection();
+            SongScreen.Init();
 
             // Create and display the default game screen
             // (Currently Main menu. In the future can implement an intro)
@@ -200,7 +164,7 @@ namespace Pulsarc
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Initialize and load all game compiled content
             AssetsManager.Initialize(Content);
@@ -280,7 +244,7 @@ namespace Pulsarc
         protected override void Draw(GameTime gameTime)
         {
             // Begin the spritebatch in relation to the camera
-            spriteBatch.Begin(SpriteSortMode.Deferred,
+            SpriteBatch.Begin(SpriteSortMode.Deferred,
                     null, null, null, null, null,
                     gameCamera.GetTransformation());
 
@@ -298,7 +262,38 @@ namespace Pulsarc
             if (displayCursor)
                 cursor.Draw();
 
-            spriteBatch.End();
+            SpriteBatch.End();
+        }
+
+        /// <summary>
+        /// Used for getting the game's base screen dimensions currently (1920x1080)
+        /// in a Vector2 Object
+        /// </summary>
+        static public Vector2 GetBaseScreenDimensions()
+        {
+            return new Vector2(BASE_WIDTH, BASE_HEIGHT);
+        }
+
+        /// <summary>
+        /// Sees if the current aspect ratio is wider than 16:9.
+        /// </summary>
+        /// <returns></returns>
+        static public bool IsPulsarcWiderThan16by9()
+        {
+            return CurrentAspectRatio > BASE_ASPECT_RATIO;
+        }
+
+        /// <summary>
+        /// Used for getting the game's current dimensions in a Vector2 object
+        /// </summary>
+        static public Vector2 GetDimensions()
+        {
+            return new Vector2(CurrentWidth, CurrentHeight);
+        }
+
+        static public void Quit()
+        {
+            pulsarc.Exit();
         }
     }
 }

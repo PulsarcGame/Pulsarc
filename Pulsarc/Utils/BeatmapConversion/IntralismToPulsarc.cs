@@ -137,7 +137,7 @@ namespace Pulsarc.Utils.BeatmapConversion
 
             float convertedZLocation = float.Parse(evt.Data[1]) * playerDistanceToZLocationFactor;
             
-            double convertedZoomLevel = Math.Round((Pulsarc.BaseWidth / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
+            double convertedZoomLevel = Math.Round((Pulsarc.BASE_WIDTH / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
 
             return new ZoomEvent($"{time},1,-1,{convertedZoomLevel},0");
         }

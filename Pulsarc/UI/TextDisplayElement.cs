@@ -36,7 +36,7 @@ namespace Pulsarc.UI
             Color = color ?? Color.White;
             Text = new StringBuilder(20);
 
-            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight);
+            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT);
 
             // Calling ReprocessPosition() too early causes a crash
             // base.ChangePosition() avoids this crash.
@@ -66,8 +66,8 @@ namespace Pulsarc.UI
             float newX = truePosition.X;
             float newY = truePosition.Y;
             Vector2 size = font.MeasureString(Text) * fontScale;
-            size.X *= Pulsarc.GetDimensions().X / Pulsarc.BaseWidth;
-            size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight;
+            size.X *= Pulsarc.GetDimensions().X / Pulsarc.BASE_WIDTH;
+            size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT;
 
             switch (Anchor)
             {
