@@ -1,4 +1,5 @@
-﻿using Pulsarc.Beatmaps;
+﻿using Microsoft.Xna.Framework;
+using Pulsarc.Beatmaps;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
@@ -33,6 +34,8 @@ namespace Pulsarc.UI.Screens.Result
 
         // Whether or not a full combo was achieved.
         public bool FullCombo { get; private set; }
+
+        private ScoreData scoreData;
 
         /// <summary>
         /// The screen that summarizes the last play.
@@ -71,17 +74,24 @@ namespace Pulsarc.UI.Screens.Result
             FullCombo = JudgesCount["miss"] == 0;
 
             // Determine the grade achieved.
-            ScoreData scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
+            scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
             scoreData.grade = Scoring.GetGrade(scoreData);
 
             // Save the score locally
             if (newScore)
                 DataManager.ScoreDB.AddScore(scoreData);
 
-            DiscordDetails = $"Finished {beatmap.Title}";
-            DiscordState = $"Grade: {scoreData.grade} | Score: {scoreData.score} | Acc = {Math.Round(accuracyTotal * 100, 2)}%";
-
             View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
+        }
+
+        public override void UpdateDiscord()
+        {
+            string details = $"Finished {Beatmap.Title}";
+            string state = $"Grade: {scoreData.grade} | Score: {scoreData.score} | Acc = {Math.Round(scoreData.accuracy * 100, 2)}%";
+
+            Console.WriteLine(details + "\n" + state);
+
+            PulsarcDiscord.SetStatus(details, state);
         }
     }
 }

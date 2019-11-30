@@ -15,8 +15,6 @@ namespace Pulsarc.UI.Screens.Settings
         {
             base.Init();
 
-            DiscordDetails = "In the menus";
-
             View = new SettingsScreenView(this);
         }
 
@@ -48,5 +46,7 @@ namespace Pulsarc.UI.Screens.Settings
 
             changeFocus(ms);
         }
+
+        public override void UpdateDiscord() { }
     }
 }

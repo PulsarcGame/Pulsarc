@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Input;
@@ -33,8 +34,6 @@ namespace Pulsarc.UI.Screens.SongSelect
         public override void Init()
         {
             base.Init();
-
-            DiscordDetails = "Browsing Maps";
 
             RefreshBeatmaps();
         }
@@ -117,6 +116,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             HandleMouseInput();
             
             View?.Update(gameTime);
+        }
+
+        public override void UpdateDiscord()
+        {
+            PulsarcDiscord.SetStatus("", "Browsing Maps");
         }
 
         private void HandleKeyboardPresses()

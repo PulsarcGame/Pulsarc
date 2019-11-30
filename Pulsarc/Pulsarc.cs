@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI;
+using Pulsarc.UI.Screens;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.MainMenu;
 using Pulsarc.UI.Screens.SongSelect;
@@ -106,6 +107,8 @@ namespace Pulsarc
 
         // Map Converting Flag
         private bool converting = false;
+
+        private PulsarcScreen lastScreen = null;
 
         public PulsarcGame()
         {
@@ -220,7 +223,10 @@ namespace Pulsarc
         protected override void Update(GameTime gameTime)
         {
             Thread.Yield();
+
             PulsarcTime.Update();
+
+            CheckDiscord();
 
             cursor.SetPos(MouseManager.CurrentState.Position);
 
@@ -254,6 +260,17 @@ namespace Pulsarc
             ScreenManager.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        private void CheckDiscord()
+        {
+            if (ScreenManager.Screens.Peek() != lastScreen)
+            {
+                PulsarcScreen currentScreen = (PulsarcScreen)ScreenManager.Screens.Peek();
+                lastScreen = currentScreen;
+
+                currentScreen.UpdateDiscord();
+            }
         }
 
         /// <summary>
