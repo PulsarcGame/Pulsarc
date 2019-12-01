@@ -178,7 +178,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                         }
                         catch
                         {
-                            Logger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
+                            PulsarcLogger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
                         }
                     else
                         map.Background = "";

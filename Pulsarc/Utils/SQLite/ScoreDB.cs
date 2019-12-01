@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.SQLite
 {
@@ -36,7 +37,7 @@ namespace Pulsarc.Utils.SQLite
                 scores.Add(new ScoreData(r));
 
             foreach (ScoreData score in scores)
-                Console.WriteLine(score.ToString());
+                PulsarcLogger.Debug(score.ToString(), LogType.Runtime);
 
             return scores;
         }

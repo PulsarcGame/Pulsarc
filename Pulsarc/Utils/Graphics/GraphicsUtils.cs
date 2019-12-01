@@ -4,6 +4,7 @@ using Pulsarc.Skinning;
 using System;
 using System.IO;
 using System.Linq;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.Graphics
 {
@@ -33,7 +34,7 @@ namespace Pulsarc.Utils.Graphics
             }
             catch
             {
-                Console.WriteLine($"Failed to load {path}");
+                PulsarcLogger.Error($"Failed to load {path}", LogType.Runtime);
                 texture = Skin.DefaultTexture;
             }
 

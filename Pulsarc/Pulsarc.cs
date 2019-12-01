@@ -120,7 +120,8 @@ namespace Pulsarc
             NativeAssemblies.Copy();
 
             // Initialize the logging tool for troubleshooting
-            Logger.Initialize();
+            PulsarcLogger.Logging = Config.GetBool("Logger", "AllMessages");
+            PulsarcLogger.Initialize();
 
             // Initialize Discord Rich Presence
             PulsarcDiscord.Initialize();

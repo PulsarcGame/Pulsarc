@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using System;
 using Wobble.Logging;
@@ -218,7 +219,7 @@ namespace Pulsarc.UI
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Logger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
+                PulsarcLogger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
 
                 currentSize = oldSize;
                 return;
@@ -251,7 +252,7 @@ namespace Pulsarc.UI
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                Logger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
+                PulsarcLogger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
 
                 currentSize = oldSize;
                 return;

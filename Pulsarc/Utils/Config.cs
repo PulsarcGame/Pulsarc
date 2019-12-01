@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -109,14 +110,14 @@ namespace Pulsarc.Utils
 
         public static void SetValue(string category, string key, object value)
         {
-            Console.WriteLine($"Set {category} {key} to {value.ToString()}");
+            PulsarcLogger.Important($"Set {category} {key} to {value.ToString()}", LogType.Runtime);
             Get[category][key] = value.ToString();
         }
 
         public static void SaveConfig()
         {
             Parser.WriteFile("config.ini", Get);
-            Console.WriteLine("Saved config");
+            PulsarcLogger.Important("Saved config", LogType.Runtime);
         }
     }
 }

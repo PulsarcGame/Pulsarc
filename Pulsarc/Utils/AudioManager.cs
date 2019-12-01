@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Wobble.Audio.Tracks;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -40,7 +41,7 @@ namespace Pulsarc.Utils
                     }
                     catch
                     {
-                        Console.WriteLine("BASS failed to initialize, retrying...");
+                        PulsarcLogger.Warning("BASS failed to initialize, retrying...", LogType.Runtime);
                     }
                 }
 
@@ -92,7 +93,7 @@ namespace Pulsarc.Utils
                 }
                 catch
                 {
-                    Console.WriteLine("BASS failed to initialize, retrying...");
+                    PulsarcLogger.Warning("BASS failed to initialize, retrying...", LogType.Runtime);
                 }
             }
 
@@ -252,7 +253,7 @@ namespace Pulsarc.Utils
                 if (time != 0)
                     DeltaTime((long)time);
 
-                Console.WriteLine($"Now Playing: {songPath} at {audioRate} rate");
+                PulsarcLogger.Important($"Now Playing: {songPath} at {audioRate} rate", LogType.Runtime);
             }
         }
 

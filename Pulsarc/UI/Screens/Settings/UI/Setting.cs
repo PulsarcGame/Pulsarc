@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
 using System;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -41,7 +42,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             Value = baseValue;
             Type = type;
-            Console.WriteLine($"{type} set for {title}");
+            PulsarcLogger.Important($"{type} set for {title}", LogType.Runtime);
             Text = title;
             Title = new TextDisplayElement(title, new Vector2(position.X - 50, position.Y), anchor: Anchor.CenterRight);
         }
@@ -91,7 +92,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     Config.SetString(category, key, (string)GetSaveValue());
                     break;
                 default:
-                    Console.WriteLine("Cannot save type " + Type.ToString() + " in category "+category+" for setting "+key);
+                    PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);
                     break;
             }
         }

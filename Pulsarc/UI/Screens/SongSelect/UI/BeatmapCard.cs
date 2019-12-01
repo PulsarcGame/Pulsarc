@@ -195,7 +195,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                     if (Beatmap.PreviewTime != 0)
                         AudioManager.DeltaTime(Beatmap.PreviewTime);
 
-                    Console.WriteLine("Now Playing: " + AudioManager.songPath);
+                    PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}", LogType.Runtime);
                 }
             }
         }

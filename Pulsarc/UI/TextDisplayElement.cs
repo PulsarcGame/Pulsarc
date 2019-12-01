@@ -136,7 +136,7 @@ namespace Pulsarc.UI
             }
             catch
             {
-                Logger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
+                PulsarcLogger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
                 caught = true; // Don't need to spam the console with Errors
             }
         }

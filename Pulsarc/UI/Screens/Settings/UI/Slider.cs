@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 using System;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -84,7 +86,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public void SetSelectorPercent(float percent)
         {
-            Console.WriteLine(percent);
+            PulsarcLogger.Debug(percent.ToString(), LogType.Runtime);
             SetSelector((int) (MinValue + (MaxValue - MinValue) * percent));
         }
 

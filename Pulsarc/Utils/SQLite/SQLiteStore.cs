@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Data.SQLite;
 using System.Reflection;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.SQLite
 {
@@ -43,16 +44,14 @@ namespace Pulsarc.Utils.SQLite
 
         public void Exec(string sql)
         {
-            if (Logging)
-                Console.WriteLine(sql);
+            PulsarcLogger.Debug(sql, LogType.Runtime);
 
             new SQLiteCommand(sql, db).ExecuteNonQuery();
         }
 
         public SQLiteDataReader Query(string sql)
         {
-            if (Logging)
-                Console.WriteLine(sql);
+            PulsarcLogger.Debug(sql, LogType.Runtime);
 
             return new SQLiteCommand(sql, db).ExecuteReader();
         }
