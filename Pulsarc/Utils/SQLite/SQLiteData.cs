@@ -28,11 +28,11 @@ namespace Pulsarc.Utils.SQLite
                 {
                     try
                     {
-                        PulsarcLogger.Warning($"Data field in SQLite request could not be set as a {info[i].FieldType.Name} : {data[info[i].Name.ToLower()]}", LogType.Runtime);
+                        PulsarcLogger.Warning($"Data field in SQLite request could not be set as a {prop.FieldType.Name} : {data[prop.Name.ToLower()]}", LogType.Runtime);
                     }
                     catch
                     {
-                        PulsarcLogger.Warning($"Unexpected data field in SQLite request : {info[i].Name}", LogType.Runtime);
+                        PulsarcLogger.Warning($"Unexpected data field in SQLite request : {prop.Name}", LogType.Runtime);
                     }
                 }
             }
