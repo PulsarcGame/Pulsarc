@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboards update after completing a map.
 - Version counter to the main menu
 - Borderless Fullscreen option. Makes alt-tabbing from Fullscreen smoother. When `FullScreen = 2` in config.ini or the Resolution is set to 0, this is enabled.
+- `AllMessages' to config.ini. Setting this to false makes it so only Error and Warning messages go through.
 
 ### Fixed
 - Leaderboard card positioning
