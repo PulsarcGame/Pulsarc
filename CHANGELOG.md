@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.0-alpha] - 219-12-04
+## [1.2.0-alpha] - 2019-12-04
 
 ### Added
 - Leaderboards update after completing a map.
