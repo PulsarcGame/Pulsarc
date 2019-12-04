@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0-alpha] - 219-12-04
+
 ### Added
 - Leaderboards update after completing a map.
 - Version counter to the main menu
@@ -63,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.1-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.2.0-alpha...HEAD
+[1.2.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.1-alpha...v1.2.0-alpha
 [1.1.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.0-alpha...v1.1.1-alpha
 [1.1.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.0.1-alpha...v1.1.0-alpha
 [1.0.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.0.0-pre-release...v1.0.1-alpha
