@@ -71,8 +71,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Crosshair Crosshair { get; private set; }
 
         // User-defined base speed
-        // "5f" is used to give more choice in config for speed;
-        public double UserSpeed => Config.GetInt("Gameplay", "ApproachSpeed") / 5f / Rate;
+        // "5d" is used to give more choice in config for speed;
+        public double UserSpeed => Config.GetDouble("Gameplay", "ApproachSpeed") / 5d / Rate;
 
         // Current speed modifier defined by the Beatmap
         public double CurrentSpeedMultiplier { get; set; }
