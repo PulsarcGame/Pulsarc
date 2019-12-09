@@ -9,16 +9,24 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         // The current diameter of this Crosshair.
         public float Diameter { get; private set; }
+        private float BaseDiameter { get; set; } = -1;
+
+        private bool hidden;
+        private float HiddenAdjustment => hidden ? (BaseDiameter + BaseAdjustment) / BaseDiameter : 1;
 
         // The current radius of this Crosshair.
         public float Radius => Diameter / 2;
+
+        public static float BaseAdjustment => Config.GetFloat("Gameplay", "HiddenCrosshairOffset");
 
         /// <summary>
         /// The crosshair, or "Judgement Circle" of Pulsarc.
         /// </summary>
         /// <param name="baseCrosshairDiameter">The base diameter for this Crosshair. Default is 300 (the diameter of Intralism's crosshair)</param>
-        public Crosshair(float baseCrosshairDiameter = 300) : base(Skin.Assets["crosshair"])
+        public Crosshair(float baseCrosshairDiameter = 300, bool hidden = false) : base(Skin.Assets["crosshair"])
         {
+            this.hidden = hidden;
+
             // Find the origin (center) of this Crosshair
             int width = Pulsarc.CurrentWidth;
             int height = Pulsarc.CurrentHeight;
@@ -28,6 +36,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Set the diameter and resize
             Resize(baseCrosshairDiameter * Pulsarc.HeightScale);
+
             ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
 
             // Set the rotation of the object.
@@ -50,7 +59,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public override void Resize(float size)
         {
             Diameter = size;
-            base.Resize(Diameter);
+
+            if (BaseDiameter == -1)
+                BaseDiameter = Diameter;
+
+            base.Resize(Diameter * HiddenAdjustment);
         }
     }
 }

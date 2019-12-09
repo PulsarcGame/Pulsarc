@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Hidden-mode Crosshair Offset, allows users to manually change the base size of the crosshair for Hidden.
+
+### Fixed
+- Decimal numbers being used for ApproachRate crashing the game.
+
 ## [1.2.0-alpha] - 2019-12-04
 
 ### Added

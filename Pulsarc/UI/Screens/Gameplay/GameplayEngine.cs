@@ -181,7 +181,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             KeyCount = 4;
 
-            Crosshair = new Crosshair();
+            // TODO: Allow maps to start at different crosshair radii
+            Crosshair = new Crosshair(300, Hidden);
         }
 
         /// <summary>
