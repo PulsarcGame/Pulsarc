@@ -10,6 +10,7 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using Wobble.Input;
 using Wobble.Logging;
@@ -210,7 +211,22 @@ namespace Pulsarc
                         break;
                 }
 
-                converter.Save(toConvert);
+                // gets all child folder names 
+                var directories = Directory.GetDirectories(toConvert);
+                // tests if subdirectories is less than 2 "this is for if converting only 1 map at a time"
+                if (directories.Length > 2)
+                {
+                    // loads all maps
+                    foreach (var directory in directories)
+                    {
+                        converter.Save(directory);
+                    }
+                }
+                else
+                {
+                    // loads only 1 map
+                    converter.Save(toConvert);
+                }
                 ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
             }
             else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
