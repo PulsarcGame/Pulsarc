@@ -191,46 +191,7 @@ namespace Pulsarc
 
             cursor.SetPos(MouseManager.CurrentState.Position);
 
-            // Temporary measure for converting intralism or osu!mania beatmaps
-            if (!converting && !GameplayEngine.Active && Keyboard.GetState().IsKeyDown(Config.Bindings["Convert"]) && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
-            {
-                converting = true;
-                IBeatmapConverter converter;
-
-                Config.Reload();
-                string convertFrom = Config.Get["Converting"]["Game"];
-                string toConvert = Config.Get["Converting"]["Path"];
-
-                switch (convertFrom.ToLower())
-                {
-                    case "mania":
-                        converter = new ManiaToPulsarc();
-                        break;
-                    default:
-                        converter = new IntralismToPulsarc();
-                        break;
-                }
-
-                // gets all child folder names 
-                var directories = Directory.GetDirectories(toConvert);
-                // tests if subdirectories is less than 2 "this is for if converting only 1 map at a time"
-                if (directories.Length > 2)
-                {
-                    // loads all maps
-                    foreach (var directory in directories)
-                    {
-                        converter.Save(directory);
-                    }
-                }
-                else
-                {
-                    // loads only 1 map
-                    converter.Save(toConvert);
-                }
-                ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
-            }
-            else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
-                converting = false;
+            ConvertMaps();
 
             // Let ScreenManager handle the updating of the current active screen
             ScreenManager.Update(gameTime);
@@ -247,6 +208,55 @@ namespace Pulsarc
 
                 currentScreen.EnteredScreen();
             }
+        }
+
+        private async void ConvertMaps()
+        {
+            // Temporary measure for converting intralism or osu!mania beatmaps
+            // TODO Make a Converter UI
+            if (!converting && !GameplayEngine.Active
+                && Keyboard.GetState().IsKeyDown(Config.Bindings["Convert"])
+                && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
+            {
+                converting = true;
+                IBeatmapConverter converter;
+
+                Config.Reload();
+                string convertFrom = Config.Get["Converting"]["Game"];
+                string toConvert = Config.Get["Converting"]["Path"];
+
+                // What extension to check for
+                string extension;
+
+                switch (convertFrom.ToLower())
+                {
+                    case "mania":
+                        converter = new ManiaToPulsarc();
+                        extension = "*.osu";
+                        break;
+                    default:
+                        converter = new IntralismToPulsarc();
+                        extension = "config.txt";
+                        break;
+                }
+
+                // Get all subfolder names 
+                string[] directories = Directory.GetDirectories(toConvert);
+
+                // If there is no maps in this folder, and the number of sub-folders is 2 or more,
+                // do a Batch Convert
+                if (Directory.GetFiles(toConvert, extension).Length == 0 && directories.Length >= 2)
+                    foreach (string directory in directories)
+                        converter.Save(directory);
+
+                // Otherwise convert one map
+                else
+                    converter.Save(toConvert);
+
+                ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
+            }
+            else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
+                converting = false;
         }
 
         /// <summary>
