@@ -94,7 +94,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             int diffBarXOffset = GetSkinnableInt("DiffBarX");
             int diffBarYOffset = GetSkinnableInt("DiffBarY");
-            diffBar.ScaledMove(diffBarXOffset, diffBarYOffset);
+            diffBar.Move(diffBarXOffset, diffBarYOffset);
             diffBarOffset = diffBar.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this);
             diffBarStartAnchor = startAnchor;
         }

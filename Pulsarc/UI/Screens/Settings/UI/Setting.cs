@@ -61,10 +61,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Title.Draw();
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            Title.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            Title.Move(delta, heightScaled);
         }
 
         /// <summary>

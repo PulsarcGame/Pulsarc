@@ -42,13 +42,13 @@ namespace Pulsarc.UI.Screens.Settings.UI
             drawnPart.Height += setting.drawnPart.Height;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            Icon.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            Icon.Move(delta, heightScaled);
 
             foreach (KeyValuePair<string, Setting> settp in Settings)
-                settp.Value.Move(position);
+                settp.Value.Move(delta, heightScaled);
         }
 
         /// <summary>

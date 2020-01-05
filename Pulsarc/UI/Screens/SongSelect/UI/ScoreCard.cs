@@ -62,7 +62,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             int gradeXOffset = GetSkinnableInt("GradeX");
             int gradeYOffset = GetSkinnableInt("GradeY");
-            grade.ScaledMove(gradeXOffset, gradeYOffset);
+            grade.Move(gradeXOffset, gradeYOffset);
         }
 
         private void SetData(int rankPosition)
@@ -92,16 +92,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             Section = "ScoreCardData";
         }
 
-        public override void Move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(delta, scaledPositioning);
-            grade.Move(delta, scaledPositioning);
-        }
-
-        public override void ScaledMove(Vector2 delta)
-        {
-            base.ScaledMove(delta);
-            grade.ScaledMove(delta);
+            base.Move(delta, heightScaled);
+            grade.Move(delta, heightScaled);
         }
 
         public override void Draw()

@@ -14,10 +14,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             fill.drawnPart = new Rectangle(0,0,(int) (fill.Texture.Width * percent), Texture.Height);
         }
 
-        public override void Move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(delta, scaledPositioning);
-            fill.Move(delta, scaledPositioning);
+            base.Move(delta, heightScaled);
+            fill.Move(delta, heightScaled);
         }
 
         public override void ChangePosition(Vector2 position, bool topLeftPositioning = false)

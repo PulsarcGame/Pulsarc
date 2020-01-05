@@ -29,7 +29,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             int offsetY = Skin.GetConfigInt(config, section, $"{name}Y");
 
             textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
-            textDisplay.ScaledMove(offsetX, offsetY);
+            textDisplay.Move(offsetX, offsetY);
             textDisplay.processedPosition = textDisplay.truePosition;
         }
 

@@ -42,9 +42,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 TextElements[i].Draw();
         }
 
-        public override void Move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(delta, scaledPositioning);
+            base.Move(delta, heightScaled);
             UpdateElements();
         }
 

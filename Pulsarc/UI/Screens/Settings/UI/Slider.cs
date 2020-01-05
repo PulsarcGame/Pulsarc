@@ -129,10 +129,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return Value / (float) DisplayDivider;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            Selector.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            Selector.Move(delta, heightScaled);
         }
 
         public override void Draw()

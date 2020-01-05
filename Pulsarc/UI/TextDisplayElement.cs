@@ -108,14 +108,9 @@ namespace Pulsarc.UI
             processedPosition.Y = newY;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            // I don't remember why this is here, but it's working so...
-            // I'll clean this up when I rewrite Move() - FRUP
-            float x = position.X / Pulsarc.WidthScale;
-            float y = position.Y * Pulsarc.HeightScale;
-
-            base.Move(new Vector2(x, y), scaledPositioning);
+            base.Move(delta, heightScaled);
             ReprocessPosition();
         }
 

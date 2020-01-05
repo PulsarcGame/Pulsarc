@@ -46,11 +46,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
             }
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            listening.Move(position, scaledPositioning);
-            key.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            listening.Move(delta, heightScaled);
+            key.Move(delta, heightScaled);
         }
 
         /// <summary>

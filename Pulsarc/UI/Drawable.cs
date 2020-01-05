@@ -174,6 +174,7 @@ namespace Pulsarc.UI
         /// </summary>
         public Drawable() { }
 
+        #region Scale and Movement Methods
         /// <summary>
         /// Resize this Drawable to fit the dimensions provided.
         /// If Height scaled, it will Resize Height over Width.
@@ -284,7 +285,7 @@ namespace Pulsarc.UI
             {
                 while (!inRange)
                 {
-                    if (adjustedDegrees < 360)
+                    if (adjustedDegrees < -360)
                         adjustedDegrees += 360;
                     else
                         adjustedDegrees -= 360;
@@ -303,7 +304,7 @@ namespace Pulsarc.UI
         /// New positon = (position.X, position.Y)</param>
         /// <param name="topLeftPositioning">Whether this should consider the Anchor
         /// when positioning, or just the raw position provided. If true the
-        /// positioning acts as if the Anchor was TopLeft.</param>
+        /// positioning acts as if the Anchor was TopLeft ("raw" position).</param>
         public virtual void ChangePosition(Vector2 position, bool topLeftPositioning = false)
         {
             if (topLeftPositioning)
@@ -366,6 +367,94 @@ namespace Pulsarc.UI
         }
 
         /// <summary>
+        /// Move this Drawable from its current coordinate by the amount provided,
+        /// movement is scaled by the current game resolution for both axis.
+        /// </summary>
+        /// <param name="delta">A Vector2 representing the movement this Drawable
+        /// should take in the X and Y axises</param>
+        /// <param name="heightScaled">True if the movement is scaled by the game height,
+        /// false if the movement is scaled by the game width,
+        /// (default) null to use use this Drawable's HeightScaled member to decide.</param>
+        public virtual void Move(Vector2 delta, bool? heightScaled = null)
+        {
+            // If Hover exists, move it
+            Hover?.Move(delta, heightScaled);
+
+            // Find out what scale we're using, height or width
+            bool useHeightScale = heightScaled ?? HeightScaled;
+
+            // If height scaled, scale movement by height scale, otherwise by width scale
+            float scale = useHeightScale ? Pulsarc.HeightScale : Pulsarc.WidthScale;
+
+            truePosition.X += delta.X * scale;
+            truePosition.Y += delta.Y * scale;
+
+            FindAnchorPosition();
+        }
+
+        /// <summary>
+        /// Move this Drawable from its current coordinate by the amount provided,
+        /// movement is scaled by the current game resolution for both axis.
+        /// </summary>
+        /// <param name="xDelta">The amount of movement this Drawable should take in
+        /// the X axis</param>
+        /// <param name="yDelta">The amount of movement this Drawable should take in
+        /// the Y axis</param>
+        /// <param name="heightScaled">True if height scaled movement, false if width scaled,
+        /// null to use this Drawable's HeightScaled member.</param>
+        public virtual void Move(float xDelta, float yDelta, bool? heightScaled = null)
+        {
+            Move(new Vector2(xDelta, yDelta), heightScaled);
+        }
+
+        /// <summary>
+        /// Find the correct position for this Drawable based
+        /// on its anchor and adjust accordingly. Call after changing the Drawable's
+        /// position.
+        /// </summary>
+        protected virtual void FindAnchorPosition()
+        {
+            Vector2 position = truePosition;
+
+            switch (Anchor)
+            {
+                case Anchor.Center:
+                    position.X += currentSize.X / 2;
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.TopRight:
+                    position.X += currentSize.X;
+                    break;
+                case Anchor.CenterRight:
+                    position.X += currentSize.X;
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.BottomRight:
+                    position.X += currentSize.X;
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.BottomLeft:
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.CenterLeft:
+                    position.Y += currentSize.Y / 2;
+                    break;
+                case Anchor.CenterTop:
+                    position.X += currentSize.X / 2;
+                    break;
+                case Anchor.CenterBottom:
+                    position.X += currentSize.X / 2;
+                    position.Y += currentSize.Y;
+                    break;
+                case Anchor.TopLeft:
+                default:
+                    break;
+            }
+
+            anchorPosition = position;
+        }
+
+        /// <summary>
         /// Move this Drawable from its current coordinate by the amount provided. Movement
         /// is scaled in one axis.
         /// TODO: Change Move() to scale in both axis for consistency (i.e, act like ScaledMove()
@@ -374,10 +463,11 @@ namespace Pulsarc.UI
         /// <param name="position">How much this Drawable should move.</param>
         /// <param name="followScale">Whether or not this Drawable should move according
         /// to the current Height/Width scaling. Default is true.</param>
-        public virtual void Move(Vector2 position, bool followScale = true)
+        [Obsolete("This was the old move method for Drawables, it is now deprecated, use Move()")]
+        public virtual void OldMove(Vector2 position, bool followScale = true)
         {
             // If Hover exists, move it.
-            Hover?.Move(position, followScale);
+            Hover?.OldMove(position, followScale);
 
             if (!followScale)
             {
@@ -404,32 +494,14 @@ namespace Pulsarc.UI
         /// <param name="yDelta">How much this Drawable should move on the Y coordinate.</param>
         /// <param name="followScale">Whether or not this Drawable should move according
         /// to the current Height/Width scaling. Default is true.</param>
-        public void Move(float xDelta, float yDelta, bool followScale = true)
+        [Obsolete("This was the old move method for Drawables, it is now deprecated, use Move()")]
+        public virtual void OldMove(float xDelta, float yDelta, bool followScale = true)
         {
-            Move(new Vector2(xDelta, yDelta), followScale);
+            OldMove(new Vector2(xDelta, yDelta), followScale);
         }
+        #endregion
 
-        /// <summary>
-        /// Move this Drawab le from its current coordinate by the amount provided,
-        /// movement is scaled in both axis.
-        /// </summary>
-        /// <param name="position"></param>
-        public virtual void ScaledMove(Vector2 position)
-        {
-            // If height scaled, scale movement by height scale, otherwise by width scale
-            float scale = HeightScaled ? Pulsarc.HeightScale : Pulsarc.WidthScale;
-
-            truePosition.X += position.X * scale;
-            truePosition.Y += position.Y * scale;
-
-            FindAnchorPosition();
-        }
-
-        public virtual void ScaledMove(float xDelta, float yDelta)
-        {
-            ScaledMove(new Vector2(xDelta, yDelta));
-        }
-
+        #region Mouse State Methods
         /// <summary>
         /// Returns whether or not this Drawable was clicked on.
         /// </summary>
@@ -483,7 +555,9 @@ namespace Pulsarc.UI
         {
             return Pressed(firstState) && Released(secondState);
         }
+        #endregion
 
+        #region Checks
         /// <summary>
         /// Determine whether this Drawable is currently visible on screen.
         /// </summary>
@@ -504,6 +578,7 @@ namespace Pulsarc.UI
             return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
                     .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, (int)drawable.currentSize.X, (int)drawable.currentSize.Y));
         }
+        #endregion
 
         /// <summary>
         /// Draw this Drawable.
@@ -518,48 +593,6 @@ namespace Pulsarc.UI
             // If this item is hovered by the mouse, display the hover drawable.
             if (Hover != null && Hovered(Mouse.GetState()))
                 Hover.Draw();
-        }
-
-        protected virtual void FindAnchorPosition()
-        {
-            Vector2 position = truePosition;
-
-            switch (Anchor)
-            {
-                case Anchor.Center:
-                    position.X += currentSize.X / 2;
-                    position.Y += currentSize.Y / 2;
-                    break;
-                case Anchor.TopRight:
-                    position.X += currentSize.X;
-                    break;
-                case Anchor.CenterRight:
-                    position.X += currentSize.X;
-                    position.Y += currentSize.Y / 2;
-                    break;
-                case Anchor.BottomRight:
-                    position.X += currentSize.X;
-                    position.Y += currentSize.Y;
-                    break;
-                case Anchor.BottomLeft:
-                    position.Y += currentSize.Y;
-                    break;
-                case Anchor.CenterLeft:
-                    position.Y += currentSize.Y / 2;
-                    break;
-                case Anchor.CenterTop:
-                    position.X += currentSize.X / 2;
-                    break;
-                case Anchor.CenterBottom:
-                    position.X += currentSize.X / 2;
-                    position.Y += currentSize.Y;
-                    break;
-                case Anchor.TopLeft:
-                default:
-                    break;
-            }
-
-            anchorPosition = position;
         }
     }
 }
