@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Setting decimal numbers for ApproachRate crashing the game.
+
+## Changed
 - Drawables now scale their positioning on both axis, instead of just one. This makes working with skini's more consistent and manageable.
 
 ## [1.2.0-alpha] - 2019-12-04
