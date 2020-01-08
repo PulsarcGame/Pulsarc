@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Setting decimal numbers for ApproachRate crashing the game.
 
-## Changed
+### Changed
 - Drawables now scale their positioning on both axis, instead of just one. This makes working with skini's more consistent and manageable.
 
 ## [1.2.0-alpha] - 2019-12-04
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Certain Intralism Map backgrounds crashing the game during conversion.
 - Invalid characters crashing the game
 
-## Changed
+### Changed
 - How static variables work in Pulsarc.cs, fixes some issues with the game.
 
 ## [1.1.1-alpha] - 2019-11-29
