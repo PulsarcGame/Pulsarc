@@ -31,7 +31,7 @@ namespace Pulsarc.Utils.BeatmapConversion
             List<Beatmap> results = new List<Beatmap>();
             Beatmap result = new Beatmap();
 
-            string backgroundImage = Config.Get["Converting"]["BGImage"];
+            string backgroundImage = Config.BGImage.Value;
 
             // See if the provided path exists
             if (!Directory.Exists(folder_path)) { return null; }

@@ -99,6 +99,8 @@ namespace Pulsarc.UI.Screens.Settings.UI
                         ((Bindable<bool>)i.GetValue(null)).Value = (bool) GetSaveValue();
                         break;
                 }
+
+                Config.SaveConfig();
             } catch (Exception e)
             {
                 PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);

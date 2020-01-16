@@ -232,8 +232,8 @@ namespace Pulsarc
                 IBeatmapConverter converter;
 
                 Config.Reload();
-                string convertFrom = Config.Get["Converting"]["Game"];
-                string toConvert = Config.Get["Converting"]["Path"];
+                string convertFrom = Config.Game.Value;
+                string toConvert = Config.Path.Value;
 
                 // What extension to check for
                 string extension;

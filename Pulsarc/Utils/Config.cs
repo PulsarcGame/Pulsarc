@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Globalization;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System.Text;
 
 namespace Pulsarc.Utils
 {
     static class Config
     {
         public static IniFileParser.IniFileParser Parser { get; private set; }
-        public static IniData Get { get; private set; }
+        public static IniData ConfigData { get; private set; }
 
         // Available options
 
@@ -137,54 +139,63 @@ namespace Pulsarc.Utils
         /// </summary>
         internal static Bindable<string> BGImage { get; private set; }
 
+        /// <summary>
+        ///     Dictates whether or not this is the first write of the file for the current game session.
+        ///     (Not saved in Config)
+        /// </summary>
+        private static bool FirstWrite { get; set; }
+
         public static void Initialize()
         {
             Parser = new IniFileParser.IniFileParser();
-
-            Get = Parser.ReadFile("config.ini");
 
             Reload();
         }
 
         public static void Reload()
         {
-            Get = Parser.ReadFile("config.ini");
+            ConfigData = Parser.ReadFile("config.ini");
 
-            ResolutionWidth = ReadValue(@"ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, Get["Graphics"]);
-            ResolutionHeight = ReadValue(@"ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, Get["Graphics"]);
-            FullScreen = ReadValue(@"FullScreen", 0, Get["Graphics"]);
-            VSync = ReadValue(@"VSync", false, Get["Graphics"]);
-            FPSLimit = ReadValue(@"FPSLimit", 1000, Get["Graphics"]);
+            foreach (KeyData element in ConfigData["Config"])
+            {
+                PulsarcLogger.Log(element.KeyName + ":" + element.Value, LogLevel.Error, LogType.Runtime);
+            }
 
-            Left = ReadValue(@"Left", Keys.D, Get["Bindings"]);
-            Up = ReadValue(@"Up", Keys.F, Get["Bindings"]);
-            Down = ReadValue(@"Down", Keys.J, Get["Bindings"]);
-            Right = ReadValue(@"Right", Keys.K, Get["Bindings"]);
+            ResolutionWidth = ReadValue(@"ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+            ResolutionHeight = ReadValue(@"ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+            FullScreen = ReadValue(@"FullScreen", 0);
+            VSync = ReadValue(@"VSync", false);
+            FPSLimit = ReadValue(@"FPSLimit", 1000);
 
-            Pause = ReadValue(@"Pause", Keys.P, Get["Bindings"]);
-            Continue = ReadValue(@"Continue", Keys.O, Get["Bindings"]);
-            Retry = ReadValue(@"Retry", Keys.OemTilde, Get["Bindings"]);
-            Convert = ReadValue(@"Convert", Keys.C, Get["Bindings"]);
+            Left = ReadValue(@"Left", Keys.D);
+            Up = ReadValue(@"Up", Keys.F);
+            Down = ReadValue(@"Down", Keys.J);
+            Right = ReadValue(@"Right", Keys.K);
 
-            MusicVolume = ReadValue(@"MusicVolume", 50, Get["Audio"]);
-            GlobalOffset = ReadValue(@"GlobalOffset", 0, Get["Audio"]);
-            RatePitch = ReadValue(@"RatePitch", true, Get["Audio"]);
+            Pause = ReadValue(@"Pause", Keys.P);
+            Continue = ReadValue(@"Continue", Keys.O);
+            Retry = ReadValue(@"Retry", Keys.OemTilde);
+            Convert = ReadValue(@"Convert", Keys.C);
 
-            SongRate = ReadValue(@"SongRate", 1f, Get["Gameplay"]);
-            ApproachSpeed = ReadValue(@"ApproachSpeed", 25d, Get["Gameplay"]);
-            BackgroundDim = ReadValue(@"BackgroundDim", 70, Get["Gameplay"]);
-            FadeTime = ReadValue(@"FadeTime", 200, Get["Gameplay"]);
-            Hidden = ReadValue(@"Hidden", false, Get["Gameplay"]);
-            HiddenCrosshairOffset = ReadValue(@"HiddenCrosshairOffset", 0, Get["Gameplay"]);
-            Autoplay = ReadValue(@"Autoplay", false, Get["Gameplay"]);
+            MusicVolume = ReadValue(@"MusicVolume", 50);
+            GlobalOffset = ReadValue(@"GlobalOffset", 0);
+            RatePitch = ReadValue(@"RatePitch", true);
 
-            AllMessages = ReadValue(@"AllMessages", true, Get["Logger"]);
+            SongRate = ReadValue(@"SongRate", 1f);
+            ApproachSpeed = ReadValue(@"ApproachSpeed", 25d);
+            BackgroundDim = ReadValue(@"BackgroundDim", 70);
+            FadeTime = ReadValue(@"FadeTime", 200);
+            Hidden = ReadValue(@"Hidden", false);
+            HiddenCrosshairOffset = ReadValue(@"HiddenCrosshairOffset", 0);
+            Autoplay = ReadValue(@"Autoplay", false);
 
-            Username = ReadValue(@"Username", "Player", Get["Profile"]);
+            AllMessages = ReadValue(@"AllMessages", true);
 
-            Game = ReadValue(@"Game", "Intralism", Get["Converting"]);
-            Path = ReadValue(@"Path", "D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain", Get["Converting"]);
-            BGImage = ReadValue(@"BGImage", "", Get["Converting"]);
+            Username = ReadValue(@"Username", "Player");
+
+            Game = ReadValue(@"Game", "Intralism");
+            Path = ReadValue(@"Path", "D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain");
+            BGImage = ReadValue(@"BGImage", "");
 
             // Inspired From https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L710
             // Write the config file with all of the changed/invalidated data.
@@ -237,7 +248,7 @@ namespace Pulsarc.Utils
         ///     Reads a Bindable<T>. Works on all types.
         /// </summary>
         /// <returns></returns>
-        private static Bindable<T> ReadValue<T>(string name, T defaultVal, KeyDataCollection ini)
+        private static Bindable<T> ReadValue<T>(string name, T defaultVal)
         {
             var binded = new Bindable<T>(name, defaultVal);
             var converter = TypeDescriptor.GetConverter(typeof(T));
@@ -245,11 +256,12 @@ namespace Pulsarc.Utils
             // Attempt to parse the value and default it if it can't.
             try
             {
-                binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ini[name]);
+                binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ConfigData["Config"][name]);
             }
             catch (Exception e)
             {
                 binded.Value = defaultVal;
+                //PulsarcLogger.Log(e.ToString(), LogLevel.Error, LogType.Runtime);
             }
 
             return binded;
@@ -268,10 +280,104 @@ namespace Pulsarc.Utils
             CommonTaskScheduler.Add(CommonTask.WriteConfig);
         }
 
+
+        // Copied and pasted from https://github.com/Quaver/Quaver/blob/c7a87e0a3ec5e5a04f6e8f9a42900ea5f9c783b6/Quaver.Shared/Config/ConfigManager.cs#L1016
+        /// <summary>
+        ///     Takes all of the current values from the ConfigManager class and creates a file with them.
+        ///     This will automatically be called whenever a configuration value is changed in the code.
+        /// </summary>
         internal static async Task SaveConfig()
         {
-            Parser.WriteFile("config.ini", Get);
-            PulsarcLogger.Important("Saved config", LogType.Runtime);
+            // Tracks the number of attempts to write the file it has made.
+            var attempts = 0;
+
+            // Don't do anything if the file isn't ready.
+            while (!IsFileReady("config.ini") && !FirstWrite)
+            {
+            }
+
+            var sb = new StringBuilder();
+
+            // Top file information
+            // sb.AppendLine("; Quaver Configuration File");
+            sb.AppendLine("; Last Updated On: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            sb.AppendLine();
+            sb.AppendLine("[Config]");
+            sb.AppendLine("; Pulsarc Configuration Values");
+
+            // For every line we want to append "PropName = PropValue" to the string
+            foreach (var prop in typeof(Config).GetProperties(BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                if (prop.Name == "FirstWrite")
+                    continue;
+
+                try
+                {
+                    sb.AppendLine(prop.Name + " = " + prop.GetValue(null).ToString());
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine(prop.Name + " = ");
+                }
+            }
+
+            try
+            {
+                // Create a new stream
+                var sw = new StreamWriter("config.ini")
+                {
+                    AutoFlush = true
+                };
+
+                // Write to file and close it.;
+                await sw.WriteLineAsync(sb.ToString());
+                sw.Close();
+
+                FirstWrite = false;
+            }
+            catch (Exception e)
+            {
+                // Try to write the file again 3 times.
+                while (attempts != 2)
+                {
+                    attempts++;
+
+                    // Create a new stream
+                    var sw = new StreamWriter("config.ini")
+                    {
+                        AutoFlush = true
+                    };
+
+                    // Write to file and close it.
+                    await sw.WriteLineAsync(sb.ToString());
+                    sw.Close();
+                }
+
+                // If too many attempts were made.
+                if (attempts == 2)
+                    PulsarcLogger.Error("Too many write attempts to the config file have been made.", LogType.Runtime);
+            }
+        }
+
+
+        /// <summary>
+        ///     Checks if the file is ready to be written to.
+        /// </summary>
+        /// <param name="sFilename"></param>
+        /// <returns></returns>
+        public static bool IsFileReady(string sFilename)
+        {
+            // If the file can be opened for exclusive access it means that the file
+            // is no longer locked by another process.
+            try
+            {
+                using (var inputStream = File.Open(sFilename, FileMode.Open, FileAccess.Read, FileShare.None))
+                    return (inputStream.Length > 0);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
