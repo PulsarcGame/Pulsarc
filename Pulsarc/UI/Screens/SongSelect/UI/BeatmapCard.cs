@@ -231,6 +231,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 {
                     AudioManager.DeltaTime(Beatmap.PreviewTime);
                 }
+                    AudioManager.songPath = Beatmap.GetFullAudioPath();
+                    AudioManager.audioRate = Utils.Config.SongRate.Value;
+                    AudioManager.StartLazyPlayer();
 
                 //PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}");
             }

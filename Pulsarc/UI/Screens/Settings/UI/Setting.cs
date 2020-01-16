@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
 using System;
+using System.Reflection;
+using Wobble.Bindables;
 using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
@@ -74,26 +76,32 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="key">The key to modify.</param>
         public virtual void Save(string category, string key)
         {
-            switch(Type)
+            try
             {
-                case "float":
-                    Config.SetFloat(category, key,(float) GetSaveValue());
-                    break;
-                case "int":
-                    Config.SetInt(category, key,(int) GetSaveValue());
-                    break;
-                case "double":
-                    Config.SetDouble(category, key,(double) GetSaveValue());
-                    break;
-                case "bool":
-                    Config.SetBool(category, key, (bool)GetSaveValue());
-                    break;
-                case "string":
-                    Config.SetString(category, key, (string)GetSaveValue());
-                    break;
-                default:
-                    PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);
-                    break;
+                Type t = typeof(Config);
+                PropertyInfo i = t.GetProperty(key, BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+                switch(Type)
+                {
+                    case "string":
+                        ((Bindable<string>)i.GetValue(null)).Value = GetSaveValue().ToString();
+                        break;
+                    case "int":
+                        ((Bindable<int>)i.GetValue(null)).Value = (int) GetSaveValue();
+                        break;
+                    case "float":
+                        ((Bindable<float>)i.GetValue(null)).Value = (float) GetSaveValue();
+                        break;
+                    case "double":
+                        ((Bindable<double>)i.GetValue(null)).Value = (double) GetSaveValue();
+                        break;
+                    case "bool":
+                        ((Bindable<bool>)i.GetValue(null)).Value = (bool) GetSaveValue();
+                        break;
+                }
+            } catch (Exception e)
+            {
+                PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);
             }
         }
 

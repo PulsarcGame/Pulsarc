@@ -3,6 +3,12 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Wobble.Logging;
+using Wobble.Bindables;
+using System.IO;
+using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Globalization;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsarc.Utils
 {
@@ -11,107 +17,258 @@ namespace Pulsarc.Utils
         public static IniFileParser.IniFileParser Parser { get; private set; }
         public static IniData Get { get; private set; }
 
-        public static Dictionary<string, Keys> Bindings { get; private set; }
+        // Available options
 
-        private static readonly Type keyType = Keys.A.GetType();
+        // [Graphics]
+
+        /// <summary>
+        /// The Width of the game window
+        /// </summary>
+        internal static Bindable<int> ResolutionWidth { get; private set; }
+
+        /// <summary>
+        /// The Height of the game window
+        /// </summary>
+        internal static Bindable<int> ResolutionHeight { get; private set; }
+
+        /// <summary>
+        /// Screen mode. 0 = Windowed, 1 = FullScreen, 2 = Borderless
+        /// </summary>
+        internal static Bindable<int> FullScreen { get; private set; }
+
+        /// <summary>
+        /// Whether VSync is enabled.
+        /// </summary>
+        internal static Bindable<bool> VSync { get; private set; }
+
+        /// <summary>
+        /// The maximum amount of FPS
+        /// </summary>
+        internal static Bindable<int> FPSLimit { get; private set; }
+
+        /// <summary>
+        /// Gameplay keybinds
+        /// </summary>
+        internal static Bindable<Keys> Left { get; private set; }
+        internal static Bindable<Keys> Up { get; private set; }
+        internal static Bindable<Keys> Down { get; private set; }
+        internal static Bindable<Keys> Right { get; private set; }
+
+        /// <summary>
+        /// Other keybinds
+        /// </summary>
+        internal static Bindable<Keys> Pause { get; private set; }
+        internal static Bindable<Keys> Continue { get; private set; }
+        internal static Bindable<Keys> Retry { get; private set; }
+        internal static Bindable<Keys> Convert { get; private set; }
+
+        /// <summary>
+        /// Audio Main volume
+        /// </summary>
+        internal static Bindable<int> MusicVolume { get; private set; }
+
+        /// <summary>
+        /// Global audio offset 
+        /// </summary>
+        internal static Bindable<int> GlobalOffset { get; private set; }
+
+        /// <summary>
+        /// Whether to pitch the audio with rates
+        /// </summary>
+        internal static Bindable<bool> RatePitch { get; private set; }
+
+        /// <summary>
+        /// Multiplier for map speed
+        /// </summary>
+        internal static Bindable<float> SongRate { get; private set; }
+
+        /// <summary>
+        /// Notes speed
+        /// </summary>
+        internal static Bindable<double> ApproachSpeed { get; private set; }
+
+        /// <summary>
+        /// Dimming of the map's background
+        /// </summary>
+        internal static Bindable<int> BackgroundDim { get; private set; }
+
+        /// <summary>
+        /// Fading time with hidden
+        /// </summary>
+        internal static Bindable<int> FadeTime { get; private set; }
+
+        /// <summary>
+        /// Whether Hidden is active or not
+        /// </summary>
+        internal static Bindable<bool> Hidden { get; private set; }
+
+        /// <summary>
+        /// Crosshair offset when using Hidden
+        /// </summary>
+        internal static Bindable<int> HiddenCrosshairOffset { get; private set; }
+
+        /// <summary>
+        /// Whether autoplay is active
+        /// </summary>
+        internal static Bindable<bool> Autoplay { get; private set; }
+
+        /// <summary>
+        /// Whether to display all messages in logger
+        /// </summary>
+        internal static Bindable<bool> AllMessages { get; private set; }
+
+        /// <summary>
+        /// Player name
+        /// </summary>
+        internal static Bindable<string> Username { get; private set; }
+
+        /// <summary>
+        /// The game from which the convertion takes place
+        /// </summary>
+        internal static Bindable<string> Game { get; private set; }
+
+        /// <summary>
+        /// The path leading to the map to convert
+        /// </summary>
+        internal static Bindable<string> Path { get; private set; }
+
+        /// <summary>
+        /// Whatever this is
+        /// </summary>
+        internal static Bindable<string> BGImage { get; private set; }
 
         public static void Initialize()
         {
             Parser = new IniFileParser.IniFileParser();
-            Bindings = new Dictionary<string, Keys>();
 
             Get = Parser.ReadFile("config.ini");
 
-            AddBindings();
+            Reload();
         }
 
         public static void Reload()
         {
-            Bindings.Clear();
             Get = Parser.ReadFile("config.ini");
 
-            AddBindings();
+            ResolutionWidth = ReadValue(@"ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, Get["Graphics"]);
+            ResolutionHeight = ReadValue(@"ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, Get["Graphics"]);
+            FullScreen = ReadValue(@"FullScreen", 0, Get["Graphics"]);
+            VSync = ReadValue(@"VSync", false, Get["Graphics"]);
+            FPSLimit = ReadValue(@"FPSLimit", 1000, Get["Graphics"]);
+
+            Left = ReadValue(@"Left", Keys.D, Get["Bindings"]);
+            Up = ReadValue(@"Up", Keys.F, Get["Bindings"]);
+            Down = ReadValue(@"Down", Keys.J, Get["Bindings"]);
+            Right = ReadValue(@"Right", Keys.K, Get["Bindings"]);
+
+            Pause = ReadValue(@"Pause", Keys.P, Get["Bindings"]);
+            Continue = ReadValue(@"Continue", Keys.O, Get["Bindings"]);
+            Retry = ReadValue(@"Retry", Keys.OemTilde, Get["Bindings"]);
+            Convert = ReadValue(@"Convert", Keys.C, Get["Bindings"]);
+
+            MusicVolume = ReadValue(@"MusicVolume", 50, Get["Audio"]);
+            GlobalOffset = ReadValue(@"GlobalOffset", 0, Get["Audio"]);
+            RatePitch = ReadValue(@"RatePitch", true, Get["Audio"]);
+
+            SongRate = ReadValue(@"SongRate", 1f, Get["Gameplay"]);
+            ApproachSpeed = ReadValue(@"ApproachSpeed", 25d, Get["Gameplay"]);
+            BackgroundDim = ReadValue(@"BackgroundDim", 70, Get["Gameplay"]);
+            FadeTime = ReadValue(@"FadeTime", 200, Get["Gameplay"]);
+            Hidden = ReadValue(@"Hidden", false, Get["Gameplay"]);
+            HiddenCrosshairOffset = ReadValue(@"HiddenCrosshairOffset", 0, Get["Gameplay"]);
+            Autoplay = ReadValue(@"Autoplay", false, Get["Gameplay"]);
+
+            AllMessages = ReadValue(@"AllMessages", true, Get["Logger"]);
+
+            Username = ReadValue(@"Username", "Player", Get["Profile"]);
+
+            Game = ReadValue(@"Game", "Intralism", Get["Converting"]);
+            Path = ReadValue(@"Path", "D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain", Get["Converting"]);
+            BGImage = ReadValue(@"BGImage", "", Get["Converting"]);
+
+            // Inspired From https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L710
+            // Write the config file with all of the changed/invalidated data.
+            Task.Run(async () => await SaveConfig())
+                .ContinueWith(t =>
+                {
+                    // SET AUTO-SAVE FUNCTIONALITY FOR EACH BINDED VALUE.
+                    // This is so shit tbcfh, lol.
+                    // yeah - adri
+                    ResolutionWidth.ValueChanged += AutoSaveConfiguration;
+                    ResolutionHeight.ValueChanged += AutoSaveConfiguration;
+                    FullScreen.ValueChanged += AutoSaveConfiguration;
+                    VSync.ValueChanged += AutoSaveConfiguration;
+                    FPSLimit.ValueChanged += AutoSaveConfiguration;
+
+                    Left.ValueChanged += AutoSaveConfiguration;
+                    Up.ValueChanged += AutoSaveConfiguration;
+                    Down.ValueChanged += AutoSaveConfiguration;
+                    Right.ValueChanged += AutoSaveConfiguration;
+
+                    Pause.ValueChanged += AutoSaveConfiguration;
+                    Continue.ValueChanged += AutoSaveConfiguration;
+                    Retry.ValueChanged += AutoSaveConfiguration;
+                    Convert.ValueChanged += AutoSaveConfiguration;
+
+                    MusicVolume.ValueChanged += AutoSaveConfiguration;
+                    GlobalOffset.ValueChanged += AutoSaveConfiguration;
+                    RatePitch.ValueChanged += AutoSaveConfiguration;
+
+                    SongRate.ValueChanged += AutoSaveConfiguration;
+                    ApproachSpeed.ValueChanged += AutoSaveConfiguration;
+                    BackgroundDim.ValueChanged += AutoSaveConfiguration;
+                    FadeTime.ValueChanged += AutoSaveConfiguration;
+                    Hidden.ValueChanged += AutoSaveConfiguration;
+                    HiddenCrosshairOffset.ValueChanged += AutoSaveConfiguration;
+                    Autoplay.ValueChanged += AutoSaveConfiguration;
+
+                    AllMessages.ValueChanged += AutoSaveConfiguration;
+
+                    Username.ValueChanged += AutoSaveConfiguration;
+
+                    Game.ValueChanged += AutoSaveConfiguration;
+                    Path.ValueChanged += AutoSaveConfiguration;
+                    BGImage.ValueChanged += AutoSaveConfiguration;
+                });
         }
 
-        private static void AddBindings()
+        // Copied and pasted from https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L827
+        /// <summary>
+        ///     Reads a Bindable<T>. Works on all types.
+        /// </summary>
+        /// <returns></returns>
+        private static Bindable<T> ReadValue<T>(string name, T defaultVal, KeyDataCollection ini)
         {
-            AddBinding("Left");
-            AddBinding("Up");
-            AddBinding("Down");
-            AddBinding("Right");
+            var binded = new Bindable<T>(name, defaultVal);
+            var converter = TypeDescriptor.GetConverter(typeof(T));
 
-            AddBinding("Pause");
-            AddBinding("Continue");
-            AddBinding("Retry");
-            AddBinding("Convert");
-            AddBinding("Screenshot");
+            // Attempt to parse the value and default it if it can't.
+            try
+            {
+                binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ini[name]);
+            }
+            catch (Exception e)
+            {
+                binded.Value = defaultVal;
+            }
+
+            return binded;
         }
-               
-        public static void AddBinding(string key)
+
+        // Copied and pasted from https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L927
+
+        /// <summary>
+        ///     Config Autosave functionality for Bindable<T>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="d"></param>
+        private static void AutoSaveConfiguration<T>(object sender, BindableValueChangedEventArgs<T> d)
         {
-            if (Bindings.ContainsKey(key))
-                Bindings[key] = (Keys)Enum.Parse(keyType, Get["Bindings"][key]);
-            else
-                Bindings.Add(key, (Keys)Enum.Parse(keyType, Get["Bindings"][key]));
+            // ReSharper disable once ArrangeMethodOrOperatorBody
+            CommonTaskScheduler.Add(CommonTask.WriteConfig);
         }
 
-        public static int GetInt(string category, string key)
-        {
-            return int.Parse(Get[category][key]);
-        }
-
-        public static void SetInt(string category, string key, int value)
-        {
-            SetValue(category, key, value);
-        }
-
-        public static double GetDouble(string category, string key)
-        {
-            return double.Parse(Get[category][key]);
-        }
-
-        public static void SetDouble(string category, string key, double value)
-        {
-            SetValue(category, key, value);
-        }
-
-        public static float GetFloat(string category, string key)
-        {
-            return float.Parse(Get[category][key]);
-        }
-
-        public static void SetFloat(string category, string key, float value)
-        {
-            SetValue(category, key, value);
-        }
-
-        public static bool GetBool(string category, string key)
-        {
-            return bool.Parse(Get[category][key]);
-        }
-
-        public static void SetBool(string category, string key, bool value)
-        {
-            SetValue(category, key, value);
-        }
-
-        public static string GetString(string category, string key)
-        {
-            return Get[category][key];
-        }
-
-        public static void SetString(string category, string key, string value)
-        {
-            SetValue(category, key, value);
-        }
-
-        public static void SetValue(string category, string key, object value)
-        {
-            PulsarcLogger.Important($"Set {category} {key} to {value.ToString()}", LogType.Runtime);
-            Get[category][key] = value.ToString();
-        }
-
-        public static void SaveConfig()
+        internal static async Task SaveConfig()
         {
             Parser.WriteFile("config.ini", Get);
             PulsarcLogger.Important("Saved config", LogType.Runtime);

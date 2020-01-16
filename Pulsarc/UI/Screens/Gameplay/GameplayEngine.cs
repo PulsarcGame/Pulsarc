@@ -11,8 +11,8 @@ using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
 using System.Linq;
 using Pulsarc.Utils.SQLite;
-using Pulsarc.Utils.Audio;
-
+using Pulsarc.Utils.Audio;
+
 namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngine : PulsarcScreen
@@ -24,11 +24,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public static bool Active { get; private set; } = false;
 
         // Whether or not the gameplay is automatically run
-        public bool AutoPlay => Config.GetBool("Gameplay", "Autoplay");
+        public bool AutoPlay => Config.Autoplay.Value;
         // Whether or not autoplay should use randomness.
         private bool autoPlayAddRandomness = false;
 
-        public bool Hidden => Config.GetBool("Gameplay", "Hidden");
+        public bool Hidden => Config.Hidden.Value;
 
         // Keep track of whether or not any object is left to play
         public bool AtLeastOneLeft { get; private set; } = false;
@@ -47,7 +47,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Column[] Columns { get; private set; }
 
         // The time for arcs to fade after being hit, defined by the user
-        private int arcFadeTime => Config.GetInt("Gameplay", "FadeTime");
+        private int arcFadeTime => Config.FadeTime.Value;
 
         // Used to store the key-style of the current map (4k, 7k, etc.)
         public int KeyCount { get; private set; }
@@ -74,7 +74,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // User-defined base speed
         // "5d" is used to give more choice in config for speed;
-        public double UserSpeed => Config.GetDouble("Gameplay", "ApproachSpeed") / 5d / Rate;
+        public double UserSpeed => Config.ApproachSpeed.Value / 5d / Rate;
 
         // Current speed modifier defined by the Beatmap
         public double CurrentSpeedMultiplier { get; set; }
@@ -102,7 +102,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private int comboMultiplier;
 
         // How fast the audio (and relevant gameplay) will play at.
-        public float Rate => Config.GetFloat("Gameplay", "SongRate");
+        public float Rate => Config.SongRate.Value;
 
         // The current time of the song, which the gameplay engine
         // uses to determine arc positioning and event handling.
@@ -110,10 +110,10 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
-        public int IgnoreTime { get; private set; } = 500;
-
-        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
-        private int notesSinceLastMiss;
+        public int IgnoreTime { get; private set; } = 500;
+
+        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
+        private int notesSinceLastMiss;
         public bool MissSoundThresholdCrossed => notesSinceLastMiss >= hitSoundComboThreshold;
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void LoadConfig()
         {
             // Set the offset for each play before starting audio
-            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
+            AudioManager.offset = Config.GlobalOffset.Value;
 
             KeyCount = 4;
 
@@ -207,8 +207,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             eventIndex = 0;
 
             // If there are events, make nextEvent the first event, otherwise make it null
-            NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
-
+            NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
+
             notesSinceLastMiss = hitSoundComboThreshold;
         }
 
@@ -229,7 +229,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             comboMultiplier = Scoring.MaxComboMultiplier;
             score = 0;
 
-            Background = new Background(Config.GetInt("Gameplay", "BackgroundDim") / 100f);
+            Background = new Background(Config.BackgroundDim.Value / 100f);
             Background.ChangeBackground(GraphicsUtils.LoadFileTexture(beatmap.Path + "/" + beatmap.Background));
 
             // Set the path of the song to be played later on
@@ -294,11 +294,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             MapEndTime += END_DELAY;
 
             // Load user bindings
-            bindings.Add(Config.Bindings["Left"], 2);
-            bindings.Add(Config.Bindings["Up"], 3);
-            bindings.Add(Config.Bindings["Down"], 1);
-            bindings.Add(Config.Bindings["Right"], 0);
-        }
+            bindings.Add(Config.Left.Value, 2);
+            bindings.Add(Config.Up.Value, 3);
+            bindings.Add(Config.Down.Value, 1);
+            bindings.Add(Config.Right.Value, 0);
 
         // An array containing the valid keys used for gameplay.
         private Keys[] validGameplayKeys =
@@ -433,7 +432,6 @@ namespace Pulsarc.UI.Screens.Gameplay
                     EndGameplay();
                 }
                 // Restart gameplay using bindable "Retry" key.
-                else if (keyPresses[i] == Config.Bindings["Retry"])
                 {
                     Retry();
                 }
@@ -448,6 +446,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     Resume();
                 }
             }
+                else if (keyPresses[i] == Config.Bindings["Retry"])
         }
 
         /// <summary>
@@ -482,9 +481,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 // If no judge is obtained, it is a ghost hit and is ignored score-wise
                 if (judge == null) { continue; }
-
-                SampleManager.PlayHitSound(judge);
-                notesSinceLastMiss++;
+
+                SampleManager.PlayHitSound(judge);
+                notesSinceLastMiss++;
 
                 ProcessHit(press, column, ref pressed, error, judge);
             }
@@ -587,15 +586,15 @@ namespace Pulsarc.UI.Screens.Gameplay
                         score = hitResult.Key;
                         comboMultiplier = hitResult.Value;
                         GetGameplayView().AddJudge(Time, miss.Score);
-                        Judgements.Add(miss);
-
-                        notesSinceLastMiss++;
-
-                        if (MissSoundThresholdCrossed)
-                        {
-                            notesSinceLastMiss = 0;
-                            SampleManager.PlayMissSound();
-                        }
+                        Judgements.Add(miss);
+
+                        notesSinceLastMiss++;
+
+                        if (MissSoundThresholdCrossed)
+                        {
+                            notesSinceLastMiss = 0;
+                            SampleManager.PlayMissSound();
+                        }
                     }
                 }
             }

@@ -74,7 +74,7 @@ namespace Pulsarc.UI.Screens.Result
             FullCombo = JudgesCount["miss"] == 0;
 
             // Determine the grade achieved.
-            scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
+            scoreData = new ScoreData(Beatmap.GetHash(), Config.Username.Value, rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
             scoreData.grade = Scoring.GetGrade(scoreData);
 
             // Save the score locally

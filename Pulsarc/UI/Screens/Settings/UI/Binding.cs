@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using System;
+using System.Reflection;
+using Wobble.Bindables;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -9,6 +12,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
     {
         private Drawable listening;
         private TextDisplayElement key;
+        private Bindable<Keys> keyBind;
 
         /// <summary>
         /// Creates a new "Binding" Setting, a setting that keeps track of and
@@ -18,14 +22,16 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="more"></param>
         /// <param name="position"></param>
         /// <param name="startingValue"></param>
-        public Binding(string title, string more, Vector2 position, string startingValue) : 
-            base(title, more, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "string")
+        public Binding(string title, string more, Vector2 position, Bindable<Keys> startingValue) : 
+            base(title, more, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "Keys")
         {
             listening = new Drawable(Skin.Assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
 
+            keyBind = startingValue;
+
             key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
 
-            key.Update(GetSaveValue());
+            key.Update(GetSaveValue().ToString());
 
         }
 
@@ -38,10 +44,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             if (KeyListen)
             {
-                Value = pressed.ToString();
+                Value = pressed;
                 key.Update(GetSaveValue());
-                Config.SetValue("Bindings", Text, GetSaveValue());
-                Config.AddBinding(Text);
+                keyBind.Value = GetSaveValue();
+
                 KeyListen = false;
             }
         }

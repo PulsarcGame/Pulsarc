@@ -42,8 +42,8 @@ namespace Pulsarc
         public const float BASE_ASPECT_RATIO = 16f / 9f;
 
         // Current Dimensions
-        public static int CurrentWidth => Config.GetInt("Graphics", "ResolutionWidth");
-        public static int CurrentHeight => Config.GetInt("Graphics", "ResolutionHeight");
+        public static int CurrentWidth => Config.ResolutionWidth.Value;
+        public static int CurrentHeight => Config.ResolutionHeight.Value;
         public static float CurrentAspectRatio => (float)CurrentWidth / CurrentHeight;
         public static Rectangle ScreenSpace => new Rectangle(0, 0, CurrentWidth, CurrentHeight);
 
@@ -91,13 +91,13 @@ namespace Pulsarc
             }
 
             // Set Graphics preferences according to config.ini
-            Graphics.PreferredBackBufferWidth = Config.GetInt("Graphics", "ResolutionWidth");
-            Graphics.PreferredBackBufferHeight = Config.GetInt("Graphics", "ResolutionHeight");
+            Graphics.PreferredBackBufferWidth = Config.ResolutionWidth.Value;
+            Graphics.PreferredBackBufferHeight = Config.ResolutionHeight.Value;
 
-            Graphics.IsFullScreen = Config.GetInt("Graphics", "FullScreen") >= 1;
-            Window.IsBorderless = Config.GetInt("Graphics", "FullScreen") >= 2;
+            Graphics.IsFullScreen = Config.FullScreen.Value >= 1;
+            Window.IsBorderless = Config.FullScreen.Value >= 2;
 
-            Graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
+            Graphics.SynchronizeWithVerticalRetrace = Config.VSync.Value == true;
 
             // Don't use FPSLimit if Vsync is on
             if (!Graphics.SynchronizeWithVerticalRetrace)
@@ -225,7 +225,7 @@ namespace Pulsarc
             // Temporary measure for converting intralism or osu!mania beatmaps
             // TODO Make a Converter UI
             if (!converting && !GameplayEngine.Active
-                && Keyboard.GetState().IsKeyDown(Config.Bindings["Convert"])
+                && Keyboard.GetState().IsKeyDown(Config.Convert.Value)
                 && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
                 converting = true;
