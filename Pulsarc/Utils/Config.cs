@@ -196,51 +196,6 @@ namespace Pulsarc.Utils
             Game = ReadValue(@"Game", "Intralism");
             Path = ReadValue(@"Path", "D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain");
             BGImage = ReadValue(@"BGImage", "");
-
-            // Inspired From https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L710
-            // Write the config file with all of the changed/invalidated data.
-            Task.Run(async () => await SaveConfig())
-                .ContinueWith(t =>
-                {
-                    // SET AUTO-SAVE FUNCTIONALITY FOR EACH BINDED VALUE.
-                    // This is so shit tbcfh, lol.
-                    // yeah - adri
-                    ResolutionWidth.ValueChanged += AutoSaveConfiguration;
-                    ResolutionHeight.ValueChanged += AutoSaveConfiguration;
-                    FullScreen.ValueChanged += AutoSaveConfiguration;
-                    VSync.ValueChanged += AutoSaveConfiguration;
-                    FPSLimit.ValueChanged += AutoSaveConfiguration;
-
-                    Left.ValueChanged += AutoSaveConfiguration;
-                    Up.ValueChanged += AutoSaveConfiguration;
-                    Down.ValueChanged += AutoSaveConfiguration;
-                    Right.ValueChanged += AutoSaveConfiguration;
-
-                    Pause.ValueChanged += AutoSaveConfiguration;
-                    Continue.ValueChanged += AutoSaveConfiguration;
-                    Retry.ValueChanged += AutoSaveConfiguration;
-                    Convert.ValueChanged += AutoSaveConfiguration;
-
-                    MusicVolume.ValueChanged += AutoSaveConfiguration;
-                    GlobalOffset.ValueChanged += AutoSaveConfiguration;
-                    RatePitch.ValueChanged += AutoSaveConfiguration;
-
-                    SongRate.ValueChanged += AutoSaveConfiguration;
-                    ApproachSpeed.ValueChanged += AutoSaveConfiguration;
-                    BackgroundDim.ValueChanged += AutoSaveConfiguration;
-                    FadeTime.ValueChanged += AutoSaveConfiguration;
-                    Hidden.ValueChanged += AutoSaveConfiguration;
-                    HiddenCrosshairOffset.ValueChanged += AutoSaveConfiguration;
-                    Autoplay.ValueChanged += AutoSaveConfiguration;
-
-                    AllMessages.ValueChanged += AutoSaveConfiguration;
-
-                    Username.ValueChanged += AutoSaveConfiguration;
-
-                    Game.ValueChanged += AutoSaveConfiguration;
-                    Path.ValueChanged += AutoSaveConfiguration;
-                    BGImage.ValueChanged += AutoSaveConfiguration;
-                });
         }
 
         // Copied and pasted from https://github.com/Quaver/Quaver/blob/282e27cc081dc3d4839c316f958d3821535362fd/Quaver.Shared/Config/ConfigManager.cs#L827
@@ -257,10 +212,12 @@ namespace Pulsarc.Utils
             try
             {
                 binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ConfigData["Config"][name]);
+                binded.ValueChanged += AutoSaveConfiguration;
             }
             catch (Exception e)
             {
                 binded.Value = defaultVal;
+                binded.ValueChanged += AutoSaveConfiguration;
                 //PulsarcLogger.Log(e.ToString(), LogLevel.Error, LogType.Runtime);
             }
 
