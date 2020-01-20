@@ -13,8 +13,8 @@ namespace Pulsarc
         [STAThread]
         static void Main()
         {
-            using (var game = new Pulsarc())
-                game.Run();
+            using var game = new Pulsarc();
+            game.Run();
         }
     }
 }

@@ -9,10 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wobble", "Wobble\Wobble\Wob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wobble.Resources", "Wobble\Wobble.Resources\Wobble.Resources.csproj", "{1461C947-21CB-4804-B038-735CC73B2347}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Framework.DesktopGL", "Wobble\MonoGame\MonoGame.Framework\MonoGame.Framework.DesktopGL.csproj", "{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpriteFontPlus", "Wobble\SpriteFontPlus\src\SpriteFontPlus\SpriteFontPlus.csproj", "{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,14 +27,6 @@ Global
 		{1461C947-21CB-4804-B038-735CC73B2347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1461C947-21CB-4804-B038-735CC73B2347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1461C947-21CB-4804-B038-735CC73B2347}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

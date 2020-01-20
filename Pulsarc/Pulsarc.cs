@@ -13,7 +13,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
 
