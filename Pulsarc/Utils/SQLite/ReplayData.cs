@@ -4,17 +4,18 @@ namespace Pulsarc.Utils.SQLite
 {
     public class ReplayData : SQLiteData
     {
-        public string map;
-        public string replaydata;
+        private string _map;
+        private string _replaydata;
 
-        public ReplayData() : base() { }
+        public ReplayData()
+        { }
 
         public ReplayData(SQLiteDataReader data) : base(data) { }
 
-        public ReplayData(string map_, string replaydata_)
+        public ReplayData(string map, string replaydata)
         {
-            map = map_;
-            replaydata = replaydata_;
+            _map = map;
+            _replaydata = replaydata;
         }
     }
 }

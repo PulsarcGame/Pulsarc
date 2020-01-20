@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pulsarc.Utils.Maths
 {
-    static public class PulsarcMath
+    public static class PulsarcMath
     {
         /// <summary>
         /// Linear Interpolation between two floats.
@@ -13,7 +13,7 @@ namespace Pulsarc.Utils.Maths
         /// <param name="secondFloat"></param>
         /// <param name="by"></param>
         /// <returns></returns>
-        static public float Lerp(float firstFloat, float secondFloat, float by)
+        public static float Lerp(float firstFloat, float secondFloat, float by)
         {
             return firstFloat + (secondFloat - firstFloat) * by;
         }

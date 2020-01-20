@@ -6,7 +6,7 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         // Which side this column represents
         // Currently not being used.
-        private int side;
+        private int _side;
 
         // All HitObjects for this column.
         public List<HitObject> HitObjects { get; private set; }
@@ -20,7 +20,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="side"></param>
         public Column(int side)
         {
-            this.side = side;
+            _side = side;
             HitObjects = new List<HitObject>();
             UpdateHitObjects = new List<KeyValuePair<long, HitObject>>();
         }

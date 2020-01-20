@@ -1,7 +1,6 @@
-using Pulsarc.UI.Screens.Gameplay;
-using System;
 using System.Diagnostics;
 using System.Threading;
+using Pulsarc.UI.Screens.Gameplay;
 using Wobble.Audio.Tracks;
 using Wobble.Logging;
 
@@ -9,19 +8,19 @@ namespace Pulsarc.Utils
 {
     static class AudioManager
     {
-        public static bool running = false;
-        public static bool initialized = false;
-        public static bool active = false;
-        public static bool activeThreadLimiterWatch = false;
-        public static bool paused = false;
-        public static string songPath = "";
-        public static double offset = 35;
-        public static double startDelayMs = 1000;
-        public static float audioRate = 1;
+        public static bool Running;
+        private static bool _initialized;
+        public static bool Active;
+        private static bool _activeThreadLimiterWatch;
+        public static bool Paused;
+        public static string SongPath = "";
+        public static double Offset = 35;
+        private static double startDelayMs = 1000;
+        public static float AudioRate = 1;
 
-        private static Thread audioThread;
-        private static AudioTrack song;
-        private static Stopwatch threadLimiterWatch;
+        private static Thread _audioThread;
+        private static AudioTrack _song;
+        private static Stopwatch _threadLimiterWatch;
 
         /// <summary>
         /// Start playing audio
@@ -31,13 +30,13 @@ namespace Pulsarc.Utils
             Stop();
 
             // Keep trying to initialize the Audio Manager
-            if (!initialized)
-                while (!initialized)
+            if (!_initialized)
+                while (!_initialized)
                 {
                     try
                     {
                         Wobble.Audio.AudioManager.Initialize(null, null);
-                        initialized = true;
+                        _initialized = true;
                     }
                     catch
                     {
@@ -45,20 +44,20 @@ namespace Pulsarc.Utils
                     }
                 }
 
-            if (songPath == "")
+            if (SongPath == "")
                 return;
 
             // Initialize the song
-            song = new AudioTrack(songPath, false)
+            _song = new AudioTrack(SongPath)
             {
-                Rate = audioRate,
-                Volume = Config.GetInt("Audio", "MusicVolume"),
+                Rate = AudioRate,
+                Volume = Config.GetInt("Audio", "MusicVolume")
             };
 
-            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+            _song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
 
-            song.Play();
-            active = true;
+            _song.Play();
+            Active = true;
         }
 
         /// <summary>
@@ -66,30 +65,30 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void StartGamePlayer()
         {
-            audioThread = new Thread(new ThreadStart(GameAudioPlayer));
-            audioThread.Start();
+            _audioThread = new Thread(GameAudioPlayer);
+            _audioThread.Start();
         }
 
         /// <summary>
         /// Initializes the GameAudioPlayer
         /// </summary>
-        public static void GameAudioPlayer()
+        private static void GameAudioPlayer()
         {
             // Initialize variables
-            threadLimiterWatch = new Stopwatch();
-            threadLimiterWatch.Start();
-            activeThreadLimiterWatch = true;
+            _threadLimiterWatch = new Stopwatch();
+            _threadLimiterWatch.Start();
+            _activeThreadLimiterWatch = true;
 
-            if (songPath == "")
+            if (SongPath == "")
                 return;
 
             // Keep trying to initialize the Audio Manager
-            while (!initialized)
+            while (!_initialized)
             {
                 try
                 {
                     Wobble.Audio.AudioManager.Initialize(null, null);
-                    initialized = true;
+                    _initialized = true;
                 }
                 catch
                 {
@@ -97,41 +96,39 @@ namespace Pulsarc.Utils
                 }
             }
 
-            running = true;
+            Running = true;
             var threadTime = new Stopwatch();
 
             // Initialize the song
-            song = new AudioTrack(songPath, false)
+            _song = new AudioTrack(SongPath)
             {
-                Rate = audioRate,
-                Volume = Config.GetInt("Audio", "MusicVolume"),
+                Rate = AudioRate,
+                Volume = Config.GetInt("Audio", "MusicVolume")
             };
 
-            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+            _song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
 
-            threadLimiterWatch.Start();
+            _threadLimiterWatch.Start();
 
             // Add a delay
-            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset)
+            while (_threadLimiterWatch.ElapsedMilliseconds < startDelayMs - Offset)
             { }
 
             // Start playing if the gameplay engine is active
-            if (GameplayEngine.Active)
-            {
-                threadLimiterWatch.Restart();
+            if (!GameplayEngine.Active) return;
+            _threadLimiterWatch.Restart();
 
-                song.Play();
-                threadTime.Start();
+            _song.Play();
+            threadTime.Start();
 
-                active = true;
+            Active = true;
 
-                while (running)
-                    if (threadLimiterWatch.ElapsedMilliseconds >= 1)
-                    {
-                        threadLimiterWatch.Restart();
-                        Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
-                    }
-            }
+            while (Running)
+                if (_threadLimiterWatch.ElapsedMilliseconds >= 1)
+                {
+                    _threadLimiterWatch.Restart();
+                    Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
+                }
         }
 
         /// <summary>
@@ -140,10 +137,9 @@ namespace Pulsarc.Utils
         /// <returns>The current time of the audio (in ms)</returns>
         public static double GetTime()
         {
-            if (active && song.StreamLoaded)
-                return song.Position - offset;
-            else
-                return -startDelayMs + (activeThreadLimiterWatch ? threadLimiterWatch.ElapsedMilliseconds : 0);
+            if (Active && _song.StreamLoaded)
+                return _song.Position - Offset;
+            return -startDelayMs + (_activeThreadLimiterWatch ? _threadLimiterWatch.ElapsedMilliseconds : 0);
         }
 
         /// <summary>
@@ -153,28 +149,28 @@ namespace Pulsarc.Utils
         /// <param name="time">The amount of time to move</param>
         public static void DeltaTime(long time)
         {
-            if (active)
-                Seek(song.Position + time);
+            if (Active)
+                Seek(_song.Position + time);
         }
 
         /// <summary>
         /// Move the audio position to the provided time.
         /// </summary>
         /// <param name="time">The time to jump to in the audio.</param>
-        public static void Seek(double time)
+        private static void Seek(double time)
         {
-            bool withinRange = time >= -1 && time <= song.Length;
+            bool withinRange = time >= -1 && time <= _song.Length;
 
             // If audio is active and the time was within range,
             // seek to that time
-            if (active && withinRange)
-                song.Seek(time);
+            if (Active && withinRange)
+                _song.Seek(time);
             // Otherwise seek to the beginning or end.
-            else if (active)
+            else if (Active)
                 if (time < -1)
-                    song.Seek(-1);
+                    _song.Seek(-1);
                 else
-                    song.Seek(song.Length);
+                    _song.Seek(_song.Length);
         }
 
         /// <summary>
@@ -182,11 +178,9 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void Pause()
         {
-            if (active && !paused && song.IsPlaying)
-            {
-                song.Pause();
-                paused = true;
-            }
+            if (!Active || Paused || !_song.IsPlaying) return;
+            _song.Pause();
+            Paused = true;
         }
 
         /// <summary>
@@ -194,11 +188,9 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void Resume()
         {
-            if (active && paused && !song.IsPlaying)
-            {
-                song.Play();
-                paused = false;
-            }
+            if (!Active || !Paused || _song.IsPlaying) return;
+            _song.Play();
+            Paused = false;
         }
 
         /// <summary>
@@ -206,29 +198,26 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void Stop()
         {
-            if (active)
-            {
-                Pause();
+            if (!Active) return;
+            Pause();
 
-                if (song.IsPlaying)
-                    song.Stop();
+            if (_song.IsPlaying)
+                _song.Stop();
 
-                song = null;
-                Reset();
-            }
+            _song = null;
+            Reset();
         }
 
         /// <summary>
         /// Reset the audio
         /// </summary>
-        public static void Reset()
+        private static void Reset()
         {
-            active = false;
-            paused = false;
-            running = false;
+            Active = false;
+            Paused = false;
+            Running = false;
 
-            if (threadLimiterWatch != null)
-                threadLimiterWatch.Reset();
+            _threadLimiterWatch?.Reset();
         }
 
         /// <summary>
@@ -237,24 +226,22 @@ namespace Pulsarc.Utils
         /// </summary>
         public static void UpdateRate()
         {
-            if (active)
-            {
-                // Save the position and audio path.
-                double time = GetTime();
-                string audio = songPath;
-                Stop();
+            if (!Active) return;
+            // Save the position and audio path.
+            double time = GetTime();
+            string audio = SongPath;
+            Stop();
 
-                // Find the audio rate.
-                songPath = audio;
-                audioRate = Config.GetFloat("Gameplay", "SongRate");
-                StartLazyPlayer();
+            // Find the audio rate.
+            SongPath = audio;
+            AudioRate = Config.GetFloat("Gameplay", "SongRate");
+            StartLazyPlayer();
 
-                // Play the rate-changed song at the time saved earlier.
-                if (time != 0)
-                    DeltaTime((long)time);
+            // Play the rate-changed song at the time saved earlier.
+            if (time != 0)
+                DeltaTime((long)time);
 
-                PulsarcLogger.Important($"Now Playing: {songPath} at {audioRate} rate", LogType.Runtime);
-            }
+            PulsarcLogger.Important($"Now Playing: {SongPath} at {AudioRate} rate", LogType.Runtime);
         }
 
         /// <summary>
@@ -263,7 +250,7 @@ namespace Pulsarc.Utils
         /// <returns>Whether the song has finished (not stopped or paused)</returns>
         public static bool FinishedPlaying()
         {
-            return !paused && !song.IsPlaying && song.IsStopped;
+            return !Paused && !_song.IsPlaying && _song.IsStopped;
         }
     }
 }

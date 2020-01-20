@@ -25,7 +25,7 @@ namespace Pulsarc.Utils.BeatmapConversion
         public long HandCount { get; set; }
 
         // Used by the Steam Workshop
-        public string MoreInfoURL { get; set; }
+        public string MoreInfoUrl { get; set; }
 
         // Beatmap data
         // Base arc speed

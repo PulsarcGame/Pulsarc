@@ -1,6 +1,6 @@
-﻿using Pulsarc.UI.Screens.Gameplay;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Pulsarc.UI.Screens.Gameplay;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -12,7 +12,7 @@ namespace Pulsarc.Beatmaps.Events
         Invalid = -1,
         Event = 0,
         Zoom = 1,
-        SpeedVariation = 2,
+        SpeedVariation = 2
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ namespace Pulsarc.Beatmaps.Events
         // EventTime index
         Time = 0,
         // EventType index
-        Type = 1,
+        Type = 1
     }
 
     /// <summary>
@@ -53,19 +53,19 @@ namespace Pulsarc.Beatmaps.Events
         public EventType Type { get; protected set; }
 
         // The list of parameters for this event
-        public List<string> Parameters { get; protected set; } = new List<string>();
+        protected List<string> Parameters { get; set; } = new List<string>();
 
         // The list of all events of this type for the beatmap
         // Legacy?
-        protected List<Event> similarEvents = new List<Event>();
-        protected bool similarEventsCalled = false;
-        protected List<Event> futureEvents = new List<Event>();
-        protected bool futureEventsCalled = false;
+        private List<Event> _similarEvents = new List<Event>();
+        private bool _similarEventsCalled;
+        private List<Event> _futureEvents = new List<Event>();
+        private bool _futureEventsCalled;
 
         // The next similar event in gameplay according to Time
         // Set in FindNextEvent
-        protected Event nextEvent;
-        protected bool foundNextEvent = false;
+        protected Event NextEvent;
+        private bool _foundNextEvent;
 
         // Whether or not this event is currently being handled
         public bool Active { get; set; } = false;
@@ -74,7 +74,7 @@ namespace Pulsarc.Beatmaps.Events
         /// Creates a new Event from the string provided.
         /// </summary>
         /// <param name="line">A line from a .psc beatmap that defines an event.</param>
-        public Event(string line)
+        protected Event(string line)
         {
             Queue<string> parts = new Queue<string>(line.Split(','));
 
@@ -143,7 +143,7 @@ namespace Pulsarc.Beatmaps.Events
         /// </summary>
         /// <param name="eventType">The EventType to find the corresponding string of. Can be null.</param>
         /// <returns>"event", "zoom", "speedvariation", or "invalid"</returns>
-        public static string GetStringOfEventType(EventType eventType)
+        private static string GetStringOfEventType(EventType eventType)
         {
             switch (eventType)
             {
@@ -165,7 +165,7 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="eventType"></param>
         protected static void ThrowWrongEventTypeException(Event evnt, EventType eventType)
         {
-            throw new WrongEventTypeException($"The event [{evnt.ToString()}] was treated as a(n) " +
+            throw new WrongEventTypeException($"The event [{evnt}] was treated as a(n) " +
                 $"{GetStringOfEventType(eventType)} event, when it is actually a(n) " +
                 $"{GetStringOfEventType(evnt.Type)} event instead!");
         }
@@ -195,19 +195,19 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplayEngine to look through</param>
         protected void FindNextEvent(GameplayEngine gameplayEngine)
         {
-            if (foundNextEvent)
+            if (_foundNextEvent)
                 return;
 
             FindAllSimilarEvents(gameplayEngine);
 
-            nextEvent = gameplayEngine.CurrentBeatmap.Events.Find(GreaterEventTime);
-            foundNextEvent = true;
+            NextEvent = gameplayEngine.CurrentBeatmap.Events.Find(GreaterEventTime);
+            _foundNextEvent = true;
         }
 
         /// <summary>
         /// Whether or not the provided event has a greater time than this event.
         /// </summary>
-        /// <param name="evt">The event to compare to</param>
+        /// <param name="evnt"></param>
         /// <returns>True if evnt's time is greater than this.</returns>
         private bool GreaterEventTime(Event evnt)
         {
@@ -219,14 +219,14 @@ namespace Pulsarc.Beatmaps.Events
         /// Find all events in gameplayEngine that share the same type as this Event.
         /// </summary>
         /// <param name="gameplayEngine">The gameplayEngine to look through</param>
-        protected void FindAllSimilarEvents(GameplayEngine gameplayEngine)
+        private void FindAllSimilarEvents(GameplayEngine gameplayEngine)
         {
             // Only need to call this once, inherited classes can set similarEventsCalled to false if they want to call again.
-            if (similarEventsCalled)
+            if (_similarEventsCalled)
                 return;
 
-            similarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
-            similarEventsCalled = true;
+            _similarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
+            _similarEventsCalled = true;
         }
 
         /// <summary>
@@ -237,20 +237,20 @@ namespace Pulsarc.Beatmaps.Events
         /// <param name="gameplayEngine">The gameplayEngine to look through</param>
         protected void FindAllSimilarFutureEvents(GameplayEngine gameplayEngine)
         {
-            if (futureEventsCalled)
+            if (_futureEventsCalled)
                 return;
 
             FindAllSimilarEvents(gameplayEngine);
 
-            futureEvents = similarEvents.FindAll(GreaterEventTime);
-            futureEventsCalled = true;
+            _futureEvents = _similarEvents.FindAll(GreaterEventTime);
+            _futureEventsCalled = true;
         }
 
         /// <summary>
         /// Currently not used. Keeping in case it proves useful in the future.
         /// Whether or not the provided event has the same type as this event.
         /// </summary>
-        /// <param name="evt">The event to compare to</param>
+        /// <param name="evnt"></param>
         /// <returns>True if evt and this Event share the same type.</returns>
         private bool SameEventType(Event evnt)
         {

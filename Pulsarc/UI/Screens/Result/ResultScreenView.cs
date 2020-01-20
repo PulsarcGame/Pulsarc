@@ -1,48 +1,47 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Skinning;
 using Pulsarc.Beatmaps;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
-using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using Pulsarc.Utils;
-using System.Collections.Generic;
 using Wobble.Screens;
-using System;
 
 namespace Pulsarc.UI.Screens.Result
 {
     class ResultScreenView : ScreenView
     {
         private string Config => "result_screen";
-        private string[] Sections => new string[] { "Properties", "Metadata", "Judgements" };
+        private string[] Sections => new[] { "Properties", "Metadata", "Judgements" };
 
         private ResultScreen GetResultScreen() { return (ResultScreen)Screen; }
 
         // Buttons
-        private RetryButton buttonRetry;
-        private ReturnButton buttonBack;
-        private ButtonAdvanced buttonAdvanced;
+        private RetryButton _buttonRetry;
+        private ReturnButton _buttonBack;
+        private ButtonAdvanced _buttonAdvanced;
 
-        private Beatmap beatmap;
+        private readonly Beatmap _beatmap;
 
         // Play stats
-        private List<TextDisplayElement> playStats = new List<TextDisplayElement>();
-        private Grade grade;
+        private readonly List<TextDisplayElement> _playStats = new List<TextDisplayElement>();
+        private Grade _grade;
 
         // Background and scorecard designs
-        private ResultCard scorecard;
-        private Background background;
-        private Background mapBackground;
+        private ResultCard _scorecard;
+        private Background _background;
+        private Background _mapBackground;
 
         // Metadata
-        private List<TextDisplayElement> metadata = new List<TextDisplayElement>();
+        private readonly List<TextDisplayElement> _metadata = new List<TextDisplayElement>();
 
         // Judges and the TDE that tracks the amount of each
-        private List<KeyValuePair<Judge,TextDisplayElement>> judgements;
+        private List<KeyValuePair<Judge,TextDisplayElement>> _judgements;
 
-        private HitErrorGraph hitErrorGraph;
+        private HitErrorGraph _hitErrorGraph;
 
         /// <summary>
         /// ResultScreenView draws everything needed for the Result Screen.
@@ -51,9 +50,10 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="accuracy">The accuracy of the play.</param>
         /// <param name="grade">The grade of the play.</param>
         /// <param name="beatmap">The beatmap that was played.</param>
+        /// <param name="mapBackground"></param>
         public ResultScreenView(Screen screen, double accuracy, string grade, Beatmap beatmap, Background mapBackground) : base(screen)
         {
-            this.beatmap = beatmap;
+            _beatmap = beatmap;
 
             // TODO: Redesign ResultScorecard to work on other aspect ratios than 16:9
             AddScoreCard();
@@ -77,36 +77,36 @@ namespace Pulsarc.UI.Screens.Result
             Vector2 startPos = Skin.GetConfigStartPosition(Config, Sections[0], "ScoreCardStartPos");
             Anchor anchor = GetSkinnablePropertyAnchor("ScoreCardAnchor");
 
-            scorecard = new ResultCard(startPos, anchor);
+            _scorecard = new ResultCard(startPos, anchor);
 
             int offsetX = GetSkinnablePropertyInt("ScoreCardX");
             int offsetY = GetSkinnablePropertyInt("ScoreCardY");
 
-            scorecard.Move(offsetX, offsetY);
+            _scorecard.Move(offsetX, offsetY);
         }
 
         private void AddButtons()
         {
-            buttonBack = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
-            buttonRetry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
-            buttonAdvanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            _buttonBack = new ReturnButton("result_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            _buttonRetry = new RetryButton("result_button_retry", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+            _buttonAdvanced = new ButtonAdvanced(AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
 
             // Move the advanced button to the right spot
-            float width = buttonAdvanced.Texture.Width;
-            float height = buttonAdvanced.Texture.Height;
-            buttonAdvanced.Move(new Vector2(width, -height));
+            float width = _buttonAdvanced.Texture.Width;
+            float height = _buttonAdvanced.Texture.Height;
+            _buttonAdvanced.Move(new Vector2(width, -height));
         }
 
         private void AddBackgrounds(Background mapBackground)
         {
             // Skinned Background
-            background = new Background("result_background");
+            _background = new Background("result_background");
 
             // Map Background
-            this.mapBackground = mapBackground;
+            _mapBackground = mapBackground;
 
             float scale = GetSkinnablePropertyFloat("MapBGScale") * Pulsarc.HeightScale;
-            Vector2 startPosition = Skin.GetConfigStartPosition(Config, Sections[0], "MapBGStartPos", scorecard);
+            Vector2 startPosition = Skin.GetConfigStartPosition(Config, Sections[0], "MapBGStartPos", _scorecard);
 
             int offsetX = GetSkinnablePropertyInt("MapBGX");
             int offsetY = GetSkinnablePropertyInt("MapBGY");
@@ -123,44 +123,44 @@ namespace Pulsarc.UI.Screens.Result
             float scale = GetSkinnablePropertyFloat("GradeScale");
             Anchor anchor = GetSkinnablePropertyAnchor("GradeAnchor");
 
-            this.grade = new Grade(grade, startPosition, scale, anchor);
+            _grade = new Grade(grade, startPosition, scale, anchor);
 
             int offsetX = GetSkinnablePropertyInt("GradeX");
             int offsetY = GetSkinnablePropertyInt("GradeY");
 
-            this.grade.Move(offsetX, offsetY);
+            _grade.Move(offsetX, offsetY);
 
             // TDEs
-            playStats.Add(MakeTextDisplayElement("Score", Sections[0]));
-            playStats[0].Update(GetResultScreen().DisplayScore.ToString("#,#0"));
+            _playStats.Add(MakeTextDisplayElement("Score", Sections[0]));
+            _playStats[0].Update(GetResultScreen().DisplayScore.ToString("#,#0"));
 
-            playStats.Add(MakeTextDisplayElement("Acc", Sections[0]));
-            playStats[1].Update(Math.Round(accuracy * 100, 2).ToString("#,##.00") + "%");
+            _playStats.Add(MakeTextDisplayElement("Acc", Sections[0]));
+            _playStats[1].Update(Math.Round(accuracy * 100, 2).ToString("#,##.00") + "%");
 
-            playStats.Add(MakeTextDisplayElement("Combo", Sections[0]));
-            playStats[2].Update(GetResultScreen().Combo.ToString("#,#0") + "x");
+            _playStats.Add(MakeTextDisplayElement("Combo", Sections[0]));
+            _playStats[2].Update(GetResultScreen().Combo.ToString("#,#0") + "x");
         }
 
         private void AddMetadata()
         {
-            metadata.Add(MakeTextDisplayElement("Title", Sections[1]));
-            metadata[0].Update(GetResultScreen().Beatmap.Title);
+            _metadata.Add(MakeTextDisplayElement("Title", Sections[1]));
+            _metadata[0].Update(GetResultScreen().Beatmap.Title);
 
-            metadata.Add(MakeTextDisplayElement("Artist", Sections[1]));
-            metadata[1].Update(GetResultScreen().Beatmap.Artist);
+            _metadata.Add(MakeTextDisplayElement("Artist", Sections[1]));
+            _metadata[1].Update(GetResultScreen().Beatmap.Artist);
 
-            metadata.Add(MakeTextDisplayElement("Version", Sections[1]));
-            metadata[2].Update(GetResultScreen().Beatmap.Version);
+            _metadata.Add(MakeTextDisplayElement("Version", Sections[1]));
+            _metadata[2].Update(GetResultScreen().Beatmap.Version);
 
-            metadata.Add(MakeTextDisplayElement("Mapper", Sections[1]));
-            metadata[3].Update(GetResultScreen().Beatmap.Mapper);
+            _metadata.Add(MakeTextDisplayElement("Mapper", Sections[1]));
+            _metadata[3].Update(GetResultScreen().Beatmap.Mapper);
         }
 
         private void AddHitErrorGraph()
         {
-            hitErrorGraph = new HitErrorGraph
+            _hitErrorGraph = new HitErrorGraph
             (
-                Skin.GetConfigStartPosition(Config, Sections[0], "HitErrorStartPos", scorecard),
+                Skin.GetConfigStartPosition(Config, Sections[0], "HitErrorStartPos", _scorecard),
                 (int)(GetSkinnablePropertyInt("HitErrorWidth") * Pulsarc.HeightScale),
                 (int)(GetSkinnablePropertyInt("HitErrorHeight") * Pulsarc.HeightScale),
                 GetResultScreen().Hits,
@@ -170,17 +170,17 @@ namespace Pulsarc.UI.Screens.Result
             int offsetX = GetSkinnablePropertyInt("HitErrorX");
             int offsetY = GetSkinnablePropertyInt("HitErrorY");
 
-            hitErrorGraph.Move(offsetX, offsetY);
+            _hitErrorGraph.Move(offsetX, offsetY);
         }
 
         private void AddJudges()
         {
-            judgements = new List<KeyValuePair<Judge, TextDisplayElement>>();
+            _judgements = new List<KeyValuePair<Judge, TextDisplayElement>>();
 
             foreach (JudgementValue judge in Judgement.Judgements)
                 AddJudgeInfo(judge.Name);
 
-            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
+            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in _judgements)
             {
                 string name = judgePair.Value.Name;
                 judgePair.Value.Name = "";
@@ -198,7 +198,7 @@ namespace Pulsarc.UI.Screens.Result
             JudgementValue judgement = Judgement.GetJudgementValueByName(name);
 
             // Judge
-            Vector2 position = Skin.GetConfigStartPosition(Config, Sections[2], $"{configName}StartPos", scorecard);
+            Vector2 position = Skin.GetConfigStartPosition(Config, Sections[2], $"{configName}StartPos", _scorecard);
             int offsetX = GetSkinnableJudgementInt($"{configName}X");
             int offsetY = GetSkinnableJudgementInt($"{configName}Y");
             float scale = GetSkinnableJudgementFloat($"{configName}Scale") * Pulsarc.HeightScale;
@@ -212,14 +212,14 @@ namespace Pulsarc.UI.Screens.Result
             text.Name = name;
             text.Color = judgement.Color;
 
-            judgements.Add(new KeyValuePair<Judge, TextDisplayElement>(judge, text));
+            _judgements.Add(new KeyValuePair<Judge, TextDisplayElement>(judge, text));
         }
         #endregion
 
         private TextDisplayElement MakeTextDisplayElement(string typeName, string section)
         {
             // Find variables for the TDE
-            Vector2 position = Skin.GetConfigStartPosition(Config, section, $"{typeName}StartPos", scorecard);
+            Vector2 position = Skin.GetConfigStartPosition(Config, section, $"{typeName}StartPos", _scorecard);
             int fontSize = Skin.GetConfigInt(Config, section, $"{typeName}FontSize");
             Anchor textAnchor = Skin.GetConfigAnchor(Config, section, $"{typeName}Anchor");
             Color textColor = Color.White;
@@ -230,7 +230,10 @@ namespace Pulsarc.UI.Screens.Result
             {
                 textColor = Skin.GetConfigColor(Config, section, $"{typeName}Color");
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             //Make TDE
             TextDisplayElement text = new TextDisplayElement("", position, fontSize, textAnchor, textColor);
@@ -348,30 +351,30 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="gameTime">Game time</param>
         public override void Draw(GameTime gameTime)
         {
-            mapBackground.Draw();
-            background.Draw();
+            _mapBackground.Draw();
+            _background.Draw();
 
-            buttonAdvanced.Draw();
-            buttonBack.Draw();
-            buttonRetry.Draw();
+            _buttonAdvanced.Draw();
+            _buttonBack.Draw();
+            _buttonRetry.Draw();
 
-            scorecard.Draw();
+            _scorecard.Draw();
 
-            foreach (TextDisplayElement playStat in playStats)
+            foreach (TextDisplayElement playStat in _playStats)
                 playStat.Draw();
 
-            grade.Draw();
+            _grade.Draw();
 
-            foreach (TextDisplayElement data in metadata)
+            foreach (TextDisplayElement data in _metadata)
                 data.Draw();
 
-            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
+            foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in _judgements)
             {
                 judgePair.Key.Draw();
                 judgePair.Value.Draw();
             }
 
-            hitErrorGraph.Draw();
+            _hitErrorGraph.Draw();
         }
 
         /// <summary>
@@ -394,10 +397,10 @@ namespace Pulsarc.UI.Screens.Result
             {
                 Point pos = InputManager.LastMouseClick.Key.Position;
 
-                if (buttonBack.Hovered(pos))
-                    buttonBack.OnClick();
-                else if (buttonRetry.Hovered(pos))
-                    buttonRetry.OnClick(beatmap);
+                if (_buttonBack.Hovered(pos))
+                    _buttonBack.OnClick();
+                else if (_buttonRetry.Hovered(pos))
+                    _buttonRetry.OnClick(_beatmap);
             }
         }
     }

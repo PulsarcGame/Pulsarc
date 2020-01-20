@@ -1,14 +1,13 @@
-﻿using Pulsarc.Beatmaps;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
 
 namespace Pulsarc.Utils.SQLite
 {
-    public class BeatmapDB : SQLiteStore
+    public class BeatmapDb : SqLiteStore
     {
-        public BeatmapDB() : base("beatmap") { }
+        public BeatmapDb() : base("beatmap") { }
 
-        public override void InitTables()
+        protected override void InitTables()
         {
             Tables.Add(new BeatmapData());
         }

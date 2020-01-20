@@ -1,10 +1,10 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
-using System;
 using Wobble.Logging;
 
 namespace Pulsarc.UI
@@ -23,50 +23,48 @@ namespace Pulsarc.UI
         CenterLeft = 5,
         BottomLeft = 6,
         CenterTop = 7,
-        CenterBottom = 8,
+        CenterBottom = 8
     }
 
     public class Drawable
     {
         // The texture for this Drawable.
-        private Texture2D texture;
+        private Texture2D _texture;
 
         // Makes sure that important variables are correctly updated when Texture is set.
         public virtual Texture2D Texture
         {
-            get => texture;
+            get => _texture;
 
             set
             {
-                texture = value;
+                _texture = value ?? Skin.DefaultTexture;
 
                 // Change to default texture if value was null
-                if (texture == null)
-                    texture = Skin.DefaultTexture;
 
                 // Update currentSize and drawnPart
-                currentSize = new Vector2(texture.Width * Scale, texture.Height * Scale);
-                drawnPart = new Rectangle(new Point(0, 0), new Point(texture.Width, texture.Height));
+                CurrentSize = new Vector2(_texture.Width * Scale, _texture.Height * Scale);
+                DrawnPart = new Rectangle(new Point(0, 0), new Point(_texture.Width, _texture.Height));
 
                 // Update position to refresh anchorPosition
-                ChangePosition(truePosition, true);
+                ChangePosition(TruePosition, true);
             }
         }
 
         // If the cursor is hovering this Drawable, it will be changed to the "hover" Drawable.
-        private Drawable hover = null;
+        private Drawable _hover;
 
         // Makes sure that important variables are correctly updated when Hover is set.
         public virtual Drawable Hover
         {
-            get => hover;
+            get => _hover;
 
             protected set
             {
-                hover = value;
-                hover.ChangePosition(truePosition, true);
-                hover.Scale = Scale;
-                hover.HeightScaled = HeightScaled;
+                _hover = value;
+                _hover.ChangePosition(TruePosition, true);
+                _hover.Scale = Scale;
+                _hover.HeightScaled = HeightScaled;
             }
         }
 
@@ -74,22 +72,22 @@ namespace Pulsarc.UI
         public virtual bool HasHover { get => Hover != null; }
 
         // The true position of this Drawable, as if it was anchored to Anchor.TopLeft.
-        public Vector2 truePosition;
+        public Vector2 TruePosition;
 
         // The position of this Drawable relative to its anchor.
-        public Vector2 anchorPosition;
+        public Vector2 AnchorPosition;
 
         // The origin (center) of this Drawable.
-        public Vector2 origin;
+        public Vector2 Origin;
 
         // What part of the Drawable is drawn, determined by this Rectangle object.
-        public Rectangle drawnPart;
+        public Rectangle DrawnPart;
 
         // The Anchor of the drawable, determines how this Drawable will be rendered in relation to its position.
         public Anchor Anchor { get; protected set; }
 
         // The current size of this drawable in pixels.
-        public Vector2 currentSize;
+        public Vector2 CurrentSize;
 
         // The opacity of this Drawable, 1 is fully opaque, 0 is fully transparent.
         public float Opacity { get; set; } = 1f;
@@ -106,7 +104,7 @@ namespace Pulsarc.UI
         public virtual bool HeightScaled { get; protected set; }
 
         // The angle of this Drawable.
-        public float Rotation { get; protected set; } = 0;
+        public float Rotation { get; protected set; }
 
 
         /// <summary>
@@ -122,10 +120,11 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
+        /// <param name="heightScaled"></param>
         public Drawable(Texture2D texture, Vector2 position, Vector2 size, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
         {
             // Define variables
-            origin = Vector2.Zero;
+            Origin = Vector2.Zero;
             Texture = texture;
             AspectRatio = aspectRatio;
             Anchor = anchor;
@@ -149,6 +148,7 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
+        /// <param name="heightScaled"></param>
         public Drawable(Texture2D texture, Vector2 position, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
             : this(texture, position, new Vector2(texture.Width, texture.Height), aspectRatio, anchor, heightScaled) { }
 
@@ -165,6 +165,7 @@ namespace Pulsarc.UI
         /// <param name="anchor">The anchor of this Drawable, the default is
         /// TopLeft, which means that the Drawable will be drawn below and to
         /// the right of the position.</param>
+        /// <param name="heightScaled"></param>
         public Drawable(Texture2D texture, float aspectRatio = -1, Anchor anchor = Anchor.TopLeft, bool heightScaled = true)
             : this(texture, new Vector2(0, 0), new Vector2(texture.Width, texture.Height), aspectRatio, anchor, heightScaled) { }
 
@@ -210,29 +211,29 @@ namespace Pulsarc.UI
         /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
         protected virtual void ResizeHeight(Vector2 size)
         {
-            Vector2 oldSize = currentSize;
+            Vector2 oldSize = CurrentSize;
 
             // Find the aspect ratio of the requested size change.
-            currentSize = size;
-            float newAspect = currentSize.X / currentSize.Y;
+            CurrentSize = size;
+            float newAspect = CurrentSize.X / CurrentSize.Y;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                PulsarcLogger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
+                PulsarcLogger.Debug($"Invalid aspect ratio : {CurrentSize.X}x{CurrentSize.Y} isn't {aspect}", LogType.Runtime);
 
-                currentSize = oldSize;
+                CurrentSize = oldSize;
                 return;
             }
             
-            currentSize = size;
+            CurrentSize = size;
 
             // Set the scale of this Drawable using the parameters provided.
-            Scale = currentSize.Y / Texture.Height;
+            Scale = CurrentSize.Y / Texture.Height;
 
             // Fix currentSize.X
-            currentSize.X = Texture.Width * Scale;
+            CurrentSize.X = Texture.Width * Scale;
         }
 
         /// <summary>
@@ -243,29 +244,29 @@ namespace Pulsarc.UI
         /// this Drawable should resize to. Width = size.X, Height = size.Y</param>
         public virtual void ResizeWidth(Vector2 size)
         {
-            Vector2 oldSize = currentSize;
+            Vector2 oldSize = CurrentSize;
 
             // Find the aspect ratio of the requested size change.
-            currentSize = size;
-            float newAspect = currentSize.X / currentSize.Y;
+            CurrentSize = size;
+            float newAspect = CurrentSize.X / CurrentSize.Y;
 
             // If aspect ratio is not -1 and the new aspect ratio does not equal the aspect ratio of this Drawable, don't resize, and throw a console error.
             if (AspectRatio != -1 && newAspect != AspectRatio)
             {
                 Fraction aspect = new Fraction(newAspect);
-                PulsarcLogger.Debug($"Invalid aspect ratio : {currentSize.X}x{currentSize.Y} isn't {aspect.ToString()}", LogType.Runtime);
+                PulsarcLogger.Debug($"Invalid aspect ratio : {CurrentSize.X}x{CurrentSize.Y} isn't {aspect}", LogType.Runtime);
 
-                currentSize = oldSize;
+                CurrentSize = oldSize;
                 return;
             }
 
-            currentSize = size;
+            CurrentSize = size;
 
             // Set the scale of this Drawable using the parameters provided.
-            Scale = currentSize.X / Texture.Width;
+            Scale = CurrentSize.X / Texture.Width;
 
             // Fix currentSize.Y
-            currentSize.Y = Texture.Height * Scale;
+            CurrentSize.Y = Texture.Height * Scale;
         }
 
         /// <summary>
@@ -309,7 +310,7 @@ namespace Pulsarc.UI
         {
             if (topLeftPositioning)
             {
-                truePosition = position;
+                TruePosition = position;
                 FindAnchorPosition();
                 return;
             }
@@ -317,39 +318,36 @@ namespace Pulsarc.UI
             switch (Anchor)
             {
                 case Anchor.Center:
-                    position.X -= currentSize.X / 2;
-                    position.Y -= currentSize.Y / 2;
+                    position.X -= CurrentSize.X / 2;
+                    position.Y -= CurrentSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    position.X -= currentSize.X;
+                    position.X -= CurrentSize.X;
                     break;
                 case Anchor.CenterRight:
-                    position.X -= currentSize.X;
-                    position.Y -= currentSize.Y / 2;
+                    position.X -= CurrentSize.X;
+                    position.Y -= CurrentSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    position.X -= currentSize.X;
-                    position.Y -= currentSize.Y;
+                    position.X -= CurrentSize.X;
+                    position.Y -= CurrentSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    position.Y -= currentSize.Y;
+                    position.Y -= CurrentSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    position.Y -= currentSize.Y / 2;
+                    position.Y -= CurrentSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
-                    position.X -= currentSize.X / 2;
+                    position.X -= CurrentSize.X / 2;
                     break;
                 case Anchor.CenterBottom:
-                    position.X -= currentSize.X / 2;
-                    position.Y -= currentSize.Y;
-                    break;
-                case Anchor.TopLeft:
-                default:
+                    position.X -= CurrentSize.X / 2;
+                    position.Y -= CurrentSize.Y;
                     break;
             }
 
-            truePosition = position;
+            TruePosition = position;
             FindAnchorPosition();
         }
 
@@ -386,8 +384,8 @@ namespace Pulsarc.UI
             // If height scaled, scale movement by height scale, otherwise by width scale
             float scale = useHeightScale ? Pulsarc.HeightScale : Pulsarc.WidthScale;
 
-            truePosition.X += delta.X * scale;
-            truePosition.Y += delta.Y * scale;
+            TruePosition.X += delta.X * scale;
+            TruePosition.Y += delta.Y * scale;
 
             FindAnchorPosition();
         }
@@ -414,44 +412,41 @@ namespace Pulsarc.UI
         /// </summary>
         protected virtual void FindAnchorPosition()
         {
-            Vector2 position = truePosition;
+            Vector2 position = TruePosition;
 
             switch (Anchor)
             {
                 case Anchor.Center:
-                    position.X += currentSize.X / 2;
-                    position.Y += currentSize.Y / 2;
+                    position.X += CurrentSize.X / 2;
+                    position.Y += CurrentSize.Y / 2;
                     break;
                 case Anchor.TopRight:
-                    position.X += currentSize.X;
+                    position.X += CurrentSize.X;
                     break;
                 case Anchor.CenterRight:
-                    position.X += currentSize.X;
-                    position.Y += currentSize.Y / 2;
+                    position.X += CurrentSize.X;
+                    position.Y += CurrentSize.Y / 2;
                     break;
                 case Anchor.BottomRight:
-                    position.X += currentSize.X;
-                    position.Y += currentSize.Y;
+                    position.X += CurrentSize.X;
+                    position.Y += CurrentSize.Y;
                     break;
                 case Anchor.BottomLeft:
-                    position.Y += currentSize.Y;
+                    position.Y += CurrentSize.Y;
                     break;
                 case Anchor.CenterLeft:
-                    position.Y += currentSize.Y / 2;
+                    position.Y += CurrentSize.Y / 2;
                     break;
                 case Anchor.CenterTop:
-                    position.X += currentSize.X / 2;
+                    position.X += CurrentSize.X / 2;
                     break;
                 case Anchor.CenterBottom:
-                    position.X += currentSize.X / 2;
-                    position.Y += currentSize.Y;
-                    break;
-                case Anchor.TopLeft:
-                default:
+                    position.X += CurrentSize.X / 2;
+                    position.Y += CurrentSize.Y;
                     break;
             }
 
-            anchorPosition = position;
+            AnchorPosition = position;
         }
 
         /// <summary>
@@ -471,15 +466,15 @@ namespace Pulsarc.UI
 
             if (!followScale)
             {
-                truePosition += position;
+                TruePosition += position;
                 FindAnchorPosition();
                 return;
             }
 
             // If not height scaled, Y movement is normal and X movement is scaled
             // If height scaled, X movement is normal and Y movement is scaled
-            truePosition.X += position.X * (!HeightScaled ? Pulsarc.WidthScale : 1);
-            truePosition.Y += position.Y * (HeightScaled ? Pulsarc.HeightScale : 1);
+            TruePosition.X += position.X * (!HeightScaled ? Pulsarc.WidthScale : 1);
+            TruePosition.Y += position.Y * (HeightScaled ? Pulsarc.HeightScale : 1);
 
             FindAnchorPosition();
         }
@@ -509,10 +504,10 @@ namespace Pulsarc.UI
         /// <returns>True if clicked, false if not clicked.</returns>
         public bool Hovered(Vector2 mousePos)
         {
-            return  mousePos.X >= truePosition.X && 
-                    mousePos.X <= truePosition.X + (drawnPart.Width * Scale) &&
-                    mousePos.Y >= truePosition.Y &&
-                    mousePos.Y <= truePosition.Y + (drawnPart.Height * Scale);
+            return  mousePos.X >= TruePosition.X && 
+                    mousePos.X <= TruePosition.X + DrawnPart.Width * Scale &&
+                    mousePos.Y >= TruePosition.Y &&
+                    mousePos.Y <= TruePosition.Y + DrawnPart.Height * Scale;
         }
 
         /// <summary>
@@ -564,7 +559,7 @@ namespace Pulsarc.UI
         /// <returns>True if on screen, false if not on screen.</returns>
         public bool OnScreen()
         {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, (int)currentSize.X, (int)currentSize.Y)
+            return new Rectangle((int)TruePosition.X, (int)TruePosition.Y, (int)CurrentSize.X, (int)CurrentSize.Y)
                     .Intersects(Pulsarc.ScreenSpace);
         }
 
@@ -575,8 +570,8 @@ namespace Pulsarc.UI
         /// <returns>True if the two Drawables intersect, false if they dont'.</returns>
         public bool Intersects(Drawable drawable)
         {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
-                    .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, (int)drawable.currentSize.X, (int)drawable.currentSize.Y));
+            return new Rectangle((int)TruePosition.X, (int)TruePosition.Y, Texture.Width, Texture.Height)
+                    .Intersects(new Rectangle((int) drawable.TruePosition.X, (int)drawable.TruePosition.Y, (int)drawable.CurrentSize.X, (int)drawable.CurrentSize.Y));
         }
         #endregion
 
@@ -588,7 +583,7 @@ namespace Pulsarc.UI
             // If opacity isn't 1, color is just Color.White, otherwise it's Color.White * the opacity.
             Color color = Opacity != 1 ? Color.White * Opacity : Color.White;
 
-            Pulsarc.SpriteBatch.Draw(Texture, truePosition, drawnPart, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
+            Pulsarc.SpriteBatch.Draw(Texture, TruePosition, DrawnPart, color, Rotation, Origin, Scale, SpriteEffects.None, 0f);
 
             // If this item is hovered by the mouse, display the hover drawable.
             if (Hover != null && Hovered(Mouse.GetState()))

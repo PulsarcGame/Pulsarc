@@ -1,18 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Pulsarc.Utils;
-using System.Globalization;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
 {
     public class TextDisplayElementFixedSize : TextDisplayElement
     {
         // Last Values
-        private string lastValueString = "";
-        private int lastValueInt = -1;
-        private long lastValueLong = -1;
-        private double lastValueDouble = -1;
+        private string _lastValueString = "";
+        private int _lastValueInt = -1;
+        private long _lastValueLong = -1;
+        private double _lastValueDouble = -1;
 
         // Format for the current Value
         public string NumberFormat { get; set; } = "#,#0";
@@ -27,6 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="append">String to be appended to the displayed value</param>
         /// <param name="fontSize">The size to be used for drawing the font</param>
         /// <param name="anchor">The anchor</param>
+        /// <param name="color"></param>
         public TextDisplayElementFixedSize(string name, Vector2 position, string append, int fontSize = 18, Anchor anchor = Anchor.Center, Color? color = null)
             : base (name, position, fontSize, anchor, color)
         {
@@ -39,11 +36,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="value">String the text should display.</param>
         public new void Update(string value)
         {
-            if (value != lastValueString)
-            {
-                base.Update(value.ToString() + append);
-                lastValueString = value;
-            }
+            if (value == _lastValueString) return;
+            base.Update(value + append);
+            _lastValueString = value;
         }
 
         /// <summary>
@@ -53,11 +48,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// this TDE's number format.</param>
         public void Update(int value)
         {
-            if (value != lastValueInt)
-            {
-                base.Update(value.ToString(NumberFormat) + append);
-                lastValueInt = value;
-            }
+            if (value == _lastValueInt) return;
+            base.Update(value.ToString(NumberFormat) + append);
+            _lastValueInt = value;
         }
 
         /// <summary>
@@ -67,11 +60,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// this TDE's number format.</param>
         public void Update(long value)
         {
-            if (value != lastValueLong)
-            {
-                base.Update(value.ToString(NumberFormat) + append);
-                lastValueLong = value;
-            }
+            if (value == _lastValueLong) return;
+            base.Update(value.ToString(NumberFormat) + append);
+            _lastValueLong = value;
         }
 
         /// <summary>
@@ -81,11 +72,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// this TDE's number format.</param>
         public void Update(double value)
         {
-            if (value != lastValueDouble)
-            {
-                base.Update(value.ToString(NumberFormat) + append);
-                lastValueDouble = value;
-            }
+            if (value == _lastValueDouble) return;
+            base.Update(value.ToString(NumberFormat) + append);
+            _lastValueDouble = value;
         }
     }
 }

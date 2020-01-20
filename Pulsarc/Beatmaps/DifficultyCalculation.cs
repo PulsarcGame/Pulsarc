@@ -1,26 +1,26 @@
-﻿using Pulsarc.Utils.Maths;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using Pulsarc.Utils.Maths;
 
 namespace Pulsarc.Beatmaps
 {
     class DifficultyCalculation
     {
-        private const double baseDiff = 1;
-        private const double divider = 10;
+        private const double BaseDiff = 1;
+        private const double Divider = 10;
 
-        private const double kpsFingerSlope = 1.8;
-        private const double maxKpsDiff = 40;
-        private const double strainDecay = 2;
+        private const double KpsFingerSlope = 1.8;
+        private const double MaxKpsDiff = 40;
+        private const double StrainDecay = 2;
 
-        private const int sectionLength = 400;
-        private const int minLength = 60;
+        private const int SectionLength = 400;
+        private const int MinLength = 60;
 
-        private const double weightSlope = 0.9;
-        private const double weightBase = 0.6;
+        private const double WeightSlope = 0.9;
+        private const double WeightBase = 0.6;
         
-        const double maxSections = minLength / (sectionLength / 1000f);
+        const double MaxSections = MinLength / (SectionLength / 1000f);
 
         /// <summary>
         /// Find the difficulty of as map by splitting a 2D List representation
@@ -29,7 +29,7 @@ namespace Pulsarc.Beatmaps
         /// <param name="columns">A 2D List that represents the beatmap.</param>
         /// <param name="previousStrain"></param>
         /// <returns></returns>
-        static public double GetSectionDifficulty(List<List<Arc>> columns, double previousStrain)
+        private static double GetSectionDifficulty(List<List<Arc>> columns, double previousStrain)
         {
             double diff = 0;
 
@@ -39,14 +39,11 @@ namespace Pulsarc.Beatmaps
             {
                 if (arcs.Count > 0)
                 {
-                    List<int> times = new List<int>();
-
-                    foreach (Arc arc in arcs)
-                        times.Add(arc.Time);
+                    List<int> times = arcs.Select(arc => arc.Time).ToList();
 
                     double stdDiff = PulsarcMath.CalcStdDeviation(times);
 
-                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff);
+                    double c = Math.Min(Math.Pow(arcs.Count,KpsFingerSlope) * (SectionLength / 1000f), MaxKpsDiff);
                     diff += c;
                     diffs.Add(c);
                 }
@@ -56,7 +53,7 @@ namespace Pulsarc.Beatmaps
 
             var std = diffs.Count > 0 ? PulsarcMath.CalcStdDeviation(diffs) : 0;
 
-            return diff + std + (previousStrain / strainDecay);
+            return diff + std + previousStrain / StrainDecay;
         }
 
         /// <summary>
@@ -97,17 +94,17 @@ namespace Pulsarc.Beatmaps
 
             bool done = false;
             int currentTime = 0;
-            double current_strain = 0;
+            double currentStrain = 0;
 
             while (!done)
             {
-                List<List<Arc>> current_section = new List<List<Arc>>();
+                List<List<Arc>> currentSection = new List<List<Arc>>();
 
                 for (int i = 0; i < beatmap.KeyCount; i++)
-                    current_section.Add(new List<Arc>());
+                    currentSection.Add(new List<Arc>());
 
-                currentTime += sectionLength;
-                current_strain /= strainDecay;
+                currentTime += SectionLength;
+                currentStrain /= StrainDecay;
 
                 for (int k = 0; k < columns.Count; k++)
                 {
@@ -115,39 +112,36 @@ namespace Pulsarc.Beatmaps
 
                     while (column.Count > 0 && column[0].Time <= currentTime)
                     {
-                        current_section[k].Add(column[0]);
+                        currentSection[k].Add(column[0]);
                         column.RemoveAt(0);
                     }
                 }
 
                 done = true;
 
-                for (int k = 0; k < columns.Count; k++)
-                    if (columns[k].Count != 0)
-                        done = false;
+                foreach (var unused in columns.Where(t => t.Count != 0))
+                    done = false;
 
-                if (!done)
-                {
-                    current_strain = GetSectionDifficulty(current_section, current_strain);
+                if (done) continue;
+                currentStrain = GetSectionDifficulty(currentSection, currentStrain);
 
-                    diffs.Add(new KeyValuePair<double, int>(current_strain, currentTime));
-                }
+                diffs.Add(new KeyValuePair<double, int>(currentStrain, currentTime));
             }
 
             diffs.Sort((y, x) => x.Key.CompareTo(y.Key));
 
             double difficulty = 0;
-            double weight = weightBase;
+            double weight = WeightBase;
 
-            for (int i = 0; i < maxSections && i < diffs.Count; i++)
+            for (int i = 0; i < MaxSections && i < diffs.Count; i++)
             {
                 difficulty += diffs[i].Key * weight;
-                weight *= weightSlope;
+                weight *= WeightSlope;
             }
 
-            difficulty /= divider;
+            difficulty /= Divider;
 
-            return baseDiff + difficulty;
+            return BaseDiff + difficulty;
         }
 
         /// <summary>
@@ -155,7 +149,7 @@ namespace Pulsarc.Beatmaps
         /// </summary>
         /// <param name="beatmap">The beatmap to find the difficulty of.</param>
         /// <returns></returns>
-        static public double GetDifficulty(Beatmap beatmap)
+        public static double GetDifficulty(Beatmap beatmap)
         {
             double difficulty = 0;
 

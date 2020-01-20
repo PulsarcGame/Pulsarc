@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 
 namespace Pulsarc.UI.Screens.Settings.UI
@@ -12,17 +8,17 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <summary>
         /// The X that signifies if this option is activated or not.
         /// </summary>
-        private Drawable cross;
+        private readonly Drawable _cross;
 
         public Checkbox(string title, string more, Vector2 position, string type, bool startingValue) : 
-            base(title, more, position, Skin.Assets["settings_checkbox"], Anchor.CenterLeft, startingValue, type)
+            base(title, position, Skin.Assets["settings_checkbox"], Anchor.CenterLeft, startingValue, type)
         {
-            cross = new Drawable(Skin.Assets["settings_checkbox_cross"], position, anchor: Anchor.CenterLeft);
+            _cross = new Drawable(Skin.Assets["settings_checkbox_cross"], position, anchor: Anchor.CenterLeft);
 
-            cross.ChangePosition(position);
+            _cross.ChangePosition(position);
         }
 
-        public override dynamic GetSaveValue()
+        protected override dynamic GetSaveValue()
         {
             return Value;
         }
@@ -40,7 +36,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public override void Move(Vector2 delta, bool? heightScaled = null)
         {
             base.Move(delta, heightScaled);
-            cross.Move(delta, heightScaled);
+            _cross.Move(delta, heightScaled);
         }
 
         public override void Draw()
@@ -48,7 +44,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
             base.Draw();
             
             if (Value)
-                cross.Draw();
+                _cross.Draw();
         }
     }
 }

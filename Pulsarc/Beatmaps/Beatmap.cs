@@ -1,11 +1,12 @@
-﻿using Pulsarc.Beatmaps.Events;
-using Pulsarc.Utils;
-using Pulsarc.Utils.SQLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Pulsarc.Beatmaps.Events;
+using Pulsarc.Utils;
+using Pulsarc.Utils.SQLite;
 
 namespace Pulsarc.Beatmaps
 {
@@ -76,13 +77,9 @@ namespace Pulsarc.Beatmaps
         public string GetHash()
         {
             // The hash is modified for any metadata or arc/sv change
-            int arcCount = 0;
-            foreach (Arc arc in Arcs)
-                arcCount += arc.Time + arc.Type;
+            int arcCount = Arcs.Sum(arc => arc.Time + arc.Type);
 
-            int eventCount = 0;
-            foreach (Event evnt in Events)
-                eventCount += evnt.Time + evnt.Time + (int)evnt.Type;
+            int eventCount = Events.Sum(evnt => evnt.Time + evnt.Time + (int) evnt.Type);
 
             string uniqueMapDescriptor = Artist + Title + Mapper + Version + arcCount + ',' + eventCount;
             return BitConverter.ToString(
@@ -101,7 +98,7 @@ namespace Pulsarc.Beatmaps
         /// <returns></returns>
         public List<ScoreData> GetLocalScores()
         {
-            return DataManager.ScoreDB.GetScores(GetHash());
+            return DataManager.ScoreDb.GetScores(GetHash());
         }
 
         /// <summary>

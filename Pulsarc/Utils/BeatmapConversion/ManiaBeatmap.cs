@@ -52,90 +52,88 @@ namespace Pulsarc.Utils.BeatmapConversion
             // Go through each line in the file
             foreach(string line in File.ReadAllLines(file))
             {
-                if (line.Length > 0)
-                {
-                    Queue<string> parts = new Queue<string>(line.Split(':'));
+                if (line.Length <= 0) continue;
+                Queue<string> parts = new Queue<string>(line.Split(':'));
                     
-                    // If there's no colons, it's probably seperated by commas instead
-                    if (parts.Count <= 1)
-                        parts = new Queue<string>(line.Split(","));
+                // If there's no colons, it's probably seperated by commas instead
+                if (parts.Count <= 1)
+                    parts = new Queue<string>(line.Split(","));
 
-                    if (parts.Count > 1)
+                if (parts.Count > 1)
+                {
+                    string key = parts.Dequeue();
+                    string value = String.Join(":", parts.ToArray()).Trim();
+
+                    // Add Metadta
+                    if (state == "")
                     {
-                        string key = parts.Dequeue();
-                        string value = String.Join(":", parts.ToArray()).Trim();
-
-                        // Add Metadta
-                        if (state == "")
+                        switch (key)
                         {
-                            switch (key)
-                            {
-                                case "AudioFilename":
-                                case "Title":
-                                case "Artist":
-                                case "Creator":
-                                case "Version":
-                                    try
-                                    {
-                                        GetType().GetProperty(key).SetValue(this, value);
-                                    }
-                                    catch
-                                    {
-                                        PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
-                                    }
-                                    break;
-                                case "Mode":
-                                case "PreviewTime":
-                                    try
-                                    {
-                                        GetType().GetProperty(key).SetValue(this, int.Parse(value));
-                                    }
-                                    catch
-                                    {
-                                        PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
-                                    }
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            // If flagged in one of these event categories, add the line to the corresponding category.
-                            switch(state)
-                            {
-                                case "[Events]":
-                                    state = AddEvent(line, state);
-                                    break;
-                                case "[TimingPoints]":
-                                    TimingPoints.Add(line);
-                                    break;
-                                case "[HitObjects]":
-                                    HitObjects.Add(line);
-                                    break;
-                                default:
-                                    state = "";
-                                    break;
-                            }
+                            case "AudioFilename":
+                            case "Title":
+                            case "Artist":
+                            case "Creator":
+                            case "Version":
+                                try
+                                {
+                                    GetType().GetProperty(key)?.SetValue(this, value);
+                                }
+                                catch
+                                {
+                                    PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
+                                }
+                                break;
+                            case "Mode":
+                            case "PreviewTime":
+                                try
+                                {
+                                    GetType().GetProperty(key)?.SetValue(this, int.Parse(value));
+                                }
+                                catch
+                                {
+                                    PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
+                                }
+                                break;
                         }
                     }
                     else
                     {
-                        // If we enter one of these categories, change "state" to flag to the
-                        // switch-case code above to add those events to the beatmap.
-                        switch(line)
+                        // If flagged in one of these event categories, add the line to the corresponding category.
+                        switch(state)
                         {
                             case "[Events]":
-                                state = line;
+                                state = AddEvent(line, state);
                                 break;
                             case "[TimingPoints]":
+                                TimingPoints.Add(line);
                                 break;
                             case "[HitObjects]":
-                                state = line;
+                                HitObjects.Add(line);
                                 break;
                             default:
-                                if (!line.Contains("//")) //Ignore comments
-                                    state = "";
+                                state = "";
                                 break;
                         }
+                    }
+                }
+                else
+                {
+                    // If we enter one of these categories, change "state" to flag to the
+                    // switch-case code above to add those events to the beatmap.
+                    switch(line)
+                    {
+                        case "[Events]":
+                            state = line;
+                            break;
+                        case "[TimingPoints]":
+                            break;
+                        case "[HitObjects]":
+                            state = line;
+                            break;
+                        default:
+                            if (!line.Contains("//")) //Ignore comments
+                                state = "";
+                            break;
                     }
                 }
             }

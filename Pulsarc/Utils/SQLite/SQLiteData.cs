@@ -6,9 +6,9 @@ namespace Pulsarc.Utils.SQLite
 {
     public abstract class SQLiteData
     {
-        public SQLiteData() { }
+        protected SQLiteData() { }
 
-        public SQLiteData(SQLiteDataReader data)
+        protected SQLiteData(SQLiteDataReader data)
         {
             foreach (FieldInfo prop in GetType().GetFields())
             {
@@ -38,7 +38,7 @@ namespace Pulsarc.Utils.SQLite
             }
         }
 
-        public void SaveData(SQLiteStore db)
+        public void SaveData(SqLiteStore db)
         {
             string r = $"INSERT INTO {GetType().Name.ToLower()} (";
             string vals = "";

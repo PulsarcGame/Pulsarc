@@ -1,21 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
 using Pulsarc.Beatmaps;
-using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.SQLite;
-using System;
-using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Result
 {
     class ResultScreen : PulsarcScreen
     {
-        public override ScreenView View { get; protected set; }
+        public sealed override ScreenView View { get; protected set; }
 
         // All of the judgements obtained during the play
-        public List<JudgementValue> Judgements { get; private set; }
+        private List<JudgementValue> Judgements { get; set; }
 
         // Keeps track of how many of each judgement was obtained.
         public Dictionary<string, int> JudgesCount { get; private set; }
@@ -33,9 +31,9 @@ namespace Pulsarc.UI.Screens.Result
         public Beatmap Beatmap { get; private set; }
 
         // Whether or not a full combo was achieved.
-        public bool FullCombo { get; private set; }
+        private bool FullCombo { get; set; }
 
-        private ScoreData scoreData;
+        private readonly ScoreData _scoreData;
 
         /// <summary>
         /// The screen that summarizes the last play.
@@ -44,7 +42,11 @@ namespace Pulsarc.UI.Screens.Result
         /// <param name="hits">All the hits from the play.</param>
         /// <param name="displayScore">The score to be displayed.</param>
         /// <param name="combo">The maximum combo achieved from the play.</param>
+        /// <param name="mods"></param>
         /// <param name="beatmap">The beatmap that was played.</param>
+        /// <param name="rate"></param>
+        /// <param name="mapBackground"></param>
+        /// <param name="newScore"></param>
         public ResultScreen(List<JudgementValue> judgements, List<KeyValuePair<double, int>> hits, int displayScore, int combo, double rate, int mods, Beatmap beatmap, Background mapBackground, bool newScore = false)
         {
             // Add all the judgement names to judges_count
@@ -74,20 +76,20 @@ namespace Pulsarc.UI.Screens.Result
             FullCombo = JudgesCount["miss"] == 0;
 
             // Determine the grade achieved.
-            scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
-            scoreData.grade = Scoring.GetGrade(scoreData);
+            _scoreData = new ScoreData(Beatmap.GetHash(), Config.GetString("Profile","Username"), rate, mods, DisplayScore, (float)accuracyTotal, Combo, "D", JudgesCount["max"], JudgesCount["perfect"], JudgesCount["great"], JudgesCount["good"], JudgesCount["bad"], JudgesCount["miss"]);
+            _scoreData.Grade = Scoring.GetGrade(_scoreData);
 
             // Save the score locally
             if (newScore)
-                DataManager.ScoreDB.AddScore(scoreData);
+                DataManager.ScoreDb.AddScore(_scoreData);
 
-            View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
+            View = new ResultScreenView(this, accuracyTotal, _scoreData.Grade, Beatmap, mapBackground);
         }
 
-        public override void UpdateDiscord()
+        protected override void UpdateDiscord()
         {
             string details = $"Finished {Beatmap.Title}";
-            string state = $"Grade: {scoreData.grade} | Score: {scoreData.score} | Acc = {Math.Round(scoreData.accuracy * 100, 2)}%";
+            string state = $"Grade: {_scoreData.Grade} | Score: {_scoreData.Score} | Acc = {Math.Round(_scoreData.Accuracy * 100, 2)}%";
 
             PulsarcDiscord.SetStatus(details, state);
         }

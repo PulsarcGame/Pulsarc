@@ -619,70 +619,68 @@ namespace Pulsarc.Utils.Input
             }
         }
 
-        static public bool isTypingCharacter(Keys key)
+        public static bool IsTypingCharacter(Keys key)
         {
-            switch (key)
+            return key switch
             {
-                case Keys.Q:
-                case Keys.W:
-                case Keys.E:
-                case Keys.R:
-                case Keys.T:
-                case Keys.Y:
-                case Keys.U:
-                case Keys.I:
-                case Keys.O:
-                case Keys.P:
-                case Keys.A:
-                case Keys.S:
-                case Keys.D:
-                case Keys.F:
-                case Keys.G:
-                case Keys.H:
-                case Keys.J:
-                case Keys.K:
-                case Keys.L:
-                case Keys.Z:
-                case Keys.X:
-                case Keys.C:
-                case Keys.V:
-                case Keys.B:
-                case Keys.N:
-                case Keys.M:
-                case Keys.OemPeriod:
-                case Keys.OemComma:
-                case Keys.OemColon:
-                case Keys.OemSemicolon:
-                case Keys.OemQuotes:
-                case Keys.OemCloseParenthesis:
-                case Keys.OemCloseBrackets:
-                case Keys.OemOpenBrackets:
-                case Keys.OemQuestion:
-                case Keys.OemExclamationMark:
-                case Keys.Caret:
-                case Keys.DollarSign:
-                case Keys.PunctuatedU:
-                case Keys.OemTilde:
-                case Keys.D1:
-                case Keys.D2:
-                case Keys.D3:
-                case Keys.D4:
-                case Keys.D5:
-                case Keys.D6:
-                case Keys.D7:
-                case Keys.D8:
-                case Keys.D9:
-                case Keys.D0:
-                case Keys.OemMinus:
-                case Keys.OemPlus:
-                case Keys.Asterisk:
-                case Keys.Squared:
-                case Keys.Multiply:
-                case Keys.Space:
-                    return true;
-                default:
-                    return false;
-            }
+                Keys.Q => true,
+                Keys.W => true,
+                Keys.E => true,
+                Keys.R => true,
+                Keys.T => true,
+                Keys.Y => true,
+                Keys.U => true,
+                Keys.I => true,
+                Keys.O => true,
+                Keys.P => true,
+                Keys.A => true,
+                Keys.S => true,
+                Keys.D => true,
+                Keys.F => true,
+                Keys.G => true,
+                Keys.H => true,
+                Keys.J => true,
+                Keys.K => true,
+                Keys.L => true,
+                Keys.Z => true,
+                Keys.X => true,
+                Keys.C => true,
+                Keys.V => true,
+                Keys.B => true,
+                Keys.N => true,
+                Keys.M => true,
+                Keys.OemPeriod => true,
+                Keys.OemComma => true,
+                Keys.OemColon => true,
+                Keys.OemSemicolon => true,
+                Keys.OemQuotes => true,
+                Keys.OemCloseParenthesis => true,
+                Keys.OemCloseBrackets => true,
+                Keys.OemOpenBrackets => true,
+                Keys.OemQuestion => true,
+                Keys.OemExclamationMark => true,
+                Keys.Caret => true,
+                Keys.DollarSign => true,
+                Keys.PunctuatedU => true,
+                Keys.OemTilde => true,
+                Keys.D1 => true,
+                Keys.D2 => true,
+                Keys.D3 => true,
+                Keys.D4 => true,
+                Keys.D5 => true,
+                Keys.D6 => true,
+                Keys.D7 => true,
+                Keys.D8 => true,
+                Keys.D9 => true,
+                Keys.D0 => true,
+                Keys.OemMinus => true,
+                Keys.OemPlus => true,
+                Keys.Asterisk => true,
+                Keys.Squared => true,
+                Keys.Multiply => true,
+                Keys.Space => true,
+                _ => false
+            };
         }
     }
 }

@@ -5,23 +5,21 @@ namespace Pulsarc.Utils
 {
     public class Camera
     {
-        private const float zoomUpperLimit = 1.5f;
-        private const float zoomLowerLimit = .5f;
+        private const float ZoomUpperLimit = 1.5f;
+        private const float ZoomLowerLimit = .5f;
 
-        private float _zoom;
         private Matrix _transform;
         private Vector2 _pos;
-        private float _rotation;
-        private int _viewportWidth;
-        private int _viewportHeight;
-        private int _worldWidth;
-        private int _worldHeight;
+        private readonly int _viewportWidth;
+        private readonly int _viewportHeight;
+        private readonly int _worldWidth;
+        private readonly int _worldHeight;
 
         public Camera(Viewport viewport, int worldWidth,
            int worldHeight, float initialZoom)
         {
-            _zoom = initialZoom;
-            _rotation = 0.0f;
+            Zoom = initialZoom;
+            Rotation = 0.0f;
             _pos = Vector2.Zero;
             _viewportWidth = viewport.Width;
             _viewportHeight = viewport.Height;
@@ -31,20 +29,9 @@ namespace Pulsarc.Utils
 
         #region Properties
 
-        public float Zoom
-        {
-            get { return _zoom; }
-            set
-            {
-                _zoom = value;
-            }
-        }
+        private float Zoom { get; set; }
 
-        public float Rotation
-        {
-            get { return _rotation; }
-            set { _rotation = value; }
-        }
+        private float Rotation { get; set; }
 
         public void Move(Vector2 amount)
         {
@@ -53,17 +40,17 @@ namespace Pulsarc.Utils
 
         public Vector2 Pos
         {
-            get { return _pos; }
+            get => _pos;
             set
             {
-                float leftBarrier = (float)_viewportWidth *
-                       .5f / _zoom;
+                float leftBarrier = _viewportWidth *
+                       .5f / Zoom;
                 float rightBarrier = _worldWidth -
-                       (float)_viewportWidth * .5f / _zoom;
+                       _viewportWidth * .5f / Zoom;
                 float topBarrier = _worldHeight -
-                       (float)_viewportHeight * .5f / _zoom;
-                float bottomBarrier = (float)_viewportHeight *
-                       .5f / _zoom;
+                       _viewportHeight * .5f / Zoom;
+                float bottomBarrier = _viewportHeight *
+                       .5f / Zoom;
                 _pos = value;
                 if (_pos.X < leftBarrier)
                     _pos.X = leftBarrier;

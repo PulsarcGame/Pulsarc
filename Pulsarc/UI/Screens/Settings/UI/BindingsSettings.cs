@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Utils;
+
 namespace Pulsarc.UI.Screens.Settings.UI
 {
     public class BindingsSettings : SettingsGroup

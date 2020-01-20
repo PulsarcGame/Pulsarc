@@ -2,7 +2,7 @@
 
 namespace Pulsarc.UI
 {
-    public class VersionCounter : TextDisplayElement
+    public sealed class VersionCounter : TextDisplayElement
     {
         private const string VERSION_NAME = "v1.2.0-alpha";
 

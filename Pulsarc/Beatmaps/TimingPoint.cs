@@ -7,9 +7,9 @@ namespace Pulsarc.Beatmaps
     public class TimingPoint
     {
         // The Time this TimingPoint activates
-        public int Time { get; private set; }
+        private int Time { get; set; }
         // The BPM set by this TimingPoint
-        public int Bpm { get; private set; }
+        private int Bpm { get; set; }
 
         public TimingPoint(int time, int bpm)
         {

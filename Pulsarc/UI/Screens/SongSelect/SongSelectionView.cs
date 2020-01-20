@@ -5,44 +5,42 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
-using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using Pulsarc.Utils.SQLite;
 using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
     public class SongSelectionView : ScreenView
     {
-        SongSelection GetSongSelection() { return (SongSelection)Screen; }
+        private SongSelection GetSongSelection() { return (SongSelection)Screen; }
 
-        SongSelection songSelectScreen;
+        readonly SongSelection _songSelectScreen;
 
         // SearchBox
         public SearchBox SearchBox { get; private set; }
 
         // Background image of Song Select
-        public static Background DefaultBackground => new Background("select_background");
+        private static Background DefaultBackground => new Background("select_background");
 
         // Current Scores to display
-        private List<ScoreCard> scores;
+        private readonly List<ScoreCard> _scores;
 
-        private List<BeatmapCard> cards;
+        private readonly List<BeatmapCard> _cards;
 
         // Back button to the Main Menu
-        private ReturnButton button_back;
+        private readonly ReturnButton _buttonBack;
 
         // Focus (used for scrolling through the menu)
-        private float currentFocus, lastFocus;
+        private float _currentFocus, _lastFocus;
         
         // Background changing stuff.
-        public bool ChangingBackground { get; private set; } = false;
-        public Background CurrentBackground { get; private set; }
-        private Background OldBackground;
+        private bool ChangingBackground { get; set; }
+        private Background CurrentBackground { get; set; }
+        private Background _oldBackground;
         private const int BackgroundFadeTime = 200;
 
         /// <summary>
@@ -54,27 +52,27 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="search">The starting string value of the SearchBar. Default is ""</param>
         public SongSelectionView(Screen screen, List<Beatmap> beatmaps, string search = "") : base(screen)
         {
-            songSelectScreen = GetSongSelection();
+            _songSelectScreen = GetSongSelection();
 
-            cards = songSelectScreen.Cards;
-            scores = new List<ScoreCard>();
+            _cards = _songSelectScreen.Cards;
+            _scores = new List<ScoreCard>();
 
             // Prepare backgrounds
             CurrentBackground = DefaultBackground;
-            OldBackground = DefaultBackground;
+            _oldBackground = DefaultBackground;
 
             // Set up beatmap cards
             for (int i = 0; i < beatmaps.Count; i++)
-                cards.Add(new BeatmapCard(beatmaps[i], i));
+                _cards.Add(new BeatmapCard(beatmaps[i], i));
 
             // Select a random map by default in the song selection.
-            if (cards.Count > 0)
+            if (_cards.Count > 0)
             {
                 Random rd = new Random();
 
-                songSelectScreen.FocusedCard = cards[rd.Next(0, cards.Count)];
-                songSelectScreen.FocusedCard.OnClick();
-                FocusCard(songSelectScreen.FocusedCard);
+                _songSelectScreen.FocusedCard = _cards[rd.Next(0, _cards.Count)];
+                _songSelectScreen.FocusedCard.OnClick();
+                FocusCard(_songSelectScreen.FocusedCard);
             }
 
             Anchor searchBoxAnchor = getSkinnablePropertyAnchor("SearchBarAnchor");
@@ -86,7 +84,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             int searchBarY = getSkinnablePropertyInt("SearchBarY");
             SearchBox.Move(searchBarX, searchBarY);
 
-            button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            _buttonBack = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
         }
 
         #region GetSkinnable Methods
@@ -95,7 +93,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePropertyFloat(string key)
+        private float GetSkinnablePropertyFloat(string key)
         {
             return Skin.GetConfigFloat("song_select", "Properties", key);
         }
@@ -125,7 +123,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string getSkinnablePropertyString(string key)
+        private string GetSkinnablePropertyString(string key)
         {
             return Skin.GetConfigString("song_select", "Properties", key);
         }
@@ -136,17 +134,18 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// the Song Select screen accordingly.
         /// </summary>
         /// <param name="card">The card to focus on.</param>
+        /// <param name="restart"></param>
         public void FocusCard(in BeatmapCard card, bool restart = false)
         {
-            if (cards[card.Index] != card)
+            if (_cards[card.Index] != card)
                 return;
 
-            songSelectScreen.SelectedFocus = card.Index - 3;
+            _songSelectScreen.SelectedFocus = card.Index - 3;
 
             if (restart)
             {
-                FocusCard(cards[0]);
-                cards[0].SetClicked(false);
+                FocusCard(_cards[0]);
+                _cards[0].SetClicked(false);
             }
 
             // Set to "selected" state
@@ -178,14 +177,14 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (card == null)
                 return;
 
-            scores.Clear();
+            _scores.Clear();
 
             // Make a ScoreCard for each score.
             List<ScoreData> scoresInMap = card.Beatmap.GetLocalScores();
 
             int rank = 1;
             for (int i = 0; i < scoresInMap.Count; i++)
-                scores.Add(new ScoreCard(scoresInMap[i], rank++));
+                _scores.Add(new ScoreCard(scoresInMap[i], rank++));
         }
               
         /// <summary>
@@ -198,19 +197,17 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (newBackground != null)
             {
                 ChangingBackground = true;
-                OldBackground.ChangeBackground(CurrentBackground.Texture);
+                _oldBackground.ChangeBackground(CurrentBackground.Texture);
                 CurrentBackground.ChangeBackground(newBackground);
                 CurrentBackground.Opacity = 0;
             }
             else
             {
-                if (CurrentBackground.Texture != DefaultBackground.Texture)
-                {
-                    ChangingBackground = true;
-                    OldBackground = CurrentBackground;
-                    CurrentBackground = DefaultBackground;
-                    CurrentBackground.Opacity = 0;
-                }
+                if (CurrentBackground.Texture == DefaultBackground.Texture) return;
+                ChangingBackground = true;
+                _oldBackground = CurrentBackground;
+                CurrentBackground = DefaultBackground;
+                CurrentBackground.Opacity = 0;
             }
         }
 
@@ -225,16 +222,16 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             DrawBackgrounds();
 
-            for (int i = 0; i < cards.Count; i++)
+            foreach (var t in _cards)
             {
-                cards[i].AdjustClickDistance();
-                cards[i].Draw();
+                t.AdjustClickDistance();
+                t.Draw();
             }
 
-            for (int i = 0; i < scores.Count; i++)
-                scores[i].Draw();
+            foreach (var t in _scores)
+                t.Draw();
 
-            button_back.Draw();
+            _buttonBack.Draw();
             SearchBox.Draw();
         }
 
@@ -245,7 +242,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             if (ChangingBackground && CurrentBackground.Opacity < 1)
             {
-                OldBackground.Draw();
+                _oldBackground.Draw();
                 CurrentBackground.Opacity += (float)PulsarcTime.DeltaTime / BackgroundFadeTime;
 
                 if (CurrentBackground.Opacity > 1)
@@ -264,25 +261,25 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
-            ref float selectedFocus = ref songSelectScreen.SelectedFocus;
+            ref float selectedFocus = ref _songSelectScreen.SelectedFocus;
 
             // Move cards if focus has changed.
             // Rounding is used so this isn't called over and over
             // When currentFocus refuses to go above x.99999999...
-            if (Math.Round(currentFocus, 2) != Math.Round(selectedFocus, 2))
+            if (Math.Round(_currentFocus, 2) != Math.Round(selectedFocus, 2))
             {
-                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
+                _currentFocus = PulsarcMath.Lerp(_currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
                 
-                float diff = lastFocus - currentFocus;
-                lastFocus = currentFocus;
+                float diff = _lastFocus - _currentFocus;
+                _lastFocus = _currentFocus;
                 
-                for (int i = 0; i < cards.Count; i++)
-                    cards[i].Move(new Vector2(0, BeatmapCard.TotalHeight * diff));
+                foreach (var t in _cards)
+                    t.Move(new Vector2(0, BeatmapCard.TotalHeight * diff));
             }
 
             // Go back if the back button was clicked.
-            if (MouseManager.IsUniqueClick(MouseButton.Left) && button_back.Hovered(MouseManager.CurrentState.Position))
-                button_back.OnClick();
+            if (MouseManager.IsUniqueClick(MouseButton.Left) && _buttonBack.Hovered(MouseManager.CurrentState.Position))
+                _buttonBack.OnClick();
         }
     }
 }

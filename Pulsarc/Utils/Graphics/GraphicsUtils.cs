@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using System;
-using System.IO;
-using System.Linq;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils.Graphics

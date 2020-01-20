@@ -1,62 +1,61 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Data.SQLite;
+using System.IO;
 using System.Reflection;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils.SQLite
 {
-    public abstract class SQLiteStore
+    public abstract class SqLiteStore
     {
         public static bool Logging = true;
 
-        private SQLiteConnection db;
-        private string filename;
+        private SQLiteConnection _db;
+        private readonly string _filename;
 
-        public List<SQLiteData> Tables { get; protected set; }
+        protected List<SQLiteData> Tables { get; }
 
-        public SQLiteStore(string name_)
+        protected SqLiteStore(string name)
         {
-            filename = name_ + ".db";
+            _filename = name + ".db";
 
             Tables = new List<SQLiteData>();
 
             InitTables(); 
 
-            if (!File.Exists(filename))
+            if (!File.Exists(_filename))
             {
-                SQLiteConnection.CreateFile(filename);
+                SQLiteConnection.CreateFile(_filename);
                 Connect();
-                InitDB();
+                InitDb();
             }
             else
                 Connect();
         }
 
-        public abstract void InitTables();
+        protected abstract void InitTables();
 
-        public void Connect()
+        private void Connect()
         {
-            db = new SQLiteConnection($"Data Source={filename};Version=3;");
-            db.Open();
+            _db = new SQLiteConnection($"Data Source={_filename};Version=3;");
+            _db.Open();
         }
 
         public void Exec(string sql)
         {
             PulsarcLogger.Debug(sql, LogType.Runtime);
 
-            new SQLiteCommand(sql, db).ExecuteNonQuery();
+            new SQLiteCommand(sql, _db).ExecuteNonQuery();
         }
 
-        public SQLiteDataReader Query(string sql)
+        protected SQLiteDataReader Query(string sql)
         {
             PulsarcLogger.Debug(sql, LogType.Runtime);
 
-            return new SQLiteCommand(sql, db).ExecuteReader();
+            return new SQLiteCommand(sql, _db).ExecuteReader();
         }
 
-        public List<object> queryFirst(string sql)
+        public List<object> QueryFirst(string sql)
         {
             List<object> res = new List<object>();
             SQLiteDataReader reader = Query(sql);
@@ -69,11 +68,11 @@ namespace Pulsarc.Utils.SQLite
 
         public void Close()
         {
-            db.Close();
+            _db.Close();
             Tables.Clear();
         }
 
-        public void InitDB()
+        private void InitDb()
         {
             foreach(SQLiteData data in Tables)
             {
@@ -87,7 +86,7 @@ namespace Pulsarc.Utils.SQLite
                     else
                         r += ",";
 
-                    r += prop.Name.ToLower() + " " + prop.FieldType.Name.ToString().ToLower();
+                    r += prop.Name.ToLower() + " " + prop.FieldType.Name.ToLower();
                 }
 
                 r += ")";

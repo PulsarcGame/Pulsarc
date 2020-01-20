@@ -1,7 +1,6 @@
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
-using Wobble.Logging;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -12,7 +11,7 @@ namespace Pulsarc.Beatmaps.Events
         // The change in zoom happens instantaneously
         Step = 0,
         // The zoom transitions linearly over time
-        Linear = 1,
+        Linear = 1
     }
 
     /// <summary>
@@ -27,30 +26,30 @@ namespace Pulsarc.Beatmaps.Events
             // Level amount index
             ZoomLevel = 1,
             // End time index
-            EndPoint = 2,
+            EndPoint = 2
         }
 
         // The type of zoom for this event.
-        public ZoomType ZoomType { get; private set; }
+        private ZoomType ZoomType { get; set; }
 
         // The zoom amount this event will go to.
         // In code, this represents the diameter of the crosshair in pixels.
         // In the .psc this represents the diameter of the crosshair in pixels on a 1080px high screen.
         // TODO?? This could represent the zLocation of the crosshair instead.
-        public float ZoomLevel { get; private set; }
+        private float ZoomLevel { get; set; }
         
         // The time of the last frame, used in calculations to handle the next frame
         //private double lastFrameTime = -1;
         // This ZoomEvent's end time, for non-Intralizooms
-        public int EndTime { get; private set; }
+        private int EndTime { get; set; }
 
         // The current zoom level, used in calcuations to decide how to handle the next frame.
-        private float currentZoomLevel;
+        private float _currentZoomLevel;
 
         // The starting zoom level, used in calcuations to decide how to handle the next frame.
         // Negative Zoom Level is not necessary, so it is set to -1 to help set the startZoomLevel
         // when Handle is first called.
-        private float startZoomLevel = -1;
+        private float _startZoomLevel = -1;
 
         /// <summary>
         /// Initializes a ZoomEvent that sets its stats with "line".
@@ -77,10 +76,10 @@ namespace Pulsarc.Beatmaps.Events
         public override void Handle(GameplayEngine gameplayEngine)
         {
             // if the startZoomLevel hasn't been set, set it now.
-            if (startZoomLevel == -1)
-                startZoomLevel = gameplayEngine.Crosshair.Diameter;
+            if (_startZoomLevel == -1)
+                _startZoomLevel = gameplayEngine.Crosshair.Diameter;
 
-            currentZoomLevel = gameplayEngine.Crosshair.Diameter;
+            _currentZoomLevel = gameplayEngine.Crosshair.Diameter;
 
             // Use the correct handling method depending on this
             // ZoomEvent's ZoomType
@@ -114,7 +113,7 @@ namespace Pulsarc.Beatmaps.Events
             // This is similar to how Intralism handles PlayerDistance, where it has a
             // local PlayerDistance that is what the player sees, and a semi-constant "PlayerDistance"
             // That is changed by the most recent SetPlayerDistance map event.
-            Active = !(nextEvent != null && nextEvent.Time < gameplayEngine.Time);
+            Active = !(NextEvent != null && NextEvent.Time < gameplayEngine.Time);
 
             // Get smoothDeltaTime and return if there was no change in deltaTime
             double smoothDeltaTime = PulsarcTime.SmoothDeltaTime;
@@ -126,7 +125,7 @@ namespace Pulsarc.Beatmaps.Events
             gameplayEngine.Crosshair.Resize(
                 PulsarcMath.Lerp(
                     // Starting position (current position)
-                    currentZoomLevel,
+                    _currentZoomLevel,
                     // Ending position (zoomLevel)
                     ZoomLevel,
                     // Amount to lerp by (Pulsarc: deltaTime(ms) / 200 = Intralism: deltaTime(s) * 5)
@@ -153,16 +152,16 @@ namespace Pulsarc.Beatmaps.Events
             double deltaTime = EndTime - Time;
 
             // Find the amount of zoom between the start zoom to the end zoom.
-            float deltaZoom = ZoomLevel - startZoomLevel;
+            float deltaZoom = ZoomLevel - _startZoomLevel;
 
             // Find the amount of time between now and the event time
             double deltaCurrentTime = gameplayEngine.Time - Time;
 
             // Find the percentage of time that has past between the event time and the end time
-            double zoomFactor = 1 - ((deltaTime - deltaCurrentTime) / deltaTime);
+            double zoomFactor = 1 - (deltaTime - deltaCurrentTime) / deltaTime;
 
             // Find what the current zoom should be.
-            float currentZoom = startZoomLevel + (deltaZoom * (float)zoomFactor);
+            float currentZoom = _startZoomLevel + deltaZoom * (float)zoomFactor;
 
             // If deltaZoom is negative, and currentZoom is less than ZoomLevel, then change currentZoom to ZoomLevel
             // If deltaZoom is positive, and currentZoom is greater than ZoomLevel, then change currentZoom to ZoomLevel

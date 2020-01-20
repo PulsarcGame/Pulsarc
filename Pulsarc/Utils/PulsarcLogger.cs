@@ -13,10 +13,7 @@ namespace Pulsarc.Utils
 
         public static string GetLogPath(LogType type)
         {
-            if (Logging)
-                return GetLogPath(type);
-
-            return "";
+            return Logging ? GetLogPath(type) : "";
         }
 
         public static void Debug(string value, LogType type, bool writeToFile = true)

@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Utils;
-using System.Text;
 using Wobble.Logging;
 
 namespace Pulsarc.UI
@@ -11,14 +11,14 @@ namespace Pulsarc.UI
         public string Name { get; set; }
 
         // Text data
-        private SpriteFont font => AssetsManager.Fonts["DefaultFont"];
-        private float fontScale;
+        private SpriteFont Font => AssetsManager.Fonts["DefaultFont"];
+        private float _fontScale;
         public StringBuilder Text { get; protected set; }
         public Color Color { get; set; }
 
-        public Vector2 processedPosition;
+        public Vector2 ProcessedPosition;
 
-        private bool caught = false;
+        private bool _caught;
 
         /// <summary>
         /// A text-based Drawable.
@@ -36,12 +36,12 @@ namespace Pulsarc.UI
             Color = color ?? Color.White;
             Text = new StringBuilder(20);
 
-            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT);
+            _fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT);
 
             // Calling ReprocessPosition() too early causes a crash
             // base.ChangePosition() avoids this crash.
             base.ChangePosition(position);
-            processedPosition = truePosition;
+            ProcessedPosition = TruePosition;
             Update("");
         }
 
@@ -55,17 +55,17 @@ namespace Pulsarc.UI
             Text.Append(Name).Append(value);
             ReprocessPosition();
 
-            caught = false;
+            _caught = false;
         }
 
         /// <summary>
         /// Reprocess the position of this TDE.
         /// </summary>
-        public void ReprocessPosition()
+        private void ReprocessPosition()
         {
-            float newX = truePosition.X;
-            float newY = truePosition.Y;
-            Vector2 size = font.MeasureString(Text) * fontScale;
+            float newX = TruePosition.X;
+            float newY = TruePosition.Y;
+            Vector2 size = Font.MeasureString(Text) * _fontScale;
             size.X *= Pulsarc.GetDimensions().X / Pulsarc.BASE_WIDTH;
             size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT;
 
@@ -99,13 +99,10 @@ namespace Pulsarc.UI
                     newX -= size.X / 2;
                     newY -= size.Y;
                     break;
-                case Anchor.TopLeft:
-                default:
-                    break;
             }
 
-            processedPosition.X = newX;
-            processedPosition.Y = newY;
+            ProcessedPosition.X = newX;
+            ProcessedPosition.Y = newY;
         }
 
         public override void Move(Vector2 delta, bool? heightScaled = null)
@@ -122,17 +119,17 @@ namespace Pulsarc.UI
 
         public override void Draw()
         {
-            if (caught)
+            if (_caught)
                 return;
 
             try
             {
-                Pulsarc.SpriteBatch.DrawString(font, Text, processedPosition, Color, 0, origin, fontScale, SpriteEffects.None, 0);
+                Pulsarc.SpriteBatch.DrawString(Font, Text, ProcessedPosition, Color, 0, Origin, _fontScale, SpriteEffects.None, 0);
             }
             catch
             {
                 PulsarcLogger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
-                caught = true; // Don't need to spam the console with Errors
+                _caught = true; // Don't need to spam the console with Errors
             }
         }
     }

@@ -1,18 +1,18 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using Microsoft.Xna.Framework;
-using Pulsarc.Utils.Graphics;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Graphics;
 
-namespace Pulsarc.UI.Common
+namespace Pulsarc.UI
 {
     public class Background : Drawable
     {
         public Drawable DimTexture { get; protected set; }
 
-        public bool Dimmed { get; set; } = false;
+        public bool Dimmed { get; set; }
 
-        public override Texture2D Texture
+        public sealed override Texture2D Texture
         {
             get => base.Texture;
 
@@ -58,12 +58,10 @@ namespace Pulsarc.UI.Common
         /// <param name="dim">The amount of background dim to use. 0 is no dim, 1 is full dim.</param>
         private void MakeDimTexture(float dim)
         {
-            if (dim > 0)
-            {
-                Dimmed = true;
-                DimTexture = new Drawable(GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
-                DimTexture.Opacity = dim;
-            }
+            if (!(dim > 0)) return;
+            Dimmed = true;
+            DimTexture = new Drawable(GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
+            DimTexture.Opacity = dim;
         }
 
         /// <summary>
@@ -74,10 +72,7 @@ namespace Pulsarc.UI.Common
         {
             Texture = newBackground;
 
-            if (!HeightScaled)
-                Resize(Pulsarc.CurrentWidth);
-            else
-                Resize(Pulsarc.CurrentHeight);
+            Resize(!HeightScaled ? Pulsarc.CurrentWidth : Pulsarc.CurrentHeight);
 
             ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
         }

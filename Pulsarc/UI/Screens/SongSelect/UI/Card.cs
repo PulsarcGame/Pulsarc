@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
-using System.Collections.Generic;
-using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
@@ -16,9 +15,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected bool IsClicked = false;
 
         // List of text elements to display
-        protected List<TextDisplayElement> TextElements = new List<TextDisplayElement>();
-        protected List<Vector2> TextElementOffsets = new List<Vector2>();
-        protected List<Anchor> TextElementStartAnchors = new List<Anchor>();
+        protected readonly List<TextDisplayElement> TextElements = new List<TextDisplayElement>();
+        private readonly List<Vector2> _textElementOffsets = new List<Vector2>();
+        private readonly List<Anchor> _textElementStartAnchors = new List<Anchor>();
 
         // Config speicifics
         protected string Config, Section;
@@ -38,8 +37,8 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
             base.Draw();
 
-            for (int i = 0; i < TextElements.Count; i++)
-                TextElements[i].Draw();
+            foreach (var t in TextElements)
+                t.Draw();
         }
 
         public override void Move(Vector2 delta, bool? heightScaled = null)
@@ -66,7 +65,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 return;
 
             for (int i = 0; i < TextElements.Count; i++)
-                TextElements[i]?.ChangePosition(AnchorUtil.FindDrawablePosition(TextElementStartAnchors[i], this) + TextElementOffsets[i]);
+                TextElements[i]?.ChangePosition(AnchorUtil.FindDrawablePosition(_textElementStartAnchors[i], this) + _textElementOffsets[i]);
         }
 
         /// <summary>
@@ -77,8 +76,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected virtual void AddTextDisplayElement(string typeName)
         {
             // Find variables for TDE
-            Anchor startAnchor;
-            Vector2 position = Skin.GetConfigStartPosition(Config, Section, typeName + "StartPos", out startAnchor, this);
+            Vector2 position = Skin.GetConfigStartPosition(Config, Section, typeName + "StartPos", out var startAnchor, this);
             int fontSize = GetSkinnableInt(typeName + "FontSize");
             Anchor anchor = GetSkinnableAnchor(typeName + "Anchor");
             Color color = Skin.GetConfigColor(Config, Section, typeName + "Color");
@@ -95,8 +93,8 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             //Add TDE
             TextElements.Add(text);
-            TextElementOffsets.Add(text.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this));
-            TextElementStartAnchors.Add(startAnchor);
+            _textElementOffsets.Add(text.AnchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this));
+            _textElementStartAnchors.Add(startAnchor);
         }
 
         #region GeSkinnable Methods

@@ -1,19 +1,19 @@
-﻿using IniFileParser.Model;
-using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using IniFileParser.Model;
+using Microsoft.Xna.Framework.Input;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
     static class Config
     {
-        public static IniFileParser.IniFileParser Parser { get; private set; }
+        private static IniFileParser.IniFileParser Parser { get; set; }
         public static IniData Get { get; private set; }
 
         public static Dictionary<string, Keys> Bindings { get; private set; }
 
-        private static readonly Type keyType = Keys.A.GetType();
+        private static readonly Type KeyType = Keys.A.GetType();
 
         public static void Initialize()
         {
@@ -53,9 +53,9 @@ namespace Pulsarc.Utils
         public static void AddBinding(string key)
         {
             if (Bindings.ContainsKey(key))
-                Bindings[key] = (Keys)Enum.Parse(keyType, Get["Bindings"][key]);
+                Bindings[key] = (Keys)Enum.Parse(KeyType, Get["Bindings"][key]);
             else
-                Bindings.Add(key, (Keys)Enum.Parse(keyType, Get["Bindings"][key]));
+                Bindings.Add(key, (Keys)Enum.Parse(KeyType, Get["Bindings"][key]));
         }
 
         public static int GetInt(string category, string key)
@@ -110,7 +110,7 @@ namespace Pulsarc.Utils
 
         public static void SetValue(string category, string key, object value)
         {
-            PulsarcLogger.Important($"Set {category} {key} to {value.ToString()}", LogType.Runtime);
+            PulsarcLogger.Important($"Set {category} {key} to {value}", LogType.Runtime);
             Get[category][key] = value.ToString();
         }
 

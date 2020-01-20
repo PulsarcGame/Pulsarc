@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Wobble.Discord;
 using Wobble.Discord.RPC;
 
@@ -9,26 +8,29 @@ namespace Pulsarc.Utils
     {
         private const string LOGO = "pulsarc_logo";
 
-        private static double lastUpdateTime = -15000;
+        private const double LastUpdateTime = -15000;
 
-        private const double UPDATE_WAIT_TIME = 15000;
+        private const double UpdateWaitTime = 15000;
 
-        private static bool Waiting => PulsarcTime.CurrentElapsedTime < lastUpdateTime + UPDATE_WAIT_TIME && waitingTriggered;
+        private static bool Waiting => PulsarcTime.CurrentElapsedTime < LastUpdateTime + UpdateWaitTime && waitingTriggered;
         private static bool waitingTriggered = false;
 
         public static RichPresence Presence { get; private set; }
 
-        static public void Initialize()
+        public static void Initialize()
         {
-            // 604680029439393812 <- Adri's AppID, in case we go back to that one.
-            // 649491503391047701 <- FRUP's AppID, currently being used.
-            DiscordManager.CreateClient("649491503391047701", Wobble.Discord.RPC.Logging.LogLevel.None);
-            Presence = new RichPresence();
-            Presence.Assets = new Assets();
-            Presence.Timestamps = new Timestamps();
+            Dictionary<string, string> appIdSwitch = new Dictionary<string, string>()
+            {
+                { "Adri", "604680029439393812" },
+                { "FRUP", "600885985219444741" },
+                { "Rubik", "649491503391047701"}
+            };
+            
+            DiscordManager.CreateClient(appIdSwitch["Rubik"]);
+            Presence = new RichPresence {Assets = new Assets(), Timestamps = new Timestamps()};
         }
 
-        static public void SetStatus(string details, string state, bool timer = false)
+        public static void SetStatus(string details, string state, bool timer = false)
         {
             SetDetails(details, false);
             SetState(state, false);
@@ -47,7 +49,7 @@ namespace Pulsarc.Utils
             UpdatePresence();
         }
 
-        static public void SetImage(string imagePath, bool toggleUpdate = true)
+        private static void SetImage(string imagePath, bool toggleUpdate = true)
         {
             Presence.Assets.LargeImageKey = imagePath;
 
@@ -55,7 +57,7 @@ namespace Pulsarc.Utils
                 UpdatePresence();
         }
 
-        static public void SetState(string state, bool toggleUpdate = true)
+        private static void SetState(string state, bool toggleUpdate = true)
         {
             Presence.State = state;
 
@@ -63,7 +65,7 @@ namespace Pulsarc.Utils
                 UpdatePresence();
         }
 
-        static public void SetDetails(string details, bool toggleUpdate = true)
+        private static void SetDetails(string details, bool toggleUpdate = true)
         {
             Presence.Details = details;
 
@@ -71,7 +73,7 @@ namespace Pulsarc.Utils
                 UpdatePresence();
         }
 
-        static private void UpdatePresence()
+        private static void UpdatePresence()
         {
             DiscordManager.Client.SetPresence(Presence);
         }

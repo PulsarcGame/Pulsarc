@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
-using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
@@ -14,15 +14,15 @@ namespace Pulsarc.UI.Screens.MainMenu
     class MenuView : ScreenView
     {
         // The background image of the main menu.
-        private Background background;
+        private Background _background;
 
         // The logo used for the main menu.
-        private GameIcon gameIcon;
+        private GameIcon _gameIcon;
 
         // The buttons used to navigate from the main menu.
-        private List<NavigationButton> navButtons;
+        private List<NavigationButton> _navButtons;
 
-        private VersionCounter version;
+        private VersionCounter _version;
 
         /// <summary>
         /// The Main Menu of Pulsarc
@@ -36,9 +36,9 @@ namespace Pulsarc.UI.Screens.MainMenu
 
         private void SetUpBackgroundAndIcon()
         {
-            background = new Background("menu_background");
+            _background = new Background("menu_background");
 
-            gameIcon = new GameIcon(
+            _gameIcon = new GameIcon(
                 Skin.GetConfigStartPosition("main_menu", "Properties", "IconStartPos"),
                 GetSkinnablePropertyAnchor("IconAnchor"));
 
@@ -46,14 +46,14 @@ namespace Pulsarc.UI.Screens.MainMenu
                 GetSkinnablePropertyInt("IconX"),
                 GetSkinnablePropertyInt("IconY"));
 
-            gameIcon.Move(offset);
+            _gameIcon.Move(offset);
 
-            version = new VersionCounter(AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+            _version = new VersionCounter(AnchorUtil.FindScreenPosition(Anchor.BottomRight));
         }
 
         private void SetUpNavigationButtons()
         {
-            navButtons = new List<NavigationButton>();
+            _navButtons = new List<NavigationButton>();
             AddNavButton(Pulsarc.SongScreen, "Play");
             AddNavButton(new InProgressScreen(), "Multi");
             AddNavButton(new InProgressScreen(), "Editor");
@@ -130,31 +130,28 @@ namespace Pulsarc.UI.Screens.MainMenu
             navButton.Move(offset);
 
             // Add the button
-            navButtons.Add(navButton);
+            _navButtons.Add(navButton);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.IsLeftClick())
-            {
-                Point pos = InputManager.LastMouseClick.Key.Position;
+            if (!InputManager.IsLeftClick()) return;
+            Point pos = InputManager.LastMouseClick.Key.Position;
 
-                foreach (NavigationButton button in navButtons)
-                    if (button.Hovered(pos))
-                        button.Navigate();
-            }
+            foreach (var button in _navButtons.Where(button => button.Hovered(pos)))
+                button.Navigate();
         }
 
         public override void Draw(GameTime gameTime)
         {
-            background.Draw();
+            _background.Draw();
 
-            foreach(NavigationButton button in navButtons)
+            foreach(NavigationButton button in _navButtons)
                 button.Draw();
 
-            gameIcon.Draw();
+            _gameIcon.Draw();
 
-            version.Draw();
+            _version.Draw();
         }
 
         public override void Destroy() { }

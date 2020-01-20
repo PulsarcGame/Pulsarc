@@ -1,13 +1,13 @@
-﻿using IniFileParser.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using IniFileParser.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using Wobble.Logging;
 
 namespace Pulsarc.Skinning
@@ -15,7 +15,7 @@ namespace Pulsarc.Skinning
     static class Skin
     {
         // Whether or not the Skin is currently loaded.
-        public static bool Loaded { get; private set; } = false;
+        private static bool Loaded { get; set; }
 
         // The default texture for Pulsarc.
         public static Texture2D DefaultTexture => AssetsManager.Content.Load<Texture2D>("default");
@@ -27,7 +27,7 @@ namespace Pulsarc.Skinning
         public static Dictionary<int, Texture2D> Judges { get; private set; }
 
         // A collection of multiple adjustable screens and the config files for those screens.
-        public static Dictionary<string, IniData> Configs { get; private set; }
+        private static Dictionary<string, IniData> Configs { get; set; }
 
         /// <summary>
         /// Load a skin from the folder name provided.

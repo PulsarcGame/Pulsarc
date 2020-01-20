@@ -3,10 +3,10 @@ using Pulsarc.Skinning;
 
 namespace Pulsarc.UI
 {
-    public class Cursor : Drawable
+    public sealed class Cursor : Drawable
     {
         //TODO: Make this adjustable by the user
-        public float cursorScale = 1;
+        private float cursorScale = 1;
 
         public Cursor() : base(Skin.Assets["cursor"])
         {
@@ -18,9 +18,9 @@ namespace Pulsarc.UI
             SetPos(new Vector2(position.X, position.Y));
         }
 
-        public void SetPos(Vector2 position)
+        private void SetPos(Vector2 position)
         {
-            truePosition = position;
+            TruePosition = position;
         }
     }
 }

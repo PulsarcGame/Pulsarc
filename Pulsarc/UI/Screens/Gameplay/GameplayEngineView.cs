@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Pulsarc.Skinning;
-using Pulsarc.UI.Common;
-using Pulsarc.UI.Screens.Gameplay.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Wobble.Logging;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Pulsarc.Skinning;
+using Pulsarc.UI.Screens.Gameplay.UI;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Gameplay
@@ -13,11 +12,11 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         // UI Elements
         private List<TextDisplayElementFixedSize> uiElements = new List<TextDisplayElementFixedSize>();
-        private JudgeBox judgeBox;
-        private AccuracyMeter accMeter;
-        private Crosshair crosshair;
+        private JudgeBox _judgeBox;
+        private AccuracyMeter _accMeter;
+        private Crosshair _crosshair;
 
-        private Background background;
+        private Background _background;
 
         private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
 
@@ -33,7 +32,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init()
         {
             // Initialize UI depending on skin config
-            crosshair = GetGameplayEngine().Crosshair;
+            _crosshair = GetGameplayEngine().Crosshair;
 
             AddTextDisplayElement("Score");
             AddTextDisplayElement("Acc");
@@ -43,7 +42,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             SetUpAccMeter();
 
-            background = GetGameplayEngine().Background;
+            _background = GetGameplayEngine().Background;
         }
 
         /// <summary>
@@ -54,12 +53,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             Vector2 startPos = Skin.GetConfigStartPosition("gameplay", "Properties", "JudgeStartPos");
             Anchor anchor = GetSkinnablePropertyAnchor("JudgeAnchor");
 
-            judgeBox = new JudgeBox(startPos, anchor);
+            _judgeBox = new JudgeBox(startPos, anchor);
 
             int offsetX = GetSkinnablePropertyInt("JudgeX");
             int offsetY = GetSkinnablePropertyInt("JudgeY");
 
-            judgeBox.Move(offsetX, offsetY);
+            _judgeBox.Move(offsetX, offsetY);
         }
 
         /// <summary>
@@ -75,12 +74,12 @@ namespace Pulsarc.UI.Screens.Gameplay
                 GetSkinnablePropertyInt("AccMeterHeight")
             );
 
-            accMeter = new AccuracyMeter(startPos, size, anchor);
+            _accMeter = new AccuracyMeter(startPos, size, anchor);
 
             int offsetX = GetSkinnablePropertyInt("AccMeterX");
             int offsetY = GetSkinnablePropertyInt("AccMeterY");
 
-            accMeter.Move(offsetX, offsetY);
+            _accMeter.Move(offsetX, offsetY);
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Make TDE
             // If this is the combo, change append to "x", if acc change it to "%"
-            string append = typeName == "Combo" ? "x" : (typeName == "Acc" ? "%" : "");
+            string append = typeName == "Combo" ? "x" : typeName == "Acc" ? "%" : "";
             // If this is the acc, change numberFormat to "#,##.00" 
             string numberFormat = typeName.Equals("Acc") ? "#,##.00" : "#,#0";
 
@@ -164,7 +163,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="judge">The base score of the judgement.</param>
         public void AddHit(double time, int error, int judge)
         {
-            accMeter.AddError(time, error);
+            _accMeter.AddError(time, error);
             AddJudge(time, judge);
         }
 
@@ -175,19 +174,16 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="judge">The base score of the judgement.</param>
         public void AddJudge(double time, int judge)
         {
-            judgeBox.Add(time, judge);
+            _judgeBox.Add(time, judge);
         }
 
         public override void Update(GameTime gameTime)
         {
             // Score
-            uiElements[0].Update(GetGameplayEngine().scoreDisplay);
+            uiElements[0].Update(GetGameplayEngine().ScoreDisplay);
 
             // Acc
-            double accuracyTotal = 0;
-
-            foreach (JudgementValue judge in GetGameplayEngine().Judgements)
-                accuracyTotal += judge.Acc;
+            double accuracyTotal = GetGameplayEngine().Judgements.Sum(judge => judge.Acc);
 
             // If no judgements have happened, 100%, otherwise, find the acc
             double value = 100d;
@@ -207,8 +203,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Combo
             uiElements[2].Update(GetGameplayEngine().Combo);
 
-            judgeBox.Update(GetGameplayEngine().Time);
-            accMeter.Update(GetGameplayEngine().Time);
+            _judgeBox.Update(GetGameplayEngine().Time);
+            _accMeter.Update(GetGameplayEngine().Time);
         }
 
         /// <summary>
@@ -221,27 +217,25 @@ namespace Pulsarc.UI.Screens.Gameplay
                 return;
 
             // Don't bother drawing the background if dim is 100%
-            if (background.Dimmed && background.DimTexture.Opacity != 1f || !background.Dimmed)
-                background.Draw();
+            if (_background.Dimmed && _background.DimTexture.Opacity != 1f || !_background.Dimmed)
+                _background.Draw();
 
-            crosshair.Draw();
+            _crosshair.Draw();
             DrawArcs();
 
             foreach (TextDisplayElementFixedSize tdef in uiElements)
                 tdef.Draw();
 
-            judgeBox.Draw();
-            accMeter.Draw();
+            _judgeBox.Draw();
+            _accMeter.Draw();
         }
 
         private void DrawArcs()
         {
-            bool skip;
-
             // Go through each key
             for (int i = 0; i < GetGameplayEngine().KeyCount; i++)
             {
-                skip = false;
+                var skip = false;
 
                 // Go through the arcs in each column
                 for (int k = 0; k < GetGameplayEngine().Columns[i].UpdateHitObjects.Count && !skip; k++)

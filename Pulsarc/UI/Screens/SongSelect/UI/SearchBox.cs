@@ -1,14 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
     public class SearchBox : Drawable
     {
-        private TextDisplayElement textDisplay;
+        private readonly TextDisplayElement _textDisplay;
 
         public SearchBox(string search, Vector2 position, Anchor anchor = Anchor.TopLeft)
             : base(Skin.Assets["searchbox"], position, anchor: anchor)
@@ -28,40 +25,40 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             int offsetX = Skin.GetConfigInt(config, section, $"{name}X");
             int offsetY = Skin.GetConfigInt(config, section, $"{name}Y");
 
-            textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
-            textDisplay.Move(offsetX, offsetY);
-            textDisplay.processedPosition = textDisplay.truePosition;
+            _textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
+            _textDisplay.Move(offsetX, offsetY);
+            _textDisplay.ProcessedPosition = _textDisplay.TruePosition;
         }
 
         public void Update(string text)
         {
-            textDisplay.Update(text);
+            _textDisplay.Update(text);
         }
 
         public void AddText(string c)
         {
-            textDisplay.Text.Append(c);
+            _textDisplay.Text.Append(c);
         }
 
         public void RemoveLast()
         {
-            textDisplay.Text.Length--;
+            _textDisplay.Text.Length--;
         }
 
         public void Clear()
         {
-            textDisplay.Text.Clear();
+            _textDisplay.Text.Clear();
         }
 
         public string GetText()
         {
-            return textDisplay.Text.ToString();
+            return _textDisplay.Text.ToString();
         }
 
         public override void Draw()
         {
             base.Draw();
-            textDisplay.Draw();
+            _textDisplay.Draw();
         }
     }
 }

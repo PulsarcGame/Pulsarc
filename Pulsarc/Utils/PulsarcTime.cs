@@ -6,7 +6,7 @@ namespace Pulsarc.Utils
     public static class PulsarcTime
     {
         // Whether or not this Class is keeping track of time.
-        public static bool IsRunning { get; private set; } = false;
+        private static bool IsRunning { get; set; }
         
         // Delta Time (in ms) that is smoothed in a similar fashion to Unity's Time.SmoothDeltaTime
         public static double SmoothDeltaTime { get; private set; }
@@ -15,19 +15,19 @@ namespace Pulsarc.Utils
         public static double DeltaTime { get; private set; }
 
         // The amount of time (in ms) since this timer started, as of last frame.
-        public static double PrevFrameElapsedTime { get; private set; }
+        private static double PrevFrameElapsedTime { get; set; }
 
         // The amount of time (in ms) since this timer was started.
-        public static double CurrentElapsedTime => stopwatch.ElapsedMilliseconds;
+        public static double CurrentElapsedTime => Stopwatch.ElapsedMilliseconds;
 
         // The stopwatch doing most of the work for us.
-        private static Stopwatch stopwatch = new Stopwatch();
+        private static readonly Stopwatch Stopwatch = new Stopwatch();
 
         public static void Start()
         {
-            stopwatch.Start();
+            Stopwatch.Start();
 
-            PrevFrameElapsedTime = stopwatch.ElapsedMilliseconds;
+            PrevFrameElapsedTime = Stopwatch.ElapsedMilliseconds;
             SmoothDeltaTime = PrevFrameElapsedTime;
             DeltaTime = PrevFrameElapsedTime;
 
@@ -36,19 +36,19 @@ namespace Pulsarc.Utils
 
         public static void Resume()
         {
-            stopwatch.Start();
+            Stopwatch.Start();
             IsRunning = true;
         }
 
         public static void Stop()
         {
-            stopwatch.Stop();
+            Stopwatch.Stop();
             IsRunning = false;
         }
 
-        public static void Reset()
+        private static void Reset()
         {
-            stopwatch.Reset();
+            Stopwatch.Reset();
 
             PrevFrameElapsedTime = 0;
             SmoothDeltaTime = 0;
@@ -72,7 +72,7 @@ namespace Pulsarc.Utils
             if (!IsRunning)
                 return;
 
-            double currentFrameTime = stopwatch.ElapsedMilliseconds;
+            double currentFrameTime = Stopwatch.ElapsedMilliseconds;
 
             DeltaTime = currentFrameTime - PrevFrameElapsedTime;
             PrevFrameElapsedTime = currentFrameTime;
@@ -83,14 +83,14 @@ namespace Pulsarc.Utils
         /// <summary>
         /// Replicates how Unity calculates Smooth Delta Time.
         /// Found this equation in some random Unity forum after
-        /// 2 hours of internet searching <_<
+        /// 2 hours of internet searching 
         /// </summary>
         /// <returns>The SmoothDeltaTime for the last frame</returns>
         private static double FindSmoothDeltaTime()
         {
-            double smoothAmount = .8;
+            const double smoothAmount = .8;
 
-            double newSmoothDeltaTime = (1 - smoothAmount) * DeltaTime + (smoothAmount * SmoothDeltaTime);
+            double newSmoothDeltaTime = (1 - smoothAmount) * DeltaTime + smoothAmount * SmoothDeltaTime;
 
             return newSmoothDeltaTime;
         }

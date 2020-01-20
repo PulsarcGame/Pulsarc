@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Globalization;
+using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
-using System;
 using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
@@ -9,30 +10,38 @@ namespace Pulsarc.UI.Screens.Settings.UI
     public class Slider : Setting
     {
         // The Selector "Knob" for this slider.
-        public SliderSelector Selector { get; protected set; } = new SliderSelector();
+        private SliderSelector Selector { get; set; } = new SliderSelector();
 
         // Min/Max Slider values
-        public int MinValue { get; protected set; }
-        public int MaxValue { get; protected set; }
+        private int MinValue { get; set; }
+        private int MaxValue { get; set; }
         
         // How much each pixel of selector movement changes the value.
-        public int Step { get; protected set; }
+        private int Step { get; set; }
 
         //
-        public int DisplayDivider { get; protected set; }
-        public int DisplayPrecision { get; protected set; }
+        private int DisplayDivider { get; set; }
+        private int DisplayPrecision { get; set; }
 
         // How far away (in pixels) from the edges the SliderSelector needs to stop at.
-        public int EdgeOffset { get; protected set; }
+        private int EdgeOffset { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="type"></param>
         /// <param name="startingValue"></param>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
+        /// <param name="title"></param>
+        /// <param name="more"></param>
+        /// <param name="position"></param>
+        /// <param name="step"></param>
+        /// <param name="displayDivider"></param>
+        /// <param name="displayPrecision"></param>
+        /// <param name="edgeOffset"></param>
         public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15)
-            : base(title, more, position, Skin.Assets["slider"], Anchor.CenterLeft, startingValue, type)
+            : base(title, position, Skin.Assets["slider"], Anchor.CenterLeft, startingValue, type)
         {
             Selector.Resize(50);
 
@@ -54,7 +63,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Moves the selector to the provided value, and changes the current value of this slider to that value.
         /// </summary>
         /// <param name="value">The value to move the selector to.</param>
-        public void SetSelector(int value)
+        private void SetSelector(int value)
         {
             int stepdist = Value - value;
 
@@ -67,33 +76,33 @@ namespace Pulsarc.UI.Screens.Settings.UI
             float percentagePosition = FindSelectorPosition();
 
             int rangeMin = EdgeOffset;
-            int rangeMax = (int)currentSize.X - EdgeOffset;
+            int rangeMax = (int)CurrentSize.X - EdgeOffset;
 
             int selectorRange = rangeMax - rangeMin;
 
             int position = (int)(percentagePosition * selectorRange);
 
-            Selector.ChangePosition(new Vector2(anchorPosition.X + EdgeOffset + position, anchorPosition.Y));
+            Selector.ChangePosition(new Vector2(AnchorPosition.X + EdgeOffset + position, AnchorPosition.Y));
         }
 
         /// <summary>
         /// Update this slider.
         /// </summary>
-        public void Update()
+        private void Update()
         {
             Title.Update(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
         }
 
-        public void SetSelectorPercent(float percent)
+        private void SetSelectorPercent(float percent)
         {
-            PulsarcLogger.Debug(percent.ToString(), LogType.Runtime);
+            PulsarcLogger.Debug(percent.ToString(CultureInfo.InvariantCulture), LogType.Runtime);
             SetSelector((int) (MinValue + (MaxValue - MinValue) * percent));
         }
 
         /// <summary>
         /// Moves the selector to the current value
         /// </summary>
-        public void SetSelector()
+        private void SetSelector()
         {
             SetSelector(Value);
         }
@@ -103,7 +112,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="value">The value to find the position for.</param>
         /// <returns>A float between 0f and 1f that represents the position the Selector should be in relative to the Slider.</returns>
-        public float FindSelectorPosition(int value)
+        private float FindSelectorPosition(int value)
         {
             int range = MaxValue - MinValue;
 
@@ -119,12 +128,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// This instance of the method uses the currentValue of this slider.
         /// </summary>
         /// <returns>A float between 0f and 1f that represents the position the Selector should be in relation to the size of the Slider.</returns>
-        public float FindSelectorPosition()
+        private float FindSelectorPosition()
         {
             return FindSelectorPosition(Value);
         }
 
-        public override dynamic GetSaveValue()
+        protected override dynamic GetSaveValue()
         {
             return Value / (float) DisplayDivider;
         }
@@ -143,7 +152,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override void OnClick(Point mousePosition)
         {
-            SetSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * Scale));
+            SetSelectorPercent((mousePosition.X - TruePosition.X) / (Texture.Width * Scale));
         }
     }
 }

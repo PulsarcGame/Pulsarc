@@ -19,17 +19,17 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="position"></param>
         /// <param name="startingValue"></param>
         public Binding(string title, string more, Vector2 position, string startingValue) : 
-            base(title, more, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "string")
+            base(title, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "string")
         {
             listening = new Drawable(Skin.Assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
 
-            key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
+            key = new TextDisplayElement("", new Vector2(position.X + listening.CurrentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
 
             key.Update(GetSaveValue());
 
         }
 
-        public override dynamic GetSaveValue()
+        protected sealed override dynamic GetSaveValue()
         {
             return Value;
         }

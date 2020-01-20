@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.UI;
-using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -17,11 +16,11 @@ namespace Pulsarc.Utils
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the provided drawable.</returns>
         public static Vector2 FindDrawablePosition(Anchor anchor, in Drawable drawable)
         {
-            float x = drawable.truePosition.X;
-            float y = drawable.truePosition.Y;
+            float x = drawable.TruePosition.X;
+            float y = drawable.TruePosition.Y;
 
-            float width = drawable.currentSize.X;
-            float height = drawable.currentSize.Y;
+            float width = drawable.CurrentSize.X;
+            float height = drawable.CurrentSize.Y;
 
             switch (anchor)
             {
@@ -57,7 +56,7 @@ namespace Pulsarc.Utils
                     x += width / 2f;
                     y += height;
                     break;
-                case Anchor.TopLeft:
+
                 default:
                     x += 0;
                     y += 0;
@@ -114,7 +113,6 @@ namespace Pulsarc.Utils
                     x = currentWidth / 2f;
                     y = currentHeight;
                     break;
-                case Anchor.TopLeft:
                 default:
                     x = 0;
                     y = 0;
@@ -172,7 +170,6 @@ namespace Pulsarc.Utils
                     x = xBaseRes / 2f;
                     y = yBaseRes;
                     break;
-                case Anchor.TopLeft:
                 default:
                     x = 0;
                     y = 0;

@@ -1,5 +1,4 @@
 ﻿using Pulsarc.Utils;
-using System.Diagnostics;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -8,14 +7,14 @@ namespace Pulsarc.UI.Screens.Gameplay
     /// </summary>
     public class HitObjectFade : HitObject
     {
-        private float timeToFade;
+        private readonly float _timeToFade;
 
-        private double timeWhenSpawned;
+        private readonly double _timeWhenSpawned;
 
-        private float startingOpacity;
+        private readonly float _startingOpacity;
 
         // Used to determine how the Fade Arc should move.
-        private double lastCrosshairPosition = -1;
+        private double _lastCrosshairPosition = -1;
 
         /// <summary>
         /// Create a new HitObjectFade, which will fade away based on the config
@@ -36,12 +35,12 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Set Stats
             ZLocation = parent.ZLocation;
 
-            this.timeToFade = timeToFade;
+            _timeToFade = timeToFade;
 
-            this.startingOpacity = startingOpacity;
+            _startingOpacity = startingOpacity;
             Opacity = startingOpacity;
 
-            timeWhenSpawned = PulsarcTime.CurrentElapsedTime;
+            _timeWhenSpawned = PulsarcTime.CurrentElapsedTime;
         }
 
         /// <summary>
@@ -55,16 +54,16 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // Crosshair position cannot be negative, so we check to see if it's
             // equal to -1 set earlier so we can properly set lastCrosshairPosition now.
-            if (lastCrosshairPosition == -1)
-                lastCrosshairPosition = crosshairZLoc;
+            if (_lastCrosshairPosition == -1)
+                _lastCrosshairPosition = crosshairZLoc;
 
             // If there was no change in crosshair, don't move the arc
-            if (lastCrosshairPosition == crosshairZLoc)
+            if (_lastCrosshairPosition == crosshairZLoc)
                 return ZLocation;
 
             // Find out how much the crosshair moved
-            double deltaCrosshairZLoc = lastCrosshairPosition - crosshairZLoc;
-            lastCrosshairPosition = crosshairZLoc;
+            double deltaCrosshairZLoc = _lastCrosshairPosition - crosshairZLoc;
+            _lastCrosshairPosition = crosshairZLoc;
 
             // Move this arc the same amount the crosshair did.
             return ZLocation - deltaCrosshairZLoc;
@@ -82,8 +81,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private float FindCurrentFade()
         {
-            double currentFadeTime = timeWhenSpawned + timeToFade - PulsarcTime.CurrentElapsedTime;
-            float currentFade = (float)(currentFadeTime / timeToFade / (1 / startingOpacity));
+            double currentFadeTime = _timeWhenSpawned + _timeToFade - PulsarcTime.CurrentElapsedTime;
+            float currentFade = (float)(currentFadeTime / _timeToFade / (1 / _startingOpacity));
 
             return currentFade;
         }

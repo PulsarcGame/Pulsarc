@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
-using System;
 using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
@@ -10,14 +9,14 @@ namespace Pulsarc.UI.Screens.Settings.UI
     public abstract class Setting : Drawable
     {
         // Current value of this setting
-        public dynamic Value { get; set; }
+        private protected dynamic Value { get; set; }
 
         // Type of setting and the text for the setting
-        public string Type { get; protected set; }
-        public string Text { get; protected set; }
+        private string Type { get; set; }
+        protected string Text { get; set; }
 
         // The TDEs to display the text of this Setting
-        public TextDisplayElement Title { get; protected set; }
+        protected TextDisplayElement Title { get; set; }
         // NOTE: More isn't being used currently
         public TextDisplayElement More { get; protected set; }
 
@@ -31,13 +30,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Initializes a setting that can change different options in Pulsarc.
         /// </summary>
         /// <param name="title">Name of the Setting</param>
-        /// <param name="more"></param>
         /// <param name="position">Setting's position.</param>
         /// <param name="texture">The texture for the Setting.</param>
         /// <param name="anchor">The anchor position for this Setting.</param>
         /// <param name="baseValue">The value this setting starts with.</param>
         /// <param name="type">The type of variable this setting changes.</param>
-        public Setting(string title, string more, Vector2 position, Texture2D texture, Anchor anchor, dynamic baseValue, string type)
+        public Setting(string title, Vector2 position, Texture2D texture, Anchor anchor, dynamic baseValue, string type)
             : base(texture, position, anchor: anchor)
         {
             Value = baseValue;
@@ -92,7 +90,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     Config.SetString(category, key, (string)GetSaveValue());
                     break;
                 default:
-                    PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);
+                    PulsarcLogger.Error($"Cannot save type {Type} in category {category} for setting {key}", LogType.Runtime);
                     break;
             }
         }
@@ -107,6 +105,6 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Get the current value that can be saved.
         /// </summary>
         /// <returns>This setting's current value.</returns>
-        public abstract dynamic GetSaveValue();
+        protected abstract dynamic GetSaveValue();
     }
 }

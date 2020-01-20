@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Pulsarc.Skinning;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Pulsarc.Skinning;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -11,7 +11,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The different judgements that can be obtained during gameplay.
         /// Can be easily edited to change how Judgement works.
         /// </summary>
-        public static readonly List<JudgementValue> Judgements = new List<JudgementValue>()
+        public static readonly List<JudgementValue> Judgements = new List<JudgementValue>
         {
             //////////////// Judge equal to Stepmania J4 /////////////
             new JudgementValue("max",       1,      22,    320,     2),
@@ -19,14 +19,14 @@ namespace Pulsarc.UI.Screens.Gameplay
             new JudgementValue("great",  2/3d,      90,    200,    -8),
             new JudgementValue("good",   1/3d,     135,    100,   -15),
             new JudgementValue("bad",    1/6d,     180,     50,   -45),
-            new JudgementValue("miss",      0,     200,      0,  -100),
+            new JudgementValue("miss",      0,     200,      0,  -100)
         };
 
         /// <summary>
         /// Returns the JudgementValue for a miss.
         /// </summary>
         /// <returns>A "miss" JudgmentValue</returns>
-        static public JudgementValue GetMiss()
+        public static JudgementValue GetMiss()
         {
             return Judgements.Last();
         }
@@ -37,13 +37,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="name">The JudgementValue to search for</param>
         /// <returns>The JudgementValue that is requested by the string.
         /// Returns null if there is no matching JudgementValue.</returns>
-        static public JudgementValue GetJudgementValueByName(string name)
+        public static JudgementValue GetJudgementValueByName(string name)
         {
-            foreach(JudgementValue j in Judgements)
-                if (j.Name == name)
-                    return j;
-
-            return null;
+            return Judgements.FirstOrDefault(j => j.Name == name);
         }
 
         /// <summary>
@@ -53,25 +49,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <returns>Returns the judgement that corresponds to the error amount.
         /// Returns null if the error is larger than all JudgementValues' Timing
         /// Windows.</returns>
-        static public JudgementValue GetJudgementValueByError(int error)
+        public static JudgementValue GetJudgementValueByError(int error)
         {
-            JudgementValue result = null;
+            if (error > Judgements.Last().Judge) return null;
 
-            if (error <= Judgements.Last().Judge)
-            {
-                for (int i = 0; i < Judgements.Count; i++)
-                {
-                    JudgementValue judgement = Judgements[i];
-
-                    if (error <= judgement.Judge)
-                    {
-                        result = judgement;
-                        break;
-                    }
-                }
-            }
-
-            return result;
+            return Judgements.FirstOrDefault(judgement => error <= judgement.Judge);
         }
 
         /// <summary>
@@ -79,15 +61,15 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="judgement"></param>
         /// <returns></returns>
-        static public JudgementValue GetPreviousJudgementValue(JudgementValue judgement)
+        public static JudgementValue GetPreviousJudgementValue(JudgementValue judgement)
         {
             JudgementValue result = JudgementValue.GetBaseJudgementValue();
 
-            for (int i = 0; i < Judgements.Count; i++)
-                if (Judgements[i].Judge >= judgement.Judge)
+            foreach (var t in Judgements)
+                if (t.Judge >= judgement.Judge)
                     break;
                 else
-                    result = Judgements[i];
+                    result = t;
 
             return result;
         }
@@ -97,13 +79,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="judgement"></param>
         /// <returns></returns>
-        static public JudgementValue GetNextJudgementValue(JudgementValue judgement)
+        public static JudgementValue GetNextJudgementValue(JudgementValue judgement)
         {
             JudgementValue result = GetMiss();
 
-            for (int i = 0; i < Judgements.Count; i++)
+            foreach (var t in Judgements)
             {
-                result = Judgements[i];
+                result = t;
 
                 if (result.Judge > judgement.Judge)
                     break;
@@ -133,8 +115,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         // The color associated with this Judgementvalue
         public Color Color { get; private set; }
 
-        // oooooooooooooooooooooooooooooooooooooooooooooo
-        private static JudgementValue baseJudgementValue;
+        // the initial judgement value
+        private static JudgementValue _baseJudgementValue;
 
         /// <summary>
         /// A JudgementValue used to determine the judgement of a hit arc.
@@ -143,15 +125,14 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="acc">The accuracy of the Judgement; this affects the accuracy in game.</param>
         /// <param name="judge">The time (in ms) before or after a HitObject's time where this JudgementValue would apply to.</param>
         /// <param name="score">How much score is added to the total hidden score when this JudgementValue is obtained.</param>
-        /// <param name="combo_addition">How much combo is added to the total hidden combo when this JudgementValue is obtained.</param>
-        /// <param name="color">The color corresponding to this JudgementValue</param>
-        public JudgementValue(string name, double acc, int judge, int score, int combo_addition)
+        /// <param name="comboAddition">How much combo is added to the total hidden combo when this JudgementValue is obtained.</param>
+        public JudgementValue(string name, double acc, int judge, int score, int comboAddition)
         {
             Name = name;
             Acc = acc;
             Judge = judge;
             Score = score;
-            ComboAddition = combo_addition;
+            ComboAddition = comboAddition;
 
             string colorName = char.ToUpper(name[0]) + name.Substring(1) + "Color";
             Color = Skin.GetConfigColor("judgements", "Colors", colorName);
@@ -160,7 +141,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Blank JudgementValue with a White color.
         /// </summary>
-        public JudgementValue()
+        private JudgementValue()
         {
             Name = "";
             Acc = 0;
@@ -172,11 +153,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public static JudgementValue GetBaseJudgementValue()
         {
-            if(baseJudgementValue == null)
-            {
-                baseJudgementValue = new JudgementValue();
-            }
-            return baseJudgementValue;
+            return _baseJudgementValue ??= new JudgementValue();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Pulsarc.UI.Screens.MainMenu
 {
     class Menu : PulsarcScreen
     {
-        public override ScreenView View { get; protected set; }
+        public sealed override ScreenView View { get; protected set; }
 
         private const string DISCORD_DETAILS = "In the menus";
 
@@ -21,7 +21,7 @@ namespace Pulsarc.UI.Screens.MainMenu
             View?.Update(gameTime);
         }
 
-        public override void UpdateDiscord()
+        protected override void UpdateDiscord()
         {
             if (PulsarcDiscord.Presence.Details != DISCORD_DETAILS)
                 PulsarcDiscord.SetStatus("", DISCORD_DETAILS);

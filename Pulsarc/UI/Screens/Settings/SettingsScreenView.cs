@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI.Buttons;
-using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Settings.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
@@ -17,20 +15,20 @@ namespace Pulsarc.UI.Screens.Settings
     {
         SettingsScreen GetSettingsScreen() { return (SettingsScreen)Screen; }
 
-        private Background background;
-        private ReturnButton button_back;
-        private SaveButton button_save;
+        private readonly Background _background;
+        private readonly ReturnButton _buttonBack;
+        private readonly SaveButton _buttonSave;
 
         public List<SettingsGroup> Groups { get; private set; }
 
-        private float currentFocus = 0;
-        private float lastFocus = 0;
+        private float _currentFocus;
+        private float _lastFocus;
 
         public SettingsScreenView(Screen screen) : base(screen)
         {
-            background = new Background("settings_background");
-            button_back = new ReturnButton("settings_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
-            button_save = new SaveButton("settings_button_save", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
+            _background = new Background("settings_background");
+            _buttonBack = new ReturnButton("settings_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+            _buttonSave = new SaveButton("settings_button_save", AnchorUtil.FindScreenPosition(Anchor.BottomRight));
 
             Groups = new List<SettingsGroup>();
 
@@ -46,7 +44,7 @@ namespace Pulsarc.UI.Screens.Settings
         /// Get the position for the next SettingsGroup to use.
         /// </summary>
         /// <returns></returns>
-        public int GetNextGroupPos()
+        private int GetNextGroupPos()
         {
             int posY = 0;
              
@@ -58,50 +56,48 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Draw(GameTime gameTime)
         {
-            background.Draw();
+            _background.Draw();
             
             foreach(SettingsGroup settingsGroup in Groups)
                 settingsGroup.Draw();
 
-            button_back.Draw();
-            button_save.Draw();
+            _buttonBack.Draw();
+            _buttonSave.Draw();
         }
 
         public override void Update(GameTime gameTime)
         {
             // Move Settings Groups if focus has changed.
-            updateFocus();
+            UpdateFocus();
 
-            listenForKeys();
+            ListenForKeys();
 
             // Check if we released a previously held item
             // TODO: only check when there was a held item
-            checkHeldItem();
+            CheckHeldItem();
 
             // Handle Single click inputs
-            handleSingleClicks();
+            HandleSingleClicks();
 
             // Handle holding mouse inputs
-            handleMouseHoldInput();
+            HandleMouseHoldInput();
         }
 
-        private void updateFocus()
+        private void UpdateFocus()
         {
             float selectedFocus = GetSettingsScreen().SelectedFocus;
 
-            if (currentFocus != selectedFocus)
-            {
-                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
+            if (_currentFocus == selectedFocus) return;
+            _currentFocus = PulsarcMath.Lerp(_currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
 
-                float diff = lastFocus - currentFocus;
-                lastFocus = currentFocus;
+            float diff = _lastFocus - _currentFocus;
+            _lastFocus = _currentFocus;
 
-                foreach (SettingsGroup settings in Groups)
-                    settings.Move(new Vector2(0, 200 * diff));
-            }
+            foreach (SettingsGroup settings in Groups)
+                settings.Move(new Vector2(0, 200 * diff));
         }
 
-        private void listenForKeys()
+        private void ListenForKeys()
         {
             while (InputManager.KeyboardPresses.Count > 0)
             {
@@ -110,30 +106,27 @@ namespace Pulsarc.UI.Screens.Settings
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
                     ScreenManager.RemoveScreen(true);
 
-                foreach (SettingsGroup settingsGroup in Groups)
-                    foreach (KeyValuePair<string, Setting> settingP in settingsGroup.Settings)
-                        if (settingP.Value.KeyListen)
-                            settingP.Value.HandleKeyEvent(press.Value);
+                foreach (var settingP in from settingsGroup in Groups from settingP in settingsGroup.Settings where settingP.Value.KeyListen select settingP)
+                    settingP.Value.HandleKeyEvent(press.Value);
             }
         }
 
-        private void checkHeldItem()
+        private void CheckHeldItem()
         {
-            if (MouseManager.CurrentState.LeftButton == ButtonState.Released)
-                foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.FocusedHoldSetting != null)
-                        settingsGroup.ResetFocusedHoldSetting();
+            if (MouseManager.CurrentState.LeftButton != ButtonState.Released) return;
+            foreach (var settingsGroup in Groups.Where(settingsGroup => settingsGroup.FocusedHoldSetting != null))
+                settingsGroup.ResetFocusedHoldSetting();
         }
 
-        private void handleSingleClicks()
+        private void HandleSingleClicks()
         {
             if (MouseManager.IsUniqueClick(MouseButton.Left))
             {
-                if (button_back.Hovered(MouseManager.CurrentState.Position))
-                    button_back.OnClick();
+                if (_buttonBack.Hovered(MouseManager.CurrentState.Position))
+                    _buttonBack.OnClick();
 
-                if (button_save.Hovered(MouseManager.CurrentState.Position))
-                    button_save.OnClick(this);
+                if (_buttonSave.Hovered(MouseManager.CurrentState.Position))
+                    _buttonSave.OnClick(this);
 
                 foreach (SettingsGroup settingsGroup in Groups)
                     if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
@@ -141,12 +134,11 @@ namespace Pulsarc.UI.Screens.Settings
             }
         }
 
-        private void handleMouseHoldInput()
+        private void HandleMouseHoldInput()
         {
-            if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
-                foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
-                        settingsGroup.OnClick(MouseManager.CurrentState.Position, true);
+            if (MouseManager.CurrentState.LeftButton != ButtonState.Pressed) return;
+            foreach (var settingsGroup in Groups.Where(settingsGroup => settingsGroup.Hovered(MouseManager.CurrentState.Position)))
+                settingsGroup.OnClick(MouseManager.CurrentState.Position, true);
         }
     }
 }

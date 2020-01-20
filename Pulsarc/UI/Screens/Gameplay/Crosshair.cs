@@ -1,18 +1,17 @@
 using System;
-using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
-    public class Crosshair : Drawable
+    public sealed class Crosshair : Drawable
     {
         // The current diameter of this Crosshair.
         public float Diameter { get; private set; }
         private float BaseDiameter { get; set; } = -1;
 
-        private bool hidden;
-        private float HiddenAdjustment => hidden ? (BaseDiameter + BaseAdjustment) / BaseDiameter : 1;
+        private readonly bool _hidden;
+        private float HiddenAdjustment => _hidden ? (BaseDiameter + BaseAdjustment) / BaseDiameter : 1;
 
         // The current radius of this Crosshair.
         public float Radius => Diameter / 2;
@@ -23,16 +22,17 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The crosshair, or "Judgement Circle" of Pulsarc.
         /// </summary>
         /// <param name="baseCrosshairDiameter">The base diameter for this Crosshair. Default is 300 (the diameter of Intralism's crosshair)</param>
+        /// <param name="hidden"></param>
         public Crosshair(float baseCrosshairDiameter = 300, bool hidden = false) : base(Skin.Assets["crosshair"])
         {
-            this.hidden = hidden;
+            _hidden = hidden;
 
             // Find the origin (center) of this Crosshair
             int width = Pulsarc.CurrentWidth;
             int height = Pulsarc.CurrentHeight;
 
-            origin.X = (width / 2) + ((Texture.Width - width) / 2);
-            origin.Y = (height / 2) + ((Texture.Height - height) / 2);
+            Origin.X = width / 2 + (Texture.Width - width) / 2;
+            Origin.Y = height / 2 + (Texture.Height - height) / 2;
 
             // Set the diameter and resize
             Resize(baseCrosshairDiameter * Pulsarc.HeightScale);
@@ -49,7 +49,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public float GetZLocation()
         {
-            return ((Pulsarc.CurrentWidth / 2) * Texture.Width / 2) / Diameter;
+            return Pulsarc.CurrentWidth / 2 * Texture.Width / 2 / Diameter;
         }
         
         /// <summary>

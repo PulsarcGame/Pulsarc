@@ -1,36 +1,37 @@
-﻿using Pulsarc.Beatmaps;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
+using Pulsarc.Beatmaps;
 
 namespace Pulsarc.Utils.SQLite
 {
     public class BeatmapData : SQLiteData
     {
         // Path to the beatmap folder and background image
-        public string path;
-        public string backgroundPath;
+        public string Path;
+        public string BackgroundPath;
 
         // Path to the beatmap's audio
-        public string audioPath;
+        public string AudioPath;
         // Time (in ms) that the preview should start from in the song select
-        public int audioPreviewTime;
+        public int AudioPreviewTime;
 
         // Filename of the .psc
-        public string fileName;
+        public string FileName;
 
         // Metadata
-        public string title;
-        public string artist;
-        public string mapper;
-        public string version;
+        public string Title;
+        public string Artist;
+        public string Mapper;
+        public string Version;
 
         // Game data
-        public int keyCount;
-        public double difficulty;
+        public int KeyCount;
+        public double Difficulty;
 
         /// <summary>
         /// Make a new BeatmapData
         /// </summary>
-        public BeatmapData() : base() { }
+        public BeatmapData()
+        { }
 
         /// <summary>
         /// Make a new BeatmapData out of a DataReader
@@ -52,17 +53,17 @@ namespace Pulsarc.Utils.SQLite
         /// <param name="beatmap">The Beatmap used to make this BeatmapData</param>
         public BeatmapData(Beatmap beatmap)
         {
-            path = beatmap.Path;
-            backgroundPath = beatmap.Background;
-            audioPath = beatmap.Audio;
-            audioPreviewTime = beatmap.PreviewTime;
-            fileName = beatmap.FileName;
-            title = beatmap.Title;
-            artist = beatmap.Artist;
-            mapper = beatmap.Mapper;
-            version = beatmap.Version;
-            keyCount = beatmap.KeyCount;
-            difficulty = beatmap.Difficulty;
+            Path = beatmap.Path;
+            BackgroundPath = beatmap.Background;
+            AudioPath = beatmap.Audio;
+            AudioPreviewTime = beatmap.PreviewTime;
+            FileName = beatmap.FileName;
+            Title = beatmap.Title;
+            Artist = beatmap.Artist;
+            Mapper = beatmap.Mapper;
+            Version = beatmap.Version;
+            KeyCount = beatmap.KeyCount;
+            Difficulty = beatmap.Difficulty;
         }
 
         /// <summary>
@@ -72,7 +73,7 @@ namespace Pulsarc.Utils.SQLite
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{artist} - {title} [{version}] ({mapper})";
+            return $"{Artist} - {Title} [{Version}] ({Mapper})";
         }
 
         /// <summary>
@@ -83,10 +84,10 @@ namespace Pulsarc.Utils.SQLite
         public bool Match(string search)
         {
             bool matching =
-                artist.ToLower().Contains(search) ||
-                title.ToLower().Contains(search)  ||
-                mapper.ToLower().Contains(search) ||
-                version.ToLower().Contains(search);
+                Artist.ToLower().Contains(search) ||
+                Title.ToLower().Contains(search)  ||
+                Mapper.ToLower().Contains(search) ||
+                Version.ToLower().Contains(search);
 
             return matching;
         }

@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
-using System;
 using Wobble.Logging;
 using Wobble.Screens;
 
@@ -14,50 +14,50 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     public class BeatmapCard : Card
     {
         public Beatmap Beatmap { get; set; }
-        
-        public static Texture2D DefaultTexture => Skin.Assets["beatmap_card"];
+
+        private static Texture2D DefaultTexture => Skin.Assets["beatmap_card"];
 
         // Stats
-        public static readonly Anchor DefaultAnchor = Skin.GetConfigAnchor("song_select", "Properties", "BeatmapCardAnchor");
+        private static readonly Anchor DefaultAnchor = Skin.GetConfigAnchor("song_select", "Properties", "BeatmapCardAnchor");
 
         private static readonly int OffsetX = Skin.GetConfigInt("song_select", "Properties", "BeatmapCardX");
         private static readonly int OffsetY = Skin.GetConfigInt("song_select", "Properties", "BeatmapCardY");
-        public static readonly Vector2 StartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "BeatmapCardStartPos") + new Vector2(OffsetX, OffsetY);
+        private static readonly Vector2 StartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "BeatmapCardStartPos") + new Vector2(OffsetX, OffsetY);
 
-        public static readonly int Margin = Skin.GetConfigInt("song_select", "Properties", "BeatmapCardMargin");
+        private static readonly int Margin = Skin.GetConfigInt("song_select", "Properties", "BeatmapCardMargin");
         public static readonly int TotalHeight = DefaultTexture.Height + Margin;
         public static readonly int TotalWidth = DefaultTexture.Width + Margin;
 
         public int Index { get; private set; }
 
-        public Vector2 PersonalStartPosition => StartPosition + personalStartPosOffset;
+        private Vector2 PersonalStartPosition => StartPosition + personalStartPosOffset;
         private Vector2 personalStartPosOffset;
 
         // How far this card will extend when selected
-        private float clickedDistance;
+        private readonly float _clickedDistance;
         // What direction this card will extend in
-        private string clickedDirection;
+        private readonly string _clickedDirection;
 
-        private float currentClickDistance = 0f;
-        private float lastClickDistance = 0f;
+        private float _currentClickDistance;
+        private float _lastClickDistance;
 
         // The difficulty of the map represented as a bar
-        private BeatmapCardDifficulty diffBar;
-        private Vector2 diffBarOffset;
-        private Anchor diffBarStartAnchor;
+        private BeatmapCardDifficulty _diffBar;
+        private Vector2 _diffBarOffset;
+        private Anchor _diffBarStartAnchor;
 
         /// <summary>
         /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
         /// TODO: Cleanup
         /// </summary>
         /// <param name="beatmap">The beatmap associated with this card.</param>
-        /// <param name="truePosition">The position of the card.</param>
+        /// <param name="index"></param>
         public BeatmapCard(Beatmap beatmap, int index)
             : base(DefaultTexture, StartPosition, DefaultAnchor)
         {
             // set clicked distance and direction
-            clickedDistance = Skin.GetConfigFloat(Config, "Properties", "BeatmapCardSelectOffset");
-            clickedDirection = Skin.GetConfigString(Config, "Properties", "BeatmapCardSelectDirection");
+            _clickedDistance = Skin.GetConfigFloat(Config, "Properties", "BeatmapCardSelectOffset");
+            _clickedDirection = Skin.GetConfigString(Config, "Properties", "BeatmapCardSelectDirection");
 
             Index = index;
 
@@ -75,6 +75,11 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             ChangePosition(PersonalStartPosition);
         }
 
+        public sealed override void ChangePosition(Vector2 position, bool topLeftPositioning = false)
+        {
+            base.ChangePosition(position, topLeftPositioning);
+        }
+
         private void SetDiffBar()
         {
             float percent = (float)(Beatmap.Difficulty / 10f);
@@ -84,7 +89,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             Anchor diffAnchor = GetSkinnableAnchor("DiffBarAnchor");
 
-            diffBar = new BeatmapCardDifficulty
+            _diffBar = new BeatmapCardDifficulty
             (
                 startPos,
                 // diffbar displayed percentage is 0 if less than 0, and 10 if greater than 10
@@ -94,9 +99,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             int diffBarXOffset = GetSkinnableInt("DiffBarX");
             int diffBarYOffset = GetSkinnableInt("DiffBarY");
-            diffBar.Move(diffBarXOffset, diffBarYOffset);
-            diffBarOffset = diffBar.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this);
-            diffBarStartAnchor = startAnchor;
+            _diffBar.Move(diffBarXOffset, diffBarYOffset);
+            _diffBarOffset = _diffBar.AnchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this);
+            _diffBarStartAnchor = startAnchor;
         }
 
         private void SetMetadata()
@@ -114,7 +119,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             TextElements[3].Update(Beatmap.Mapper);
 
             AddTextDisplayElement("Difficulty");
-            TextElements[4].Update(string.Format("{0:0.00}", Beatmap.Difficulty));
+            TextElements[4].Update($"{Beatmap.Difficulty:0.00}");
         }
 
         protected override void SetConfigAndSection()
@@ -129,7 +134,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 return;
 
             base.Draw();
-            diffBar.Draw();
+            _diffBar.Draw();
         }
 
         /// <summary>
@@ -138,21 +143,21 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         public void AdjustClickDistance()
         {
             // If clicked, smoothly move to the clicked distance
-            if (IsClicked && Math.Round(currentClickDistance, 3) < Math.Round(clickedDistance, 3))
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, clickedDistance, (float)PulsarcTime.DeltaTime / 100f);
+            if (IsClicked && Math.Round(_currentClickDistance, 3) < Math.Round(_clickedDistance, 3))
+                _currentClickDistance = PulsarcMath.Lerp(_currentClickDistance, _clickedDistance, (float)PulsarcTime.DeltaTime / 100f);
 
             // Else if not clicked and currentClickDistacne is greater than 0, smoothly move to 0
-            else if (!IsClicked && Math.Round(currentClickDistance, 3) > 0)
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, 0, (float)PulsarcTime.DeltaTime / 100f);
+            else if (!IsClicked && Math.Round(_currentClickDistance, 3) > 0)
+                _currentClickDistance = PulsarcMath.Lerp(_currentClickDistance, 0, (float)PulsarcTime.DeltaTime / 100f);
 
             // Else, end the method.
             else
                 return;
 
-            float diff = lastClickDistance - currentClickDistance;
-            lastClickDistance = currentClickDistance;
+            float diff = _lastClickDistance - _currentClickDistance;
+            _lastClickDistance = _currentClickDistance;
 
-            switch (clickedDirection)
+            switch (_clickedDirection)
             {
                 case "Left":
                     Move(new Vector2(diff, 0));
@@ -186,17 +191,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             {
                 string path = Beatmap.GetFullAudioPath();
 
-                if (AudioManager.songPath != path)
-                {
-                    AudioManager.songPath = Beatmap.GetFullAudioPath();
-                    AudioManager.audioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
-                    AudioManager.StartLazyPlayer();
+                if (AudioManager.SongPath == path) return;
+                AudioManager.SongPath = Beatmap.GetFullAudioPath();
+                AudioManager.AudioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
+                AudioManager.StartLazyPlayer();
 
-                    if (Beatmap.PreviewTime != 0)
-                        AudioManager.DeltaTime(Beatmap.PreviewTime);
+                if (Beatmap.PreviewTime != 0)
+                    AudioManager.DeltaTime(Beatmap.PreviewTime);
 
-                    PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}", LogType.Runtime);
-                }
+                PulsarcLogger.Important($"Now Playing: {AudioManager.SongPath}", LogType.Runtime);
             }
         }
 
@@ -216,7 +219,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             base.UpdateElements();
 
-            diffBar?.ChangePosition(AnchorUtil.FindDrawablePosition(diffBarStartAnchor, this) + diffBarOffset);
+            _diffBar?.ChangePosition(AnchorUtil.FindDrawablePosition(_diffBarStartAnchor, this) + _diffBarOffset);
         }
     }
 }

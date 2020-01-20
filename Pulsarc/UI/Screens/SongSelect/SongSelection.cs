@@ -1,14 +1,13 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
-using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Input;
 using Pulsarc.Utils.SQLite;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -22,14 +21,11 @@ namespace Pulsarc.UI.Screens.SongSelect
         public List<BeatmapCard> Cards { get; private set; }
 
         // Used for determining the position of all the cards and moving them with mouse scrolling
-        private int lastScrollValue = 0;
-        private bool leftClicking = false;
-        private MouseState leftClickedState;
-        public float SelectedFocus = 0;
+        private int _lastScrollValue;
+        private bool _leftClicking;
+        private MouseState _leftClickedState;
+        public float SelectedFocus;
         public BeatmapCard FocusedCard { get; set; }
-
-        public SongSelection()
-        { }
 
         public override void Init()
         {
@@ -42,16 +38,13 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// Load all beatmaps.
         /// TODO: this should be loaded from a cache and updated incrementally or when doing a refresh
         /// </summary>
-        public void RefreshBeatmaps(string keyword = "")
+        private void RefreshBeatmaps(string keyword = "")
         {
-            List<Beatmap> beatmaps = new List<Beatmap>();
             Cards = new List<BeatmapCard>();
 
-            List<BeatmapData> data = DataManager.BeatmapDB.GetBeatmaps();
+            List<BeatmapData> data = DataManager.BeatmapDb.GetBeatmaps();
 
-            for (int i = 0; i < data.Count; i++)
-                if (keyword == "" || data[i].Match(keyword))
-                    beatmaps.Add(BeatmapHelper.LoadLight(data[i]));
+            List<Beatmap> beatmaps = (from t in data where keyword == "" || t.Match(keyword) select BeatmapHelper.LoadLight(t)).ToList();
 
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
@@ -66,18 +59,18 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             List<Beatmap> beatmaps = new List<Beatmap>();
 
-            DataManager.BeatmapDB.ClearBeatmaps();
+            DataManager.BeatmapDb.ClearBeatmaps();
 
             string[] directories = Directory.GetDirectories("Songs/");
 
-            for (int i = 0; i < directories.Length; i++)
+            foreach (var t in directories)
             {
-                string[] files = Directory.GetFiles(directories[i], "*.psc").Select(Path.GetFileName).ToArray();
+                string[] files = Directory.GetFiles(t, "*.psc").Select(Path.GetFileName).ToArray();
 
-                for (int j = 0; j < files.Length; j++)
+                foreach (var s in files)
                 {
-                    BeatmapData debugData = new BeatmapData(BeatmapHelper.Load(directories[i], files[j]));
-                    DataManager.BeatmapDB.AddBeatmap(debugData);
+                    BeatmapData debugData = new BeatmapData(BeatmapHelper.Load(t, s));
+                    DataManager.BeatmapDb.AddBeatmap(debugData);
                 }
             }
 
@@ -91,23 +84,27 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="sort">The way to sort. "Difficulty," "Artist", "Title", "Mapper", or "Version"</param>
         /// <param name="ascending">Whether the list should be sorted Ascending (A->Z,1->9), or Descending (Z->A,9->1)</param>
         /// <returns></returns>
-        public List<Beatmap> SortBeatmaps(List<Beatmap> beatmaps, string sort, bool ascending = true)
+        private List<Beatmap> SortBeatmaps(List<Beatmap> beatmaps, string sort, bool ascending = true)
         {
-            switch(sort)
+            return sort switch
             {
-                case "difficulty":
-                    return ascending ? beatmaps.OrderBy(i => i.Difficulty).ToList() : beatmaps.OrderByDescending(i => i.Difficulty).ToList();
-                case "artist":
-                    return ascending ? beatmaps.OrderBy(i => i.Artist).ToList() : beatmaps.OrderByDescending(i => i.Artist).ToList();
-                case "title":
-                    return ascending ? beatmaps.OrderBy(i => i.Title).ToList() : beatmaps.OrderByDescending(i => i.Title).ToList();
-                case "mapper":
-                    return ascending ? beatmaps.OrderBy(i => i.Mapper).ToList() : beatmaps.OrderByDescending(i => i.Mapper).ToList();
-                case "version":
-                    return ascending ? beatmaps.OrderBy(i => i.Version).ToList() : beatmaps.OrderByDescending(i => i.Version).ToList();
-                default:
-                    return beatmaps;
-            }
+                "difficulty" => (ascending
+                    ? beatmaps.OrderBy(i => i.Difficulty).ToList()
+                    : beatmaps.OrderByDescending(i => i.Difficulty).ToList()),
+                "artist" => (ascending
+                    ? beatmaps.OrderBy(i => i.Artist).ToList()
+                    : beatmaps.OrderByDescending(i => i.Artist).ToList()),
+                "title" => (ascending
+                    ? beatmaps.OrderBy(i => i.Title).ToList()
+                    : beatmaps.OrderByDescending(i => i.Title).ToList()),
+                "mapper" => (ascending
+                    ? beatmaps.OrderBy(i => i.Mapper).ToList()
+                    : beatmaps.OrderByDescending(i => i.Mapper).ToList()),
+                "version" => (ascending
+                    ? beatmaps.OrderBy(i => i.Version).ToList()
+                    : beatmaps.OrderByDescending(i => i.Version).ToList()),
+                _ => beatmaps
+            };
         }
 
         public override void Update(GameTime gameTime)
@@ -130,7 +127,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             GetSongSelectionView().RefocusCurrentCard();
         }
 
-        public override void UpdateDiscord()
+        protected override void UpdateDiscord()
         {
             PulsarcDiscord.SetStatus("", "Browsing Maps");
         }
@@ -141,33 +138,38 @@ namespace Pulsarc.UI.Screens.SongSelect
             {
                 KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
 
-                // If Escape has been pressed, go back one screen.
-                if (press.Value == Keys.Escape)
-                    ScreenManager.RemoveScreen(true);
-
-                // If F5 has been pressed, refresh beatmaps
-                else if (press.Value == Keys.F5)
-                    RescanBeatmaps();
-
-                // If Enter is pressed, start playing the beatmap of the focused card
-                else if (press.Value == Keys.Enter)
-                    FocusedCard.OnClick();
-
-                // If Delete or backspace is pressed, clear the search bar
-                else if (press.Value == Keys.Delete || press.Value == Keys.Back)
+                switch (press.Value)
                 {
-                    GetSongSelectionView().SearchBox.Clear();
-                    RefreshBeatmaps();
-                }
-                // If none of the above, type into the search bar
-                // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
-                // TODO? Ignore keypresses unless clicked on
-                else
-                {
-                    if (XnaKeyHelper.isTypingCharacter(press.Value))
+                    // If Escape has been pressed, go back one screen.
+                    // If F5 has been pressed, refresh beatmaps
+                    case Keys.Escape:
+                        ScreenManager.RemoveScreen(true);
+                        break;
+                    // If Enter is pressed, start playing the beatmap of the focused card
+                    case Keys.F5:
+                        RescanBeatmaps();
+                        break;
+                    // If Delete or backspace is pressed, clear the search bar
+                    case Keys.Enter:
+                        FocusedCard.OnClick();
+                        break;
+                    case Keys.Delete:
+                    // If none of the above, type into the search bar
+                    // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
+                    // TODO? Ignore keypresses unless clicked on
+                    case Keys.Back:
+                        GetSongSelectionView().SearchBox.Clear();
+                        RefreshBeatmaps();
+                        break;
+                    default:
                     {
-                        GetSongSelectionView().SearchBox.AddText(InputManager.Caps ? XnaKeyHelper.GetStringFromKey(press.Value) : XnaKeyHelper.GetStringFromKey(press.Value).ToLower());
-                        RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText().ToLower());
+                        if (XnaKeyHelper.IsTypingCharacter(press.Value))
+                        {
+                            GetSongSelectionView().SearchBox.AddText(InputManager.Caps ? XnaKeyHelper.GetStringFromKey(press.Value) : XnaKeyHelper.GetStringFromKey(press.Value).ToLower());
+                            RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText().ToLower());
+                        }
+
+                        break;
                     }
                 }
             }
@@ -184,42 +186,39 @@ namespace Pulsarc.UI.Screens.SongSelect
         private void ChangeFocus(MouseState ms)
         {
             // If the scroll wheel's state has changed, change the focus
-            if (ms.ScrollWheelValue < lastScrollValue)
+            if (ms.ScrollWheelValue < _lastScrollValue)
                 SelectedFocus += 0.3f;
 
-            else if (ms.ScrollWheelValue > lastScrollValue)
+            else if (ms.ScrollWheelValue > _lastScrollValue)
                 SelectedFocus -= 0.3f;
 
-            lastScrollValue = ms.ScrollWheelValue;
+            _lastScrollValue = ms.ScrollWheelValue;
         }
 
         private void HandleClicks(MouseState ms)
         {
             // If the Focused Card is clicked (and released), play its map.
-            if (!leftClicking && ms.LeftButton == ButtonState.Pressed)
+            if (!_leftClicking && ms.LeftButton == ButtonState.Pressed)
             {
-                leftClicking = true;
-                leftClickedState = ms;
+                _leftClicking = true;
+                _leftClickedState = ms;
             }
             // If a non-focused card is clicked, focus that clicked card
-            else if (leftClicking && ms.LeftButton == ButtonState.Released)
+            else if (_leftClicking && ms.LeftButton == ButtonState.Released)
             {
-                leftClicking = false;
+                _leftClicking = false;
                 MouseState leftRelease = ms;
 
-                for (int i = 0; i < Cards.Count; i++)
+                foreach (var t in Cards.Where(t => t.Clicked(_leftClickedState, leftRelease)))
                 {
-                    if (Cards[i].Clicked(leftClickedState, leftRelease))
+                    if (FocusedCard != t)
                     {
-                        if (FocusedCard != Cards[i])
-                        {
-                            FocusedCard.SetClicked(false);
-                            FocusedCard = Cards[i];
-                        }
-
-                        Cards[i].OnClick();
-                        GetSongSelectionView().FocusCard(Cards[i]);
+                        FocusedCard.SetClicked(false);
+                        FocusedCard = t;
                     }
+
+                    t.OnClick();
+                    GetSongSelectionView().FocusCard(t);
                 }
             }
         }

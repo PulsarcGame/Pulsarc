@@ -1,16 +1,14 @@
-﻿using Pulsarc.UI.Screens.Gameplay;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils.SQLite
 {
-    public class ScoreDB : SQLiteStore
+    public class ScoreDb : SqLiteStore
     {
-        public ScoreDB() : base("scores") { }
+        public ScoreDb() : base("scores") { }
 
-        public override void InitTables()
+        protected override void InitTables()
         {
             Tables.Add(new ScoreData());
             Tables.Add(new ReplayData());

@@ -1,19 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using Pulsarc.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
     public class SettingsGroup : Drawable
     {
         // Name of this group
-        public string Name { get; protected set; }
+        protected string Name { get; set; }
         
         // The icon to use for this group.
-        public Drawable Icon { get; protected set; }
+        private Drawable Icon { get; set; }
         
         // Each setting and the key they change
         public Dictionary<string, Setting> Settings { get; protected set; }
@@ -21,13 +19,13 @@ namespace Pulsarc.UI.Screens.Settings.UI
         //
         public Setting FocusedHoldSetting { get; protected set; }
 
-        public SettingsGroup(string name, Vector2 position)
+        protected SettingsGroup(string name, Vector2 position)
         {
             Name = name;
             Settings = new Dictionary<string, Setting>();
             Icon = new Drawable(Skin.Assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200,200),anchor: Anchor.Center);
             ChangePosition(position);
-            drawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
+            DrawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
         }
 
         /// <summary>
@@ -35,11 +33,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="key">The Key to modify in the config.</param>
         /// <param name="setting">The setting object itself.</param>
-        public void AddSetting(string key, Setting setting)
+        internal void AddSetting(string key, Setting setting)
         {
             Settings.Add(key, setting);
 
-            drawnPart.Height += setting.drawnPart.Height;
+            DrawnPart.Height += setting.DrawnPart.Height;
         }
 
         public override void Move(Vector2 delta, bool? heightScaled = null)
@@ -57,7 +55,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <returns></returns>
         public Vector2 GetNextPosition()
         {
-            return new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
+            return new Vector2(TruePosition.X, TruePosition.Y + DrawnPart.Height);
         }
 
         public override void Draw()
@@ -83,28 +81,24 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="hold"></param>
         public void OnClick(Point mousePosition, bool hold)
         {
-            foreach (KeyValuePair<string, Setting> entry in Settings)
+            foreach (var entry in Settings.Where(entry => entry.Value.Hold == hold))
             {
-                // Check if this setting corresponds to the current input type
-                if (entry.Value.Hold == hold)
+                // Single Input
+                if (!hold)
                 {
-                    // Single Input
-                    if (!hold)
-                    {
-                        if (entry.Value.Hovered(mousePosition))
-                            entry.Value.OnClick(mousePosition);
-                    }
-                    // Hold Input
-                    else
-                    {
-                        // Start to hold this item, keep it in memory
-                        if (entry.Value.Hovered(mousePosition) && FocusedHoldSetting == null)
-                            FocusedHoldSetting = entry.Value;
+                    if (entry.Value.Hovered(mousePosition))
+                        entry.Value.OnClick(mousePosition);
+                }
+                // Hold Input
+                else
+                {
+                    // Start to hold this item, keep it in memory
+                    if (entry.Value.Hovered(mousePosition) && FocusedHoldSetting == null)
+                        FocusedHoldSetting = entry.Value;
 
-                        // Continue to update the held item, even if out of range
-                        if (FocusedHoldSetting == entry.Value)
-                            entry.Value.OnClick(mousePosition);
-                    }
+                    // Continue to update the held item, even if out of range
+                    if (FocusedHoldSetting == entry.Value)
+                        entry.Value.OnClick(mousePosition);
                 }
             }
         }

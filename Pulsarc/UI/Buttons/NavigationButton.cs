@@ -5,12 +5,12 @@ using Wobble.Screens;
 
 namespace Pulsarc.UI.Buttons
 {
-    class NavigationButton : Drawable
+    sealed class NavigationButton : Drawable
     {
-        private TextDisplayElement text;
-        private PulsarcScreen screen;
+        private readonly TextDisplayElement _text;
+        private readonly PulsarcScreen _screen;
 
-        private bool removeFirst;
+        private readonly bool _removeFirst;
 
         /// <summary>
         /// A button that allows the user to navigate to a new Screen.
@@ -22,9 +22,10 @@ namespace Pulsarc.UI.Buttons
         /// <param name="anchor">The anchor for this button, defaults to Anchor.Center.</param>
         /// <param name="removeFirst">Whether or not the current screen should be removed
         /// <param name="textAnchor"/>The anchor for the text on this button.</param>
-        /// <param name="textColor"/>The color of the text.</param>
-        /// <param name="fontSize"The font size of the text.</param>
-        /// before moving to the navigation screen. True = Remove Current screen before navigating.</param>
+        /// <param name="textAnchor"></param>
+        /// <param name="textColor">The color of the text.</param>
+        /// <param name="fontSize">The font size of the text.</param>
+        /// before moving to the navigation screen. True = Remove Current screen before navigating.
         public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null, int fontSize = 18)
             : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) {}
         
@@ -32,13 +33,13 @@ namespace Pulsarc.UI.Buttons
         public NavigationButton(PulsarcScreen screen, int type, Vector2 position, TextDisplayElement text, Anchor anchor = Anchor.Center, bool removeFirst = false)
             : base(Skin.Assets["button_back_" + type], position, anchor: anchor)
         {
-            this.text = text;
+            _text = text;
             // TODO: Change positioniong depending on textAnchor
             // TODO: Position text properly, without using hacky workarounds
-            this.text.Move(new Vector2((1 - Scale) * -10, (1 - Scale) * -10));
+            _text.Move(new Vector2((1 - Scale) * -10, (1 - Scale) * -10));
 
-            this.screen = screen;
-            this.removeFirst = removeFirst;
+            _screen = screen;
+            _removeFirst = removeFirst;
 
             Hover = new Drawable(Skin.Assets["button_hover_" + type], position, anchor: anchor);
         }
@@ -48,13 +49,13 @@ namespace Pulsarc.UI.Buttons
         /// </summary>
         public void Navigate()
         {
-            if (removeFirst)
+            if (_removeFirst)
                 ScreenManager.RemoveScreen(true);
 
-            ScreenManager.AddScreen(screen);
+            ScreenManager.AddScreen(_screen);
             
-            if (!screen.Initialized)
-                screen.Init();
+            if (!_screen.Initialized)
+                _screen.Init();
         }
 
         /// <summary>
@@ -65,13 +66,13 @@ namespace Pulsarc.UI.Buttons
         public override void Move(Vector2 delta, bool? heightScaled = null)
         {
             base.Move(delta, heightScaled);
-            text.Move(delta, heightScaled);
+            _text.Move(delta, heightScaled);
         }
 
         public override void Draw()
         {
             base.Draw();
-            text.Draw();
+            _text.Draw();
         }
     }
 }
