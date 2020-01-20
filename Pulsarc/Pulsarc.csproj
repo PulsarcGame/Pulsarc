@@ -20,6 +20,7 @@
     <PackageReference Include="IniFileParserStandard" Version="1.0.1" />
     <PackageReference Include="ManagedBass" Version="2.0.4" />
     <PackageReference Include="ManagedBass.Fx" Version="2.0.1" />
+    <PackageReference Include="MonoGame.Extended" Version="3.7.0" />
     <PackageReference Include="SpriteFontPlus" Version="0.7.1.25" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.111" />
   </ItemGroup>
