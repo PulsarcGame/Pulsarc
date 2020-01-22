@@ -2,6 +2,7 @@ using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using Wobble.Audio;
 using Wobble.Audio.Tracks;
 using Wobble.Logging;
 
@@ -30,30 +31,22 @@ namespace Pulsarc.Utils
         {
             Stop();
 
-            // Keep trying to initialize the Audio Manager
-            if (!initialized)
-                while (!initialized)
-                {
-                    try
-                    {
-                        Wobble.Audio.AudioManager.Initialize(null, null);
-                        initialized = true;
-                    }
-                    catch
-                    {
-                        PulsarcLogger.Warning("BASS failed to initialize, retrying...", LogType.Runtime);
-                    }
-                }
-
             if (songPath == "")
                 return;
 
             // Initialize the song
-            song = new AudioTrack(songPath, false)
+            try
             {
-                Rate = audioRate,
-                Volume = Config.GetInt("Audio", "MusicVolume"),
-            };
+                song = new AudioTrack(songPath)
+                {
+                    Rate = audioRate,
+                    Volume = Config.GetInt("Audio", "MusicVolume"),
+                };
+            }
+            catch (AudioEngineException)
+            {
+                PulsarcLogger.Debug(ManagedBass.Bass.LastError.ToString(), LogType.Runtime);
+            }
 
             song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
 
@@ -83,20 +76,6 @@ namespace Pulsarc.Utils
             if (songPath == "")
                 return;
 
-            // Keep trying to initialize the Audio Manager
-            while (!initialized)
-            {
-                try
-                {
-                    Wobble.Audio.AudioManager.Initialize(null, null);
-                    initialized = true;
-                }
-                catch
-                {
-                    PulsarcLogger.Warning("BASS failed to initialize, retrying...", LogType.Runtime);
-                }
-            }
-
             running = true;
             var threadTime = new Stopwatch();
 
@@ -124,13 +103,6 @@ namespace Pulsarc.Utils
                 threadTime.Start();
 
                 active = true;
-
-                while (running)
-                    if (threadLimiterWatch.ElapsedMilliseconds >= 1)
-                    {
-                        threadLimiterWatch.Restart();
-                        Wobble.Audio.AudioManager.Update(threadTime.ElapsedMilliseconds);
-                    }
             }
         }
 

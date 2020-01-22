@@ -53,7 +53,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="mousePosition">The current mouse position to check if
         /// this was clicked.</param>
-        public abstract void OnClick(Point mousePosition);
+        public abstract void OnClick(Vector2 mousePosition);
 
         public override void Draw()
         {

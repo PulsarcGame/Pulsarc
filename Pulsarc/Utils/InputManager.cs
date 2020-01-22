@@ -47,9 +47,6 @@ namespace Pulsarc.Utils
 
                     try
                     {
-                        MouseManager.Update();
-                        KeyboardManager.Update();
-
                         KeyboardState = Keyboard.GetState();
                         MouseState = Mouse.GetState();
 

@@ -81,7 +81,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="mousePosition"></param>
         /// <param name="hold"></param>
-        public void OnClick(Point mousePosition, bool hold)
+        public void OnClick(Vector2 mousePosition, bool hold)
         {
             foreach (KeyValuePair<string, Setting> entry in Settings)
             {
@@ -108,6 +108,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
                 }
             }
         }
+
+        public void OnClick(Point mousePosition, bool hold)
+            => OnClick(new Vector2(mousePosition.X, mousePosition.Y), hold);
 
         /// <summary>
         /// Save all the settings into the config.ini

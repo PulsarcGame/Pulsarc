@@ -12,8 +12,8 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using Wobble;
 using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Platform;
 using Wobble.Screens;
 
@@ -22,11 +22,11 @@ namespace Pulsarc
     /// <summary>
     /// Main game object
     /// </summary>
-    public class Pulsarc : Game
+    public class Pulsarc : WobbleGame
     {
         private static Pulsarc pulsarc;
-        public static SpriteBatch SpriteBatch { get; private set; }
-        public static GraphicsDeviceManager Graphics { get; private set; }
+        public static SpriteBatch SpriteBatch => GameBase.Game.SpriteBatch;
+        public static GraphicsDeviceManager Graphics => GameBase.Game.Graphics;
 
         // Whether or not the Cursor is shown.
         public static bool DisplayCursor { get; set; } = true;
@@ -64,6 +64,8 @@ namespace Pulsarc
 
         private PulsarcScreen lastScreen = null;
 
+        protected override bool IsReadyToUpdate { get; set; }
+
         public Pulsarc()
         {
             pulsarc = this;
@@ -86,10 +88,7 @@ namespace Pulsarc
             {
                 Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
                 Config.SetInt("Graphics", "FullScreen", 2);
-            }   
-
-            // Create the game's application window
-            Graphics = new GraphicsDeviceManager(this);
+            }
 
             // Set Graphics preferences according to config.ini
             Graphics.PreferredBackBufferWidth = Config.GetInt("Graphics", "ResolutionWidth");
@@ -153,6 +152,8 @@ namespace Pulsarc
             ScreenManager.AddScreen(firstScreen);
 
             cursor = new Cursor();
+
+            IsReadyToUpdate = true;
         }
 
         /// <summary>
@@ -160,8 +161,7 @@ namespace Pulsarc
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            base.LoadContent();
 
             // Initialize and load all game compiled content
             AssetsManager.Initialize(Content);
@@ -183,6 +183,8 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (!IsReadyToUpdate) return;
+
             Thread.Yield();
 
             PulsarcTime.Update();
@@ -265,6 +267,8 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (!IsReadyToUpdate) return;
+
             // Begin the spritebatch in relation to the camera
             SpriteBatch.Begin(SpriteSortMode.Deferred,
                     null, null, null, null, null,
