@@ -157,7 +157,7 @@ namespace Pulsarc.Utils
 
             foreach (KeyData element in ConfigData["Config"])
             {
-                PulsarcLogger.Log(element.KeyName + ":" + element.Value, LogLevel.Error, LogType.Runtime);
+                PulsarcLogger.RunLog("CONFIG - "+ element.KeyName + ":" + element.Value, LogLevel.Debug);
             }
 
             ResolutionWidth = ReadValue(@"ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
@@ -269,12 +269,28 @@ namespace Pulsarc.Utils
                     continue;
                 }
 
+                switch(prop.Name)
+                {
+                    case "Game":
+                        sb.AppendLine("; The Game to convert from. <Intralism | Mania>");
+                        break;
+                    case "Path":
+                        sb.AppendLine("; The path to the map files. Example : D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain");
+                        break;
+                    case "BGImage":
+                        sb.AppendLine("; Pulsarc will automatically grab the first image of a non-animated Intralism map.");
+                        sb.AppendLine("; To override this, type in the image name (with extension) below");
+                        sb.AppendLine(";i.e. \"background2.png\"");
+                        break;
+                }
+
                 try
                 {
                     sb.AppendLine(prop.Name + " = " + prop.GetValue(null).ToString());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    PulsarcLogger.RunLog(e.ToString(), LogLevel.Debug);
                     sb.AppendLine(prop.Name + " = ");
                 }
             }
