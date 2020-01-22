@@ -281,8 +281,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
 
             // Go back if the back button was clicked.
-            if (MouseManager.IsUniqueClick(MouseButton.Left) && button_back.Hovered(MouseManager.CurrentState.Position))
+            if (InputManager.IsLeftClick()
+                && button_back.Hovered(InputManager.LastMouseClick.Key.Position))
+            {
                 button_back.OnClick();
+            }
         }
     }
 }
