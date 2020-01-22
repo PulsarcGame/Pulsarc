@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Buttons
@@ -21,9 +18,6 @@ namespace Pulsarc.UI.Buttons
         /// <summary>
         /// When this ReturnButton is clicked, remove the current screen from view.
         /// </summary>
-        public void OnClick()
-        {
-            ScreenManager.RemoveScreen(true);
-        }
+        public void OnClick() => ScreenManager.RemoveScreen(true);
     }
 }

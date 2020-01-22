@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.UI;
-using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -123,7 +122,7 @@ namespace Pulsarc.Utils
 
             return new Vector2(x, y);
         }
-        
+
         /// <summary>
         /// Finds the position of the provided anchor on the base screen (1920x1080).
         /// Legacy?

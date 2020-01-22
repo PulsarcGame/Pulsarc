@@ -13,10 +13,7 @@ namespace Pulsarc.Utils.Maths
         /// <param name="secondFloat"></param>
         /// <param name="by"></param>
         /// <returns></returns>
-        static public float Lerp(float firstFloat, float secondFloat, float by)
-        {
-            return firstFloat + (secondFloat - firstFloat) * by;
-        }
+        static public float Lerp(float firstFloat, float secondFloat, float by) => firstFloat + (secondFloat - firstFloat) * by;
 
         /// <summary>
         /// Caculate the Standard Deviation from a set of doubles.

@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.SongSelect
     public class SongSelection : PulsarcScreen
     {
         public override ScreenView View { get; protected set; }
-        SongSelectionView GetSongSelectionView() { return (SongSelectionView)View; }
+        SongSelectionView GetSongSelectionView() => (SongSelectionView)View;
 
         // All cards that can be played.
         public List<BeatmapCard> Cards { get; private set; }
@@ -152,7 +152,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <returns></returns>
         public List<Beatmap> SortBeatmaps(List<Beatmap> beatmaps, string sort, bool ascending = true)
         {
-            switch(sort)
+            switch (sort)
             {
                 case "difficulty":
                     return ascending
@@ -201,7 +201,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             HandleKeyboardPresses();
             HandleMouseInput();
-            
+
             View?.Update(gameTime);
         }
 
@@ -329,10 +329,13 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             // If the scroll wheel's state has changed, change the focus
             if (ms.ScrollWheelValue < lastScrollValue)
+            {
                 SelectedFocus += 0.3f;
-
+            }
             else if (ms.ScrollWheelValue > lastScrollValue)
+            {
                 SelectedFocus -= 0.3f;
+            }
 
             lastScrollValue = ms.ScrollWheelValue;
         }

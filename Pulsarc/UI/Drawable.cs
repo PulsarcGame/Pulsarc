@@ -42,7 +42,9 @@ namespace Pulsarc.UI
 
                 // Change to default texture if value was null
                 if (texture == null)
+                {
                     texture = Skin.DefaultTexture;
+                }
 
                 // Update currentSize and drawnPart
                 currentSize = new Vector2(texture.Width * Scale, texture.Height * Scale);
@@ -71,7 +73,7 @@ namespace Pulsarc.UI
         }
 
         // Whether or not this Drawable has a Hover object
-        public virtual bool HasHover { get => Hover != null; }
+        public virtual bool HasHover => Hover != null;
 
         // The true position of this Drawable, as if it was anchored to Anchor.TopLeft.
         public Vector2 TruePosition;
@@ -235,7 +237,7 @@ namespace Pulsarc.UI
                 currentSize = oldSize;
                 return;
             }
-            
+
             currentSize = size;
 
             // Set the scale of this Drawable using the parameters provided.
@@ -288,7 +290,9 @@ namespace Pulsarc.UI
             float adjustedDegrees = degrees;
 
             if (inRange)
+            {
                 Rotation = (float)(degrees * (Math.PI / 180));
+            }
             // If rotation is greater than 360 or less than -360, keep adding/subtracting
             // 360 until we get a value within the desired range, then use that for rotation.
             else
@@ -375,10 +379,7 @@ namespace Pulsarc.UI
         /// <param name="topLeftPositioning">Whether this should consider the Anchor
         /// when positioning, or just the raw position provided. If true the
         /// positioning acts as if the Anchor was TopLeft.</param>
-        public void ChangePosition(float x, float y, bool topLeftPositioning = false)
-        {
-            ChangePosition(new Vector2(x, y), topLeftPositioning);
-        }
+        public void ChangePosition(float x, float y, bool topLeftPositioning = false) => ChangePosition(new Vector2(x, y), topLeftPositioning);
 
         /// <summary>
         /// Move this Drawable from its current coordinate by the amount provided,
@@ -416,10 +417,7 @@ namespace Pulsarc.UI
         /// the Y axis</param>
         /// <param name="heightScaled">True if height scaled movement, false if width scaled,
         /// null to use this Drawable's HeightScaled member.</param>
-        public virtual void Move(float xDelta, float yDelta, bool? heightScaled = null)
-        {
-            Move(new Vector2(xDelta, yDelta), heightScaled);
-        }
+        public virtual void Move(float xDelta, float yDelta, bool? heightScaled = null) => Move(new Vector2(xDelta, yDelta), heightScaled);
 
         /// <summary>
         /// Find the correct position for this Drawable based
@@ -509,10 +507,7 @@ namespace Pulsarc.UI
         /// <param name="followScale">Whether or not this Drawable should move according
         /// to the current Height/Width scaling. Default is true.</param>
         [Obsolete("This was the old move method for Drawables, it is now deprecated, use Move()")]
-        public virtual void OldMove(float xDelta, float yDelta, bool followScale = true)
-        {
-            OldMove(new Vector2(xDelta, yDelta), followScale);
-        }
+        public virtual void OldMove(float xDelta, float yDelta, bool followScale = true) => OldMove(new Vector2(xDelta, yDelta), followScale);
         #endregion
 
         #region Mouse State Methods

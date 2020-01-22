@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Pulsarc.Beatmaps;
 using System.Collections.Generic;
-using Pulsarc.Beatmaps;
 using System.IO;
 
 namespace Pulsarc.Utils.BeatmapConversion
@@ -44,7 +43,9 @@ namespace Pulsarc.Utils.BeatmapConversion
                         string[] charsToRemove = new string[] { ",", "\"", "0" };
 
                         foreach (string c in charsToRemove)
+                        {
                             backgroundName = backgroundName.Replace(c, "");
+                        }
 
                         result.Background = backgroundName;
                     }
@@ -71,7 +72,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                 break;
                         }
 
-                        int time = Int32.Parse(parts[2]) + msOffset;
+                        int time = int.Parse(parts[2]) + msOffset;
                         result.Arcs.Add(new Arc(time, arc));
                     }
                     results.Add(result);
@@ -101,18 +102,24 @@ namespace Pulsarc.Utils.BeatmapConversion
                         string dirName = $"Songs/{folderName}";
 
                         if (!Directory.Exists(dirName))
+                        {
                             Directory.CreateDirectory(dirName);
+                        }
 
                         // Copy Audio File
                         File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
 
                         // Copy Background Image
                         string backgroundPath = $"{folder_path}/{map.Background}";
-                        
+
                         if (File.Exists(backgroundPath))
+                        {
                             File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        }
                         else
+                        {
                             map.Background = "";
+                        }
 
                         // The file name will look like "Artist - SongTitle [Converted] (Mapper).psc"
                         string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));

@@ -19,15 +19,13 @@ namespace Pulsarc.UI.Buttons
         /// <param name="type">The button type this navigation button is.</param>
         /// <param name="text">The text this button will display.</param>
         /// <param name="position">The position of this button.</param>
-        /// <param name="anchor">The anchor for this button, defaults to Anchor.Center.</param>
-        /// <param name="removeFirst">Whether or not the current screen should be removed
         /// <param name="textAnchor"/>The anchor for the text on this button.</param>
         /// <param name="textColor"/>The color of the text.</param>
         /// <param name="fontSize"The font size of the text.</param>
         /// before moving to the navigation screen. True = Remove Current screen before navigating.</param>
-        public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor anchor = Anchor.Center, bool removeFirst = false, Anchor textAnchor = Anchor.Center, Color? textColor = null, int fontSize = 18)
-            : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) {}
-        
+        public NavigationButton(PulsarcScreen screen, int type, string text, Vector2 position, Anchor textAnchor = Anchor.Center, Color? textColor = null, int fontSize = 18)
+            : this(screen, type, position, new TextDisplayElement(text, new Vector2(position.X, position.Y), fontSize, textAnchor, textColor)) { }
+
 
         public NavigationButton(PulsarcScreen screen, int type, Vector2 position, TextDisplayElement text, Anchor anchor = Anchor.Center, bool removeFirst = false)
             : base(Skin.Assets["button_back_" + type], position, anchor: anchor)
@@ -49,12 +47,16 @@ namespace Pulsarc.UI.Buttons
         public void Navigate()
         {
             if (removeFirst)
+            {
                 ScreenManager.RemoveScreen(true);
+            }
 
             ScreenManager.AddScreen(screen);
-            
+
             if (!screen.Initialized)
+            {
                 screen.Init();
+            }
         }
 
         /// <summary>

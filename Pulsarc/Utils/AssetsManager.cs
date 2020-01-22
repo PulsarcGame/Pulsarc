@@ -21,24 +21,31 @@ namespace Pulsarc.Utils
         {
             Content = content;
 
-            Fonts = new Dictionary<String, SpriteFont>();
-
-            Fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600"));
+            Fonts = new Dictionary<string, SpriteFont>
+            {
+                { "DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600") }
+            };
             Fonts["DefaultFont"].DefaultCharacter = '?'; // Prevents crashing with invalid characters
-            
+
             Skin.LoadSkin("DefaultSkin");
             SampleManager.Init();
 
-            StoredTexture = new Dictionary<String, KeyValuePair<Texture2D, double>>();
+            StoredTexture = new Dictionary<string, KeyValuePair<Texture2D, double>>();
         }
 
         public static Texture2D Load(string path)
         {
             if (StoredTexture.ContainsKey(path))
+            {
                 if (StoredTexture[path].Value + textureExpireTimeMs > PulsarcTime.CurrentElapsedTime)
+                {
                     return StoredTexture[path].Key;
+                }
                 else
+                {
                     StoredTexture.Remove(path);
+                }
+            }
 
             Texture2D newTexture = null;
 
@@ -51,9 +58,6 @@ namespace Pulsarc.Utils
             return newTexture;
         }
 
-        static public void Unload()
-        {
-            Skin.Unload();
-        }
+        static public void Unload() => Skin.Unload();
     }
 }

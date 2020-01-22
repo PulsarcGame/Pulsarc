@@ -1,5 +1,4 @@
 ﻿using Pulsarc.Utils;
-using System.Diagnostics;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -56,11 +55,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Crosshair position cannot be negative, so we check to see if it's
             // equal to -1 set earlier so we can properly set lastCrosshairPosition now.
             if (lastCrosshairPosition == -1)
+            {
                 lastCrosshairPosition = crosshairZLoc;
+            }
 
             // If there was no change in crosshair, don't move the arc
             if (lastCrosshairPosition == crosshairZLoc)
+            {
                 return ZLocation;
+            }
 
             // Find out how much the crosshair moved
             double deltaCrosshairZLoc = lastCrosshairPosition - crosshairZLoc;
@@ -77,7 +80,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             ToErase = Opacity <= 0;
 
             if (!ToErase)
+            {
                 base.Draw();
+            }
         }
 
         private float FindCurrentFade()

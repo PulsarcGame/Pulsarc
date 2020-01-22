@@ -1,7 +1,6 @@
-using System;
-using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using System;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -75,8 +74,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Returns the z-axis Position of this Crosshair.
         /// </summary>
-        public float GetZLocation() => Pulsarc.CurrentWidth / 2 * Texture.Width / 2 / Diameter;
-        
+        public float GetZLocation() => ((Pulsarc.CurrentWidth / 2) * Texture.Width / 2) / Diameter;
+
         /// <summary>
         /// Resizes the crosshair, and sets diameter to the size
         /// </summary>

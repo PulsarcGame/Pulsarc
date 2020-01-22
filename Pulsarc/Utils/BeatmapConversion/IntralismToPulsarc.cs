@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Pulsarc.Beatmaps;
 using Newtonsoft.Json;
-using System.IO;
+using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.Skinning;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Wobble.Logging;
 
 namespace Pulsarc.Utils.BeatmapConversion
@@ -145,8 +145,8 @@ namespace Pulsarc.Utils.BeatmapConversion
             int time = (int)Math.Floor(evt.Time * 1000) + (msOffset * 2);
 
             float convertedZLocation = float.Parse(evt.Data[1]) * playerDistanceToZLocationFactor;
-            
-            double convertedZoomLevel = Math.Round((Pulsarc.BASE_WIDTH / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
+
+            double convertedZoomLevel = Math.Round((Pulsarc.BASE_WIDTH / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation, 2);
 
             return new ZoomEvent($"{time},1,-1,{convertedZoomLevel},0");
         }

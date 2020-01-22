@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using Microsoft.Xna.Framework;
-using Pulsarc.Utils.Graphics;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Graphics;
 
 namespace Pulsarc.UI.Common
 {
@@ -21,15 +21,19 @@ namespace Pulsarc.UI.Common
                 base.Texture = value;
 
                 if (Texture == Skin.DefaultTexture)
+                {
                     Texture = GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black);
-                
+                }
+
                 // Make dimTexture
                 if (DimTexture != null)
+                {
                     MakeDimTexture(DimTexture.Opacity);
+                }
             }
         }
 
-        public override bool HeightScaled { get => WiderThanOrSameAsPulsarc(); }
+        public override bool HeightScaled => WiderThanOrSameAsPulsarc();
 
         /// <summary>
         /// Create a background using the Skin-asset name to find the image.
@@ -51,7 +55,7 @@ namespace Pulsarc.UI.Common
             MakeDimTexture(dim);
             ChangeBackground(Texture);
         }
-        
+
         /// <summary>
         /// Makes the dim texture if needed for this Background instance.
         /// </summary>
@@ -61,8 +65,10 @@ namespace Pulsarc.UI.Common
             if (dim > 0)
             {
                 Dimmed = true;
-                DimTexture = new Drawable(GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black));
-                DimTexture.Opacity = dim;
+                DimTexture = new Drawable(GraphicsUtils.CreateSolidColorTexture(Pulsarc.CurrentWidth, Pulsarc.CurrentHeight, Color.Black))
+                {
+                    Opacity = dim
+                };
             }
         }
 
@@ -75,24 +81,27 @@ namespace Pulsarc.UI.Common
             Texture = newBackground;
 
             if (!HeightScaled)
+            {
                 Resize(Pulsarc.CurrentWidth);
+            }
             else
+            {
                 Resize(Pulsarc.CurrentHeight);
+            }
 
             ChangePosition(AnchorUtil.FindScreenPosition(Anchor.Center));
         }
 
-        private bool WiderThanOrSameAsPulsarc()
-        {
-            return (float)Texture.Width / Texture.Height >= Pulsarc.CurrentAspectRatio;
-        }
+        private bool WiderThanOrSameAsPulsarc() => (float)Texture.Width / Texture.Height >= Pulsarc.CurrentAspectRatio;
 
         public override void Resize(Vector2 size)
         {
             base.Resize(size);
 
             if (Dimmed)
+            {
                 DimTexture.Resize(size);
+            }
         }
 
         public override void Draw()
@@ -100,7 +109,9 @@ namespace Pulsarc.UI.Common
             base.Draw();
 
             if (Dimmed)
+            {
                 DimTexture.Draw();
+            }
         }
     }
 }

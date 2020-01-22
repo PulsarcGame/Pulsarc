@@ -112,7 +112,7 @@ namespace Pulsarc.Beatmaps.Events
                 case "zoom":
                     return EventType.Zoom;
                 case "speedvariation":
-                        return EventType.SpeedVariation;
+                    return EventType.SpeedVariation;
                 default:
                     return EventType.Invalid;
             }
@@ -196,7 +196,9 @@ namespace Pulsarc.Beatmaps.Events
         protected void FindNextEvent(GameplayEngine gameplayEngine)
         {
             if (foundNextEvent)
+            {
                 return;
+            }
 
             FindAllSimilarEvents(gameplayEngine);
 
@@ -209,10 +211,7 @@ namespace Pulsarc.Beatmaps.Events
         /// </summary>
         /// <param name="evt">The event to compare to</param>
         /// <returns>True if evnt's time is greater than this.</returns>
-        private bool GreaterEventTime(Event evnt)
-        {
-            return evnt.Time > Time && SameEventType(evnt);
-        }
+        private bool GreaterEventTime(Event evnt) => evnt.Time > Time && SameEventType(evnt);
 
         /// <summary>
         /// Currently not used. Keeping in case it proves useful in the future.
@@ -223,7 +222,9 @@ namespace Pulsarc.Beatmaps.Events
         {
             // Only need to call this once, inherited classes can set similarEventsCalled to false if they want to call again.
             if (similarEventsCalled)
+            {
                 return;
+            }
 
             similarEvents = gameplayEngine.CurrentBeatmap.Events.FindAll(SameEventType);
             similarEventsCalled = true;
@@ -238,7 +239,9 @@ namespace Pulsarc.Beatmaps.Events
         protected void FindAllSimilarFutureEvents(GameplayEngine gameplayEngine)
         {
             if (futureEventsCalled)
+            {
                 return;
+            }
 
             FindAllSimilarEvents(gameplayEngine);
 
@@ -252,10 +255,7 @@ namespace Pulsarc.Beatmaps.Events
         /// </summary>
         /// <param name="evt">The event to compare to</param>
         /// <returns>True if evt and this Event share the same type.</returns>
-        private bool SameEventType(Event evnt)
-        {
-            return evnt.Type == Type;
-        }
+        private bool SameEventType(Event evnt) => evnt.Type == Type;
 
     }
 }

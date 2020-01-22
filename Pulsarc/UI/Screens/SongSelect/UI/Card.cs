@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 using System.Collections.Generic;
-using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
@@ -81,8 +80,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected virtual void AddTextDisplayElement(string typeName)
         {
             // Find variables for TDE
-            Anchor startAnchor;
-            Vector2 position = Skin.GetConfigStartPosition(Config, Section, typeName + "StartPos", out startAnchor, this);
+            Vector2 position = Skin.GetConfigStartPosition(Config, Section, typeName + "StartPos", out Anchor startAnchor, this);
             int fontSize = GetSkinnableInt(typeName + "FontSize");
             Anchor anchor = GetSkinnableAnchor(typeName + "Anchor");
             Color color = Skin.GetConfigColor(Config, Section, typeName + "Color");

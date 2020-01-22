@@ -1,7 +1,6 @@
 ﻿using Pulsarc.Utils.Maths;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.Beatmaps
 {
@@ -19,7 +18,7 @@ namespace Pulsarc.Beatmaps
 
         private const double weightSlope = 0.9;
         private const double weightBase = 0.6;
-        
+
         const double maxSections = minLength / (sectionLength / 1000f);
 
         /// <summary>
@@ -42,19 +41,23 @@ namespace Pulsarc.Beatmaps
                     List<int> times = new List<int>();
 
                     foreach (Arc arc in arcs)
+                    {
                         times.Add(arc.Time);
+                    }
 
                     double stdDiff = PulsarcMath.CalcStdDeviation(times);
 
-                    double c = Math.Min((Math.Pow(arcs.Count,kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff);
+                    double c = Math.Min((Math.Pow(arcs.Count, kpsFingerSlope) * (sectionLength / 1000f)), maxKpsDiff);
                     diff += c;
                     diffs.Add(c);
                 }
                 else
+                {
                     diffs.Add(0);
+                }
             }
 
-            var std = diffs.Count > 0 ? PulsarcMath.CalcStdDeviation(diffs) : 0;
+            double std = diffs.Count > 0 ? PulsarcMath.CalcStdDeviation(diffs) : 0;
 
             return diff + std + (previousStrain / strainDecay);
         }
@@ -69,12 +72,20 @@ namespace Pulsarc.Beatmaps
             List<List<Arc>> columns = new List<List<Arc>>();
 
             for (int k = 0; k < beatmap.KeyCount; k++)
+            {
                 columns.Add(new List<Arc>());
+            }
 
             foreach (Arc arc in beatmap.Arcs)
+            {
                 for (int k = 0; k < beatmap.KeyCount; k++)
+                {
                     if (BeatmapHelper.IsColumn(arc, k))
+                    {
                         columns[k].Add(arc);
+                    }
+                }
+            }
 
             return columns;
         }
@@ -104,7 +115,9 @@ namespace Pulsarc.Beatmaps
                 List<List<Arc>> current_section = new List<List<Arc>>();
 
                 for (int i = 0; i < beatmap.KeyCount; i++)
+                {
                     current_section.Add(new List<Arc>());
+                }
 
                 currentTime += sectionLength;
                 current_strain /= strainDecay;
@@ -123,8 +136,12 @@ namespace Pulsarc.Beatmaps
                 done = true;
 
                 for (int k = 0; k < columns.Count; k++)
+                {
                     if (columns[k].Count != 0)
+                    {
                         done = false;
+                    }
+                }
 
                 if (!done)
                 {
@@ -160,7 +177,7 @@ namespace Pulsarc.Beatmaps
             double difficulty = 0;
 
             difficulty += GetDensityDifficulty(beatmap);
-            
+
             return difficulty;
         }
     }

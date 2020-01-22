@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Data.SQLite;
+using System.IO;
 using System.Reflection;
 using Wobble.Logging;
 
@@ -22,7 +21,7 @@ namespace Pulsarc.Utils.SQLite
 
             Tables = new List<SQLiteData>();
 
-            InitTables(); 
+            InitTables();
 
             if (!File.Exists(filename))
             {
@@ -31,7 +30,9 @@ namespace Pulsarc.Utils.SQLite
                 InitDB();
             }
             else
+            {
                 Connect();
+            }
         }
 
         public abstract void InitTables();
@@ -63,7 +64,7 @@ namespace Pulsarc.Utils.SQLite
 
             reader.Read();
             res.Add(reader);
-            
+
             return res;
         }
 
@@ -75,17 +76,21 @@ namespace Pulsarc.Utils.SQLite
 
         public void InitDB()
         {
-            foreach(SQLiteData data in Tables)
+            foreach (SQLiteData data in Tables)
             {
                 string r = $"CREATE TABLE {data.GetType().Name.ToLower()} (";
 
                 bool first = true;
                 foreach (FieldInfo prop in data.GetType().GetFields())
                 {
-                    if(first)
+                    if (first)
+                    {
                         first = false;
+                    }
                     else
+                    {
                         r += ",";
+                    }
 
                     r += prop.Name.ToLower() + " " + prop.FieldType.Name.ToString().ToLower();
                 }

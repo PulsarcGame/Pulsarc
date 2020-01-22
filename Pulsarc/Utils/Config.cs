@@ -1,16 +1,15 @@
 ﻿using IniFileParser.Model;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using Wobble.Logging;
-using Wobble.Bindables;
-using System.IO;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Globalization;
-using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using Wobble.Bindables;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -205,8 +204,8 @@ namespace Pulsarc.Utils
         /// <returns></returns>
         private static Bindable<T> ReadValue<T>(string name, T defaultVal)
         {
-            var binded = new Bindable<T>(name, defaultVal);
-            var converter = TypeDescriptor.GetConverter(typeof(T));
+            Bindable<T> binded = new Bindable<T>(name, defaultVal);
+            TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
 
             // Attempt to parse the value and default it if it can't.
             try
@@ -214,7 +213,7 @@ namespace Pulsarc.Utils
                 binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ConfigData["Config"][name]);
                 binded.ValueChanged += AutoSaveConfiguration;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 binded.Value = defaultVal;
                 binded.ValueChanged += AutoSaveConfiguration;
@@ -246,14 +245,14 @@ namespace Pulsarc.Utils
         internal static async Task SaveConfig()
         {
             // Tracks the number of attempts to write the file it has made.
-            var attempts = 0;
+            int attempts = 0;
 
             // Don't do anything if the file isn't ready.
             while (!IsFileReady("config.ini") && !FirstWrite)
             {
             }
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             // Top file information
             // sb.AppendLine("; Quaver Configuration File");
@@ -263,16 +262,18 @@ namespace Pulsarc.Utils
             sb.AppendLine("; Pulsarc Configuration Values");
 
             // For every line we want to append "PropName = PropValue" to the string
-            foreach (var prop in typeof(Config).GetProperties(BindingFlags.Static | BindingFlags.NonPublic))
+            foreach (PropertyInfo prop in typeof(Config).GetProperties(BindingFlags.Static | BindingFlags.NonPublic))
             {
                 if (prop.Name == "FirstWrite")
+                {
                     continue;
+                }
 
                 try
                 {
                     sb.AppendLine(prop.Name + " = " + prop.GetValue(null).ToString());
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     sb.AppendLine(prop.Name + " = ");
                 }
@@ -281,18 +282,20 @@ namespace Pulsarc.Utils
             try
             {
                 // Create a new stream
-                var sw = new StreamWriter("config.ini")
+                using (StreamWriter sw = new StreamWriter("config.ini")
                 {
                     AutoFlush = true
-                };
+                })
+                {
 
-                // Write to file and close it.;
-                await sw.WriteLineAsync(sb.ToString());
-                sw.Close();
+                    // Write to file and close it.;
+                    await sw.WriteLineAsync(sb.ToString());
+                    sw.Close();
+                }
 
                 FirstWrite = false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Try to write the file again 3 times.
                 while (attempts != 2)
@@ -300,7 +303,7 @@ namespace Pulsarc.Utils
                     attempts++;
 
                     // Create a new stream
-                    var sw = new StreamWriter("config.ini")
+                    StreamWriter sw = new StreamWriter("config.ini")
                     {
                         AutoFlush = true
                     };
@@ -312,7 +315,9 @@ namespace Pulsarc.Utils
 
                 // If too many attempts were made.
                 if (attempts == 2)
+                {
                     PulsarcLogger.Error("Too many write attempts to the config file have been made.", LogType.Runtime);
+                }
             }
         }
 
@@ -328,8 +333,10 @@ namespace Pulsarc.Utils
             // is no longer locked by another process.
             try
             {
-                using (var inputStream = File.Open(sFilename, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (FileStream inputStream = File.Open(sFilename, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
                     return (inputStream.Length > 0);
+                }
             }
             catch (Exception)
             {

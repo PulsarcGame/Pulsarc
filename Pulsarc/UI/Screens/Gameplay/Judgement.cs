@@ -26,10 +26,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Returns the JudgementValue for a miss.
         /// </summary>
         /// <returns>A "miss" JudgmentValue</returns>
-        static public JudgementValue GetMiss()
-        {
-            return Judgements.Last();
-        }
+        static public JudgementValue GetMiss() => Judgements.Last();
 
         /// <summary>
         /// Finds the JudgementValue that has the name provided, then returns it.
@@ -39,9 +36,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Returns null if there is no matching JudgementValue.</returns>
         static public JudgementValue GetJudgementValueByName(string name)
         {
-            foreach(JudgementValue j in Judgements)
+            foreach (JudgementValue j in Judgements)
+            {
                 if (j.Name == name)
+                {
                     return j;
+                }
+            }
 
             return null;
         }
@@ -84,10 +85,16 @@ namespace Pulsarc.UI.Screens.Gameplay
             JudgementValue result = JudgementValue.GetBaseJudgementValue();
 
             for (int i = 0; i < Judgements.Count; i++)
+            {
                 if (Judgements[i].Judge >= judgement.Judge)
+                {
                     break;
+                }
                 else
+                {
                     result = Judgements[i];
+                }
+            }
 
             return result;
         }
@@ -106,7 +113,9 @@ namespace Pulsarc.UI.Screens.Gameplay
                 result = Judgements[i];
 
                 if (result.Judge > judgement.Judge)
+                {
                     break;
+                }
             }
 
             return result;
@@ -117,19 +126,19 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         // Judge Name
         public string Name { get; private set; }
-        
+
         // Accuracy Reward
         public double Acc { get; private set; }
-        
+
         // Outer range of timing window in ms.
         public int Judge { get; private set; }
-        
+
         // Base Hidden Score Reward
         public int Score { get; private set; }
 
         // Hidden Combo Reward
         public int ComboAddition { get; private set; }
-        
+
         // The color associated with this Judgementvalue
         public Color Color { get; private set; }
 
@@ -172,7 +181,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         public static JudgementValue GetBaseJudgementValue()
         {
-            if(baseJudgementValue == null)
+            if (baseJudgementValue == null)
             {
                 baseJudgementValue = new JudgementValue();
             }

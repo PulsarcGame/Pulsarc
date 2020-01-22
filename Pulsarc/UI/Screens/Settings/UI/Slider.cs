@@ -14,7 +14,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         // Min/Max Slider values
         public int MinValue { get; protected set; }
         public int MaxValue { get; protected set; }
-        
+
         // How much each pixel of selector movement changes the value.
         public int Step { get; protected set; }
 
@@ -58,7 +58,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             int stepdist = Value - value;
 
-            if (Math.Abs(stepdist) >= Step/2)
+            if (Math.Abs(stepdist) >= Step / 2)
             {
                 Value -= Step * (stepdist / Step);
                 Update();
@@ -79,10 +79,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <summary>
         /// Update this slider.
         /// </summary>
-        public void Update()
-        {
-            Title.RestartThenAppend(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
-        }
+        public void Update() => Title.Update(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
 
         public void SetSelectorPercent(float percent)
         {
@@ -92,10 +89,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <summary>
         /// Moves the selector to the current value
         /// </summary>
-        public void SetSelector()
-        {
-            SetSelector(Value);
-        }
+        public void SetSelector() => SetSelector(Value);
 
         /// <summary>
         /// Finds the position of the Selector for this Slider. (0-1f relative to the size of the Slider)
@@ -118,15 +112,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// This instance of the method uses the currentValue of this slider.
         /// </summary>
         /// <returns>A float between 0f and 1f that represents the position the Selector should be in relation to the size of the Slider.</returns>
-        public float FindSelectorPosition()
-        {
-            return FindSelectorPosition(Value);
-        }
+        public float FindSelectorPosition() => FindSelectorPosition(Value);
 
-        public override dynamic GetSaveValue()
-        {
-            return Value / (float) DisplayDivider;
-        }
+        public override dynamic GetSaveValue() => Value / (float)DisplayDivider;
 
         public override void Move(Vector2 delta, bool? heightScaled = null)
         {
@@ -140,9 +128,6 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Selector.Draw();
         }
 
-        public override void OnClick(Vector2 mousePosition)
-        {
-            SetSelectorPercent((mousePosition.X - TruePosition.X) / ((Texture.Width) * Scale));
-        }
+        public override void OnClick(Point mousePosition) => SetSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * Scale));
     }
 }

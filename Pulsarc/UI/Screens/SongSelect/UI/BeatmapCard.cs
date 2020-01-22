@@ -15,7 +15,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     public class BeatmapCard : Card
     {
         public Beatmap Beatmap { get; set; }
-        
+
         public static Texture2D DefaultTexture => Skin.Assets["beatmap_card"];
 
         // Stats
@@ -89,8 +89,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         {
             float difficulty = (float)Beatmap.Difficulty;
 
-            Anchor startAnchor;
-            Vector2 startPos = Skin.GetConfigStartPosition(Config, Section, "DiffBarStartPos", out startAnchor, this);
+            Vector2 startPos = Skin.GetConfigStartPosition(Config, Section, "DiffBarStartPos", out Anchor startAnchor, this);
 
             Anchor diffAnchor = GetSkinnableAnchor("DiffBarAnchor");
 

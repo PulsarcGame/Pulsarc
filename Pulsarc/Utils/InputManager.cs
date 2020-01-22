@@ -33,8 +33,8 @@ namespace Pulsarc.Utils
 
         static public void InputUpdater()
         {
-            var running = true;
-            var threadLimiterWatch = new Stopwatch();
+            bool running = true;
+            Stopwatch threadLimiterWatch = new Stopwatch();
 
             threadLimiterWatch.Start();
 
@@ -51,6 +51,7 @@ namespace Pulsarc.Utils
                         MouseState = Mouse.GetState();
 
                         if (KeyboardState.GetPressedKeys().Count() > 0)
+                        {
                             foreach (Keys key in KeyboardState.GetPressedKeys())
                             {
                                 if (!PressedKeys.Contains(key))
@@ -65,9 +66,12 @@ namespace Pulsarc.Utils
                                     }
 
                                     if (key == Keys.LeftShift || key == Keys.RightShift)
+                                    {
                                         Caps = !CapsLock;
+                                    }
                                 }
                             }
+                        }
 
                         for (int i = 0; i < PressedKeys.Count; i++)
                         {
@@ -82,7 +86,9 @@ namespace Pulsarc.Utils
 
 
                                 if (key == Keys.LeftShift || key == Keys.RightShift)
+                                {
                                     Caps = CapsLock;
+                                }
                             }
                         }
 
@@ -114,9 +120,6 @@ namespace Pulsarc.Utils
             return false;
         }
 
-        static public void Reset()
-        {
-            PressActions.Clear();
-        }
+        static public void Reset() => KeyboardPresses.Clear();
     }
 }

@@ -1,10 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Utils;
 using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Result;
+using Pulsarc.Utils;
+using Pulsarc.Utils.Graphics;
+using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
 using Wobble.Screens;
@@ -18,7 +20,7 @@ namespace Pulsarc.UI.Screens.Gameplay
     public class GameplayEngine : PulsarcScreen
     {
         public override ScreenView View { get; protected set; }
-        private GameplayEngineView GetGameplayView() { return (GameplayEngineView)View; }
+        private GameplayEngineView GetGameplayView() => (GameplayEngineView)View;
 
         // Whether or not the gameplay engine is currently running
         public static bool Active { get; private set; } = false;
@@ -34,7 +36,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public bool AtLeastOneLeft { get; private set; } = false;
 
         // Used for delaying the gameplay's end
-        private bool ending => endTime != -1;
+        private bool Ending => endTime != -1;
         private double endTime = -1;
         private const int END_DELAY = 2000;
         public double MapEndTime { get; private set; }
@@ -47,7 +49,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public Column[] Columns { get; private set; }
 
         // The time for arcs to fade after being hit, defined by the user
-        private int arcFadeTime => Config.FadeTime.Value;
+        private int ArcFadeTime => Config.FadeTime.Value;
 
         // Used to store the key-style of the current map (4k, 7k, etc.)
         public int KeyCount { get; private set; }
@@ -90,7 +92,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private long maxScore;
         private long score;
-        public int scoreDisplay { get; private set; }
+        public int ScoreDisplay { get; private set; }
 
         // The current combo during gameplay.
         public int Combo { get; private set; }
@@ -239,9 +241,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         /// <summary>
-        /// Create columns from the beatmap
+        /// Create columns from the currently loaded beatmap
         /// </summary>
-        /// <param name="beatmap"></param>
         private void CreateColumns()
         {
             // Create one column for each key being used
@@ -284,6 +285,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             foreach (Column col in Columns)
             {
                 col.SortUpdateHitObjects();
+            }
 
                 if (col.HitObjects.Last().Time > MapEndTime)
                 {
@@ -382,7 +384,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Handle user input in priority
             HandleInputs();
-            
+
             // Event Handling
             HandleEvents();
 

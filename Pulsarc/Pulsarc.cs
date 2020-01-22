@@ -94,7 +94,8 @@ namespace Pulsarc
             Graphics.PreferredBackBufferWidth = Config.ResolutionWidth.Value;
             Graphics.PreferredBackBufferHeight = Config.ResolutionHeight.Value;
 
-            Graphics.IsFullScreen = Config.FullScreen.Value >= 1;
+                IsFullScreen = Config.FullScreen.Value >= 1
+            };
             Window.IsBorderless = Config.FullScreen.Value >= 2;
 
             Graphics.SynchronizeWithVerticalRetrace = Config.VSync.Value == true;
@@ -105,12 +106,10 @@ namespace Pulsarc
                 // Force the game to update at fixed time intervals
                 IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
 
-                // Set the time interval to match the FPSLimit
-                if (IsFixedTimeStep)
-                {
-                    TargetElapsedTime =
-                        TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
-                }
+            // Set the time interval to match the FPSLimit
+            if (IsFixedTimeStep)
+            {
+                TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.FPSLimit.Value);
             }
 
             Content.RootDirectory = "Content";

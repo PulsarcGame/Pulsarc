@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using System;
 using System.IO;
 using System.Linq;
 using Wobble.Logging;
@@ -17,7 +16,9 @@ namespace Pulsarc.Utils.Graphics
             Color[] data = new Color[width * height];
 
             for (int pixel = 0; pixel < data.Count(); pixel++)
+            {
                 data[pixel] = paint;
+            }
 
             texture.SetData(data);
 

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
 {
@@ -25,7 +25,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             judges = new Dictionary<int, Judge>();
 
             foreach (JudgementValue judge in Judgement.Judgements)
-                judges.Add(judge.Score,new Judge(judge.Score, new Vector2(position.X, position.Y)));
+            {
+                judges.Add(judge.Score, new Judge(judge.Score, new Vector2(position.X, position.Y)));
+            }
         }
 
         /// <summary>
@@ -47,9 +49,11 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             // TODO: Make this customizeable by the user
             int judgeDisplayTimeMs = 100;
-           
-            if(this.time + judgeDisplayTimeMs < time)
+
+            if (this.time + judgeDisplayTimeMs < time)
+            {
                 judgeKey = -1;
+            }
         }
 
         /// <summary>
@@ -58,7 +62,9 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         public override void Draw()
         {
             if (judgeKey >= 0)
+            {
                 judges[judgeKey].Draw();
+            }
         }
     }
 }

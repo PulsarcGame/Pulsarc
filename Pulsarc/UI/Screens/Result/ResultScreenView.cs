@@ -1,15 +1,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Pulsarc.Skinning;
 using Pulsarc.Beatmaps;
+using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.Result.UI;
 using Pulsarc.Utils;
+using System;
 using System.Collections.Generic;
 using Wobble.Screens;
-using System;
 
 namespace Pulsarc.UI.Screens.Result
 {
@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.Result
         private string Config => "result_screen";
         private string[] Sections => new string[] { "Properties", "Metadata", "Judgements" };
 
-        private ResultScreen GetResultScreen() { return (ResultScreen)Screen; }
+        private ResultScreen GetResultScreen() => (ResultScreen)Screen;
 
         // Buttons
         private RetryButton buttonRetry;
@@ -40,7 +40,7 @@ namespace Pulsarc.UI.Screens.Result
         private List<TextDisplayElement> metadata = new List<TextDisplayElement>();
 
         // Judges and the TDE that tracks the amount of each
-        private List<KeyValuePair<Judge,TextDisplayElement>> judgements;
+        private List<KeyValuePair<Judge, TextDisplayElement>> judgements;
 
         private HitErrorGraph hitErrorGraph;
 
@@ -178,7 +178,9 @@ namespace Pulsarc.UI.Screens.Result
             judgements = new List<KeyValuePair<Judge, TextDisplayElement>>();
 
             foreach (JudgementValue judge in Judgement.Judgements)
+            {
                 AddJudgeInfo(judge.Name);
+            }
 
             foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
@@ -251,90 +253,63 @@ namespace Pulsarc.UI.Screens.Result
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float GetSkinnablePropertyFloat(string key)
-        {
-            return Skin.GetConfigFloat(Config, Sections[0], key);
-        }
+        private float GetSkinnablePropertyFloat(string key) => Skin.GetConfigFloat(Config, Sections[0], key);
 
         /// <summary>
         /// Find a float position from the Metadata section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float GetSkinnableMetadataFloat(string key)
-        {
-            return Skin.GetConfigFloat(Config, Sections[1], key);
-        }
+        private float GetSkinnableMetadataFloat(string key) => Skin.GetConfigFloat(Config, Sections[1], key);
 
         /// <summary>
         /// Find a float position from the Judgements section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float GetSkinnableJudgementFloat(string key)
-        {
-            return Skin.GetConfigFloat(Config, Sections[2], key);
-        }
+        private float GetSkinnableJudgementFloat(string key) => Skin.GetConfigFloat(Config, Sections[2], key);
 
         /// <summary>
         /// Find a int from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int GetSkinnablePropertyInt(string key)
-        {
-            return Skin.GetConfigInt(Config, Sections[0], key);
-        }
+        private int GetSkinnablePropertyInt(string key) => Skin.GetConfigInt(Config, Sections[0], key);
 
         /// <summary>
         /// Find a int from the Metadata section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int GetSkinnableMetadataInt(string key)
-        {
-            return Skin.GetConfigInt(Config, Sections[1], key);
-        }
+        private int GetSkinnableMetadataInt(string key) => Skin.GetConfigInt(Config, Sections[1], key);
 
         /// <summary>
         /// Find a int from the Judgements section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int GetSkinnableJudgementInt(string key)
-        {
-            return Skin.GetConfigInt(Config, Sections[2], key);
-        }
+        private int GetSkinnableJudgementInt(string key) => Skin.GetConfigInt(Config, Sections[2], key);
 
         /// <summary>
         /// Find an Anchor from the Properties section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor GetSkinnablePropertyAnchor(string key)
-        {
-            return Skin.GetConfigAnchor(Config, Sections[0], key);
-        }
+        private Anchor GetSkinnablePropertyAnchor(string key) => Skin.GetConfigAnchor(Config, Sections[0], key);
 
         /// <summary>
         /// Find an Anchor from the Metadata section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor GetSkinnableMetadataAnchor(string key)
-        {
-            return Skin.GetConfigAnchor(Config, Sections[1], key);
-        }
+        private Anchor GetSkinnableMetadataAnchor(string key) => Skin.GetConfigAnchor(Config, Sections[1], key);
 
         /// <summary>
         /// Find an Anchor from the Judgements section of the Result Screen config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor GetSkinnableJudgementAnchor(string key)
-        {
-            return Skin.GetConfigAnchor(Config, Sections[2], key);
-        }
+        private Anchor GetSkinnableJudgementAnchor(string key) => Skin.GetConfigAnchor(Config, Sections[2], key);
         #endregion  
 
         public override void Destroy()
@@ -358,12 +333,16 @@ namespace Pulsarc.UI.Screens.Result
             scorecard.Draw();
 
             foreach (TextDisplayElement playStat in playStats)
+            {
                 playStat.Draw();
+            }
 
             grade.Draw();
 
             foreach (TextDisplayElement data in metadata)
+            {
                 data.Draw();
+            }
 
             foreach (KeyValuePair<Judge, TextDisplayElement> judgePair in judgements)
             {
@@ -386,7 +365,9 @@ namespace Pulsarc.UI.Screens.Result
                 KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
+                {
                     ScreenManager.RemoveScreen(true);
+                }
             }
 
             // Were the retry or back buttons clicked?
@@ -395,9 +376,13 @@ namespace Pulsarc.UI.Screens.Result
                 Point pos = InputManager.LastMouseClick.Key.Position;
 
                 if (buttonBack.Hovered(pos))
+                {
                     buttonBack.OnClick();
+                }
                 else if (buttonRetry.Hovered(pos))
+                {
                     buttonRetry.OnClick(beatmap);
+                }
             }
         }
     }

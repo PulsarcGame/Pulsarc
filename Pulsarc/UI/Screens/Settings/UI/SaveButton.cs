@@ -23,7 +23,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public void OnClick(SettingsScreenView settings)
         {
             foreach (SettingsGroup group in settings.Groups)
+            {
                 group.Save();
+            }
 
             Config.SaveConfig();
         }

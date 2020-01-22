@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
-using Wobble.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Gameplay.UI
 {
@@ -61,8 +60,12 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
                 Color[] judgeColors = new Color[errorBarWidth * (int)Size.Y];
 
                 for (int h = 0; h < (int)Size.Y; h++)
+                {
                     for (int l = 0; l < errorBarWidth; l++)
+                    {
                         judgeColors[h * errorBarWidth + l] = judgement.Color;
+                    }
+                }
 
                 judgeTexture.SetData(judgeColors);
                 judges.Add(new KeyValuePair<JudgementValue, Texture2D>(judgement, judgeTexture));
@@ -75,32 +78,32 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             Texture = new Texture2D(Pulsarc.Graphics.GraphicsDevice, (int)Size.X, (int)Size.Y);
             Color[] bar = new Color[(int)(Size.X * Size.Y)];
-
-            int lastX = -1;
-            int x = 0;
-            int y = 0;
+            int y;
 
             for (y = (int)Size.Y / 3; y < 2 * Size.Y / 3; y++)
             {
-                lastX = 0;
-                x = 0;
-
+                int lastX = 0;
+                int x;
                 for (int i = Judgement.Judgements.Count - 2; i >= 0; i--)
                 {
-                    int judgePixelLength = getJudgePixelLength();
+                    int judgePixelLength = GetJudgePixelLength();
 
                     for (x = lastX; x - lastX < judgePixelLength; x++)
+                    {
                         bar[(int)(y * Size.X) + x] = Judgement.Judgements[i].Color;
+                    }
 
                     lastX = x;
                 }
 
                 for (int i = 0; i < Judgement.Judgements.Count - 1; i++)
                 {
-                    int judgePixelLength = getJudgePixelLength();
+                    int judgePixelLength = GetJudgePixelLength();
 
                     for (x = lastX; x - lastX < judgePixelLength; x++)
+                    {
                         bar[(int)(y * Size.X) + x] = Judgement.Judgements[i].Color;
+                    }
 
                     lastX = x;
                 }
@@ -112,10 +115,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <summary>
         /// The size of each Judge section on the AccuracyMeter
         /// </summary>
-        private int getJudgePixelLength()
-        {
-            return (int)(Size.X / 2 / (Judgement.Judgements.Count - 1));
-        }
+        private int GetJudgePixelLength() => (int)(Size.X / 2 / (Judgement.Judgements.Count - 1));
 
         /// <summary>
         /// Used to determine where to draw each HitError on the bar.
@@ -125,18 +125,20 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         private Vector2 GetErrorPixelPosition(int error)
         {
             JudgementValue judgement = Judgement.GetJudgementValueByError(Math.Abs(error));
-         
-            int baseX = (int)(TruePosition.X + Size.X / 2);
-            int sectionLength = getJudgePixelLength();
+
+            int baseX = (int)(truePosition.X + Size.X / 2);
+            int sectionLength = GetJudgePixelLength();
             int sectionX = Judgement.Judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.Judge - Judgement.GetPreviousJudgementValue(judgement).Judge;
 
             float judgePos = 0;
 
             if (timeSize > 0)
-                judgePos = (judgement.Judge - Math.Abs(error)) / (float) timeSize;
+            {
+                judgePos = (judgement.Judge - Math.Abs(error)) / (float)timeSize;
+            }
 
-            int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
+            int errorX = (int)((sectionX + (1 - judgePos) * sectionLength) * Math.Sign(error));
 
             return new Vector2(baseX - errorX, TruePosition.Y);
         }
@@ -146,10 +148,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         /// <param name="time">The time the hit happened.</param> 
         /// <param name="error">The error time of the hit.</param>
-        public void AddError(double time, int error)
-        {
-            errors.Add(new KeyValuePair<double, int>(time, error));
-        }
+        public void AddError(double time, int error) => errors.Add(new KeyValuePair<double, int>(time, error));
 
         /// <summary>
         /// How much of a HitError bar's "life" has it gone through so far.
@@ -157,10 +156,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="time">The time a HitError bar was added.</param>
         /// <param name="currentTime">The current time.</param>
         /// <returns>The percentage of time left until the HitError bar would be removed.</returns>
-        public double LifeLeft(double time, double currentTime)
-        {
-            return (time - currentTime + errorLifetime) / errorLifetime;
-        }
+        public double LifeLeft(double time, double currentTime) => (time - currentTime + errorLifetime) / errorLifetime;
 
         /// <summary>
         /// Clear all expired HitErrors.
@@ -171,11 +167,13 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             lastTime = currentTime;
 
             for (int i = 0; i < errors.Count; i++)
+            {
                 if (LifeLeft(errors[i].Key, currentTime) <= 0)
                 {
                     errors.RemoveAt(i);
                     i--;
                 }
+            }
         }
 
         /// <summary>
@@ -185,14 +183,16 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <returns>The JudgementValue:Texture KVP for a HitError bar.</returns>
         public KeyValuePair<JudgementValue, Texture2D> GetJudge(JudgementValue judgeVal)
         {
-            KeyValuePair<JudgementValue, Texture2D > judgePair = new KeyValuePair<JudgementValue, Texture2D>();
+            KeyValuePair<JudgementValue, Texture2D> judgePair = new KeyValuePair<JudgementValue, Texture2D>();
 
             foreach (KeyValuePair<JudgementValue, Texture2D> pair in judges)
+            {
                 if (pair.Key.Judge == judgeVal.Judge)
                 {
                     judgePair = pair;
                     break;
                 }
+            }
 
             return judgePair;
         }
@@ -208,7 +208,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
             {
                 KeyValuePair<JudgementValue, Texture2D> judgeBar = GetJudge(Judgement.GetJudgementValueByError(Math.Abs(error.Value)));
 
-                Pulsarc.SpriteBatch.Draw(judgeBar.Value, position: GetErrorPixelPosition(error.Value), rotation: Rotation, origin: origin, color: judgeBar.Key.Color * (float) LifeLeft(error.Key, lastTime));
+                Pulsarc.SpriteBatch.Draw(judgeBar.Value, position: GetErrorPixelPosition(error.Value), rotation: Rotation, origin: origin, color: judgeBar.Key.Color * (float)LifeLeft(error.Key, lastTime));
             }
         }
     }

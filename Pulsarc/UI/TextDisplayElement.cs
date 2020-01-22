@@ -145,7 +145,9 @@ namespace Pulsarc.UI
         public override void Draw()
         {
             if (caught)
+            {
                 return;
+            }
 
             try
             {

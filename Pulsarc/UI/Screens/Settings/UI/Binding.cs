@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Skinning;
-using Pulsarc.Utils;
-using System;
-using System.Reflection;
 using Wobble.Bindables;
 
 namespace Pulsarc.UI.Screens.Settings.UI
@@ -22,25 +19,22 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="more"></param>
         /// <param name="position"></param>
         /// <param name="startingValue"></param>
-        public Binding(string title, string more, Vector2 position, Bindable<Keys> startingValue) : 
+        public Binding(string title, string more, Vector2 position, Bindable<Keys> startingValue) :
             base(title, more, position, Skin.Assets["settings_binding"], Anchor.CenterLeft, startingValue, "Keys")
         {
             listening = new Drawable(Skin.Assets["settings_binding_focus"], position, anchor: Anchor.CenterLeft);
 
             keyBind = startingValue;
 
-            key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X/2, position.Y), color: Color.Black, anchor: Anchor.Center) ;
+            key = new TextDisplayElement("", new Vector2(position.X + listening.currentSize.X / 2, position.Y), color: Color.Black, anchor: Anchor.Center);
 
             key.Update(GetSaveValue().ToString());
 
         }
 
-        public override dynamic GetSaveValue()
-        {
-            return Value;
-        }
+        public override dynamic GetSaveValue() => Value;
 
-        public override void HandleKeyEvent(Keys pressed) 
+        public override void HandleKeyEvent(Keys pressed)
         {
             if (KeyListen)
             {
@@ -64,10 +58,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// to record or exit the key binding state.
         /// </summary>
         /// <param name="mousePosition"></param>
-        public override void OnClick(Vector2 mousePosition)
-        {
-            KeyListen = !KeyListen;
-        }
+        public override void OnClick(Point mousePosition) => KeyListen = !KeyListen;
 
         public override void Draw()
         {

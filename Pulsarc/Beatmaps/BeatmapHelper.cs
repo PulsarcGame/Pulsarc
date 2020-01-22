@@ -1,11 +1,11 @@
+using Pulsarc.Beatmaps.Events;
+using Pulsarc.Utils;
+using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Globalization;
-using Pulsarc.Beatmaps.Events;
-using Pulsarc.Utils.SQLite;
+using System.IO;
 using Wobble.Logging;
-using Pulsarc.Utils;
 
 namespace Pulsarc.Beatmaps
 {
@@ -18,15 +18,17 @@ namespace Pulsarc.Beatmaps
         /// <param name="fileName">The fileName of the .psc file.</param>
         static public Beatmap Load(string path, string fileName)
         {
-            Beatmap parsed = new Beatmap();
-            parsed.Path = path;
-            parsed.FileName = fileName;
+            Beatmap parsed = new Beatmap
+            {
+                Path = path,
+                FileName = fileName
+            };
 
-            var state = "";
+            string state = "";
 
-            var lines = File.ReadLines($"{path}/{fileName}");
+            IEnumerable<string> lines = File.ReadLines($"{path}/{fileName}");
 
-            foreach (var line in lines)
+            foreach (string line in lines)
             {
                 if (line.Length > 0)
                 {
@@ -37,8 +39,8 @@ namespace Pulsarc.Beatmaps
                     // Otherwise, it is a more complex data form, like an event
                     if (lineParts.Count > 1)
                     {
-                        var type = lineParts.Dequeue();
-                        var rightPart = string.Concat(lineParts.ToArray()).Trim();
+                        string type = lineParts.Dequeue();
+                        string rightPart = string.Concat(lineParts.ToArray()).Trim();
 
                         // Use reflection to set the Beatmap's attributes
                         switch (type)
@@ -65,9 +67,9 @@ namespace Pulsarc.Beatmaps
                                         parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
                                     }
                                     catch
-                                {
-                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
-                                }
+                                    {
+                                        PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                    }
                                     break;
                                 }
                             case "PreviewTime":
@@ -84,7 +86,7 @@ namespace Pulsarc.Beatmaps
                             case "Difficulty":
                                 try
                                 {
-                                    parsed.GetType().GetProperty(type).SetValue(parsed, Double.Parse(rightPart, CultureInfo.InvariantCulture));
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, double.Parse(rightPart, CultureInfo.InvariantCulture));
                                 }
                                 catch
                                 {
@@ -105,7 +107,7 @@ namespace Pulsarc.Beatmaps
                     else
                     {
                         // Each event is comma separated and can have any amount of values.
-                        var eventParts = line.Split(',');
+                        string[] eventParts = line.Split(',');
 
                         // Handling depends on the data type (or the current reading state)
                         switch (state)
@@ -116,7 +118,10 @@ namespace Pulsarc.Beatmaps
                                     int type = int.Parse(eventParts[(int)EventIndex.Type]);
 
                                     Event evnt = MakeEvent(line, (EventType)type);
-                                    if (evnt != null) parsed.Events.Add(evnt);
+                                    if (evnt != null)
+                                    {
+                                        parsed.Events.Add(evnt);
+                                    }
                                 }
                                 catch
                                 {
@@ -153,8 +158,10 @@ namespace Pulsarc.Beatmaps
             }
 
             // If no difficulty has been provided in the game file, process it now.
-            if(parsed.Difficulty == 0)
+            if (parsed.Difficulty == 0)
+            {
                 parsed.Difficulty = DifficultyCalculation.GetDifficulty(parsed);
+            }
 
             parsed.FullyLoaded = true;
 
@@ -169,29 +176,31 @@ namespace Pulsarc.Beatmaps
         /// <returns>The beatmap created from the BeatmapData</returns>
         public static Beatmap LoadLight(BeatmapData data)
         {
-            Beatmap parsed = new Beatmap();
-            parsed.FullyLoaded = false;
+            Beatmap parsed = new Beatmap
+            {
+                FullyLoaded = false,
 
-            // Path names
-            parsed.Path = data.path;
-            parsed.FileName = data.fileName;
+                // Path names
+                Path = data.path,
+                FileName = data.fileName,
 
-            // Background
-            parsed.Background = data.backgroundPath;
+                // Background
+                Background = data.backgroundPath,
 
-            // Audio
-            parsed.Audio = data.audioPath;
-            parsed.PreviewTime = data.audioPreviewTime;
+                // Audio
+                Audio = data.audioPath,
+                PreviewTime = data.audioPreviewTime,
 
-            // Metadata
-            parsed.Artist = data.artist;
-            parsed.Title = data.title;
-            parsed.Version = data.version;
-            parsed.Mapper = data.mapper;
+                // Metadata
+                Artist = data.artist,
+                Title = data.title,
+                Version = data.version,
+                Mapper = data.mapper,
 
-            // Game Data
-            parsed.KeyCount = data.keyCount;
-            parsed.Difficulty = data.difficulty;
+                // Game Data
+                KeyCount = data.keyCount,
+                Difficulty = data.difficulty
+            };
 
             return parsed;
         }

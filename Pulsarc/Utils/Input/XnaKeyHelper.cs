@@ -306,7 +306,7 @@ namespace Pulsarc.Utils.Input
         /// <returns></returns>
         public static string GetStringFromKey(Keys key)
         {
-            var keyStr = "?";
+            string keyStr = "?";
 
             switch (key)
             {

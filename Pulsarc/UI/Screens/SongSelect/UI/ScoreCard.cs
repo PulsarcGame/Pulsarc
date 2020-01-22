@@ -80,7 +80,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             TextElements[3].Update("x" + scoreData.maxCombo);
 
             AddTextDisplayElement("Rate");
-            TextElements[4].Update("x"+Math.Round(scoreData.rate, 2).ToString("#.00"));
+            TextElements[4].Update("x" + Math.Round(scoreData.rate, 2).ToString("#.00"));
 
             AddTextDisplayElement("Username");
             TextElements[5].Update(scoreData.username);

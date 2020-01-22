@@ -1,7 +1,7 @@
-using System;
 using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
+using System;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -113,10 +113,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
         /// <param name="speedModifier">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
-        protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc)
-        {
-            ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
-        }
+        protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc) => ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
 
         /// <summary>
         /// Calculate the current z-axis position for this object.
@@ -148,17 +145,21 @@ namespace Pulsarc.UI.Screens.Gameplay
                 float newOpacity = (float)(fullFadeLocation - ZLocation) / (float)(fullFadeLocation);
 
                 if (ZLocation > fullFadeLocation)
+                {
                     newOpacity = 0f;
+                }
                 // This is for playing with Hidden. Zooms can make 
                 // the arcs more opaque with the current implementation
                 // of hidden. This makes sure that arcs don't gain opacity.
                 else if (newOpacity > Opacity)
+                {
                     newOpacity = Opacity;
+                }
 
                 Opacity = newOpacity;
             }
         }
-        
+
         /// <summary>
         /// Find this object's current arc radius using its current z-axis position.
         /// </summary>
@@ -170,7 +171,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             return radius;
         }
-        
+
         /// <summary>
         /// Return the time (in ms) since the start of the audio
         /// when this HitObject should first be drawn.
@@ -179,17 +180,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// all speed changes before, or if it only needs to consider the speed of
         /// the HitObject's time.</param>
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
-        public int IsSeenAt(double speed, double crosshairZLoc)
-        {
-            return (int)(Time - (crosshairZLoc / speed));
-        }
+        public int IsSeenAt(double speed, double crosshairZLoc) => (int)(Time - (crosshairZLoc / speed));
 
         /// <summary>
         /// Returns whether this HitObject can be drawn.
         /// </summary>
-        public bool IsSeen()
-        {
-            return ZLocation > 0;
-        }
+        public bool IsSeen() => ZLocation > 0;
     }
 }

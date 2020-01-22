@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Wobble;
@@ -33,7 +32,9 @@ namespace Pulsarc.Utils
         internal static void Add(CommonTask task)
         {
             if (QueuedTasks.All(x => x != task))
+            {
                 QueuedTasks.Add(task);
+            }
         }
 
         /// <summary>
@@ -42,15 +43,19 @@ namespace Pulsarc.Utils
         internal static void Run()
         {
             if (GameBase.Game.TimeRunning - LastRunTime <= 5000 || IsRunning || QueuedTasks.Count == 0)
+            {
                 return;
+            }
 
-            var taskList = new List<Task>();
+            List<Task> taskList = new List<Task>();
 
             // Thread that completes all the tasks.
-            var taskThread = new Thread(() =>
+            Thread taskThread = new Thread(() =>
             {
-                foreach (var task in taskList)
+                foreach (Task task in taskList)
+                {
                     task.Start();
+                }
 
                 // Wait for all the tasks to complete.
                 Task.WaitAll(taskList.ToArray());
@@ -64,7 +69,7 @@ namespace Pulsarc.Utils
             });
 
             // Add all common tasks to the queue.
-            foreach (var task in QueuedTasks)
+            foreach (CommonTask task in QueuedTasks)
             {
                 switch (task)
                 {

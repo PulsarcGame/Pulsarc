@@ -12,7 +12,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         public List<HitObject> HitObjects { get; private set; }
 
         //
-        public List<KeyValuePair<long,HitObject>> UpdateHitObjects { get; private set; }
+        public List<KeyValuePair<long, HitObject>> UpdateHitObjects { get; private set; }
 
         /// <summary>
         /// A Column is a "track" where all arcs from a specific direction are kept track of.
@@ -50,9 +50,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Organizes the hitobjects to avoid updating yet unseen hitobjects.
         /// </summary>
-        public void SortUpdateHitObjects()
-        {
-            UpdateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
-        }
+        public void SortUpdateHitObjects() => UpdateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
     }
 }

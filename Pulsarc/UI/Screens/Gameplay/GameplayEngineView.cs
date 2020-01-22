@@ -4,7 +4,6 @@ using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay.UI;
 using System;
 using System.Collections.Generic;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Gameplay
@@ -108,8 +107,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             // If this is the acc, change numberFormat to "#,##.00" 
             string numberFormat = typeName.Equals("Acc") ? "#,##.00" : "#,#0";
 
-            TextDisplayElementFixedSize text = new TextDisplayElementFixedSize("", position, append, fontSize, textAnchor, textColor);
-            text.NumberFormat = numberFormat;
+            TextDisplayElementFixedSize text = new TextDisplayElementFixedSize("", position, append, fontSize, textAnchor, textColor)
+            {
+                NumberFormat = numberFormat
+            };
 
             // Offset
             Vector2 offset = new Vector2(
@@ -127,40 +128,28 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float GetSkinnablePropertyFloat(string key)
-        {
-            return Skin.GetConfigFloat("gameplay", "Properties", key);
-        }
+        private float GetSkinnablePropertyFloat(string key) => Skin.GetConfigFloat("gameplay", "Properties", key);
 
         /// <summary>
         /// Find a int from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int GetSkinnablePropertyInt(string key)
-        {
-            return Skin.GetConfigInt("gameplay", "Properties", key);
-        }
+        private int GetSkinnablePropertyInt(string key) => Skin.GetConfigInt("gameplay", "Properties", key);
 
         /// <summary>
         /// Find an Anchor from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor GetSkinnablePropertyAnchor(string key)
-        {
-            return Skin.GetConfigAnchor("gameplay", "Properties", key);
-        }
+        private Anchor GetSkinnablePropertyAnchor(string key) => Skin.GetConfigAnchor("gameplay", "Properties", key);
 
         /// <summary>
         /// Find a string from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string GetSkinnablePropertyString(string key)
-        {
-            return Skin.GetConfigString("gameplay", "Properties", key);
-        }
+        private string GetSkinnablePropertyString(string key) => Skin.GetConfigString("gameplay", "Properties", key);
 
         /// <summary>
         /// Add a hit and its judgement.
@@ -179,16 +168,13 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         /// <param name="time">The time of the judgement.</param>
         /// <param name="judge">The base score of the judgement.</param>
-        public void AddJudge(double time, int judge)
-        {
-            judgeBox.Add(time, judge);
-        }
+        public void AddJudge(double time, int judge) => judgeBox.Add(time, judge);
 
         // TODO: Cleanup
         public override void Update(GameTime gameTime)
         {
             // Score
-            uiElements[0].Update(GetGameplayEngine().scoreDisplay);
+            uiElements[0].Update(GetGameplayEngine().ScoreDisplay);
 
             // Acc
             double accuracyTotal = 0;
@@ -270,24 +256,22 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     // If the arc is on screen, draw it.
                     if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.IsSeen())
+                    {
                         GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.Draw();
+                    }
 
                     // If the arc is inside the "IgnoreTime" window, stop bothering to
                     // look at the rest of the arcs in this column.
                     if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Key - GetGameplayEngine().IgnoreTime > GetGameplayEngine().Time)
+                    {
                         skip = true;
+                    }
                 }
             }
         }
 
-        public bool IsActive()
-        {
-            return GameplayEngine.Active;
-        }
+        public bool IsActive() => GameplayEngine.Active;
 
-        public override void Destroy()
-        {
-            GetGameplayEngine().Reset();
-        }
+        public override void Destroy() => GetGameplayEngine().Reset();
     }
 }

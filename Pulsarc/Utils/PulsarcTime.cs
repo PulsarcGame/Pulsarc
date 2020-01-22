@@ -7,7 +7,7 @@ namespace Pulsarc.Utils
     {
         // Whether or not this Class is keeping track of time.
         public static bool IsRunning { get; private set; } = false;
-        
+
         // Delta Time (in ms) that is smoothed in a similar fashion to Unity's Time.SmoothDeltaTime
         public static double SmoothDeltaTime { get; private set; }
 
@@ -70,7 +70,9 @@ namespace Pulsarc.Utils
         public static void Update()
         {
             if (!IsRunning)
+            {
                 return;
+            }
 
             double currentFrameTime = stopwatch.ElapsedMilliseconds;
 

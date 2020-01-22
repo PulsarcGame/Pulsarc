@@ -33,7 +33,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Initializes a setting that can change different options in Pulsarc.
         /// </summary>
         /// <param name="title">Name of the Setting</param>
-        /// <param name="more"></param>
+        /// <param name="more">Description when hovering</param>
         /// <param name="position">Setting's position.</param>
         /// <param name="texture">The texture for the Setting.</param>
         /// <param name="anchor">The anchor position for this Setting.</param>
@@ -81,27 +81,28 @@ namespace Pulsarc.UI.Screens.Settings.UI
                 Type t = typeof(Config);
                 PropertyInfo i = t.GetProperty(key, BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
-                switch(Type)
+                switch (Type)
                 {
                     case "string":
                         ((Bindable<string>)i.GetValue(null)).Value = GetSaveValue().ToString();
                         break;
                     case "int":
-                        ((Bindable<int>)i.GetValue(null)).Value = (int) GetSaveValue();
+                        ((Bindable<int>)i.GetValue(null)).Value = (int)GetSaveValue();
                         break;
                     case "float":
-                        ((Bindable<float>)i.GetValue(null)).Value = (float) GetSaveValue();
+                        ((Bindable<float>)i.GetValue(null)).Value = (float)GetSaveValue();
                         break;
                     case "double":
-                        ((Bindable<double>)i.GetValue(null)).Value = (double) GetSaveValue();
+                        ((Bindable<double>)i.GetValue(null)).Value = (double)GetSaveValue();
                         break;
                     case "bool":
-                        ((Bindable<bool>)i.GetValue(null)).Value = (bool) GetSaveValue();
+                        ((Bindable<bool>)i.GetValue(null)).Value = (bool)GetSaveValue();
                         break;
                 }
 
                 Config.SaveConfig();
-            } catch (Exception e)
+            }
+            catch (Exception)
             {
                 PulsarcLogger.Error($"Cannot save type {Type.ToString()} in category {category} for setting {key}", LogType.Runtime);
             }

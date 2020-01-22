@@ -1,7 +1,6 @@
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
-using Wobble.Logging;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -38,7 +37,7 @@ namespace Pulsarc.Beatmaps.Events
         // In the .psc this represents the diameter of the crosshair in pixels on a 1080px high screen.
         // TODO?? This could represent the zLocation of the crosshair instead.
         public float ZoomLevel { get; private set; }
-        
+
         // The time of the last frame, used in calculations to handle the next frame
         //private double lastFrameTime = -1;
         // This ZoomEvent's end time, for non-Intralizooms
@@ -62,7 +61,9 @@ namespace Pulsarc.Beatmaps.Events
         {
             // Check if the type for this event is "zoom"
             if (Type != EventType.Zoom)
+            {
                 ThrowWrongEventTypeException(this, EventType.Zoom);
+            }
 
             ZoomType = (ZoomType)int.Parse(Parameters[(int)ZoomParameter.ZoomType]);
             ZoomLevel = float.Parse(Parameters[(int)ZoomParameter.ZoomLevel]) * Pulsarc.HeightScale;
@@ -78,7 +79,9 @@ namespace Pulsarc.Beatmaps.Events
         {
             // if the startZoomLevel hasn't been set, set it now.
             if (startZoomLevel == -1)
+            {
                 startZoomLevel = gameplayEngine.Crosshair.Diameter;
+            }
 
             currentZoomLevel = gameplayEngine.Crosshair.Diameter;
 
@@ -120,7 +123,9 @@ namespace Pulsarc.Beatmaps.Events
             double smoothDeltaTime = PulsarcTime.SmoothDeltaTime;
 
             if (smoothDeltaTime == 0 || !Active)
+            {
                 return;
+            }
 
             // Resize the crosshair
             gameplayEngine.Crosshair.Resize(
@@ -170,9 +175,13 @@ namespace Pulsarc.Beatmaps.Events
             bool negative = deltaZoom < 0;
 
             if (negative && currentZoom < ZoomLevel)
+            {
                 currentZoom = ZoomLevel;
+            }
             else if (!negative && currentZoom > ZoomLevel)
+            {
                 currentZoom = ZoomLevel;
+            }
 
             // Resize the crosshair
             gameplayEngine.Crosshair.Resize(currentZoom);

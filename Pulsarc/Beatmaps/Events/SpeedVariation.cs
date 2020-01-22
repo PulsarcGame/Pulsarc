@@ -1,5 +1,5 @@
-﻿using System;
-using Pulsarc.UI.Screens.Gameplay;
+﻿using Pulsarc.UI.Screens.Gameplay;
+using System;
 
 namespace Pulsarc.Beatmaps.Events
 {
@@ -14,12 +14,11 @@ namespace Pulsarc.Beatmaps.Events
         {
             // Check if the type for this event is "SpeedVariation"
             if (Type != EventType.SpeedVariation)
+            {
                 ThrowWrongEventTypeException(this, EventType.SpeedVariation);
+            }
         }
 
-        public override void Handle(GameplayEngine gameplayEngine)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Handle(GameplayEngine gameplayEngine) => throw new NotImplementedException();
     }
 }

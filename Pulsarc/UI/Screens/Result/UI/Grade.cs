@@ -25,8 +25,12 @@ namespace Pulsarc.UI.Screens.Result.UI
                 suffixGrades.Add(new Grade($"{grade_[0]}", position, scale));
 
                 if (i % 2 == 0)
+                {
                     foreach (Grade suffixGrade in suffixGrades)
+                    {
                         suffixGrade.Move(new Vector2(currentSize.X / 2.5f, 0));
+                    }
+                }
             }
 
             ChangePosition(new Vector2(position.X - currentSize.X / 2, position.Y - currentSize.Y / 2));
@@ -37,13 +41,17 @@ namespace Pulsarc.UI.Screens.Result.UI
             base.Move(delta, heightScaled);
 
             foreach (Grade subGrade in suffixGrades)
+            {
                 subGrade.Move(delta, heightScaled);
+            }
         }
 
         public override void Draw()
         {
-            foreach(Grade subGrade in suffixGrades)
+            foreach (Grade subGrade in suffixGrades)
+            {
                 subGrade.Draw();
+            }
 
             base.Draw();
         }

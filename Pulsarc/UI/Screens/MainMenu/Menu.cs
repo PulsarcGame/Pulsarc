@@ -16,15 +16,14 @@ namespace Pulsarc.UI.Screens.MainMenu
             PulsarcDiscord.SetStatus("", DISCORD_DETAILS);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            View?.Update(gameTime);
-        }
+        public override void Update(GameTime gameTime) => View?.Update(gameTime);
 
         public override void UpdateDiscord()
         {
             if (PulsarcDiscord.Presence.Details != DISCORD_DETAILS)
+            {
                 PulsarcDiscord.SetStatus("", DISCORD_DETAILS);
+            }
         }
     }
 }

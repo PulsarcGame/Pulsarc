@@ -33,46 +33,51 @@ namespace Pulsarc.Utils
 
         public float Zoom
         {
-            get { return _zoom; }
-            set
-            {
-                _zoom = value;
-            }
+            get => _zoom;
+            set => _zoom = value;
         }
 
         public float Rotation
         {
-            get { return _rotation; }
-            set { _rotation = value; }
+            get => _rotation;
+            set => _rotation = value;
         }
 
-        public void Move(Vector2 amount)
-        {
-            _pos += amount;
-        }
+        public void Move(Vector2 amount) => _pos += amount;
 
         public Vector2 Pos
         {
-            get { return _pos; }
+            get => _pos;
             set
             {
-                float leftBarrier = (float)_viewportWidth *
+                float leftBarrier = _viewportWidth *
                        .5f / _zoom;
                 float rightBarrier = _worldWidth -
-                       (float)_viewportWidth * .5f / _zoom;
+                       _viewportWidth * .5f / _zoom;
                 float topBarrier = _worldHeight -
-                       (float)_viewportHeight * .5f / _zoom;
-                float bottomBarrier = (float)_viewportHeight *
+                       _viewportHeight * .5f / _zoom;
+                float bottomBarrier = _viewportHeight *
                        .5f / _zoom;
                 _pos = value;
                 if (_pos.X < leftBarrier)
+                {
                     _pos.X = leftBarrier;
+                }
+
                 if (_pos.X > rightBarrier)
+                {
                     _pos.X = rightBarrier;
+                }
+
                 if (_pos.Y > topBarrier)
+                {
                     _pos.Y = topBarrier;
+                }
+
                 if (_pos.Y < bottomBarrier)
+                {
                     _pos.Y = bottomBarrier;
+                }
             }
         }
 

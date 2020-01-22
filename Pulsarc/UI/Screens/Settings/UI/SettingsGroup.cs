@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using Pulsarc.Utils;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -11,13 +8,13 @@ namespace Pulsarc.UI.Screens.Settings.UI
     {
         // Name of this group
         public string Name { get; protected set; }
-        
+
         // The icon to use for this group.
         public Drawable Icon { get; protected set; }
-        
+
         // Each setting and the key they change
         public Dictionary<string, Setting> Settings { get; protected set; }
-        
+
         //
         public Setting FocusedHoldSetting { get; protected set; }
 
@@ -25,9 +22,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
         {
             Name = name;
             Settings = new Dictionary<string, Setting>();
-            Icon = new Drawable(Skin.Assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200,200),anchor: Anchor.Center);
+            Icon = new Drawable(Skin.Assets["settings_icon_" + name.ToLower()], new Vector2(position.X + 250, position.Y + 250), new Vector2(200, 200), anchor: Anchor.Center);
             ChangePosition(position);
-            drawnPart = new Rectangle(new Point((int) position.X, (int) position.Y), new Point(500, 500));
+            drawnPart = new Rectangle(new Point((int)position.X, (int)position.Y), new Point(500, 500));
         }
 
         /// <summary>
@@ -48,33 +45,31 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Icon.Move(delta, heightScaled);
 
             foreach (KeyValuePair<string, Setting> settp in Settings)
+            {
                 settp.Value.Move(delta, heightScaled);
+            }
         }
 
         /// <summary>
         /// Get the next position for a setting to use.
         /// </summary>
         /// <returns></returns>
-        public Vector2 GetNextPosition()
-        {
-            return new Vector2(TruePosition.X, TruePosition.Y + drawnPart.Height);
-        }
+        public Vector2 GetNextPosition() => new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
 
         public override void Draw()
         {
             Icon.Draw();
 
             foreach (KeyValuePair<string, Setting> entry in Settings)
+            {
                 entry.Value.Draw();
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void ResetFocusedHoldSetting()
-        {
-            FocusedHoldSetting = null;
-        }
+        public void ResetFocusedHoldSetting() => FocusedHoldSetting = null;
 
         /// <summary>
         /// 
@@ -92,18 +87,24 @@ namespace Pulsarc.UI.Screens.Settings.UI
                     if (!hold)
                     {
                         if (entry.Value.Hovered(mousePosition))
+                        {
                             entry.Value.OnClick(mousePosition);
+                        }
                     }
                     // Hold Input
                     else
                     {
                         // Start to hold this item, keep it in memory
                         if (entry.Value.Hovered(mousePosition) && FocusedHoldSetting == null)
+                        {
                             FocusedHoldSetting = entry.Value;
+                        }
 
                         // Continue to update the held item, even if out of range
                         if (FocusedHoldSetting == entry.Value)
+                        {
                             entry.Value.OnClick(mousePosition);
+                        }
                     }
                 }
             }
@@ -118,7 +119,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
         public void Save()
         {
             foreach (KeyValuePair<string, Setting> entry in Settings)
+            {
                 entry.Value.Save(Name, entry.Key);
+            }
         }
     }
 }

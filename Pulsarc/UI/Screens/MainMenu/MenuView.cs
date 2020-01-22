@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
@@ -7,6 +6,7 @@ using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
 using Pulsarc.Utils;
+using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.MainMenu
@@ -66,40 +66,28 @@ namespace Pulsarc.UI.Screens.MainMenu
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float GetSkinnablePropertyFloat(string key)
-        {
-            return Skin.GetConfigFloat("main_menu", "Properties", key);
-        }
+        private float GetSkinnablePropertyFloat(string key) => Skin.GetConfigFloat("main_menu", "Properties", key);
 
         /// <summary>
         /// Find a int from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int GetSkinnablePropertyInt(string key)
-        {
-            return Skin.GetConfigInt("main_menu", "Properties", key);
-        }
+        private int GetSkinnablePropertyInt(string key) => Skin.GetConfigInt("main_menu", "Properties", key);
 
         /// <summary>
         /// Find an Anchor from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor GetSkinnablePropertyAnchor(string key)
-        {
-            return Skin.GetConfigAnchor("main_menu", "Properties", key);
-        }
+        private Anchor GetSkinnablePropertyAnchor(string key) => Skin.GetConfigAnchor("main_menu", "Properties", key);
 
         /// <summary>
         /// Find a string from the Properties section of the Main Menu config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string GetSkinnablePropertyString(string key)
-        {
-            return Skin.GetConfigString("main_menu", "Properties", key);
-        }
+        private string GetSkinnablePropertyString(string key) => Skin.GetConfigString("main_menu", "Properties", key);
 
         /// <summary>
         /// Add a navigation button to the main menu, using the config to
@@ -140,8 +128,12 @@ namespace Pulsarc.UI.Screens.MainMenu
                 Point pos = InputManager.LastMouseClick.Key.Position;
 
                 foreach (NavigationButton button in navButtons)
+                {
                     if (button.Hovered(pos))
+                    {
                         button.Navigate();
+                    }
+                }
             }
         }
 
@@ -149,8 +141,10 @@ namespace Pulsarc.UI.Screens.MainMenu
         {
             background.Draw();
 
-            foreach(NavigationButton button in navButtons)
+            foreach (NavigationButton button in navButtons)
+            {
                 button.Draw();
+            }
 
             gameIcon.Draw();
 

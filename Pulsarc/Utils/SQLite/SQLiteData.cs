@@ -13,8 +13,8 @@ namespace Pulsarc.Utils.SQLite
             foreach (FieldInfo prop in GetType().GetFields())
             {
                 try
-                { 
-                    switch(prop.Name.ToLower())
+                {
+                    switch (prop.Name.ToLower())
                     {
                         case "datet":
                             prop.SetValue(this, data[prop.Name.ToLower()].ToString());
@@ -52,9 +52,13 @@ namespace Pulsarc.Utils.SQLite
 
                 r += prop.Name;
                 if (prop.FieldType.Name.ToLower() == "string" || prop.FieldType.Name.ToLower() == "char")
-                    vals += "'" + prop.GetValue(this).ToString().Replace("'" , "\'" + "'") + "'";
+                {
+                    vals += "'" + prop.GetValue(this).ToString().Replace("'", "\'" + "'") + "'";
+                }
                 else
+                {
                     vals += prop.GetValue(this);
+                }
             }
 
             r += $") VALUES ({vals})";

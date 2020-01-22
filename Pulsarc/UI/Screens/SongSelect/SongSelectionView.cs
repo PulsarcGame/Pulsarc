@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
@@ -36,7 +34,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         // Focus (used for scrolling through the menu)
         private float currentFocus, lastFocus;
-        
+
         // Background changing stuff.
         public bool ChangingBackground { get; private set; } = false;
         public Background CurrentBackground { get; private set; }
@@ -166,7 +164,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                 scores.Add(new ScoreCard(scoresInMap[i], i + 1));
             }
         }
-              
+
         /// <summary>
         /// Start changing backgrounds from the old to the
         /// new provided one.
@@ -256,9 +254,11 @@ namespace Pulsarc.UI.Screens.SongSelect
                 
                 float diff = lastFocus - currentFocus;
                 lastFocus = currentFocus;
-                
+
                 for (int i = 0; i < cards.Count; i++)
+                {
                     cards[i].Move(new Vector2(0, BeatmapCard.TotalHeight * diff));
+                }
             }
 
             // Go back if the back button was clicked.

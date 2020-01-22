@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Wobble.Logging;
 
@@ -50,20 +49,22 @@ namespace Pulsarc.Utils.BeatmapConversion
             string state = "";
 
             // Go through each line in the file
-            foreach(string line in File.ReadAllLines(file))
+            foreach (string line in File.ReadAllLines(file))
             {
                 if (line.Length > 0)
                 {
                     Queue<string> parts = new Queue<string>(line.Split(':'));
-                    
+
                     // If there's no colons, it's probably seperated by commas instead
                     if (parts.Count <= 1)
+                    {
                         parts = new Queue<string>(line.Split(","));
+                    }
 
                     if (parts.Count > 1)
                     {
                         string key = parts.Dequeue();
-                        string value = String.Join(":", parts.ToArray()).Trim();
+                        string value = string.Join(":", parts.ToArray()).Trim();
 
                         // Add Metadta
                         if (state == "")
@@ -100,7 +101,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                         else
                         {
                             // If flagged in one of these event categories, add the line to the corresponding category.
-                            switch(state)
+                            switch (state)
                             {
                                 case "[Events]":
                                     state = AddEvent(line, state);
@@ -121,7 +122,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                     {
                         // If we enter one of these categories, change "state" to flag to the
                         // switch-case code above to add those events to the beatmap.
-                        switch(line)
+                        switch (line)
                         {
                             case "[Events]":
                                 state = line;
@@ -133,7 +134,10 @@ namespace Pulsarc.Utils.BeatmapConversion
                                 break;
                             default:
                                 if (!line.Contains("//")) //Ignore comments
+                                {
                                     state = "";
+                                }
+
                                 break;
                         }
                     }
@@ -144,7 +148,7 @@ namespace Pulsarc.Utils.BeatmapConversion
         private string AddEvent(string line, string state)
         {
             Events.Add(line);
-            
+
             // Temp: this is to change the map background, which is the first line
             return "";
         }

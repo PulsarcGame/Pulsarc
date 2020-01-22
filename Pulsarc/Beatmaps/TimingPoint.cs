@@ -17,9 +17,6 @@ namespace Pulsarc.Beatmaps
             Bpm = bpm;
         }
 
-        public override string ToString()
-        {
-            return $"{Time},{Bpm}";
-        }
+        public override string ToString() => $"{Time},{Bpm}";
     }
 }

@@ -9,15 +9,9 @@ namespace Pulsarc.UI.Screens
     {
         public override ScreenView View { get; protected set; }
 
-        public InProgressScreen()
-        {
-            View = new InProgressScreenView(this);
-        }
+        public InProgressScreen() => View = new InProgressScreenView(this);
 
-        public override void Init()
-        {
-            ScreenManager.RemoveScreen();
-        }
+        public override void Init() => ScreenManager.RemoveScreen();
 
         public override void UpdateDiscord() { }
     }

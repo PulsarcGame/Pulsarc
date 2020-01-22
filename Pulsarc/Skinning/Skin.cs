@@ -1,5 +1,5 @@
 ﻿using IniFileParser.Model;
-using ManagedBass;
+using ManagedBass;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Wobble.Audio;
-using Wobble.Audio.Samples;
+using Wobble.Audio;
+using Wobble.Audio.Samples;
 using Wobble.Logging;
 
 namespace Pulsarc.Skinning
@@ -30,9 +30,9 @@ namespace Pulsarc.Skinning
         public static Dictionary<int, Texture2D> Judges { get; private set; }
 
         // A collection of multiple adjustable screens and the config files for those screens.
-        public static Dictionary<string, IniData> Configs { get; private set; }
-
-        // A collection of all the custom sounds in the skin folder and their ids
+        public static Dictionary<string, IniData> Configs { get; private set; }
+
+        // A collection of all the custom sounds in the skin folder and their ids
         public static Dictionary<string, AudioSample> Sounds { get; private set; }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Pulsarc.Skinning
         {
             Assets = new Dictionary<string, Texture2D>();
             Configs = new Dictionary<String, IniData>();
-            Judges = new Dictionary<int, Texture2D>();
+            Judges = new Dictionary<int, Texture2D>();
             Sounds = new Dictionary<string, AudioSample>();
             Loaded = false;
 
@@ -78,15 +78,17 @@ namespace Pulsarc.Skinning
                 LoadGrades(skinFolder);
 
                 // Load judge assets
-                LoadJudges(skinFolder);
-
-                // Load sounds
+                LoadJudges(skinFolder);
+
+                // Load sounds
                 LoadSounds(skinFolder);
 
                 Loaded = true;
             }
             else
+            {
                 PulsarcLogger.Error($"Could not find the skin {name}", LogType.Network);
+            }
         }
 
         #region Loading Methods
@@ -99,7 +101,7 @@ namespace Pulsarc.Skinning
             Configs.Add("main_menu",        parser.ReadFile($"{skinFolder}UI/MainMenu/main_menu.ini"));
             Configs.Add("judgements",       parser.ReadFile($"{skinFolder}Judgements/judgements.ini"));
             Configs.Add("result_screen",    parser.ReadFile($"{skinFolder}UI/ResultScreen/result_screen.ini"));
-            Configs.Add("song_select",      parser.ReadFile($"{skinFolder}UI/SongSelect/song_select.ini"));
+            Configs.Add("song_select",      parser.ReadFile($"{skinFolder}UI/SongSelect/song_select.ini"));
             Configs.Add("audio",            parser.ReadFile($"{skinFolder}Audio/audio.ini"));
         }
 
@@ -164,7 +166,9 @@ namespace Pulsarc.Skinning
             char letter = 'A';
 
             for (int i = 1; i < 5; i++)
+            {
                 LoadSkinTexture($"{skinFolder}Grades/", "grade_" + letter++);
+            }
 
             LoadSkinTexture($"{skinFolder}Grades/", "grade_S");
             LoadSkinTexture($"{skinFolder}Grades/", "grade_X");
@@ -173,13 +177,14 @@ namespace Pulsarc.Skinning
         private static void LoadJudges(string skinFolder)
         {
             foreach (JudgementValue judge in Judgement.Judgements)
+            {
                 Judges.Add(judge.Score, LoadTexture($"{skinFolder}Judgements/", judge.Name));
-        }
-
-        private static void LoadSounds(string skinFolder)
-        {
-            LoadSample($"{skinFolder}Audio/", "hit");
-            LoadSample($"{skinFolder}Audio/", "miss");
+        }
+
+        private static void LoadSounds(string skinFolder)
+        {
+            LoadSample($"{skinFolder}Audio/", "hit");
+            LoadSample($"{skinFolder}Audio/", "miss");
         }
         #endregion
 
@@ -188,10 +193,7 @@ namespace Pulsarc.Skinning
         /// </summary>
         /// <param name="path">The folder location of the texture</param>
         /// <param name="asset">The name of the asset, texture file must be the same name</param>
-        private static void LoadSkinTexture(string path, string asset)
-        {
-            Assets.Add(asset, LoadTexture(path, asset));
-        }
+        private static void LoadSkinTexture(string path, string asset) => Assets.Add(asset, LoadTexture(path, asset));
 
         /// <summary>
         /// Add a texture that's cropped using the crop-Vectors provided.
@@ -200,10 +202,7 @@ namespace Pulsarc.Skinning
         /// <param name="texture">The texture to assign to the asset, after cropping.</param>
         /// <param name="cropHorizontal">The X coordinates of the rectangle used to crop from the texture.</param>
         /// <param name="cropVertical">The Y coordinates of the rectangle used to crop from the texture.</param>
-        private static void LoadCropSkinTexture(string asset, Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical)
-        {
-            Assets.Add(asset, LoadCropFromTexture(texture, cropHorizontal, cropVertical));
-        }
+        private static void LoadCropSkinTexture(string asset, Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical) => Assets.Add(asset, LoadCropFromTexture(texture, cropHorizontal, cropVertical));
 
         /// <summary>
         /// Attempts to return the texture found using the folder path and file asset name provided.
@@ -241,7 +240,7 @@ namespace Pulsarc.Skinning
         /// <param name="cropHorizontal">The X coordinates of the rectangle used to crop from the texture.</param>
         /// <param name="cropVertical">The Y coordinates of the rectangle used to crop from the texture.</param>
         /// <returns>The cropped area as a new texture.</returns>
-        private static Texture2D LoadCropFromTexture(Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical) 
+        private static Texture2D LoadCropFromTexture(Texture2D texture, Vector2 cropHorizontal, Vector2 cropVertical)
         {
             // Define the subrectangle bounds
             Rectangle bounds = texture.Bounds;
@@ -260,37 +259,37 @@ namespace Pulsarc.Skinning
             cropped.SetData(data);
 
             return cropped;
-        }
-
-        private static string[] acceptedAudioExtensions = new string[]
-        {
-            ".mp3",
-            ".wav",
-            ".ogg"
-        };
-
-
-        private static void LoadSample(string path, string name)
-        {
-            bool fileExists = false;
-            string extension = "";
-
-            for (int i = 0; i < acceptedAudioExtensions.Length; i++)
-            {
-                if (File.Exists(path + name + acceptedAudioExtensions[i]))
-                {
-                    extension = acceptedAudioExtensions[i];
-                    fileExists = true;
-                    break;
-                }
-            }
-
-            if (!fileExists)
-            {
-                throw new FileNotFoundException("AudioSample not found", path, new AudioEngineException());
-            }
-
-            Sounds.Add(name, new AudioSample(path + name + extension));
+        }
+
+        private static string[] acceptedAudioExtensions = new string[]
+        {
+            ".mp3",
+            ".wav",
+            ".ogg"
+        };
+
+
+        private static void LoadSample(string path, string name)
+        {
+            bool fileExists = false;
+            string extension = "";
+
+            for (int i = 0; i < acceptedAudioExtensions.Length; i++)
+            {
+                if (File.Exists(path + name + acceptedAudioExtensions[i]))
+                {
+                    extension = acceptedAudioExtensions[i];
+                    fileExists = true;
+                    break;
+                }
+            }
+
+            if (!fileExists)
+            {
+                throw new FileNotFoundException("AudioSample not found", path, new AudioEngineException());
+            }
+
+            Sounds.Add(name, new AudioSample(path + name + extension));
         }
 
         /// <summary>
@@ -300,7 +299,7 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The int value found using the provided parameters.</returns>
-        public static int GetConfigInt(string config, string section, string key)
+        public static int GetConfigInt(string config, string section, string key)
             => int.Parse(GetConfigString(config, section, key));
 
         /// <summary>
@@ -310,17 +309,17 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The float value found using the provided parameters.</returns>
-        public static float GetConfigFloat(string config, string section, string key)
-            => float.Parse(GetConfigString(config, section, key), CultureInfo.InvariantCulture);
-
+        public static float GetConfigFloat(string config, string section, string key)
+            => float.Parse(GetConfigString(config, section, key), CultureInfo.InvariantCulture);
+
         /// <summary>
         /// Find the config provided, go to the config-section provided, and return the bool value of the key provided.
         /// </summary>
         /// <param name="config">The config to look in.</param>
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
-        /// <returns>The float value found using the provided parameters.</returns>
-        public static bool GetConfigBool(string config, string section, string key)
+        /// <returns>The float value found using the provided parameters.</returns>
+        public static bool GetConfigBool(string config, string section, string key)
             => bool.Parse(GetConfigString(config, section, key));
 
         /// <summary>
@@ -330,7 +329,7 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The float value found using the provided parameters.</returns>
-        public static string GetConfigString(string config, string section, string key)
+        public static string GetConfigString(string config, string section, string key)
             => Configs[config][section][key].Replace("\"", string.Empty);
 
         /// <summary>
@@ -340,7 +339,7 @@ namespace Pulsarc.Skinning
         /// <param name="section">The section of a config to look in.</param>
         /// <param name="key">The name of the variable.</param>
         /// <returns>The Anchor found using the provided parameters.</returns>
-        public static Anchor GetConfigAnchor(string config, string section, string key)
+        public static Anchor GetConfigAnchor(string config, string section, string key)
             => (Anchor)Enum.Parse(Anchor.TopLeft.GetType(), GetConfigString(config, section, key));
 
         /// <summary>
@@ -399,10 +398,10 @@ namespace Pulsarc.Skinning
         {
             string valueToParse = GetConfigString(config, section, key);
 
-            var parts = valueToParse.Split(',');
-            int r, g, b = 0;
+            string[] parts = valueToParse.Split(',');
+            int r, g;
             int a = 255;
-
+            int b;
             try
             {
                 r = int.Parse(parts[0]);
@@ -410,10 +409,12 @@ namespace Pulsarc.Skinning
                 b = int.Parse(parts[2]);
 
                 if (parts.Length > 3)
+                {
                     a = int.Parse(parts[3]);
+                }
             }
             // If the color wasn't formatted right, display a console error and return black instead
-            catch (Exception e)
+            catch (Exception)
             {
                 PulsarcLogger.Error($"{key} was not formatted correctly." +
                     $"\nPlease format {key} with \"{{red}},{{green}},{{blue}},[alpha]\", where alpha is optional:" +

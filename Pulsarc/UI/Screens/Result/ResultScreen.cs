@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Pulsarc.Beatmaps;
+﻿using Pulsarc.Beatmaps;
 using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
@@ -50,8 +49,10 @@ namespace Pulsarc.UI.Screens.Result
             // Add all the judgement names to judges_count
             JudgesCount = new Dictionary<string, int>();
 
-            foreach(JudgementValue judge in Judgement.Judgements)
+            foreach (JudgementValue judge in Judgement.Judgements)
+            {
                 JudgesCount.Add(judge.Name, 0);
+            }
 
             Judgements = judgements;
             Hits = hits;
@@ -79,7 +80,9 @@ namespace Pulsarc.UI.Screens.Result
 
             // Save the score locally
             if (newScore)
+            {
                 DataManager.ScoreDB.AddScore(scoreData);
+            }
 
             View = new ResultScreenView(this, accuracyTotal, scoreData.grade, Beatmap, mapBackground);
         }

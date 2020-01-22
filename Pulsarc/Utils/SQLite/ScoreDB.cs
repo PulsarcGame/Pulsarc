@@ -1,6 +1,4 @@
-﻿using Pulsarc.UI.Screens.Gameplay;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using Wobble.Logging;
 
@@ -16,15 +14,9 @@ namespace Pulsarc.Utils.SQLite
             Tables.Add(new ReplayData());
         }
 
-        public void AddScore(ScoreData score)
-        {
-            score.SaveData(this);
-        }
+        public void AddScore(ScoreData score) => score.SaveData(this);
 
-        public void AddReplay(ReplayData replay)
-        {
-            replay.SaveData(this);
-        }
+        public void AddReplay(ReplayData replay) => replay.SaveData(this);
 
         public List<ScoreData> GetScores(string map)
         {

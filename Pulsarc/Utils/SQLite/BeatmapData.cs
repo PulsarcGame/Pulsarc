@@ -81,7 +81,7 @@ namespace Pulsarc.Utils.SQLite
         {
             bool matching =
                 artist.ToLower().Contains(search) ||
-                title.ToLower().Contains(search)  ||
+                title.ToLower().Contains(search) ||
                 mapper.ToLower().Contains(search) ||
                 version.ToLower().Contains(search);
 

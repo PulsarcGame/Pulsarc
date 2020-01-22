@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Quit
@@ -9,10 +7,7 @@ namespace Pulsarc.UI.Screens.Quit
     {
         public override ScreenView View { get; protected set; }
 
-        public QuitScreen()
-        {
-            View = new QuitScreenView(this);
-        }
+        public QuitScreen() => View = new QuitScreenView(this);
 
         public override void Init()
         {

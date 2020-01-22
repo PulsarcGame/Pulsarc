@@ -37,7 +37,7 @@ namespace Pulsarc.UI.Screens.Settings
 
         public override void Update(GameTime gameTime)
         {
-            handleMouseInput();
+            HandleMouseInput();
 
             View?.Update(gameTime);
         }
@@ -46,22 +46,26 @@ namespace Pulsarc.UI.Screens.Settings
         /// Change the focus when the mouse wheel scrolls.
         /// </summary>
         /// <param name="ms">The mouse state.</param>
-        private void changeFocus(MouseState ms)
+        private void ChangeFocus(MouseState ms)
         {
             // If the scroll wheel's state has changed, change the focus
             if (ms.ScrollWheelValue < lastScrollValue)
+            {
                 SelectedFocus += 0.3f;
+            }
             else if (ms.ScrollWheelValue > lastScrollValue)
+            {
                 SelectedFocus -= 0.3f;
+            }
 
             lastScrollValue = ms.ScrollWheelValue;
         }
 
-        private void handleMouseInput()
+        private void HandleMouseInput()
         {
             MouseState ms = Mouse.GetState();
 
-            changeFocus(ms);
+            ChangeFocus(ms);
         }
 
         public override void UpdateDiscord() { }
