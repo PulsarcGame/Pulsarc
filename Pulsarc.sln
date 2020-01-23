@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pulsarc", "Pulsarc\Pulsarc.csproj", "{A4BD4B4A-8A00-4E26-9223-298BE5106591}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Framework.DesktopGL", "Wobble\MonoGame.Framework\MonoGame.Framework.DesktopGL.csproj", "{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Framework.DesktopGL", "MonoGame\MonoGame.Framework\MonoGame.Framework.DesktopGL.csproj", "{77FBD7AF-209B-4005-8A4F-BC0F0A8877FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wobble", "Wobble\Wobble\Wobble.csproj", "{279FD61F-F19A-468D-9F52-BD8A526C3933}"
 EndProject
