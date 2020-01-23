@@ -31,7 +31,7 @@ To convert a map, find and open ``config.ini`` in your text editor of choice. Pu
 
 ## Build and Run
 To build and run Pulsarc, follow these steps:
-- Install the [.NET Core 2.2 SDK](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+- Install the [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 - Clone the Pulsarc repository and its submodules 
 ```git clone --recurse-submodules https://github.com/rubiksmaster02/Pulsarc.git
 cd Pulsarc
