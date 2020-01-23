@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Hidden-mode Crosshair Offset, allows users to manually change the base size of the crosshair for Hidden.
+- **Experimental**: Hidden-mode Crosshair Offset, allows users to manually change the base size of the crosshair for Hidden.
 - Option to batch convert multiple maps in a single folder.
+- Optimization to Song Select.
+- Delay to refreshing the Song Select after typing in the search bar.
 
 ### Fixed
 - Setting decimal numbers for ApproachRate crashing the game.
+- Unresponsiveness from some buttons.
+- Inconsistent Beatmap card movement in the Song Select.
+- Pressing Delete/Backspace causing the Song Select to refresh.
 
 ### Changed
-- Drawables now scale their positioning on both axis, instead of just one. This makes working with skini's more consistent and manageable.
+- Drawables now scale their positioning on both axis, instead of just one. This makes working with skini's more consistent and have less guess-work.
 
 ## [1.2.0-alpha] - 2019-12-04
 
