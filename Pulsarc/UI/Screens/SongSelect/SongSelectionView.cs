@@ -10,15 +10,13 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using Pulsarc.Utils.SQLite;
-using Wobble.Input;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
 {
     public class SongSelectionView : ScreenView
     {
-        SongSelection GetSongSelection() { return (SongSelection)Screen; }
+        SongSelection GetSongSelection() => (SongSelection)Screen;
 
         SongSelection songSelectScreen;
 
@@ -65,7 +63,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             // Set up beatmap cards
             for (int i = 0; i < beatmaps.Count; i++)
+            {
                 cards.Add(new BeatmapCard(beatmaps[i], i));
+            }
 
             // Select a random map by default in the song selection.
             if (cards.Count > 0)
@@ -77,13 +77,13 @@ namespace Pulsarc.UI.Screens.SongSelect
                 FocusCard(songSelectScreen.FocusedCard);
             }
 
-            Anchor searchBoxAnchor = getSkinnablePropertyAnchor("SearchBarAnchor");
+            Anchor searchBoxAnchor = GetSkinnablePropertyAnchor("SearchBarAnchor");
             Vector2 searchBarStartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "SearchBarStartPos");
 
             SearchBox = new SearchBox(search, searchBarStartPosition, searchBoxAnchor);
 
-            int searchBarX = getSkinnablePropertyInt("SearchBarX");
-            int searchBarY = getSkinnablePropertyInt("SearchBarY");
+            int searchBarX = GetSkinnablePropertyInt("SearchBarX");
+            int searchBarY = GetSkinnablePropertyInt("SearchBarY");
             SearchBox.Move(searchBarX, searchBarY);
 
             button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
@@ -95,40 +95,28 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        private float getSkinnablePropertyFloat(string key)
-        {
-            return Skin.GetConfigFloat("song_select", "Properties", key);
-        }
+        private float GetSkinnablePropertyFloat(string key) => Skin.GetConfigFloat("song_select", "Properties", key);
 
         /// <summary>
         /// Find a int from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        private int getSkinnablePropertyInt(string key)
-        {
-            return Skin.GetConfigInt("song_select", "Properties", key);
-        }
+        private int GetSkinnablePropertyInt(string key) => Skin.GetConfigInt("song_select", "Properties", key);
 
         /// <summary>
         /// Find an Anchor from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        private Anchor getSkinnablePropertyAnchor(string key)
-        {
-            return Skin.GetConfigAnchor("song_select", "Properties", key);
-        }
+        private Anchor GetSkinnablePropertyAnchor(string key) => Skin.GetConfigAnchor("song_select", "Properties", key);
 
         /// <summary>
         /// Find a string from the Properties section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        private string getSkinnablePropertyString(string key)
-        {
-            return Skin.GetConfigString("song_select", "Properties", key);
-        }
+        private string GetSkinnablePropertyString(string key) => Skin.GetConfigString("song_select", "Properties", key);
         #endregion
 
         /// <summary>
@@ -138,8 +126,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="card">The card to focus on.</param>
         public void FocusCard(in BeatmapCard card, bool restart = false)
         {
-            if (cards[card.Index] != card)
-                return;
+            if (cards[card.Index] != card) { return; }
 
             songSelectScreen.SelectedFocus = card.Index - 3;
 
@@ -163,10 +150,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             UpdateScoreCard(card);
         }
 
-        public void RefocusCurrentCard()
-        {
-            UpdateScoreCard(GetSongSelection().FocusedCard);
-        }
+        public void RefocusCurrentCard() => UpdateScoreCard(GetSongSelection().FocusedCard);
 
         /// <summary>
         /// Finish the selecting process for the card we're
@@ -175,17 +159,17 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="card">The card we're focusing on.</param>
         private void UpdateScoreCard(in BeatmapCard card)
         {
-            if (card == null)
-                return;
+            if (card == null) { return; }
 
             scores.Clear();
 
             // Make a ScoreCard for each score.
             List<ScoreData> scoresInMap = card.Beatmap.GetLocalScores();
 
-            int rank = 1;
             for (int i = 0; i < scoresInMap.Count; i++)
-                scores.Add(new ScoreCard(scoresInMap[i], rank++));
+            {
+                scores.Add(new ScoreCard(scoresInMap[i], i + 1));
+            }
         }
               
         /// <summary>
@@ -229,10 +213,13 @@ namespace Pulsarc.UI.Screens.SongSelect
             {
                 cards[i].AdjustClickDistance();
                 cards[i].Draw();
-            }
 
-            for (int i = 0; i < scores.Count; i++)
-                scores[i].Draw();
+                // Might as well through this here instead of having a second for loop taking up time.
+                if (i < scores.Count)
+                {
+                    scores[i].Draw();
+                }
+            }
 
             button_back.Draw();
             SearchBox.Draw();

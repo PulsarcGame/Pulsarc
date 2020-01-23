@@ -34,10 +34,12 @@ namespace Pulsarc.Utils.SQLite
 
             // r can be null due to the current issues with ScoreDB
             while (r != null && r.Read())
+            {
                 scores.Add(new ScoreData(r));
+            }
 
-            foreach (ScoreData score in scores)
-                PulsarcLogger.Debug(score.ToString(), LogType.Runtime);
+            //foreach (ScoreData score in scores)
+                //PulsarcLogger.Debug(score.ToString(), LogType.Runtime);
 
             return scores;
         }

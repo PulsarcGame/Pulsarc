@@ -34,17 +34,26 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         private Vector2 personalStartPosOffset;
 
         // How far this card will extend when selected
-        private float clickedDistance;
+        private float selectedDistance;
         // What direction this card will extend in
-        private string clickedDirection;
+        private string selectedDirection;
 
-        private float currentClickDistance = 0f;
-        private float lastClickDistance = 0f;
+        private float currentSelectDistance = 0f;
+        private float lastSelectDistance = 0f;
 
         // The difficulty of the map represented as a bar
         private BeatmapCardDifficulty diffBar;
         private Vector2 diffBarOffset;
         private Anchor diffBarStartAnchor;
+        
+        // Bools that help with moving when selected
+        private bool SelectedAndMoving => IsSelected
+            && Math.Round(currentSelectDistance, 3) < Math.Round(selectedDistance, 3);
+
+        private bool NotSelectedAndMoving => !IsSelected && Math.Round(currentSelectDistance, 3) > 0;
+
+        private bool IncorrectPosition => currentSelectDistance > selectedDistance
+            || currentSelectDistance < 0;
 
         /// <summary>
         /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
@@ -56,8 +65,8 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             : base(DefaultTexture, StartPosition, DefaultAnchor)
         {
             // set clicked distance and direction
-            clickedDistance = Skin.GetConfigFloat(Config, "Properties", "BeatmapCardSelectOffset");
-            clickedDirection = Skin.GetConfigString(Config, "Properties", "BeatmapCardSelectDirection");
+            selectedDistance = Skin.GetConfigFloat(Config, "Properties", "BeatmapCardSelectOffset");
+            selectedDirection = Skin.GetConfigString(Config, "Properties", "BeatmapCardSelectDirection");
 
             Index = index;
 
@@ -125,8 +134,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public override void Draw()
         {
-            if (!OnScreen())
-                return;
+            AdjustClickDistance();
+
+            if (!OnScreen()) { return; }
 
             base.Draw();
             diffBar.Draw();
@@ -134,25 +144,49 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         /// <summary>
         /// The card moving in and out depending on its selected state.
+        /// TODO: Fix vertical movement
         /// </summary>
         public void AdjustClickDistance()
         {
+            if (!SelectedAndMoving && !NotSelectedAndMoving && !IncorrectPosition) { return; }
+
             // If clicked, smoothly move to the clicked distance
-            if (IsClicked && Math.Round(currentClickDistance, 3) < Math.Round(clickedDistance, 3))
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, clickedDistance, (float)PulsarcTime.DeltaTime / 100f);
-
+            if (SelectedAndMoving)
+            {
+                currentSelectDistance = PulsarcMath.Lerp(
+                    currentSelectDistance,
+                    selectedDistance,
+                    (float)PulsarcTime.DeltaTime / 100f);
+            }
             // Else if not clicked and currentClickDistacne is greater than 0, smoothly move to 0
-            else if (!IsClicked && Math.Round(currentClickDistance, 3) > 0)
-                currentClickDistance = PulsarcMath.Lerp(currentClickDistance, 0, (float)PulsarcTime.DeltaTime / 100f);
+            else if (NotSelectedAndMoving)
+            {
+                currentSelectDistance =
+                    PulsarcMath.Lerp(currentSelectDistance, 0, (float)PulsarcTime.DeltaTime / 100f);
+            }
 
-            // Else, end the method.
-            else
+            // If it has the wrong position, correct it's position.
+            if (IncorrectPosition)
+            {
+                ChangePosition(PersonalStartPosition.X, anchorPosition.Y);
+
+                if (IsSelected)
+                {
+                    MoveInAssignedDirection(-selectedDistance);
+                }
+
                 return;
+            }
 
-            float diff = lastClickDistance - currentClickDistance;
-            lastClickDistance = currentClickDistance;
+            float diff = lastSelectDistance - currentSelectDistance;
+            lastSelectDistance = currentSelectDistance;
 
-            switch (clickedDirection)
+            MoveInAssignedDirection(diff);
+        }
+
+        private void MoveInAssignedDirection(float diff)
+        {
+            switch (selectedDirection)
             {
                 case "Left":
                     Move(new Vector2(diff, 0));
@@ -176,34 +210,32 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         public void OnClick()
         {
-            if (IsClicked)
+            // If already selected, start a game.
+            if (IsSelected)
             {
                 GameplayEngine gameplay = new GameplayEngine();
                 ScreenManager.AddScreen(gameplay);
                 gameplay.Init(Beatmap);
             }
+            // If newly selected, play the song.
             else
             {
-                string path = Beatmap.GetFullAudioPath();
+                if (AudioManager.songPath == Beatmap.GetFullAudioPath()) { return; }
 
-                if (AudioManager.songPath != path)
+                AudioManager.songPath = Beatmap.GetFullAudioPath();
+                AudioManager.audioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
+                AudioManager.StartLazyPlayer();
+
+                if (Beatmap.PreviewTime != 0)
                 {
-                    AudioManager.songPath = Beatmap.GetFullAudioPath();
-                    AudioManager.audioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
-                    AudioManager.StartLazyPlayer();
-
-                    if (Beatmap.PreviewTime != 0)
-                        AudioManager.DeltaTime(Beatmap.PreviewTime);
-
-                    PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}", LogType.Runtime);
+                    AudioManager.DeltaTime(Beatmap.PreviewTime);
                 }
+
+                //PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}");
             }
         }
 
-        public void SetClicked(bool set)
-        {
-            IsClicked = set;
-        }
+        public void SetClicked(bool set) => IsSelected = set;
 
         /// <summary>
         /// Adds diffBar to the elements to be updated.
@@ -211,8 +243,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected override void UpdateElements()
         {
             // Don't bother updating if we aren't on screen.
-            if (!OnScreen())
-                return;
+            if (!OnScreen()) { return; }
 
             base.UpdateElements();
 

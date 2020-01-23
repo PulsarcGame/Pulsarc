@@ -562,11 +562,10 @@ namespace Pulsarc.UI
         /// Determine whether this Drawable is currently visible on screen.
         /// </summary>
         /// <returns>True if on screen, false if not on screen.</returns>
-        public bool OnScreen()
-        {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, (int)currentSize.X, (int)currentSize.Y)
-                    .Intersects(Pulsarc.ScreenSpace);
-        }
+        public bool OnScreen() =>   new Rectangle(
+                                        (int)truePosition.X, (int)truePosition.Y,
+                                        (int)currentSize.X, (int)currentSize.Y)
+                                    .Intersects(Pulsarc.ScreenSpace);
 
         /// <summary>
         /// Determine whether this Drawable is intersecting with the provided Drawable.
@@ -575,8 +574,12 @@ namespace Pulsarc.UI
         /// <returns>True if the two Drawables intersect, false if they dont'.</returns>
         public bool Intersects(Drawable drawable)
         {
-            return new Rectangle((int)truePosition.X, (int)truePosition.Y, Texture.Width, Texture.Height)
-                    .Intersects(new Rectangle((int) drawable.truePosition.X, (int)drawable.truePosition.Y, (int)drawable.currentSize.X, (int)drawable.currentSize.Y));
+            return new Rectangle(
+                (int)truePosition.X, (int)truePosition.Y,
+                (int)currentSize.X, (int)currentSize.Y)
+            .Intersects(new Rectangle(
+                (int)drawable.truePosition.X, (int)drawable.truePosition.Y,
+                (int)drawable.currentSize.X, (int)drawable.currentSize.Y));
         }
         #endregion
 

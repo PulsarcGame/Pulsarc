@@ -44,14 +44,14 @@ namespace Pulsarc.Utils.SQLite
 
         public void Exec(string sql)
         {
-            PulsarcLogger.Debug(sql, LogType.Runtime);
+            //PulsarcLogger.Debug(sql, LogType.Runtime);
 
             new SQLiteCommand(sql, db).ExecuteNonQuery();
         }
 
         public SQLiteDataReader Query(string sql)
         {
-            PulsarcLogger.Debug(sql, LogType.Runtime);
+            //PulsarcLogger.Debug(sql, LogType.Runtime);
 
             return new SQLiteCommand(sql, db).ExecuteReader();
         }
