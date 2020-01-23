@@ -279,14 +279,13 @@ namespace Pulsarc
             // Let ScreenManager handle the drawing of the current active screen
             ScreenManager.Draw(gameTime);
 
-            // FPS
-            if (fpsDisplay != null)
-                fpsDisplay.Draw();
-
             base.Draw(gameTime);
 
             if (displayCursor)
                 cursor.Draw();
+
+            // FPS
+            fpsDisplay?.Draw();
 
             SpriteBatch.End();
         }
