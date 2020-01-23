@@ -619,7 +619,7 @@ namespace Pulsarc.Utils.Input
             }
         }
 
-        static public bool isTypingCharacter(Keys key)
+        public static bool IsTypingCharacter(Keys key)
         {
             switch (key)
             {

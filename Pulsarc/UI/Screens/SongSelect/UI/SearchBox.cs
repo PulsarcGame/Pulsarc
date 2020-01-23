@@ -33,30 +33,15 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             textDisplay.processedPosition = textDisplay.truePosition;
         }
 
-        public void Update(string text)
-        {
-            textDisplay.Update(text);
-        }
+        public void Update(string text) => textDisplay.Update(text);
 
-        public void AddText(string c)
-        {
-            textDisplay.Text.Append(c);
-        }
+        public void AddText(string c) => textDisplay.Text.Append(c);
 
-        public void RemoveLast()
-        {
-            textDisplay.Text.Length--;
-        }
+        public void RemoveLast() => textDisplay.Text.Length--;
 
-        public void Clear()
-        {
-            textDisplay.Text.Clear();
-        }
+        public void Clear() => textDisplay.Text.Clear();
 
-        public string GetText()
-        {
-            return textDisplay.Text.ToString();
-        }
+        public string GetText() => textDisplay.Text.ToString();
 
         public override void Draw()
         {

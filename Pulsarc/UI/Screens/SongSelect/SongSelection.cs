@@ -6,9 +6,11 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Input;
 using Pulsarc.Utils.SQLite;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -27,6 +29,28 @@ namespace Pulsarc.UI.Screens.SongSelect
         private MouseState leftClickedState;
         public float SelectedFocus = 0;
         public BeatmapCard FocusedCard { get; set; }
+
+        private double lastKeyPressTime;
+
+        // Returns true once a second has passed since the last RestartKeyPressTimer = true call
+        private bool OneSecondSinceLastKeyPress
+            => PulsarcTime.CurrentElapsedTime >= (lastKeyPressTime + 1000);
+
+        // When this is set to true, the timer resets.
+        private bool restartKeyPressTimer;
+        private bool RestartKeyPressTimer
+        {
+            get => restartKeyPressTimer;
+            set
+            {
+                if (value)
+                {
+                    lastKeyPressTime = PulsarcTime.CurrentElapsedTime;
+                }
+
+                restartKeyPressTimer = value;
+            }
+        }
 
         public SongSelection()
         { }
@@ -141,35 +165,57 @@ namespace Pulsarc.UI.Screens.SongSelect
             {
                 KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
 
-                // If Escape has been pressed, go back one screen.
-                if (press.Value == Keys.Escape)
-                    ScreenManager.RemoveScreen(true);
-
-                // If F5 has been pressed, refresh beatmaps
-                else if (press.Value == Keys.F5)
-                    RescanBeatmaps();
-
-                // If Enter is pressed, start playing the beatmap of the focused card
-                else if (press.Value == Keys.Enter)
-                    FocusedCard.OnClick();
-
-                // If Delete or backspace is pressed, clear the search bar
-                else if (press.Value == Keys.Delete || press.Value == Keys.Back)
+                switch (press.Value)
                 {
-                    GetSongSelectionView().SearchBox.Clear();
-                    RefreshBeatmaps();
+                    // If Escape has been pressed, go back one screen.
+                    case Keys.Escape:
+                        ScreenManager.RemoveScreen(true);
+                        break;
+                    // If F5 has been pressed, refresh beatmaps
+                    case Keys.F5:
+                        RescanBeatmaps();
+                        break;
+                    // If Enter is pressed, start playing the beatmap of the focused card
+                    case Keys.Enter:
+                        FocusedCard.OnClick();
+                        break;
+                    // If Delete or Backspace is pressed, clear the search bar
+                    case Keys.Delete:
+                    case Keys.Back:
+                        // If there's nothing in the box, don't refresh.
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
+                        {
+                            break;
+                        }
+
+                        GetSongSelectionView().SearchBox.Clear();
+                        RefreshBeatmaps();
+                        break;
+                    // If none of the above, type into the search bar
+                    // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
+                    // TODO? Ignore keypresses unless clicked on
+                    default:
+                        if (!KeyboardManager.IsUniqueKeyPress(press.Value))
+                        {
+                            break;
+                        }
+
+                        RestartKeyPressTimer = true;
+
+                        GetSongSelectionView().SearchBox.AddText(InputManager.Caps
+                            ? Enum.GetName(typeof(Keys), press.Value)
+                            : Enum.GetName(typeof(Keys), press.Value).ToLower());
+                        break;
                 }
-                // If none of the above, type into the search bar
-                // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
-                // TODO? Ignore keypresses unless clicked on
-                else
-                {
-                    if (XnaKeyHelper.isTypingCharacter(press.Value))
-                    {
-                        GetSongSelectionView().SearchBox.AddText(InputManager.Caps ? XnaKeyHelper.GetStringFromKey(press.Value) : XnaKeyHelper.GetStringFromKey(press.Value).ToLower());
-                        RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText().ToLower());
-                    }
-                }
+            }
+
+            // If one second has passed since the last search box key press, refresh the maps.
+            if (OneSecondSinceLastKeyPress && RestartKeyPressTimer)
+            {
+                // Don't call this block every frame
+                RestartKeyPressTimer = false;
+
+                RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText().ToLower());
             }
         }
 
