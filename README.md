@@ -32,7 +32,19 @@ To convert a map, find and open ``config.ini`` in your text editor of choice. Pu
 ## Build and Run
 To build and run Pulsarc, follow these steps:
 - Install the [.NET Core 2.2 SDK](https://dotnet.microsoft.com/download/dotnet-core/2.2)
-- Clone the Pulsarc repository and its submodules `git clone --recurse-submodules https://github.com/PulsarcGame/Pulsarc.git`
+- Clone the Pulsarc repository and its submodules 
+```git clone --recurse-submodules https://github.com/rubiksmaster02/Pulsarc.git
+cd Pulsarc
+mkdir MonoGame
+cd MonoGame
+git init
+git remote add origin https://github.com/Quaver/MonoGame.git
+git sparse-checkout set MonoGame.Framework/*
+git pull origin latest-develop
+cd ..
+mv -f Wobble/MonoGame.Framework.DesktopGL.csproj MonoGame/MonoGame.Framework
+
+```
 - Build & Run Pulsarc with `dotnet run --project Pulsarc`
 
 ## Contributing
