@@ -104,7 +104,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             int diffBarXOffset = GetSkinnableInt("DiffBarX");
             int diffBarYOffset = GetSkinnableInt("DiffBarY");
             diffBar.Move(diffBarXOffset, diffBarYOffset);
-            diffBarOffset = diffBar.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this);
+            diffBarOffset = diffBar.Position - AnchorUtil.FindDrawablePosition(startAnchor, this);
             diffBarStartAnchor = startAnchor;
         }
 
@@ -168,7 +168,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // If it has the wrong position, correct it's position.
             if (IncorrectPosition)
             {
-                ChangePosition(PersonalStartPosition.X, anchorPosition.Y);
+                ChangePosition(PersonalStartPosition.X, Position.Y);
 
                 if (IsSelected)
                 {

@@ -17,8 +17,8 @@ namespace Pulsarc.Utils
         /// <returns>A Vector2 representing the Coordinate of the anchor point on the provided drawable.</returns>
         public static Vector2 FindDrawablePosition(Anchor anchor, in Drawable drawable)
         {
-            float x = drawable.truePosition.X;
-            float y = drawable.truePosition.Y;
+            float x = drawable.TruePosition.X;
+            float y = drawable.TruePosition.Y;
 
             float width = drawable.currentSize.X;
             float height = drawable.currentSize.Y;

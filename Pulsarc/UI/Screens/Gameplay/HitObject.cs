@@ -85,7 +85,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Rotation = (float)(45 * (Math.PI / 180));
 
             // Set the HitObject's position
-            ChangePosition(truePosition);
+            ChangePosition(TruePosition);
         }
 
         /// <summary>

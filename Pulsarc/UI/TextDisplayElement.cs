@@ -41,7 +41,7 @@ namespace Pulsarc.UI
             // Calling ReprocessPosition() too early causes a crash
             // base.ChangePosition() avoids this crash.
             base.ChangePosition(position);
-            processedPosition = truePosition;
+            processedPosition = TruePosition;
             Update("");
         }
 
@@ -63,8 +63,8 @@ namespace Pulsarc.UI
         /// </summary>
         public void ReprocessPosition()
         {
-            float newX = truePosition.X;
-            float newY = truePosition.Y;
+            float newX = TruePosition.X;
+            float newY = TruePosition.Y;
             Vector2 size = font.MeasureString(Text) * fontScale;
             size.X *= Pulsarc.GetDimensions().X / Pulsarc.BASE_WIDTH;
             size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT;

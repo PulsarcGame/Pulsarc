@@ -99,7 +99,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             //Add TDE
             TextElements.Add(text);
-            TextElementOffsets.Add(text.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this));
+            TextElementOffsets.Add(text.Position - AnchorUtil.FindDrawablePosition(startAnchor, this));
             TextElementStartAnchors.Add(startAnchor);
         }
 

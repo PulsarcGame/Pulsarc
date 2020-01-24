@@ -73,7 +73,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            Selector.ChangePosition(new Vector2(anchorPosition.X + EdgeOffset + position, anchorPosition.Y));
+            Selector.ChangePosition(new Vector2(Position.X + EdgeOffset + position, Position.Y));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override void OnClick(Vector2 mousePosition)
         {
-            SetSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * Scale));
+            SetSelectorPercent((mousePosition.X - TruePosition.X) / ((Texture.Width) * Scale));
         }
     }
 }
