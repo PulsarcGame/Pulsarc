@@ -22,15 +22,7 @@ namespace Pulsarc.Utils
 
             Get = Parser.ReadFile("config.ini");
 
-            AddBinding("Left");
-            AddBinding("Up");
-            AddBinding("Down");
-            AddBinding("Right");
-
-            AddBinding("Pause");
-            AddBinding("Continue");
-            AddBinding("Retry");
-            AddBinding("Convert");
+            AddBindings();
         }
 
         public static void Reload()
@@ -38,6 +30,11 @@ namespace Pulsarc.Utils
             Bindings.Clear();
             Get = Parser.ReadFile("config.ini");
 
+            AddBindings();
+        }
+
+        private static void AddBindings()
+        {
             AddBinding("Left");
             AddBinding("Up");
             AddBinding("Down");
@@ -47,9 +44,9 @@ namespace Pulsarc.Utils
             AddBinding("Continue");
             AddBinding("Retry");
             AddBinding("Convert");
+            AddBinding("Screenshot");
         }
-
-
+               
         public static void AddBinding(string key)
         {
             if (Bindings.ContainsKey(key))
