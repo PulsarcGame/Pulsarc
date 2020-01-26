@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to batch convert multiple maps in a single folder.
 - Optimization to Song Select.
 - Delay to refreshing the Song Select after typing in the search bar.
+- Screenshot function, screenshot key defined in `config.ini` (default for now is F11), images save to Pulsarc/Screenshots 
 
 ### Fixed
 - Setting decimal numbers for ApproachRate crashing the game.
