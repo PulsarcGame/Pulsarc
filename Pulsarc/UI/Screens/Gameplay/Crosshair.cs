@@ -9,10 +9,6 @@ namespace Pulsarc.UI.Screens.Gameplay
     {
         // The current diameter of this Crosshair.
         public float Diameter { get; private set; }
-        private float BaseDiameter { get; set; } = -1;
-
-        private bool hidden;
-        private float HiddenAdjustment => hidden ? (BaseDiameter + BaseAdjustment) / BaseDiameter : 1;
 
         // The current radius of this Crosshair.
         public float Radius => Diameter / 2;
@@ -47,10 +43,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Returns the z-axis Position of this Crosshair.
         /// </summary>
-        public float GetZLocation()
-        {
-            return ((Pulsarc.CurrentWidth / 2) * Texture.Width / 2) / Diameter;
-        }
+        public float GetZLocation() => Pulsarc.CurrentWidth / 2 * Texture.Width / 2 / Diameter;
         
         /// <summary>
         /// Resizes the crosshair, and sets diameter to the size
@@ -60,10 +53,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             Diameter = size;
 
-            if (BaseDiameter == -1)
-                BaseDiameter = Diameter;
-
-            base.Resize(Diameter * HiddenAdjustment);
+            base.Resize(Diameter);
         }
     }
 }
