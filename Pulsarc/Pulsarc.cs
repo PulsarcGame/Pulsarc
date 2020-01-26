@@ -25,8 +25,9 @@ namespace Pulsarc
     public class Pulsarc : WobbleGame
     {
         private static Pulsarc pulsarc;
-        public static SpriteBatch SpriteBatch => GameBase.Game.SpriteBatch;
-        public static GraphicsDeviceManager Graphics => GameBase.Game.Graphics;
+        public static new SpriteBatch SpriteBatch => GameBase.Game.SpriteBatch;
+        public static new GraphicsDeviceManager Graphics => GameBase.Game.Graphics;
+        public static new GraphicsDevice GraphicsDevice => Graphics.GraphicsDevice;
 
         // Whether or not the Cursor is shown.
         public static bool DisplayCursor { get; set; } = true;
@@ -197,6 +198,9 @@ namespace Pulsarc
 
             // Let ScreenManager handle the updating of the current active screen
             ScreenManager.Update(gameTime);
+
+            // See if we're taking a screenshot this frame
+            Screenshotter.Update();
 
             base.Update(gameTime);
         }

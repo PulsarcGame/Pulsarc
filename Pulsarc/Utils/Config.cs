@@ -44,9 +44,9 @@ namespace Pulsarc.Utils
             AddBinding("Continue");
             AddBinding("Retry");
             AddBinding("Convert");
+            AddBinding("Screenshot");
         }
-
-
+               
         public static void AddBinding(string key)
         {
             if (Bindings.ContainsKey(key))
