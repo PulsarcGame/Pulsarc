@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Experimental**: Hidden-mode Crosshair Offset, allows users to manually change the base size of the crosshair for Hidden.
+- **Experimental**: Crosshair turns invisible when playing with Hidden.
 - Option to batch convert multiple maps in a single folder.
 - Optimization to Song Select.
 - Delay to refreshing the Song Select after typing in the search bar.

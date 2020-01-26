@@ -13,7 +13,12 @@ namespace Pulsarc.UI.Screens.Gameplay
         // The current radius of this Crosshair.
         public float Radius => Diameter / 2;
 
-        public static float BaseAdjustment => Config.GetFloat("Gameplay", "HiddenCrosshairOffset");
+        // Time it takes (in ms) for the crosshair to fade to nothing in ms when Hidden is enabled.
+        private const int HIDDEN_FADE_OUT_TIME = 1000;
+
+        private bool hidden;
+        private double hidingAnimationStartTime = -1;
+        private bool FullyHidden => Opacity <= 0 && hidden;
 
         /// <summary>
         /// The crosshair, or "Judgement Circle" of Pulsarc.
@@ -38,6 +43,33 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Set the rotation of the object.
             // TODO: Make this customizeable by the beatmap/user setting.
             Rotation = (float)(45 * (Math.PI / 180));
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            // NOTE: Current implementation of Hidden gives less "oomph" to zooms
+            // because the crosshair gives you a reference point to recognize the zooms.
+            // When zooms happen with hidden and no crosshair, it looks like weird SV movement.
+            if (!FullyHidden)
+            {
+                Hide();
+            }
+        }
+
+        private void Hide()
+        {
+            double currentTime = PulsarcTime.CurrentElapsedTime;
+
+            if (hidingAnimationStartTime < 0)
+            {
+                hidingAnimationStartTime = currentTime;
+            }
+
+            double delta = currentTime - hidingAnimationStartTime;
+
+            Opacity = Math.Max((HIDDEN_FADE_OUT_TIME - (float)delta) / HIDDEN_FADE_OUT_TIME, 0);
         }
 
         /// <summary>
