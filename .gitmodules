@@ -1,0 +1,6 @@
+[submodule "Wobble"]
+	path = Wobble
+	url = https://github.com/rubiksmaster02/Wobble.git
+[submodule "MonoGame"]
+	path = MonoGame
+	url = https://github.com/Quaver/MonoGame.git
