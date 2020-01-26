@@ -33,7 +33,7 @@ namespace Pulsarc.Utils
                 PulsarcLogger.Debug("test");
 
                 Screenshotting = true;
-                await Task.Run(TakeScreenshot);
+                TakeScreenshot();
                 Screenshotting = false;
                 
                 // Make sure we don't accidentally rapid-fire screenshots from holding.
