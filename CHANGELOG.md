@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Searchbox entering the names of keys instead of proper typing (i.e. "space", "leftalt")
 - Positioning of the elements on ScoreCards and the Grade on the result screen.
 - Leaderboards only showing at max the same amount of ranks as there were beatmap cards on the screen.
+- Sliders not dragging.
 
 ## [1.3.1-alpha] - 2020-01-26
 

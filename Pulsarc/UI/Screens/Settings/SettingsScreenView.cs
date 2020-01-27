@@ -145,7 +145,7 @@ namespace Pulsarc.UI.Screens.Settings
 
         private void handleMouseHoldInput()
         {
-            Point pos = InputManager.LastMouseClick.Key.Position;
+            Point pos = InputManager.MouseState.Position;
 
             if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
                 foreach (SettingsGroup settingsGroup in Groups)
