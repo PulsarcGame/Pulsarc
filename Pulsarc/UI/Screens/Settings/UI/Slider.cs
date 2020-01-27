@@ -81,7 +81,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         public void Update()
         {
-            Title.Update(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
+            Title.RestartThenAppend(" : " + Math.Round(Value / (float)DisplayDivider, DisplayPrecision).ToString());
         }
 
         public void SetSelectorPercent(float percent)
