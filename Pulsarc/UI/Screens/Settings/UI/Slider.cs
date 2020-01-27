@@ -86,7 +86,6 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public void SetSelectorPercent(float percent)
         {
-            PulsarcLogger.Debug(percent.ToString(), LogType.Runtime);
             SetSelector((int) (MinValue + (MaxValue - MinValue) * percent));
         }
 
