@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0-alpha] - 2020-01-26
+
 ### Added
 - **Experimental**: Crosshair turns invisible when playing with Hidden.
 - Option to batch convert multiple maps in a single folder.
@@ -81,9 +83,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.2.0-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.0-alpha...HEAD
+[1.3.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.2.0-alpha...v1.3.0-alpha
 [1.2.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.1-alpha...v1.2.0-alpha
 [1.1.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.0-alpha...v1.1.1-alpha
 [1.1.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.0.1-alpha...v1.1.0-alpha
 [1.0.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.0.0-pre-release...v1.0.1-alpha
-[1.0.0-pre-release]: https://github.com/PulsarcGame/Pulsarc/tag/v1.0.0-pre-release
+[1.0.0-pre-release]: https://github.com/PulsarcGame/Pulsarc/tree/v1.0.0-pre-release
