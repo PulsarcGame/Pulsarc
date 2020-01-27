@@ -41,7 +41,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         public void Clear() => textDisplay.Text.Clear();
 
-        public string GetText() => textDisplay.Text.ToString();
+        public string GetText() => textDisplay.CurrentText;
+
+        public void SetText(string text) => textDisplay.Update(text);
+
+        public void DeleteLastCharacter()
+            => textDisplay.Update(
+                textDisplay.CurrentText.Substring(0, textDisplay.CurrentText.Length - 1));
 
         public override void Draw()
         {

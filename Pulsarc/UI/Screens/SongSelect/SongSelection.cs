@@ -30,6 +30,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         public float SelectedFocus = 0;
         public BeatmapCard FocusedCard { get; set; }
 
+        // The time when the last key was pressed
         private double lastKeyPressTime;
 
         // Returns true once a second has passed since the last RestartKeyPressTimer = true call
@@ -68,14 +69,20 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// </summary>
         public void RefreshBeatmaps(string keyword = "")
         {
+            keyword = keyword.ToLower();
+
             List<Beatmap> beatmaps = new List<Beatmap>();
             Cards = new List<BeatmapCard>();
 
             List<BeatmapData> data = DataManager.BeatmapDB.GetBeatmaps();
 
             for (int i = 0; i < data.Count; i++)
+            {
                 if (keyword == "" || data[i].Match(keyword))
+                {
                     beatmaps.Add(BeatmapHelper.LoadLight(data[i]));
+                }
+            }
 
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
@@ -167,10 +174,6 @@ namespace Pulsarc.UI.Screens.SongSelect
 
                 switch (press.Value)
                 {
-                    // If Escape has been pressed, go back one screen.
-                    case Keys.Escape:
-                        ScreenManager.RemoveScreen(true);
-                        break;
                     // If F5 has been pressed, refresh beatmaps
                     case Keys.F5:
                         RescanBeatmaps();
@@ -179,9 +182,18 @@ namespace Pulsarc.UI.Screens.SongSelect
                     case Keys.Enter:
                         FocusedCard.OnClick();
                         break;
-                    // If Delete or Backspace is pressed, clear the search bar
+                    // If Escape has been pressed with no text in the searchbox, go back one screen.
+                    case Keys.Escape:
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
+                        {
+                            ScreenManager.RemoveScreen(true);
+                            break;
+                        }
+                        // If there was text in the searchbox, fall through to Keys.Delete, which
+                        // clears the box
+                        goto case Keys.Delete;
+                    // If Delete is pressed, clear the search bar
                     case Keys.Delete:
-                    case Keys.Back:
                         // If there's nothing in the box, don't refresh.
                         if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
                         {
@@ -191,31 +203,47 @@ namespace Pulsarc.UI.Screens.SongSelect
                         GetSongSelectionView().SearchBox.Clear();
                         RefreshBeatmaps();
                         break;
+                    // If the backspace is pressed, delete the last character
+                    case Keys.Back:
+                        // Reset the timer
+                        RestartKeyPressTimer = true;
+
+                        GetSongSelectionView().SearchBox.DeleteLastCharacter();
+                        break;
                     // If none of the above, type into the search bar
-                    // TODO: Ignore keypressses like CTRL, SHIFT, ALT, etc
                     // TODO? Ignore keypresses unless clicked on
                     default:
-                        if (!KeyboardManager.IsUniqueKeyPress(press.Value))
+                        // If the press is not an acceptable typing character, or the key hasn't been
+                        // released yet, break.
+                        if (!XnaKeyHelper.IsTypingCharacter(press.Value)
+                            || !KeyboardManager.IsUniqueKeyPress(press.Value))
                         {
                             break;
                         }
 
+                        // Reset the timer
                         RestartKeyPressTimer = true;
 
-                        GetSongSelectionView().SearchBox.AddText(InputManager.Caps
-                            ? Enum.GetName(typeof(Keys), press.Value)
-                            : Enum.GetName(typeof(Keys), press.Value).ToLower());
+                        string key = XnaKeyHelper.GetStringFromKey(press.Value);
+
+                        // If caps/shift isn't on, lowercase the text
+                        if (!InputManager.Caps)
+                        {
+                            key = key.ToLower();
+                        }
+
+                        GetSongSelectionView().SearchBox.AddText(key);
                         break;
                 }
             }
 
             // If one second has passed since the last search box key press, refresh the maps.
-            if (OneSecondSinceLastKeyPress && RestartKeyPressTimer)
+            if (RestartKeyPressTimer && OneSecondSinceLastKeyPress)
             {
                 // Don't call this block every frame
                 RestartKeyPressTimer = false;
 
-                RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText().ToLower());
+                RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText());
             }
         }
 

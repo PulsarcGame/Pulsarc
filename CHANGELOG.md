@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2-alpha] - 2020-01-27
+
+### Changed
+- Backspace gets rid of the last character instead of clearing the searchbox.
+- Pressing escape clears the searchbox if there is text in it. When there's no text, pressing escape quits to the main menu.
+
+### Fixed
+- Searchbox entering the names of keys instead of proper typing (i.e. "space", "leftalt")
+- Positioning of the elements on ScoreCards and the Grade on the result screen.
+- Leaderboards only showing at max the same amount of ranks as there were beatmap cards on the screen.
+
 ## [1.3.1-alpha] - 2020-01-26
 
 ### Fixed
@@ -88,7 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.1-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...HEAD
+[1.3.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.1-alpha...v1.3.2-alpha
 [1.3.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.0-alpha...v1.3.1-alpha
 [1.3.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.2.0-alpha...v1.3.0-alpha
 [1.2.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.1.1-alpha...v1.2.0-alpha

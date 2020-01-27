@@ -8,7 +8,11 @@ namespace Pulsarc.UI
 {
     public class TextDisplayElement : Drawable
     {
+        // The "name" of this TDE. This will be the starting text for the TDE, but it can be changed.
         public string Name { get; set; }
+        
+        // Gets the current text displayed by this TDE
+        public string CurrentText => Text.ToString();
 
         // Text data
         private SpriteFont font => AssetsManager.Fonts["DefaultFont"];
@@ -42,21 +46,39 @@ namespace Pulsarc.UI
             // base.ChangePosition() avoids this crash.
             base.ChangePosition(position);
             processedPosition = TruePosition;
-            Update("");
+            Update(Name);
         }
 
         /// <summary>
-        /// Update the text with new text added to name.
+        /// Update the text to display the provided value.
         /// </summary>
         /// <param name="value">The text to change to</param>
         public void Update(string value)
         {
             Text.Clear();
-            Text.Append(Name).Append(value);
+            Text.Append(value);
             ReprocessPosition();
 
             caught = false;
         }
+
+        /// <summary>
+        /// Adds the provided value to the end of this TDE
+        /// </summary>
+        /// <param name="value"></param>
+        public void Append(string value) => Update(CurrentText + value);
+
+        /// <summary>
+        /// Restarts this TDE and changes the text to Name.
+        /// </summary>
+        public void RestartToName() => Update(Name);
+
+        /// <summary>
+        /// Clears the text, changes it to "Name + value";
+        /// The Old Update() method did something similar to this.
+        /// </summary>
+        /// <param name="value"></param>
+        public void RestartThenAppend(string value) => Update(Name + value);
 
         /// <summary>
         /// Reprocess the position of this TDE.
