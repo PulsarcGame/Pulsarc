@@ -209,12 +209,15 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             DrawBackgrounds();
 
-            for (int i = 0; i < cards.Count; i++)
+            // Keep things in one for-loop for optimization
+            for (int i = 0; i < Math.Max(cards.Count, scores.Count); i++)
             {
-                cards[i].AdjustClickDistance();
-                cards[i].Draw();
+                if (i < cards.Count)
+                {
+                    cards[i].AdjustClickDistance();
+                    cards[i].Draw();
+                }
 
-                // Might as well through this here instead of having a second for loop taking up time.
                 if (i < scores.Count)
                 {
                     scores[i].Draw();
