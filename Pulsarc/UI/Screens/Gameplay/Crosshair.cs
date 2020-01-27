@@ -18,7 +18,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private bool hidden;
         private double hidingAnimationStartTime = -1;
-        private bool FullyHidden => Opacity <= 0 && hidden;
+        private bool FullyHidden => Opacity <= 0;
 
         /// <summary>
         /// The crosshair, or "Judgement Circle" of Pulsarc.
@@ -52,7 +52,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // NOTE: Current implementation of Hidden gives less "oomph" to zooms
             // because the crosshair gives you a reference point to recognize the zooms.
             // When zooms happen with hidden and no crosshair, it looks like weird SV movement.
-            if (!FullyHidden)
+            if (hidden && !FullyHidden)
             {
                 Hide();
             }
