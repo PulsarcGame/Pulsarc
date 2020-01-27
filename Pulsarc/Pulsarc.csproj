@@ -29,8 +29,7 @@
       <SkinsSource Include="$(ProjectDir)Skins\**\*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(SkinsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Skins\%(RecursiveDir)">
-    </Copy>
+    <Copy SourceFiles="@(SkinsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Skins\%(RecursiveDir)"/>
 
 
     <!-- Copy Songs -->
@@ -38,8 +37,7 @@
       <SongsSource Include="$(ProjectDir)Songs\**\*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)">
-    </Copy>
+    <Copy SourceFiles="@(SongsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Songs\%(RecursiveDir)"/>
 
 
     <!-- Copy Logs -->
@@ -47,8 +45,7 @@
       <LogsSource Include="$(ProjectDir)Logs\*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(LogsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Logs\%(RecursiveDir)">
-    </Copy>
+    <Copy SourceFiles="@(LogsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Logs\%(RecursiveDir)"/>
 
 
     <!-- Copy Required DLLs and files -->
@@ -60,15 +57,11 @@
       <config Include="$(ProjectDir)config.ini" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(contentSource)" DestinationFolder="$(ProjectDir)$(OutDir)Content\%(RecursiveDir)">
-    </Copy>
-    <Copy SourceFiles="@(x64Source)" DestinationFolder="$(ProjectDir)$(OutDir)x64\%(RecursiveDir)">
-    </Copy>
-    <Copy SourceFiles="@(x86Source)" DestinationFolder="$(ProjectDir)$(OutDir)x86\%(RecursiveDir)">
-    </Copy>
-    <Copy SourceFiles="@(dylibSource)" DestinationFolder="$(ProjectDir)$(OutDir)">
-    </Copy>
-    <Copy SourceFiles="@(config)" DestinationFolder="$(ProjectDir)$(OutDir)">
-    </Copy>
+    <Copy SourceFiles="@(contentSource)" DestinationFolder="$(ProjectDir)$(OutDir)Content\%(RecursiveDir)"/>
+    <Copy SourceFiles="@(x64Source)" DestinationFolder="$(ProjectDir)$(OutDir)x64\%(RecursiveDir)"/>
+    <Copy SourceFiles="@(x86Source)" DestinationFolder="$(ProjectDir)$(OutDir)x86\%(RecursiveDir)"/>
+    <Copy SourceFiles="@(dylibSource)" DestinationFolder="$(ProjectDir)$(OutDir)"/>
+    <Copy SourceFiles="@(config)" DestinationFolder="$(ProjectDir)$(OutDir)"/>
+    <Copy SourceFiles="Wobble.Resources.dll" DestinationFolder="$(ProjectDir)$(OutDir)"/>
   </Target>
 </Project>
