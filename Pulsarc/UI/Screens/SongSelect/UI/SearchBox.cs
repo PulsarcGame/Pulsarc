@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    class SearchBox : Drawable
+    public class SearchBox : Drawable
     {
         private TextDisplayElement textDisplay;
 
@@ -29,34 +29,19 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             int offsetY = Skin.GetConfigInt(config, section, $"{name}Y");
 
             textDisplay = new TextDisplayElement(search, startPos, fontSize, textAnchor, textColor);
-            textDisplay.ScaledMove(offsetX, offsetY);
-            textDisplay.processedPosition = textDisplay.truePosition;
+            textDisplay.Move(offsetX, offsetY);
+            textDisplay.processedPosition = textDisplay.TruePosition;
         }
 
-        public void Update(string text)
-        {
-            textDisplay.Update(text);
-        }
+        public void Update(string text) => textDisplay.Update(text);
 
-        public void AddText(string c)
-        {
-            textDisplay.Text.Append(c);
-        }
+        public void AddText(string c) => textDisplay.Text.Append(c);
 
-        public void RemoveLast()
-        {
-            textDisplay.Text.Length--;
-        }
+        public void RemoveLast() => textDisplay.Text.Length--;
 
-        public void Clear()
-        {
-            textDisplay.Text.Clear();
-        }
+        public void Clear() => textDisplay.Text.Clear();
 
-        public string GetText()
-        {
-            return textDisplay.Text.ToString();
-        }
+        public string GetText() => textDisplay.Text.ToString();
 
         public override void Draw()
         {

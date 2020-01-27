@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 using System;
+using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
@@ -71,7 +73,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
             int position = (int)(percentagePosition * selectorRange);
 
-            Selector.ChangePosition(new Vector2(anchorPosition.X + EdgeOffset + position, anchorPosition.Y));
+            Selector.ChangePosition(new Vector2(Position.X + EdgeOffset + position, Position.Y));
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public void SetSelectorPercent(float percent)
         {
-            Console.WriteLine(percent);
+            PulsarcLogger.Debug(percent.ToString(), LogType.Runtime);
             SetSelector((int) (MinValue + (MaxValue - MinValue) * percent));
         }
 
@@ -127,10 +129,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return Value / (float) DisplayDivider;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            Selector.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            Selector.Move(delta, heightScaled);
         }
 
         public override void Draw()
@@ -139,9 +141,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
             Selector.Draw();
         }
 
-        public override void OnClick(Point mousePosition)
+        public override void OnClick(Vector2 mousePosition)
         {
-            SetSelectorPercent((mousePosition.X - truePosition.X) / ((Texture.Width) * Scale));
+            SetSelectorPercent((mousePosition.X - TruePosition.X) / ((Texture.Width) * Scale));
         }
     }
 }

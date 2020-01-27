@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
@@ -80,7 +81,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     catch
                                     {
-                                        Console.WriteLine($"Incorrect value in field : {key}");
+                                        PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
                                     }
                                     break;
                                 case "Mode":
@@ -91,7 +92,7 @@ namespace Pulsarc.Utils.BeatmapConversion
                                     }
                                     catch
                                     {
-                                        Console.WriteLine($"Incorrect value in field : {key}");
+                                        PulsarcLogger.Error($"Incorrect value in field : {key}", LogType.Runtime);
                                     }
                                     break;
                             }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
@@ -21,15 +22,7 @@ namespace Pulsarc.Utils
 
             Get = Parser.ReadFile("config.ini");
 
-            AddBinding("Left");
-            AddBinding("Up");
-            AddBinding("Down");
-            AddBinding("Right");
-
-            AddBinding("Pause");
-            AddBinding("Continue");
-            AddBinding("Retry");
-            AddBinding("Convert");
+            AddBindings();
         }
 
         public static void Reload()
@@ -37,6 +30,11 @@ namespace Pulsarc.Utils
             Bindings.Clear();
             Get = Parser.ReadFile("config.ini");
 
+            AddBindings();
+        }
+
+        private static void AddBindings()
+        {
             AddBinding("Left");
             AddBinding("Up");
             AddBinding("Down");
@@ -46,9 +44,9 @@ namespace Pulsarc.Utils
             AddBinding("Continue");
             AddBinding("Retry");
             AddBinding("Convert");
+            AddBinding("Screenshot");
         }
-
-
+               
         public static void AddBinding(string key)
         {
             if (Bindings.ContainsKey(key))
@@ -109,14 +107,14 @@ namespace Pulsarc.Utils
 
         public static void SetValue(string category, string key, object value)
         {
-            Console.WriteLine($"Set {category} {key} to {value.ToString()}");
+            PulsarcLogger.Important($"Set {category} {key} to {value.ToString()}", LogType.Runtime);
             Get[category][key] = value.ToString();
         }
 
         public static void SaveConfig()
         {
             Parser.WriteFile("config.ini", Get);
-            Console.WriteLine("Saved config");
+            PulsarcLogger.Important("Saved config", LogType.Runtime);
         }
     }
 }

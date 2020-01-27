@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.Skinning;
+using Wobble.Logging;
 
 namespace Pulsarc.Utils.BeatmapConversion
 {
@@ -137,7 +138,7 @@ namespace Pulsarc.Utils.BeatmapConversion
 
             float convertedZLocation = float.Parse(evt.Data[1]) * playerDistanceToZLocationFactor;
             
-            double convertedZoomLevel = Math.Round((Pulsarc.BaseWidth / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
+            double convertedZoomLevel = Math.Round((Pulsarc.BASE_WIDTH / 2) * (Skin.Assets["crosshair"].Width / 2) / convertedZLocation,2);
 
             return new ZoomEvent($"{time},1,-1,{convertedZoomLevel},0");
         }
@@ -171,7 +172,14 @@ namespace Pulsarc.Utils.BeatmapConversion
                     string backgroundPath = $"{folder_path}/{map.Background}";
 
                     if (File.Exists(backgroundPath))
-                        File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        try
+                        {
+                            File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        }
+                        catch
+                        {
+                            PulsarcLogger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
+                        }
                     else
                         map.Background = "";
 

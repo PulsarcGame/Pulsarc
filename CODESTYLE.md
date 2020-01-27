@@ -241,6 +241,11 @@ for (int i = 0; i < 100; ++i)   // Right
 for (int i=0 ; i<100 ; ++i)     // Wrong
 ```
 
+## `var` vs Type
+**DO** use the variable type.
+
+**DO NOT** use `var`
+
 ## Naming
 camelCasing - First word all lowercase, following words initial uppercase.
 

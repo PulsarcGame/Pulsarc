@@ -36,12 +36,12 @@ namespace Pulsarc.UI
             Color = color ?? Color.White;
             Text = new StringBuilder(20);
 
-            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight);
+            fontScale = fontSize / 64f * (Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT);
 
             // Calling ReprocessPosition() too early causes a crash
             // base.ChangePosition() avoids this crash.
             base.ChangePosition(position);
-            processedPosition = truePosition;
+            processedPosition = TruePosition;
             Update("");
         }
 
@@ -63,11 +63,11 @@ namespace Pulsarc.UI
         /// </summary>
         public void ReprocessPosition()
         {
-            float newX = truePosition.X;
-            float newY = truePosition.Y;
+            float newX = TruePosition.X;
+            float newY = TruePosition.Y;
             Vector2 size = font.MeasureString(Text) * fontScale;
-            size.X *= Pulsarc.GetDimensions().X / Pulsarc.BaseWidth;
-            size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BaseHeight;
+            size.X *= Pulsarc.GetDimensions().X / Pulsarc.BASE_WIDTH;
+            size.Y *= Pulsarc.GetDimensions().Y / Pulsarc.BASE_HEIGHT;
 
             switch (Anchor)
             {
@@ -108,14 +108,9 @@ namespace Pulsarc.UI
             processedPosition.Y = newY;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            // I don't remember why this is here, but it's working so...
-            // I'll clean this up when I rewrite Move() - FRUP
-            float x = position.X / Pulsarc.WidthScale;
-            float y = position.Y * Pulsarc.HeightScale;
-
-            base.Move(new Vector2(x, y), scaledPositioning);
+            base.Move(delta, heightScaled);
             ReprocessPosition();
         }
 
@@ -136,7 +131,7 @@ namespace Pulsarc.UI
             }
             catch
             {
-                Logger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
+                PulsarcLogger.Error($"Could not write {Text}, Aborting Draw() calls for this TextDisplayElement until Update() has been called.", LogType.Runtime);
                 caught = true; // Don't need to spam the console with Errors
             }
         }

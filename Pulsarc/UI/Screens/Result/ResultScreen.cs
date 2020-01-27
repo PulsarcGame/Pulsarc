@@ -89,8 +89,6 @@ namespace Pulsarc.UI.Screens.Result
             string details = $"Finished {Beatmap.Title}";
             string state = $"Grade: {scoreData.grade} | Score: {scoreData.score} | Acc = {Math.Round(scoreData.accuracy * 100, 2)}%";
 
-            Console.WriteLine(details + "\n" + state);
-
             PulsarcDiscord.SetStatus(details, state);
         }
     }

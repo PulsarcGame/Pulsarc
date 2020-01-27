@@ -17,7 +17,7 @@ namespace Pulsarc.UI.Screens.Quit
         public override void Init()
         {
             base.Init();
-            Pulsarc.Exit();
+            Pulsarc.Quit();
             Environment.Exit(0);
         }
 

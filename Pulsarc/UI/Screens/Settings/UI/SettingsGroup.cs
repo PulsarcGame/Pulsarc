@@ -42,13 +42,13 @@ namespace Pulsarc.UI.Screens.Settings.UI
             drawnPart.Height += setting.drawnPart.Height;
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            Icon.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            Icon.Move(delta, heightScaled);
 
             foreach (KeyValuePair<string, Setting> settp in Settings)
-                settp.Value.Move(position);
+                settp.Value.Move(delta, heightScaled);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <returns></returns>
         public Vector2 GetNextPosition()
         {
-            return new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
+            return new Vector2(TruePosition.X, TruePosition.Y + drawnPart.Height);
         }
 
         public override void Draw()
@@ -81,7 +81,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <param name="mousePosition"></param>
         /// <param name="hold"></param>
-        public void OnClick(Point mousePosition, bool hold)
+        public void OnClick(Vector2 mousePosition, bool hold)
         {
             foreach (KeyValuePair<string, Setting> entry in Settings)
             {
@@ -108,6 +108,9 @@ namespace Pulsarc.UI.Screens.Settings.UI
                 }
             }
         }
+
+        public void OnClick(Point mousePosition, bool hold)
+            => OnClick(new Vector2(mousePosition.X, mousePosition.Y), hold);
 
         /// <summary>
         /// Save all the settings into the config.ini

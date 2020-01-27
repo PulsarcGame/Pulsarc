@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -58,6 +58,14 @@
     </ItemGroup>
     
     <Copy SourceFiles="@(LogsSource)" DestinationFolder="$(ProjectDir)$(OutDir)Logs\%(RecursiveDir)">
+    </Copy>
+    
+    <!-- Copy Screenshots-->
+    <ItemGroup>
+      <LogsSource Include="$(ProjectDir)Screenshots\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(ScreenshotSource)" DestinationFolder="$(ProjectDir)$(OutDir)Screenshots\%(RecursiveDir)">
     </Copy>
 
 

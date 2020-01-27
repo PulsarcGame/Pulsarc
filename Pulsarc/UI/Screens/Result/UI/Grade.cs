@@ -32,20 +32,12 @@ namespace Pulsarc.UI.Screens.Result.UI
             ChangePosition(new Vector2(position.X - currentSize.X / 2, position.Y - currentSize.Y / 2));
         }
 
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
 
             foreach (Grade subGrade in suffixGrades)
-                subGrade.Move(position, scaledPositioning);
-        }
-
-        public override void ScaledMove(Vector2 position)
-        {
-            base.ScaledMove(position);
-
-            foreach (Grade subGrade in suffixGrades)
-                subGrade.ScaledMove(position);
+                subGrade.Move(delta, heightScaled);
         }
 
         public override void Draw()

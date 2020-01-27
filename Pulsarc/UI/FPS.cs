@@ -1,15 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using Pulsarc.Utils;
 using System.Diagnostics;
 
 namespace Pulsarc.UI
 {
     public class FPS : TextDisplayElementFixedSize
     {
-        private Stopwatch fpsWatch;
+        private double lastRestartTime;
 
-        private static int fpsResolution;
-        private static int frames = 0;
+        // How many times per second the FPS counter updates.
+        // TODO? Make FPSResolution customizeable by player
+        private static int updatesPerSecond = 10;
+
+        // How many frames have passed since the last update
+        private static int frames = -1;
 
         /// <summary>
         /// A little tracker in the corner of the screen that gives an
@@ -20,24 +25,18 @@ namespace Pulsarc.UI
         /// <param name="anchor">Anchor position for the FPS counter.</param>
         public FPS(Vector2 position, int fontSize = 14, Anchor anchor = Anchor.TopLeft)
             : base("", position, "fps", fontSize, anchor)
-        {
-            // TODO? Make FPSResolution customizeable by player
-            fpsResolution = 10;
-
-            fpsWatch = new Stopwatch();
-            fpsWatch.Start();
-        }
+        { }
 
         public override void Draw()
         {
             frames++;
 
-            if (fpsWatch.ElapsedMilliseconds > 1000 / fpsResolution)
+            if (PulsarcTime.CurrentElapsedTime > lastRestartTime + 1000 / updatesPerSecond)
             {
-                Update(frames * fpsResolution);
+                Update(frames * updatesPerSecond);
 
-                frames = 0;
-                fpsWatch.Restart();
+                lastRestartTime = PulsarcTime.CurrentElapsedTime;
+                frames = -1;
             }
 
             base.Draw();

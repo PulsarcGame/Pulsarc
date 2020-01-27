@@ -126,7 +126,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             JudgementValue judgement = Judgement.GetJudgementValueByError(Math.Abs(error));
          
-            int baseX = (int)(truePosition.X + Size.X / 2);
+            int baseX = (int)(TruePosition.X + Size.X / 2);
             int sectionLength = getJudgePixelLength();
             int sectionX = Judgement.Judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.Judge - Judgement.GetPreviousJudgementValue(judgement).Judge;
@@ -138,7 +138,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
 
             int errorX = (int) ((sectionX + (1-judgePos) * sectionLength) * Math.Sign(error));
 
-            return new Vector2(baseX - errorX, truePosition.Y);
+            return new Vector2(baseX - errorX, TruePosition.Y);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// </summary>
         public override void Draw()
         {
-            Pulsarc.SpriteBatch.Draw(Texture, position: truePosition, rotation: Rotation, origin: origin, color: Color.White * 0.3f);
+            Pulsarc.SpriteBatch.Draw(Texture, position: TruePosition, rotation: Rotation, origin: origin, color: Color.White * 0.3f);
 
             foreach (KeyValuePair<double, int> error in errors)
             {

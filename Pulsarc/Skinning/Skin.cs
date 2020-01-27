@@ -75,7 +75,7 @@ namespace Pulsarc.Skinning
                 Loaded = true;
             }
             else
-                Console.WriteLine($"Could not find the skin {name}");
+                PulsarcLogger.Error($"Could not find the skin {name}", LogType.Network);
         }
 
         #region Loading Methods
@@ -210,7 +210,7 @@ namespace Pulsarc.Skinning
                 // Don't load, throw a console error, and return default texture.
                 catch
                 {
-                    Console.WriteLine($"Failed to load {asset} in {path}, make sure it is a .png or .jpg file!");
+                    PulsarcLogger.Warning($"Failed to load {asset} in {path}, make sure it is a .png or .jpg file!", LogType.Runtime);
                     return DefaultTexture;
                 }
             }
@@ -364,7 +364,7 @@ namespace Pulsarc.Skinning
             // If the color wasn't formatted right, display a console error and return black instead
             catch (Exception e)
             {
-                Logger.Error($"{key} was not formatted correctly." +
+                PulsarcLogger.Error($"{key} was not formatted correctly." +
                     $"\nPlease format {key} with \"{{red}},{{green}},{{blue}},[alpha]\", where alpha is optional:" +
                     $"\n Each value can be from 0 to 255. For example for Black color write {key} =0,0,0,255." +
                     $"\nBecause the format was incorrect, the Color for {key} will be Black instead.", LogType.Runtime);

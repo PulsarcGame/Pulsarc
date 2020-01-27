@@ -13,7 +13,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
     public abstract class Card : Drawable
     {
         // Keep track of whether this card has been clicked on or not.
-        protected bool IsClicked = false;
+        protected bool IsSelected = false;
 
         // List of text elements to display
         protected List<TextDisplayElement> TextElements = new List<TextDisplayElement>();
@@ -24,10 +24,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected string Config, Section;
 
         public Card(Texture2D texture, Vector2 position, Anchor anchor)
-            : base(texture, position, anchor: anchor)
-        {
-            SetConfigAndSection();
-        }
+            : base(texture, position, anchor: anchor) => SetConfigAndSection();
 
         /// <summary>
         /// Set the config specific variables for the GetSkinnable methods.
@@ -39,12 +36,14 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             base.Draw();
 
             for (int i = 0; i < TextElements.Count; i++)
+            {
                 TextElements[i].Draw();
+            }
         }
 
-        public override void Move(Vector2 delta, bool scaledPositioning = true)
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(delta, scaledPositioning);
+            base.Move(delta, heightScaled);
             UpdateElements();
         }
 
@@ -62,11 +61,16 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         protected virtual void UpdateElements()
         {
             // Don't bother updating if we aren't on screen.
-            if (!OnScreen())
-                return;
+            if (!OnScreen()) { return; }
 
             for (int i = 0; i < TextElements.Count; i++)
-                TextElements[i]?.ChangePosition(AnchorUtil.FindDrawablePosition(TextElementStartAnchors[i], this) + TextElementOffsets[i]);
+            {
+                TextElements[i]?.ChangePosition
+                (
+                    AnchorUtil.FindDrawablePosition(TextElementStartAnchors[i], this)
+                        + TextElementOffsets[i]
+                );
+            }
         }
 
         /// <summary>
@@ -95,7 +99,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             //Add TDE
             TextElements.Add(text);
-            TextElementOffsets.Add(text.anchorPosition - AnchorUtil.FindDrawablePosition(startAnchor, this));
+            TextElementOffsets.Add(text.Position - AnchorUtil.FindDrawablePosition(startAnchor, this));
             TextElementStartAnchors.Add(startAnchor);
         }
 
@@ -105,40 +109,28 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The float value of the key provided.</returns>
-        protected float GetSkinnableFloat(string key)
-        {
-            return Skin.GetConfigFloat(Config, Section, key);
-        }
+        protected float GetSkinnableFloat(string key) => Skin.GetConfigFloat(Config, Section, key);
 
         /// <summary>
         /// Find a int from the Metadata section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The int value of the key provided.</returns>
-        protected int GetSkinnableInt(string key)
-        {
-            return Skin.GetConfigInt(Config, Section, key);
-        }
+        protected int GetSkinnableInt(string key) => Skin.GetConfigInt(Config, Section, key);
 
         /// <summary>
         /// Find an Anchor from the Metadata section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The Anchor of the key provided.</returns>
-        protected Anchor GetSkinnableAnchor(string key)
-        {
-            return Skin.GetConfigAnchor(Config, Section, key);
-        }
+        protected Anchor GetSkinnableAnchor(string key) => Skin.GetConfigAnchor(Config, Section, key);
 
         /// <summary>
         /// Find a string from the Metadata section of the Song Select config.
         /// </summary>
         /// <param name="key">The key of the value to find.</param>
         /// <returns>The string of the key provided.</returns>
-        protected string GetSkinnableString(string key)
-        {
-            return Skin.GetConfigString(Config, Section, key);
-        }
+        protected string GetSkinnableString(string key) => Skin.GetConfigString(Config, Section, key);
         #endregion
     }
 }

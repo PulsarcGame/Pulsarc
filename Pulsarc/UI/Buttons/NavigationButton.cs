@@ -60,12 +60,12 @@ namespace Pulsarc.UI.Buttons
         /// <summary>
         /// Move the Navigation Button and its parts.
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="scaledPositioning"></param>
-        public override void Move(Vector2 position, bool scaledPositioning = true)
+        /// <param name="delta"></param>
+        /// <param name="heightScaled"></param>
+        public override void Move(Vector2 delta, bool? heightScaled = null)
         {
-            base.Move(position, scaledPositioning);
-            text.Move(position, scaledPositioning);
+            base.Move(delta, heightScaled);
+            text.Move(delta, heightScaled);
         }
 
         public override void Draw()

@@ -4,6 +4,8 @@ using System.IO;
 using System.Globalization;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.Utils.SQLite;
+using Wobble.Logging;
+using Pulsarc.Utils;
 
 namespace Pulsarc.Beatmaps
 {
@@ -53,7 +55,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Unknown beatmap field : {type}");
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 }
                                 break;
                             case "Background":
@@ -63,9 +65,9 @@ namespace Pulsarc.Beatmaps
                                         parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
                                     }
                                     catch
-                                    {
-                                        Console.WriteLine($"Unknown beatmap field : {type}");
-                                    }
+                                {
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                }
                                     break;
                                 }
                             case "PreviewTime":
@@ -76,7 +78,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Unknown beatmap field : {type}");
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 }
                                 break;
                             case "Difficulty":
@@ -86,7 +88,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Unknown beatmap field : {type}");
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 }
                                 break;
                             case "Events":
@@ -96,7 +98,7 @@ namespace Pulsarc.Beatmaps
                                 state = type;
                                 break;
                             default:
-                                Console.WriteLine($"Unknown beatmap field : {type}");
+                                PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 break;
                         }
                     }
@@ -118,7 +120,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Invalid Event : {line}");
+                                    PulsarcLogger.Error($"Invalid Event : {line}", LogType.Runtime);
                                 }
                                 break;
                             case "TimingPoints":
@@ -128,7 +130,7 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Invalid TimingPoint : {line}");
+                                    PulsarcLogger.Error($"Invalid TimingPoint : {line}", LogType.Runtime);
                                 }
                                 break;
                             case "Arcs":
@@ -138,11 +140,11 @@ namespace Pulsarc.Beatmaps
                                 }
                                 catch
                                 {
-                                    Console.WriteLine($"Invalid Arc : {line}");
+                                    PulsarcLogger.Error($"Invalid Arc : {line}", LogType.Runtime);
                                 }
                                 break;
                             default:
-                                Console.WriteLine($"Invalid state : {line}");
+                                PulsarcLogger.Error($"Invalid state : {line}", LogType.Runtime);
                                 break;
 
                         }
@@ -259,7 +261,7 @@ namespace Pulsarc.Beatmaps
             }
             catch
             {
-                Console.WriteLine($"Trying to write invalid property {property}");
+                PulsarcLogger.Error($"Trying to write invalid property {property}", LogType.Runtime);
             }
         }
 

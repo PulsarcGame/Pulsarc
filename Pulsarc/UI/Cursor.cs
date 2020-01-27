@@ -20,7 +20,7 @@ namespace Pulsarc.UI
 
         public void SetPos(Vector2 position)
         {
-            truePosition = position;
+            TruePosition = position * Wobble.Window.WindowManager.ScreenScale;
         }
     }
 }

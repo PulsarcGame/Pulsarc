@@ -127,26 +127,30 @@ namespace Pulsarc.UI.Screens.Settings
 
         private void handleSingleClicks()
         {
-            if (MouseManager.IsUniqueClick(MouseButton.Left))
+            Point pos = InputManager.LastMouseClick.Key.Position;
+
+            if (InputManager.IsLeftClick())
             {
-                if (button_back.Hovered(MouseManager.CurrentState.Position))
+                if (button_back.Hovered(pos))
                     button_back.OnClick();
 
-                if (button_save.Hovered(MouseManager.CurrentState.Position))
+                if (button_save.Hovered(pos))
                     button_save.OnClick(this);
 
                 foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
-                        settingsGroup.OnClick(MouseManager.CurrentState.Position, false);
+                    if (settingsGroup.Hovered(pos))
+                        settingsGroup.OnClick(pos, false);
             }
         }
 
         private void handleMouseHoldInput()
         {
+            Point pos = InputManager.LastMouseClick.Key.Position;
+
             if (MouseManager.CurrentState.LeftButton == ButtonState.Pressed)
                 foreach (SettingsGroup settingsGroup in Groups)
-                    if (settingsGroup.Hovered(MouseManager.CurrentState.Position))
-                        settingsGroup.OnClick(MouseManager.CurrentState.Position, true);
+                    if (settingsGroup.Hovered(pos))
+                        settingsGroup.OnClick(pos, true);
         }
     }
 }

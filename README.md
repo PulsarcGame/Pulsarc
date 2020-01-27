@@ -6,7 +6,7 @@
 [![Discord](https://discordapp.com/api/guilds/486933399425122318/widget.png?style=shield)](https://discord.gg/SYfpvfJ)
 
 ## About
-Pulsarc is a community-focused and open-source omni-directional rhythm game. Notes (also called "arcs") fall from the edges of the screen towards a crosshair in the center of the screen. This crosshair is equivalent to a judgement line in other rhythm games. The gameplay is directly inspired by (Intralism)[https://store.steampowered.com/app/513510/Intralism/].
+Pulsarc is a community-focused and open-source omni-directional rhythm game. Notes (also called "arcs") fall from the edges of the screen towards a crosshair in the center of the screen. This crosshair is equivalent to a judgement line in other rhythm games. The gameplay is directly inspired by [Intralism](https://store.steampowered.com/app/513510/Intralism/).
 
 This layout allows for interesting gimmicks to be introduced to the gameplay. For example, manipulating the size of the crosshair during the middle of gameplay (also known "Zooms"). Currently only basic Intralism-based zooms are implemented, but as time goes one we would like to introduce more control over zooms, and other mechanics such as crosshair rotation and movement.
 

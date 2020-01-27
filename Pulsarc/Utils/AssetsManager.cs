@@ -23,6 +23,7 @@ namespace Pulsarc.Utils
             Fonts = new Dictionary<String, SpriteFont>();
 
             Fonts.Add("DefaultFont", Content.Load<SpriteFont>("Fonts/rawline-600"));
+            Fonts["DefaultFont"].DefaultCharacter = '?'; // Prevents crashing with invalid characters
             
             Skin.LoadSkin("DefaultSkin");
 

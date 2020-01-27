@@ -94,7 +94,7 @@ namespace Pulsarc.UI.Screens.Result
             // Move the advanced button to the right spot
             float width = buttonAdvanced.Texture.Width;
             float height = buttonAdvanced.Texture.Height;
-            buttonAdvanced.ScaledMove(new Vector2(width, -height));
+            buttonAdvanced.Move(new Vector2(width, -height));
         }
 
         private void AddBackgrounds(Background mapBackground)
@@ -170,7 +170,7 @@ namespace Pulsarc.UI.Screens.Result
             int offsetX = GetSkinnablePropertyInt("HitErrorX");
             int offsetY = GetSkinnablePropertyInt("HitErrorY");
 
-            hitErrorGraph.ScaledMove(offsetX, offsetY);
+            hitErrorGraph.Move(offsetX, offsetY);
         }
 
         private void AddJudges()
@@ -205,7 +205,7 @@ namespace Pulsarc.UI.Screens.Result
 
             Judge judge = new Judge(judgement.Score, position, scale);
 
-            judge.ScaledMove(offsetX, offsetY);
+            judge.Move(offsetX, offsetY);
 
             // JudgeCount
             TextDisplayElement text = MakeTextDisplayElement($"{configName}Count", Sections[2]);
@@ -240,7 +240,7 @@ namespace Pulsarc.UI.Screens.Result
                 Skin.GetConfigInt(Config, section, $"{typeName}X"),
                 Skin.GetConfigInt(Config, section, $"{typeName}Y"));
 
-            text.ScaledMove(offset);
+            text.Move(offset);
 
             return text;
         }
