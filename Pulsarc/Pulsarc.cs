@@ -84,7 +84,6 @@ namespace Pulsarc
                 Config.SetInt("Graphics", "FullScreen", 2);
             }
 
-            bool heightIsZero = false;
             if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
@@ -100,12 +99,19 @@ namespace Pulsarc
 
             Graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
 
-            // Force the game to update at fixed time intervals
-            IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
+            // Don't use FPSLimit if Vsync is on
+            if (!Graphics.SynchronizeWithVerticalRetrace)
+            {
+                // Force the game to update at fixed time intervals
+                IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
 
-            // Set the time interval to match the FPSLimit
-            if (IsFixedTimeStep)
-                TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
+                // Set the time interval to match the FPSLimit
+                if (IsFixedTimeStep)
+                {
+                    TargetElapsedTime =
+                        TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
+                }
+            }
 
             Content.RootDirectory = "Content";
         }

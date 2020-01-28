@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- A game crash when pressing backspace when there's no text in the box.
+- Lag issues when both Vsync and FPSLimit are utilized
+
 ## [1.3.2-alpha] - 2020-01-27
 
 ### Changed

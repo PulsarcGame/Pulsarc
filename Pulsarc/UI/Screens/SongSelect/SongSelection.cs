@@ -127,15 +127,25 @@ namespace Pulsarc.UI.Screens.SongSelect
             switch(sort)
             {
                 case "difficulty":
-                    return ascending ? beatmaps.OrderBy(i => i.Difficulty).ToList() : beatmaps.OrderByDescending(i => i.Difficulty).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Difficulty).ToList()
+                        : beatmaps.OrderByDescending(i => i.Difficulty).ToList();
                 case "artist":
-                    return ascending ? beatmaps.OrderBy(i => i.Artist).ToList() : beatmaps.OrderByDescending(i => i.Artist).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Artist).ToList()
+                        : beatmaps.OrderByDescending(i => i.Artist).ToList();
                 case "title":
-                    return ascending ? beatmaps.OrderBy(i => i.Title).ToList() : beatmaps.OrderByDescending(i => i.Title).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Title).ToList()
+                        : beatmaps.OrderByDescending(i => i.Title).ToList();
                 case "mapper":
-                    return ascending ? beatmaps.OrderBy(i => i.Mapper).ToList() : beatmaps.OrderByDescending(i => i.Mapper).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Mapper).ToList()
+                        : beatmaps.OrderByDescending(i => i.Mapper).ToList();
                 case "version":
-                    return ascending ? beatmaps.OrderBy(i => i.Version).ToList() : beatmaps.OrderByDescending(i => i.Version).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Version).ToList()
+                        : beatmaps.OrderByDescending(i => i.Version).ToList();
                 default:
                     return beatmaps;
             }
@@ -205,6 +215,12 @@ namespace Pulsarc.UI.Screens.SongSelect
                         break;
                     // If the backspace is pressed, delete the last character
                     case Keys.Back:
+                        // If there's nothing in the box, don't do anything
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
+                        {
+                            break;
+                        }
+
                         // Reset the timer
                         RestartKeyPressTimer = true;
 
