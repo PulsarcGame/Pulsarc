@@ -44,9 +44,9 @@ It is also useful if you talk about a feature you want to develop on Discord or 
 
 You can make a contribution through a pull request. Don't make requests for the master branch, use the [develop branch](https://github.com/PulsarcGame/Pulsarc). Please have one branch/pull request per feature, and keep pull requests short and sweet. We will let you know if we want to discuss more, or you can bring up a discussion on the Discord server.
 
-When contributing, please follow our (code style)[CODESTYLE.md]. If you have any issues with the code style feel free to discuss on the issues board or our Discord server.
+When contributing, please follow our [code style](CODESTYLE.md). If you have any issues with the code style feel free to discuss on the issues board or our Discord server.
 
 ## License
-Pulsarc uses multiple submodules and third-party dependencies which are subject to their own individual licensing. To see the dependencies and their licenses, visit (DEPENDENCIES.md)[DEPENDENCIES].
+Pulsarc uses multiple submodules and third-party dependencies which are subject to their own individual licensing. To see the dependencies and their licenses, visit [DEPENDENCIES](DEPENDENCIES).
 
 The code in this repository is released and licensed under the [Mozilla Public License 2.0](LICENSE). Please see the [LICENSE](LICENSE) file for more information. In short, if you are making any modifications to this software, you **must** disclose the source code of the modified version of the file(s), and include the original copyright notice.
