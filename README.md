@@ -47,6 +47,6 @@ You can make a contribution through a pull request. Don't make requests for the 
 When contributing, please follow our (code style)[CODESTYLE.md]. If you have any issues with the code style feel free to discuss on the issues board or our Discord server.
 
 ## License
-Pulsarc uses multiple submodules and third-party dependencies which are subject to their own individual licensing. To see the dependencies and their licenses, visit (DEPENDENCIES.md)[DEPENDENCIES.md].
+Pulsarc uses multiple submodules and third-party dependencies which are subject to their own individual licensing. To see the dependencies and their licenses, visit (DEPENDENCIES.md)[DEPENDENCIES].
 
 The code in this repository is released and licensed under the [Mozilla Public License 2.0](LICENSE). Please see the [LICENSE](LICENSE) file for more information. In short, if you are making any modifications to this software, you **must** disclose the source code of the modified version of the file(s), and include the original copyright notice.
