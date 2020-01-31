@@ -18,7 +18,7 @@ namespace Pulsarc.Utils
 
         public static async void Update()
         {
-            if (InputManager.KeyboardPresses.Count <= 0) { return; }
+            if (InputManager.PressActions.Count <= 0) { return; }
 
             bool pressingKey = InputManager.PressedKeys.Contains(ScreenshotKey);
 

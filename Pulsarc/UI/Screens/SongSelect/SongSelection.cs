@@ -178,9 +178,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         private void HandleKeyboardPresses()
         {
-            while (InputManager.KeyboardPresses.Count > 0)
+            while (InputManager.PressActions.Count > 0)
             {
-                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
                 switch (press.Value)
                 {

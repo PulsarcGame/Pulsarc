@@ -295,7 +295,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
 
                 foreach (KeyValuePair<double, Keys> input in inputs)
-                    InputManager.KeyboardPresses.Enqueue(input);
+                    InputManager.PressActions.Enqueue(input);
             }
         }
         #endregion
@@ -387,10 +387,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void HandleInputs(GameTime gameTime)
         {
             // Prevents future input from being handled. Useful for auto. Remove for quick auto result testing
-            while (InputManager.KeyboardPresses.Count > 0
-                && InputManager.KeyboardPresses.Peek().Key <= AudioManager.GetTime())
+            while (InputManager.PressActions.Count > 0
+                && InputManager.PressActions.Peek().Key <= AudioManager.GetTime())
             {
-                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
                 // Process a hit if the pressed key corresponds to a bound key
                 if(bindings.ContainsKey(press.Value))
@@ -615,7 +615,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Active = false;
 
             // Clear Input and Audio
-            InputManager.KeyboardPresses.Clear();
+            InputManager.PressActions.Clear();
             AudioManager.Stop();
 
             // Unset attributes to avoid potential conflict with next gameplays

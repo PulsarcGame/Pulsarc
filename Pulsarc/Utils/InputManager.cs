@@ -10,8 +10,8 @@ namespace Pulsarc.Utils
     static class InputManager
     {
         private static Thread inputThread;
-        public static Queue<KeyValuePair<double, Keys>> KeyboardPresses { get; private set; }
-        public static Queue<KeyValuePair<double, Keys>> KeyboardReleases { get; private set; }
+        public static Queue<KeyValuePair<double, Keys>> PressActions { get; private set; }
+        public static Queue<KeyValuePair<double, Keys>> ReleaseActions { get; private set; }
         public static List<Keys> PressedKeys { get; private set; }
         public static KeyboardState KeyboardState { get; private set; }
         public static MouseState MouseState { get; private set; }
@@ -23,8 +23,8 @@ namespace Pulsarc.Utils
         static public void StartThread()
         {
             PressedKeys = new List<Keys>();
-            KeyboardPresses = new Queue<KeyValuePair<double, Keys>>();
-            KeyboardReleases = new Queue<KeyValuePair<double, Keys>>();
+            PressActions = new Queue<KeyValuePair<double, Keys>>();
+            ReleaseActions = new Queue<KeyValuePair<double, Keys>>();
             LastMouseClick = new KeyVal<MouseState, int>(Mouse.GetState(),0);
 
             inputThread = new Thread(new ThreadStart(InputUpdater));
@@ -55,7 +55,7 @@ namespace Pulsarc.Utils
                             {
                                 if (!PressedKeys.Contains(key))
                                 {
-                                    KeyboardPresses.Enqueue(new KeyValuePair<double, Keys>(AudioManager.GetTime(), key));
+                                    PressActions.Enqueue(new KeyValuePair<double, Keys>(AudioManager.GetTime(), key));
                                     PressedKeys.Add(key);
 
                                     if (key == Keys.CapsLock)
@@ -116,7 +116,7 @@ namespace Pulsarc.Utils
 
         static public void Reset()
         {
-            KeyboardPresses.Clear();
+            PressActions.Clear();
         }
     }
 }
