@@ -389,29 +389,53 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         #region Update Methods
+        // Each key that is used for engine inputs (end, pause, retry, etc.)
+        private readonly Keys[] validEngineInputKeys =
+        {
+            Keys.Escape,
+            Config.Bindings["Pause"],
+            Config.Bindings["Continue"],
+            Config.Bindings["Retry"],
+        };
+
         /// <summary>
         /// Handle inputs that pause, continue, leave, or restart gameplay
         /// </summary>
         private void HandleEngineInputs()
         {
-            // End the gameplay with the "escape" key TODO: make this key bindable.
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Keys[] keyPresses = Keyboard.GetState().GetPressedKeys();
+
+            // If no keys were pressed, return
+            if (keyPresses.Length <= 0) { return; }
+
+            // Remove all invalid keys from keyPresses
+            // From my research, ToArray() may not be very well optimized, but with a small amount
+            // of data (max size is: validEngineInputsKeys.Length) this may be alright. -FRUP
+            keyPresses = keyPresses.Where(validEngineInputKeys.Contains).ToArray();
+
+            for (int i = 0; i < keyPresses.Length; i++)
             {
-                EndGameplay();
-                return;
+                // End the gameplay with the "escape" key TODO: make this key bindable.
+                if (keyPresses[i] == Keys.Escape)
+                {
+                    EndGameplay();
+                }
+                // Restart gameplay using bindable "Retry" key.
+                else if (keyPresses[i] == Config.Bindings["Retry"])
+                {
+                    Retry();
+                }
+                // Pause Gameplay with bindable "Pause" key.
+                else if (keyPresses[i] == Config.Bindings["Pause"])
+                {
+                    Pause();
+                }
+                // Resume Gameplay with bindable "Continue" key.
+                else if (keyPresses[i] == Config.Bindings["Continue"])
+                {
+                    Resume();
+                }
             }
-
-            // Pause Gameplay with bindable "Pause" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Pause"]))
-                Pause();
-
-            // Resume Gameplay with bindable "Continue" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Continue"]))
-                Resume();
-
-            // Restart gameplay using bindable "Retry" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Retry"]))
-                Retry();
         }
 
         /// <summary>
