@@ -205,13 +205,13 @@ namespace Pulsarc.UI.Screens.SongSelect
                     // If Delete is pressed, clear the search bar
                     case Keys.Delete:
                         // If there's nothing in the box, don't refresh.
-                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
-                        {
-                            break;
-                        }
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0) { break; }
 
                         GetSongSelectionView().SearchBox.Clear();
                         RefreshBeatmaps();
+
+                        // Stop the timer to prevent a second refresh
+                        RestartKeyPressTimer = false;
                         break;
                     // If the backspace is pressed, delete the last character
                     case Keys.Back:
@@ -229,13 +229,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                     // If none of the above, type into the search bar
                     // TODO? Ignore keypresses unless clicked on
                     default:
-                        // If the press is not an acceptable typing character, or the key hasn't been
-                        // released yet, break.
-                        if (!XnaKeyHelper.IsTypingCharacter(press.Value)
-                            || !KeyboardManager.IsUniqueKeyPress(press.Value))
-                        {
-                            break;
-                        }
+                        // If the press is not an acceptable typing character, break
+                        if (!XnaKeyHelper.IsTypingCharacter(press.Value)) { break; }
 
                         // Reset the timer
                         RestartKeyPressTimer = true;
