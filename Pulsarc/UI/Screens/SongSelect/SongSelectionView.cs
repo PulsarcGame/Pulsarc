@@ -124,17 +124,12 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// the Song Select screen accordingly.
         /// </summary>
         /// <param name="card">The card to focus on.</param>
-        public void FocusCard(in BeatmapCard card, bool restart = false)
+        public void FocusCard(in BeatmapCard card)
         {
             if (cards[card.Index] != card) { return; }
 
+            // Reset focus for consistency
             songSelectScreen.SelectedFocus = card.Index - 3;
-
-            if (restart)
-            {
-                FocusCard(cards[0]);
-                cards[0].SetClicked(false);
-            }
 
             // Set to "selected" state
             card.SetClicked(true);
