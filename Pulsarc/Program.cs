@@ -14,7 +14,9 @@ namespace Pulsarc
         static void Main()
         {
             using (var game = new Pulsarc())
+            {
                 game.Run();
+            }
         }
     }
 }

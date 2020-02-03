@@ -325,9 +325,19 @@ namespace Pulsarc
             return new Vector2(CurrentWidth, CurrentHeight);
         }
 
+        /// <summary> If a user closes the main window without clicking on the "Quit" button,
+        /// This gets called to make sure everything shuts down properly.
+        /// </summary>
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+            Quit();
+        }
+
         static public void Quit()
         {
             pulsarc.Exit();
+            Environment.Exit(0);
         }
     }
 }
