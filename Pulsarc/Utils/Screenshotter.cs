@@ -30,8 +30,6 @@ namespace Pulsarc.Utils
             // If ready to screenshot and the key is released, screenshot!
             else if (!pressingKey && ReadyToScreenshot)
             {
-                PulsarcLogger.Debug("test");
-
                 Screenshotting = true;
                 TakeScreenshot();
                 Screenshotting = false;
