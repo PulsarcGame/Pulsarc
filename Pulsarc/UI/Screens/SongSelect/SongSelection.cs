@@ -27,7 +27,19 @@ namespace Pulsarc.UI.Screens.SongSelect
         private int lastScrollValue = 0;
         private bool leftClicking = false;
         private MouseState leftClickedState;
-        public float SelectedFocus = 0;
+
+        private float selectedFocus = 0;
+        public float SelectedFocus
+        {
+            get => selectedFocus;
+            // Don't set this higher or lower than the min/max focus
+            set => selectedFocus =
+                value > maxFocus ? maxFocus : value < MIN_FOCUS ? MIN_FOCUS : value;
+        }
+
+        private const float MIN_FOCUS = -3;
+        private float maxFocus => Cards.Count - 4;
+
         public BeatmapCard FocusedCard { get; set; }
 
         // The time when the last key was pressed

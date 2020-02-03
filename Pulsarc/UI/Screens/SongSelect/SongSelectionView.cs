@@ -249,14 +249,13 @@ namespace Pulsarc.UI.Screens.SongSelect
         /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
-            ref float selectedFocus = ref songSelectScreen.SelectedFocus;
-
             // Move cards if focus has changed.
             // Rounding is used so this isn't called over and over
             // When currentFocus refuses to go above x.99999999...
-            if (Math.Round(currentFocus, 2) != Math.Round(selectedFocus, 2))
+            if (Math.Round(currentFocus, 2) != Math.Round(songSelectScreen.SelectedFocus, 2))
             {
-                currentFocus = PulsarcMath.Lerp(currentFocus, selectedFocus, (float)PulsarcTime.DeltaTime / 100f);
+                currentFocus = PulsarcMath.Lerp(
+                    currentFocus, songSelectScreen.SelectedFocus, (float)PulsarcTime.DeltaTime / 100f);
                 
                 float diff = lastFocus - currentFocus;
                 lastFocus = currentFocus;
