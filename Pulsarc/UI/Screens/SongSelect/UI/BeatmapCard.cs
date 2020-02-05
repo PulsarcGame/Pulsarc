@@ -86,7 +86,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         private void SetDiffBar()
         {
-            float percent = (float)(Beatmap.Difficulty / 10f);
+            float difficulty = (float)Beatmap.Difficulty;
 
             Anchor startAnchor;
             Vector2 startPos = Skin.GetConfigStartPosition(Config, Section, "DiffBarStartPos", out startAnchor, this);
@@ -97,7 +97,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             (
                 startPos,
                 // diffbar displayed percentage is 0 if less than 0, and 10 if greater than 10
-                percent <= 10 ? percent >= 0 ? percent : 0 : 10,
+                difficulty <= 10 ? difficulty >= 0 ? difficulty : 0 : 10,
                 diffAnchor
             );
 

@@ -35,7 +35,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Used for delaying the gameplay's end
         private bool ending => endTime != -1;
         private double endTime = -1;
-        private const int endDelay = 2000;
+        private const int END_DELAY = 2000;
+        public double MapEndTime { get; private set; }
 
         // Beatmap Elements
         // The current beatmap being played.
@@ -113,10 +114,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
         /// </summary>
-        public GameplayEngine()
-        {
-            View = new GameplayEngineView(this);
-        }
+        public GameplayEngine() => View = new GameplayEngineView(this);
 
         /// <summary>
         /// Initializes the current GameplayView with the provided beatmap.
@@ -279,7 +277,14 @@ namespace Pulsarc.UI.Screens.Gameplay
             foreach (Column col in Columns)
             {
                 col.SortUpdateHitObjects();
+
+                if (col.HitObjects.Last().Time > MapEndTime)
+                {
+                    MapEndTime = col.HitObjects.Last().Time;
+                }
             }
+
+            MapEndTime += END_DELAY;
 
             // Load user bindings
             bindings.Add(Config.Bindings["Left"], 2);
@@ -363,7 +368,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (AudioManager.paused) { return; }
 
             // Quit gameplay when nothing is left to play, or if the audio finished playing
-            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + endDelay))
+            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + END_DELAY))
             {                
                 EndGameplay(true);
                 return;

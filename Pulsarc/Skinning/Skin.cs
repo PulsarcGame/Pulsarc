@@ -50,6 +50,7 @@ namespace Pulsarc.Skinning
                 // Load gameplay assets
                 LoadSkinTexture($"{skinFolder}Gameplay/", "arcs");
                 LoadSkinTexture($"{skinFolder}Gameplay/", "crosshair");
+                LoadSkinTexture($"{skinFolder}Gameplay/", "map_timer");
 
                 // Load cursor asset
                 LoadSkinTexture($"{skinFolder}UI/", "cursor");
