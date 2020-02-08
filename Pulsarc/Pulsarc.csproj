@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,7 +8,9 @@
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>               
     <AssemblyName>Pulsarc</AssemblyName>               
     <ApplicationIcon>Icon.ico</ApplicationIcon>               
-    <StartupObject></StartupObject>
+    <StartupObject></StartupObject>            
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>               
+    <FileVersion>1.4.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

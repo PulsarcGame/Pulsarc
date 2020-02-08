@@ -11,6 +11,7 @@ using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Wobble;
 using Wobble.Input;
@@ -24,6 +25,8 @@ namespace Pulsarc
     /// </summary>
     public class Pulsarc : WobbleGame
     {
+        public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
+
         private static Pulsarc pulsarc;
         public static new SpriteBatch SpriteBatch => GameBase.Game.SpriteBatch;
         public static new GraphicsDeviceManager Graphics => GameBase.Game.Graphics;
