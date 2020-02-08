@@ -44,37 +44,8 @@ namespace Pulsarc.Utils.Update
 
             e.Result = Result.AllPatchesSucceeded;
         }
-
-        private Result Install(string tempFilePath)
-        {
-            string zipFilePath = Path.ChangeExtension(tempFilePath, ".zip");
-
-            // Try to copy/paste the tempfile as a zip file.
-            const int MAX_TRIES = 3;
-            for (int i = 0; i < MAX_TRIES; i++)
-            {
-                try
-                {
-                    File.Copy(tempFilePath, zipFilePath);
-                    break;
-                }
-                catch
-                {
-                    if (i >= MAX_TRIES - 1)
-                    {
-                        DeleteExtraFiles(tempFilePath);
-                        DeleteExtraFiles(zipFilePath);
-
-                        return Result.CopyingFailed;
-                    }
-                }
-            }
-
-            DeleteExtraFiles(tempFilePath);
-            return InstallZip(zipFilePath);
-        }
         
-        private Result InstallZip(in string zipFilePath)
+        private Result Install(in string zipFilePath)
         {
             using (FileStream input = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(input))
@@ -115,16 +86,13 @@ namespace Pulsarc.Utils.Update
                 }
             }
 
-            DeleteExtraFiles(zipFilePath);
+            DeleteExtraFile(zipFilePath);
             return Result.SinglePatchSucceeded;
 
             // If the entry is a file without the .pdb extension and is good for the
             // current platform, return true.
             bool KeepEntry(ZipEntry entry)
                 => entry.IsFile && !entry.Name.Contains(".pdb") && ForRightPlatform(entry.Name);
-
-            bool ShouldHideFile(in string name)
-                => hiddenFileTypes.Contains(name.Substring(name.LastIndexOf('.')));
 
             bool ForRightPlatform(in string name)
             {
@@ -156,13 +124,16 @@ namespace Pulsarc.Utils.Update
 
                 return true;
             }
+
+            bool ShouldHideFile(in string name)
+                => hiddenFileTypes.Contains(name.Substring(name.LastIndexOf('.')));
         }
 
         // For ShouldHideFile() above
         private List<string> hiddenFileTypes = new List<string>()
             { ".dll", ".so", ".dylib", ".config", ".json", };
 
-        private void DeleteExtraFiles(in string path)
+        private void DeleteExtraFile(in string path)
         {
             // Try to delete the files twice.
             try { File.Delete(path); }

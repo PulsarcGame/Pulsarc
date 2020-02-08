@@ -53,7 +53,11 @@ namespace Pulsarc.Utils.Update
 
         private Result HandleUpdateXML(UpdateXML update, bool retry = false)
         {
-            string tempFilePath = Path.GetTempFileName();
+            string tempFilePath = Path.GetRandomFileName();
+            using (FileStream stream = File.Create(Path.Combine(Path.GetTempPath(), $"{tempFilePath}.zip")))
+            {
+                tempFilePath = stream.Name;
+            }
 
             try
             {
@@ -90,7 +94,7 @@ namespace Pulsarc.Utils.Update
             Result DeleteFileAndTryAgain()
             {
                 // Give everything a break
-                Thread.Sleep(500);
+                Thread.Sleep(333);
 
                 // Try to delete the temp file twice
                 try { File.Delete(tempFilePath); }
