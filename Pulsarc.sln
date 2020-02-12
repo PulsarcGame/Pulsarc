@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Framework.DesktopG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpriteFontPlus", "Wobble\SpriteFontPlus\src\SpriteFontPlus\SpriteFontPlus.csproj", "{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patcher", "Patcher\Patcher.csproj", "{428773A7-E73C-42DD-A5A5-7D6A5FDCA490}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF5BB17F-5D3D-449C-B640-D9A5AE16FCD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{428773A7-E73C-42DD-A5A5-7D6A5FDCA490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{428773A7-E73C-42DD-A5A5-7D6A5FDCA490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{428773A7-E73C-42DD-A5A5-7D6A5FDCA490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{428773A7-E73C-42DD-A5A5-7D6A5FDCA490}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

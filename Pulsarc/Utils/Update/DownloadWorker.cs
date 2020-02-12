@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -10,35 +12,8 @@ namespace Pulsarc.Utils.Update
     {
         private WebClient webClient = new WebClient();
 
-        private string downloadedFilePath = "";
-        public string DownloadedFilePath
-        {
-            // Reset this when we get it to signal we're ready to download another.
-            get
-            {
-                string toReturn = downloadedFilePath;
-                downloadedFilePath = "";
-                PathWaitingToBeGot = false;
-                return toReturn;
-            }
-            // Set PathWaitingToBeGot to true to let others know we're ready to be got.
-            private set
-            {
-                if (!PathWaitingToBeGot)
-                {
-                    downloadedFilePath = value;
-                    PathWaitingToBeGot = true;
-                }
-            }
-        }
-
         private Stack<UpdateXML> updates;
-
-        public bool ReadyForAnother => !CancellationPending
-                                        && !PathWaitingToBeGot
-                                        && !IsBusy;
-
-        public bool PathWaitingToBeGot { get; private set; } = false;
+        private Queue<string> patchFileLocations;
 
         public DownloadWorker(Stack<UpdateXML> updates)
         {
@@ -63,8 +38,6 @@ namespace Pulsarc.Utils.Update
             {
                 using (webClient)
                 {
-                    // Not using Async since we're already in a worker thread, and we need to wait
-                    // for the file to finish before continuing.
                     webClient.DownloadFile(update.DownloadUri, tempFilePath);
                 }
             }
@@ -78,7 +51,8 @@ namespace Pulsarc.Utils.Update
             }
 
             // Checksum with md5, try again if there's an issue
-            if (Hasher.HashFile(tempFilePath, HashType.MD5) != update.MD5 || !File.Exists(tempFilePath))
+            if (!File.Exists(tempFilePath) 
+                || Hasher.HashFile(tempFilePath, HashType.MD5) != update.MD5)
             {
                 // If we already tried once, stop trying.
                 if (retry) { return Result.HashFailed; }
@@ -87,9 +61,13 @@ namespace Pulsarc.Utils.Update
                 return DeleteFileAndTryAgain();
             }
 
-            DownloadedFilePath = tempFilePath;
+            // Otherwise add it to the queue of patches
+            patchFileLocations.Enqueue(tempFilePath);
 
-            return Result.DownloadSucceeded;
+            UpdateXML nextUpdate;
+            bool anotherOne = updates.TryPop(out nextUpdate);
+            // If the Pop was successful, handle it, otherwise we are done and have suceeded!
+            return anotherOne ? HandleUpdateXML(nextUpdate) : Result.DownloadSucceeded;
 
             Result DeleteFileAndTryAgain()
             {
@@ -110,12 +88,82 @@ namespace Pulsarc.Utils.Update
 
         private void OnComplete(object sender, RunWorkerCompletedEventArgs e)
         {
-            // If there's no more updates to handle, cancel.
+            // If there's no more updates to handle, prepare the patches and cancel.
             if (updates.Count <= 0)
             {
                 webClient.Dispose();
+                PreparePatches();
                 CancelAsync();
             }
         }
+
+        private void PreparePatches()
+        {
+            while (patchFileLocations.Count > 0)
+            {
+                string patchFile = patchFileLocations.Dequeue();
+                using (FileStream input = File.OpenRead(patchFile))
+                using (ZipFile zipFile = new ZipFile(input))
+                {
+                    foreach (ZipEntry entry in zipFile)
+                    {
+                        // Ignore non-files
+                        if (!entry.IsFile) { continue; }
+
+                        // entry.Name includes the full path relative to the .zip file
+                        string newPath = Path.Combine( UpdateInfo.GetPathToAssembly() + "Downloads/",
+                                                       entry.Name );
+
+                        // Make sure the directory is created.
+                        string directoryName = Path.GetDirectoryName(newPath);
+                        if (directoryName.Length > 0)
+                        {
+                            Directory.CreateDirectory(directoryName);
+                        }
+
+                        // According to SharpZipLib 4KB is optimum
+                        byte[] buffer = new byte[4096];
+
+                        // Unzip the file in buffered chunks.
+                        // According to SharpZipLib this uses less memory than unzipping the whole
+                        // thing At once.
+                        using (Stream zipStream = zipFile.GetInputStream(entry))
+                        using (Stream output = File.Create(newPath))
+                        {
+                            // Queue is organized from oldest to newest so newer files will
+                            // overwrite older files.
+                            StreamUtils.Copy(zipStream, output, buffer);
+
+                            if (ShouldHideFile(entry.Name))
+                            {
+                                File.SetAttributes(newPath,
+                                    File.GetAttributes(newPath) | FileAttributes.Hidden);
+                            }
+                        }
+                    }
+                }
+
+                // Delete the original file
+                try
+                {
+                    File.Delete(patchFile);
+                }
+                catch
+                {
+                    System.Console.WriteLine($"DEBUG: Couldn't delete temp file {patchFile}, ignoring.");
+                }
+            }
+
+            // At this point, all the patch files should be in Downloads, the patcher program is ready
+            // To go.
+            Updater.LaunchPathcer();
+
+            bool ShouldHideFile(in string name)
+                => hiddenFileTypes.Contains(name.Substring(name.LastIndexOf('.')));
+        }
+
+        // For ShouldHideFile() above
+        private List<string> hiddenFileTypes = new List<string>()
+            { ".dll", ".so", ".dylib", ".config", ".json", };
     }
 }

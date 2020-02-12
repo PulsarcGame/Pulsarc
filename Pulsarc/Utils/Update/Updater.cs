@@ -13,7 +13,7 @@ namespace Pulsarc.Utils.Update
 
             if (!UpdateAvailable(out updateXML)) { return; }
 
-            ApplyUpdates(FindNeededUpdates(updateXML));
+            DownloadUpdates(FindNeededUpdates(updateXML));
         }
 
         private static bool UpdateAvailable(out UpdateXML updateXML)
@@ -60,44 +60,17 @@ namespace Pulsarc.Utils.Update
             return updateStack;
         }
 
-        private static void ApplyUpdates(Stack<UpdateXML> updates)
+        private static void DownloadUpdates(Stack<UpdateXML> updates)
+        {
+            using (DownloadWorker downloader = new DownloadWorker(updates))
+            {
+                downloader.RunWorkerAsync();
+            }
+        }
+
+        internal static void LaunchPathcer()
         {
 
-            using (DownloadWorker downloader = new DownloadWorker(updates))
-            using (PatchWorker patcher = new PatchWorker())
-            {
-                // We have data we want handled by downloader that we will sent to installer, this loop
-                // Lets those two workers work together but in async until both are done.
-                while (!downloader.CancellationPending || !patcher.CancellationPending)
-                {
-                    // Downloader will do work when its ready to start again.
-                    if (downloader.ReadyForAnother)
-                    {
-                        downloader.RunWorkerAsync();
-                    }
-                    // If the worker is ready to give us the TempFile details enqueue them
-                    // to the installer worker's queue.
-                    else if (downloader.PathWaitingToBeGot)
-                    {
-                        patcher.Enqueue(downloader.DownloadedFilePath);
-                    }
-                    // When downloader is done, let installer know it doesn't need to wait for anymore
-                    // files
-                    else if (downloader.CancellationPending)
-                    {
-                        patcher.AddingToQueue = false;
-                    }
-
-                    // Wait until at least thing has been queued before starting.
-                    if (patcher.ReadyToStart)
-                    {
-                        patcher.RunWorkerAsync();
-                    }
-
-                    // Sleep for a bit so we aren't looping this a shitton.
-                    Thread.Sleep(300);
-                }
-            }
         }
     }
 
