@@ -64,8 +64,7 @@ namespace Pulsarc.Utils.Update
             // Otherwise add it to the queue of patches
             patchFileLocations.Enqueue(tempFilePath);
 
-            UpdateXML nextUpdate;
-            bool anotherOne = updates.TryPop(out nextUpdate);
+            bool anotherOne = updates.TryPop(out UpdateXML nextUpdate);
             // If the Pop was successful, handle it, otherwise we are done and have suceeded!
             return anotherOne ? HandleUpdateXML(nextUpdate) : Result.DownloadSucceeded;
 
@@ -111,8 +110,7 @@ namespace Pulsarc.Utils.Update
                         if (!entry.IsFile) { continue; }
 
                         // entry.Name includes the full path relative to the .zip file
-                        string newPath = Path.Combine( UpdateInfo.GetPathToAssembly() + "Downloads/",
-                                                       entry.Name );
+                        string newPath = Path.Combine(UpdateInfo.DownloadsPath, entry.Name);
 
                         // Make sure the directory is created.
                         string directoryName = Path.GetDirectoryName(newPath);
@@ -150,7 +148,7 @@ namespace Pulsarc.Utils.Update
                 }
                 catch
                 {
-                    System.Console.WriteLine($"DEBUG: Couldn't delete temp file {patchFile}, ignoring.");
+                    System.Console.WriteLine($"DEBUG: Couldn't delete temp file {patchFile}. Ignoring.");
                 }
             }
 

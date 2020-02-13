@@ -41,6 +41,8 @@ namespace Pulsarc.Utils.Update
         // "https://pulsarc.net/Releases/CurrentVersion-{platform}.xml"
         public static string ServerDownloadPath => $"{RELEASE_PATH}CurrentVersion-{Platform}.xml";
 
+        public static string DownloadsPath => Path.Combine(GetPathToAssembly(), "Downloads");
+
         /// <summary>
         /// Sees if a Pulsarc executable is in the path provided.
         /// </summary>

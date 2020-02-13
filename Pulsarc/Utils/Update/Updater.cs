@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
+using System.Diagnostics;
+using System.IO;
 
 namespace Pulsarc.Utils.Update
 {
@@ -9,9 +9,7 @@ namespace Pulsarc.Utils.Update
     {
         public static void CheckForUpdates()
         {
-            UpdateXML updateXML;
-
-            if (!UpdateAvailable(out updateXML)) { return; }
+            if (!UpdateAvailable(out UpdateXML updateXML)) { return; }
 
             DownloadUpdates(FindNeededUpdates(updateXML));
         }
@@ -41,12 +39,10 @@ namespace Pulsarc.Utils.Update
             UpdateXML currentUpdate = firstUpdateToStack;
             while (true)
             {
-                UpdateXML lastUpdate;
-
                 // Look at the previous version provided by the current UpdateXML.
                 // If the previous version is not greater than this client's version, or parsing
                 // failed, break
-                if (!UpdateExistsAndIsNewerThanClient(out lastUpdate,
+                if (!UpdateExistsAndIsNewerThanClient(out UpdateXML lastUpdate,
                     UpdateInfo.GetPreviousVersionXMLPath(currentUpdate.PreviousVersion)))
                 { break; }
 
