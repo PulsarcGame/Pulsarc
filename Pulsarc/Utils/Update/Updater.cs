@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -70,7 +70,19 @@ namespace Pulsarc.Utils.Update
 
         internal static void LaunchPathcer()
         {
+            bool checksumPassed = true; // TODO: checksum Patcher.exe
 
+            // If Patcher.exe is not the correct version of patcher, download it
+            if (!checksumPassed || !File.Exists("Patcher.exe"))
+            {
+                // TODO: Download the newest version of patcher.exe
+            }
+
+            // Launch Patcher
+            Process.Start("Patcher.exe");
+
+            // Quit Pulsarc so Patcher can do shit
+            Environment.Exit(0);
         }
     }
 
