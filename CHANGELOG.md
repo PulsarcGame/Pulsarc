@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `AllMessages` setting in config.ini.
 
 ### Fixed
+- Major framerate stutter issues for some users.
 - A game crash when pressing backspace when there's no text in the box.
 - Lag issues when both Vsync and FPSLimit are utilized
 - Inconsistent typing in the searchbar of the Song Select.
