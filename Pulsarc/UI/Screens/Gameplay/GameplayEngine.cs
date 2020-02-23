@@ -11,6 +11,7 @@ using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
 using System.Linq;
 using Pulsarc.Utils.SQLite;
+using Pulsarc.Utils.Audio;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -475,6 +476,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 // If no judge is obtained, it is a ghost hit and is ignored score-wise
                 if (judge == null) { continue; }
+
+                AudioSamplePlayer.PlayHitSound();
 
                 ProcessHit(press, column, ref pressed, error, judge);
             }

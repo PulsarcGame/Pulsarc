@@ -1,4 +1,5 @@
 ﻿using IniFileParser.Model;
+using ManagedBass;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.UI;
@@ -8,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Wobble.Audio;
+using Wobble.Audio.Samples;
 using Wobble.Logging;
 
 namespace Pulsarc.Skinning
@@ -28,6 +31,9 @@ namespace Pulsarc.Skinning
 
         // A collection of multiple adjustable screens and the config files for those screens.
         public static Dictionary<string, IniData> Configs { get; private set; }
+
+        // A collection of all the custom sounds in the skin folder and their ids
+        public static Dictionary<string, int> Sounds { get; private set; }
 
         /// <summary>
         /// Load a skin from the folder name provided.
@@ -72,6 +78,9 @@ namespace Pulsarc.Skinning
 
                 // Load judge assets
                 LoadJudges(skinFolder);
+
+                // Load sounds
+                LoadSounds(skinFolder);
 
                 Loaded = true;
             }
@@ -164,6 +173,13 @@ namespace Pulsarc.Skinning
             foreach (JudgementValue judge in Judgement.Judgements)
                 Judges.Add(judge.Score, LoadTexture($"{skinFolder}Judgements/", judge.Name));
         }
+
+        private const int MAX_CONCURRENT_PLAYBACKS = 10;
+
+        private static void LoadSounds(string skinFolder)
+        {
+            LoadSample($"{skinFolder}Audio/", "hitsound", MAX_CONCURRENT_PLAYBACKS);
+        }
         #endregion
 
         /// <summary>
@@ -243,6 +259,35 @@ namespace Pulsarc.Skinning
             cropped.SetData(data);
 
             return cropped;
+        }
+
+        private static string[] acceptedAudioExtensions = new string[]
+        {
+            ".mp3",
+            ".wav",
+            ".ogg"
+        };
+
+
+        private static void LoadSample(string path, string name, int concurrentPlaybacks)
+        {
+            bool fileExists = false;
+
+            for (int i = 0; i < acceptedAudioExtensions.Length; i++)
+            {
+                if (File.Exists(path + name + acceptedAudioExtensions[i]))
+                {
+                    fileExists = true;
+                    break;
+                }
+            }
+
+            if (!fileExists)
+            {
+                throw new FileNotFoundException("AudioSample not found", path, new AudioEngineException());
+            }
+
+            Sounds.Add(name, Bass.SampleLoad(path, 0, 0, concurrentPlaybacks, BassFlags.Default | BassFlags.SampleOverrideLongestPlaying));
         }
 
         /// <summary>
