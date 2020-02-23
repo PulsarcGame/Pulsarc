@@ -9,24 +9,16 @@ namespace Pulsarc.Utils.Audio
 {
     public static class AudioSamplePlayer
     {
-        private static int HitSoundID = Skin.Sounds["hitsound"];
-        private static int HitSoundChannelID;
+        private static double SampleVolume => Config.GetInt("Audio", "EffectVolume");
 
-        public static void Init()
-        {
-            HitSoundID = Skin.Sounds["hitsounds"];
-            HitSoundChannelID = Bass.SampleGetChannel(HitSoundID);
-        }
+        public static void PlayHitSound(int judge = 0) => PlaySample("hitsound");
 
-        public static void PlayHitSound()
+        public static void PlaySample(string name)
         {
-            try
+            using (AudioSampleChannel channel = Skin.Sounds[name].CreateChannel())
             {
-                Bass.ChannelPlay(HitSoundChannelID);
-            }
-            catch
-            {
-                PulsarcLogger.Debug("Some shit went wrong!!!");
+                channel.Volume = SampleVolume;
+                channel.Play();
             }
         }
     }

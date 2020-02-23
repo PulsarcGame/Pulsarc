@@ -33,7 +33,7 @@ namespace Pulsarc.Skinning
         public static Dictionary<string, IniData> Configs { get; private set; }
 
         // A collection of all the custom sounds in the skin folder and their ids
-        public static Dictionary<string, int> Sounds { get; private set; }
+        public static Dictionary<string, AudioSample> Sounds { get; private set; }
 
         /// <summary>
         /// Load a skin from the folder name provided.
@@ -44,6 +44,7 @@ namespace Pulsarc.Skinning
             Assets = new Dictionary<string, Texture2D>();
             Configs = new Dictionary<String, IniData>();
             Judges = new Dictionary<int, Texture2D>();
+            Sounds = new Dictionary<string, AudioSample>();
             Loaded = false;
 
             string skinFolder = $"Skins/{name}/";
@@ -174,11 +175,9 @@ namespace Pulsarc.Skinning
                 Judges.Add(judge.Score, LoadTexture($"{skinFolder}Judgements/", judge.Name));
         }
 
-        private const int MAX_CONCURRENT_PLAYBACKS = 10;
-
         private static void LoadSounds(string skinFolder)
         {
-            LoadSample($"{skinFolder}Audio/", "hitsound", MAX_CONCURRENT_PLAYBACKS);
+            LoadSample($"{skinFolder}Audio/", "hitsound");
         }
         #endregion
 
@@ -269,14 +268,16 @@ namespace Pulsarc.Skinning
         };
 
 
-        private static void LoadSample(string path, string name, int concurrentPlaybacks)
+        private static void LoadSample(string path, string name)
         {
             bool fileExists = false;
+            string extension = "";
 
             for (int i = 0; i < acceptedAudioExtensions.Length; i++)
             {
                 if (File.Exists(path + name + acceptedAudioExtensions[i]))
                 {
+                    extension = acceptedAudioExtensions[i];
                     fileExists = true;
                     break;
                 }
@@ -287,7 +288,7 @@ namespace Pulsarc.Skinning
                 throw new FileNotFoundException("AudioSample not found", path, new AudioEngineException());
             }
 
-            Sounds.Add(name, Bass.SampleLoad(path, 0, 0, concurrentPlaybacks, BassFlags.Default | BassFlags.SampleOverrideLongestPlaying));
+            Sounds.Add(name, new AudioSample(path + name + extension));
         }
 
         /// <summary>
