@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - A skinnable bar during gameplay to represent the time left in the map.
-- Hitsounds. Control the volume by changing `EffectVolume` in config.ini.
+- Hitsounds and misssounds. Control effect volume by changing `EffectVolume` in config.ini.
+- MissSoundThreshold to config.ini. This setting determines how many notes will pass before the misssound will play again.
+- Option to disable hitsounds for specific judgements in skin/audio.ini
 
 ### Changed
 - Scrolling in the song select or settings menu is no longer infinite.

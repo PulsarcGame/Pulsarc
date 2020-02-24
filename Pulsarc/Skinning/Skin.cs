@@ -100,6 +100,7 @@ namespace Pulsarc.Skinning
             Configs.Add("judgements",       parser.ReadFile($"{skinFolder}Judgements/judgements.ini"));
             Configs.Add("result_screen",    parser.ReadFile($"{skinFolder}UI/ResultScreen/result_screen.ini"));
             Configs.Add("song_select",      parser.ReadFile($"{skinFolder}UI/SongSelect/song_select.ini"));
+            Configs.Add("audio",            parser.ReadFile($"{skinFolder}Audio/audio.ini"));
         }
 
         private static void LoadMainMenu(string skinFolder)
@@ -177,7 +178,8 @@ namespace Pulsarc.Skinning
 
         private static void LoadSounds(string skinFolder)
         {
-            LoadSample($"{skinFolder}Audio/", "hitsound");
+            LoadSample($"{skinFolder}Audio/", "hit");
+            LoadSample($"{skinFolder}Audio/", "miss");
         }
         #endregion
 
@@ -299,9 +301,7 @@ namespace Pulsarc.Skinning
         /// <param name="key">The name of the variable.</param>
         /// <returns>The int value found using the provided parameters.</returns>
         public static int GetConfigInt(string config, string section, string key)
-        {
-            return int.Parse(GetConfigString(config, section, key));
-        }
+            => int.Parse(GetConfigString(config, section, key));
 
         /// <summary>
         /// Find the config provided, go to the config-section provided, and return the float value of the key provided.
@@ -311,9 +311,17 @@ namespace Pulsarc.Skinning
         /// <param name="key">The name of the variable.</param>
         /// <returns>The float value found using the provided parameters.</returns>
         public static float GetConfigFloat(string config, string section, string key)
-        {
-            return float.Parse(GetConfigString(config, section, key), CultureInfo.InvariantCulture);
-        }
+            => float.Parse(GetConfigString(config, section, key), CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Find the config provided, go to the config-section provided, and return the bool value of the key provided.
+        /// </summary>
+        /// <param name="config">The config to look in.</param>
+        /// <param name="section">The section of a config to look in.</param>
+        /// <param name="key">The name of the variable.</param>
+        /// <returns>The float value found using the provided parameters.</returns>
+        public static bool GetConfigBool(string config, string section, string key)
+            => bool.Parse(GetConfigString(config, section, key));
 
         /// <summary>
         /// Find the config provided, go to the config-section provided, and return the string value of the key provided.
@@ -323,9 +331,7 @@ namespace Pulsarc.Skinning
         /// <param name="key">The name of the variable.</param>
         /// <returns>The float value found using the provided parameters.</returns>
         public static string GetConfigString(string config, string section, string key)
-        {
-            return Configs[config][section][key].Replace("\"", string.Empty);
-        }
+            => Configs[config][section][key].Replace("\"", string.Empty);
 
         /// <summary>
         /// Find the config provided, go to the section provided, and return the Anchor of the key provided.
@@ -335,9 +341,7 @@ namespace Pulsarc.Skinning
         /// <param name="key">The name of the variable.</param>
         /// <returns>The Anchor found using the provided parameters.</returns>
         public static Anchor GetConfigAnchor(string config, string section, string key)
-        {
-            return (Anchor)Enum.Parse(Anchor.TopLeft.GetType(), GetConfigString(config, section, key));
-        }
+            => (Anchor)Enum.Parse(Anchor.TopLeft.GetType(), GetConfigString(config, section, key));
 
         /// <summary>
         /// Find the config provided, go to the section provided, and return the start position of the

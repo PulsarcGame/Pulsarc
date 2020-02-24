@@ -112,6 +112,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Time distance (in ms) from which hitobjects are neither updated not drawn
         public int IgnoreTime { get; private set; } = 500;
 
+        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
+        private int notesSinceLastMiss;
+        public bool MissSoundThresholdCrossed => notesSinceLastMiss >= hitSoundComboThreshold;
+
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
         /// </summary>
@@ -204,6 +208,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // If there are events, make nextEvent the first event, otherwise make it null
             NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
+
+            notesSinceLastMiss = hitSoundComboThreshold;
         }
 
         /// <summary>
@@ -477,7 +483,8 @@ namespace Pulsarc.UI.Screens.Gameplay
                 // If no judge is obtained, it is a ghost hit and is ignored score-wise
                 if (judge == null) { continue; }
 
-                AudioSamplePlayer.PlayHitSound();
+                SampleManager.PlayHitSound(judge);
+                notesSinceLastMiss++;
 
                 ProcessHit(press, column, ref pressed, error, judge);
             }
@@ -581,6 +588,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                         comboMultiplier = hitResult.Value;
                         GetGameplayView().AddJudge(Time, miss.Score);
                         Judgements.Add(miss);
+
+                        notesSinceLastMiss++;
+
+                        if (MissSoundThresholdCrossed)
+                        {
+                            notesSinceLastMiss = 0;
+                            SampleManager.PlayMissSound();
+                        }
                     }
                 }
             }
