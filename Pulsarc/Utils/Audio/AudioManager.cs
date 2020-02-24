@@ -6,7 +6,7 @@ using Wobble.Audio;
 using Wobble.Audio.Tracks;
 using Wobble.Logging;
 
-namespace Pulsarc.Utils
+namespace Pulsarc.Utils.Audio
 {
     static class AudioManager
     {

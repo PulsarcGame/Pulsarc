@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
+using Pulsarc.Utils.Audio;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,7 @@ namespace Pulsarc.Utils
             Fonts["DefaultFont"].DefaultCharacter = '?'; // Prevents crashing with invalid characters
             
             Skin.LoadSkin("DefaultSkin");
+            SampleManager.Init();
 
             StoredTexture = new Dictionary<String, KeyValuePair<Texture2D, double>>();
         }

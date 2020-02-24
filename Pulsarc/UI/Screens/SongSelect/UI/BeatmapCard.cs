@@ -4,6 +4,7 @@ using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Audio;
 using Pulsarc.Utils.Maths;
 using System;
 using Wobble.Logging;

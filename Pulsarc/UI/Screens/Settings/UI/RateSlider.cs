@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Pulsarc.Utils;
+using Pulsarc.Utils.Audio;
 
 namespace Pulsarc.UI.Screens.Settings.UI
 {
