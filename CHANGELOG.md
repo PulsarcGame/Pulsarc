@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - A skinnable bar during gameplay to represent the time left in the map.
+- Auto-updater before game launch.
 
 ### Changed
 - Scrolling in the song select or settings menu is no longer infinite.
