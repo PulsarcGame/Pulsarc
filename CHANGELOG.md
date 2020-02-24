@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hitsounds and misssounds. Control effect volume by changing `EffectVolume` in config.ini.
 - MissSoundThreshold to config.ini. This setting determines how many notes will pass before the misssound will play again.
 - Option to disable hitsounds for specific judgements in skin/audio.ini
+- Auto-updater before game launch.
 
 ### Changed
 - Scrolling in the song select or settings menu is no longer infinite.
