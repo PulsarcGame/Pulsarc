@@ -19,6 +19,9 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         private Background background;
 
+        private MapTimer mapTimer;
+        private double Time => GetGameplayEngine().Time;
+
         private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
 
         /// <summary>
@@ -44,6 +47,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             SetUpAccMeter();
 
             background = GetGameplayEngine().Background;
+
+            // Todo make fill direction skinnable
+            mapTimer = new MapTimer(GetGameplayEngine().MapEndTime, FillBarDirection.UpToDown);
         }
 
         /// <summary>
@@ -178,6 +184,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             judgeBox.Add(time, judge);
         }
 
+        // TODO: Cleanup
         public override void Update(GameTime gameTime)
         {
             // Score
@@ -186,29 +193,40 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Acc
             double accuracyTotal = 0;
 
-            foreach (JudgementValue judge in GetGameplayEngine().Judgements)
-                accuracyTotal += judge.Acc;
+            List<JudgementValue> judgements = GetGameplayEngine().Judgements;
+
+            for (int i = 0; i < judgements.Count; i++)
+            {
+                accuracyTotal += judgements[i].Acc;
+            }
 
             // If no judgements have happened, 100%, otherwise, find the acc
             double value = 100d;
 
-            int count = GetGameplayEngine().Judgements.Count;
+            int count = judgements.Count;
 
             if (count > 0)
+            {
                 value *= accuracyTotal / count;
+            }
 
             value = Math.Round(value, 2);
 
             if (value < 1)
+            {
                 uiElements[1].Update("0" + value.ToString(uiElements[1].NumberFormat));
+            }
             else
+            {
                 uiElements[1].Update(value);
+            }
 
             // Combo
             uiElements[2].Update(GetGameplayEngine().Combo);
 
-            judgeBox.Update(GetGameplayEngine().Time);
-            accMeter.Update(GetGameplayEngine().Time);
+            judgeBox.Update(Time);
+            accMeter.Update(Time);
+            mapTimer.CurrentValue = (float)Time;
         }
 
         /// <summary>
@@ -217,21 +235,25 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="gameTime"></param>
         public override void Draw(GameTime gameTime)
         {
-            if (!GameplayEngine.Active)
-                return;
+            if (!GameplayEngine.Active) { return; }
 
             // Don't bother drawing the background if dim is 100%
             if (background.Dimmed && background.DimTexture.Opacity != 1f || !background.Dimmed)
+            {
                 background.Draw();
+            }
 
             crosshair.Draw();
             DrawArcs();
 
-            foreach (TextDisplayElementFixedSize tdef in uiElements)
-                tdef.Draw();
+            for (int i = 0; i < uiElements.Count; i++)
+            {
+                uiElements[i].Draw();
+            }
 
             judgeBox.Draw();
             accMeter.Draw();
+            mapTimer.Draw();
         }
 
         private void DrawArcs()

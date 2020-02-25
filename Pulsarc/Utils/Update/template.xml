@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install appId="Pulsarc">
+  <version>x.x.x.0</version>
+  <download>https://github.com/PulsarcGame/Pulsarc/releases/download/{release}/{full_download}.zip</download>
+  <md5></md5>
+  <patch>
+    <previousVersion>x.x.x.0</previousVersion>
+    <download>https://github.com/PulsarcGame/Pulsarc/releases/download/{release}/{patch_download}.zip</download>
+    <md5></md5>
+  </patch>
+</install>

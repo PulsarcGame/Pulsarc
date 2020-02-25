@@ -11,6 +11,7 @@ using Pulsarc.Utils.BeatmapConversion;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Wobble;
 using Wobble.Input;
@@ -24,6 +25,8 @@ namespace Pulsarc
     /// </summary>
     public class Pulsarc : WobbleGame
     {
+        public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
+
         private static Pulsarc pulsarc;
         public static new SpriteBatch SpriteBatch => GameBase.Game.SpriteBatch;
         public static new GraphicsDeviceManager Graphics => GameBase.Game.Graphics;
@@ -54,9 +57,6 @@ namespace Pulsarc
         // Static song selection screen for playing and managing user audio everywhere
         public static SongSelection SongScreen;
 
-        // Whether or not the cursor should be displayed
-        private bool displayCursor => Pulsarc.DisplayCursor;
-
         // FPS
         private FPS fpsDisplay;
 
@@ -84,7 +84,6 @@ namespace Pulsarc
                 Config.SetInt("Graphics", "FullScreen", 2);
             }
 
-            bool heightIsZero = false;
             if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
             {
                 Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
@@ -100,12 +99,19 @@ namespace Pulsarc
 
             Graphics.SynchronizeWithVerticalRetrace = Config.GetInt("Graphics", "VSync") == 1;
 
-            // Force the game to update at fixed time intervals
-            IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
+            // Don't use FPSLimit if Vsync is on
+            if (!Graphics.SynchronizeWithVerticalRetrace)
+            {
+                // Force the game to update at fixed time intervals
+                IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
 
-            // Set the time interval to match the FPSLimit
-            if (IsFixedTimeStep)
-                TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
+                // Set the time interval to match the FPSLimit
+                if (IsFixedTimeStep)
+                {
+                    TargetElapsedTime =
+                        TimeSpan.FromSeconds(1 / (float)Config.GetInt("Graphics", "FPSLimit"));
+                }
+            }
 
             Content.RootDirectory = "Content";
         }
@@ -121,7 +127,6 @@ namespace Pulsarc
             NativeAssemblies.Copy();
 
             // Initialize the logging tool for troubleshooting
-            PulsarcLogger.Logging = Config.GetBool("Logger", "AllMessages");
             PulsarcLogger.Initialize();
 
             // Initialize Discord Rich Presence
@@ -140,8 +145,10 @@ namespace Pulsarc
             fpsDisplay = new FPS(Vector2.Zero);
 
             // Initialize the game camera
-            gameCamera = new Camera(Graphics.GraphicsDevice.Viewport, (int)GetDimensions().X, (int)GetDimensions().Y, 1);
-            gameCamera.Pos = new Vector2(GetDimensions().X / 2, GetDimensions().Y / 2);
+            gameCamera = new Camera(Graphics.GraphicsDevice.Viewport, (int)GetDimensions().X, (int)GetDimensions().Y, 1)
+            {
+                Pos = new Vector2(GetDimensions().X / 2, GetDimensions().Y / 2)
+            };
 
             // Start the song selection in the background to have music when entering the game
             SongScreen = new SongSelection();
@@ -172,10 +179,7 @@ namespace Pulsarc
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent()
-        {
-            AssetsManager.Unload();
-        }
+        protected override void UnloadContent() => AssetsManager.Unload();
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -184,7 +188,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (!IsReadyToUpdate) return;
+            if (!IsReadyToUpdate) { return; }
 
             Thread.Yield();
 
@@ -252,17 +256,25 @@ namespace Pulsarc
                 // If there is no maps in this folder, and the number of sub-folders is 2 or more,
                 // do a Batch Convert
                 if (Directory.GetFiles(toConvert, extension).Length == 0 && directories.Length >= 2)
-                    foreach (string directory in directories)
-                        converter.Save(directory);
+                {
+                    for (int i = 0; i < directories.Length; i++)
+                    {
+                        converter.Save(directories[i]);
+                    }
+                }
 
                 // Otherwise convert one map
                 else
+                {
                     converter.Save(toConvert);
-
+                }
+                
                 ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
             }
             else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
+            {
                 converting = false;
+            }
         }
 
         /// <summary>
@@ -271,7 +283,7 @@ namespace Pulsarc
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (!IsReadyToUpdate) return;
+            if (!IsReadyToUpdate) { return; }
 
             // Begin the spritebatch in relation to the camera
             SpriteBatch.Begin(SpriteSortMode.Deferred,
@@ -285,8 +297,10 @@ namespace Pulsarc
 
             base.Draw(gameTime);
 
-            if (displayCursor)
+            if (DisplayCursor)
+            {
                 cursor.Draw();
+            }
 
             // FPS
             fpsDisplay?.Draw();
@@ -298,31 +312,33 @@ namespace Pulsarc
         /// Used for getting the game's base screen dimensions currently (1920x1080)
         /// in a Vector2 Object
         /// </summary>
-        static public Vector2 GetBaseScreenDimensions()
-        {
-            return new Vector2(BASE_WIDTH, BASE_HEIGHT);
-        }
+        static public Vector2 GetBaseScreenDimensions() => new Vector2(BASE_WIDTH, BASE_HEIGHT);
 
         /// <summary>
         /// Sees if the current aspect ratio is wider than 16:9.
         /// </summary>
         /// <returns></returns>
-        static public bool IsPulsarcWiderThan16by9()
-        {
-            return CurrentAspectRatio > BASE_ASPECT_RATIO;
-        }
+        static public bool IsPulsarcWiderThan16by9() => CurrentAspectRatio > BASE_ASPECT_RATIO;
 
         /// <summary>
         /// Used for getting the game's current dimensions in a Vector2 object
         /// </summary>
-        static public Vector2 GetDimensions()
+        static public Vector2 GetDimensions() => new Vector2(CurrentWidth, CurrentHeight);
+
+        /// <summary>
+        /// If a user closes the main window without clicking on the "Quit" button,
+        /// This gets called to make sure everything shuts down properly.
+        /// </summary>
+        protected override void OnExiting(object sender, EventArgs args)
         {
-            return new Vector2(CurrentWidth, CurrentHeight);
+            base.OnExiting(sender, args);
+            Quit();
         }
 
         static public void Quit()
         {
             pulsarc.Exit();
+            Environment.Exit(0);
         }
     }
 }

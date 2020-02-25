@@ -2,42 +2,38 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pulsarc.Utils
 {
     public static class Screenshotter
     {
-        public static Keys ScreenshotKey => Config.Bindings["Screenshot"];
+        private static Keys screenshotKey = Config.Bindings["Screenshot"];
 
-        public static bool ReadyToScreenshot { get; private set; } = false;
-        public static bool Screenshotting { get; private set; } = false;
+        private static bool pressedAlready = false;
 
-        public static async void Update()
+        public static void Update()
         {
-            if (InputManager.KeyboardPresses.Count <= 0) { return; }
-
-            bool pressingKey = InputManager.PressedKeys.Contains(ScreenshotKey);
-
-            // If pressed, get ready to screenshot
-            if (pressingKey && !ReadyToScreenshot)
+            // If screenshotKey is pressed, take a screenshot
+            if (InputManager.PressedKeys.Contains(screenshotKey))
             {
-                ReadyToScreenshot = true;
+                try
+                {
+                    if (!pressedAlready)
+                    {
+                        TakeScreenshot();
+                    }
+                }
+                catch (Exception e)
+                {
+                    PulsarcLogger.Warning(e.ToString());
+                }
+
+                pressedAlready = true;
             }
-            // If ready to screenshot and the key is released, screenshot!
-            else if (!pressingKey && ReadyToScreenshot)
+            else if (pressedAlready)
             {
-                PulsarcLogger.Debug("test");
-
-                Screenshotting = true;
-                TakeScreenshot();
-                Screenshotting = false;
-                
-                // Make sure we don't accidentally rapid-fire screenshots from holding.
-                ReadyToScreenshot = false;
+                pressedAlready = false;
             }
         }
 
@@ -62,6 +58,13 @@ namespace Pulsarc.Utils
 
             string name = FindName();
 
+            // If the game doesn't hae a screenshots folder for any reason, make it.
+            // TODO: Custom screenshot directory?
+            if (!Directory.Exists($"Screenshots/"))
+            {
+                Directory.CreateDirectory($"Screenshots/");
+            }
+
             using (FileStream fileStream = File.Create($"Screenshots/{name}.png", 4096))
             {
                 screenTexture.SaveAsPng(fileStream, bounds.Width, bounds.Height);
@@ -77,6 +80,7 @@ namespace Pulsarc.Utils
             int suffix = 0;
             string fullName = baseName + $"-{suffix}";
 
+            // If there's already a file with this name, change the suffix of the file name
             while (File.Exists($"Screenshots/{fullName}"))
             {
                 suffix++;

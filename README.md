@@ -27,7 +27,9 @@ And Quit shuts the game down.
 
 ## How to Add Maps
 Right now releases comes with one map to play, but currently there's no editor or map-hosting service to get more. However, Pulsarc can convert osu!mania or Intralism maps into a pulsarc beatmap for you to play.
-To convert a map, find and open ``config.ini`` in your text editor of choice. Put "Intralism" or "Mania" after ``Game = ``. Find the path to the __folder__ of the map you want to convert. Copy the path address and then paste it after ``Path = ``. If you're converting an Intralism map, and want to import a specific background image from teh map, copy and paste the image name in front of ``BGImage = `` Save config.ini. You do not need to restart Pulsarc if it's currently running. In the Pulsarc Song Select screen, press the convert button (Default is "C"). If you gave the correct path, the map data should be converted to a new beatmap folder in the /Songs folder, and the Song Select screen should update to include the new map.
+To convert a map, find and open ``config.ini`` in your text editor of choice. Put "Intralism" or "Mania" after ``Game = ``. Find the path to the __folder__ of the map you want to convert. Copy the path address and then paste it after ``Path = ``. If you're converting an Intralism map, and want to import a specific background image from teh map, copy and paste the image name in front of ``BGImage = `` Save config.ini. You do not need to restart Pulsarc if it's currently running. In the Pulsarc Song Select screen, press the convert button (Default is "F1"). If you gave the correct path, the map data should be converted to a new beatmap folder in the /Songs folder, and the Song Select screen should update to include the new map.
+
+You can also convert multiple maps at once. If you provide a path to a folder filled with either Intralism or osu!mania maps (i.e., your intralism workshop folder or your osu library folder), Pulsarc will detect it and convert every map in the folder. THIS WILL FREEZE YOUR GAME FOR A SIGNIFICANT AMOUNT OF TIME, especially with a large amount of maps. It is recommended that you set Pulsarc to be in windowed mode before you batch convert many maps at once.
 
 ## Build and Run
 To build and run Pulsarc, follow these steps:
@@ -42,9 +44,9 @@ It is also useful if you talk about a feature you want to develop on Discord or 
 
 You can make a contribution through a pull request. Don't make requests for the master branch, use the [develop branch](https://github.com/PulsarcGame/Pulsarc). Please have one branch/pull request per feature, and keep pull requests short and sweet. We will let you know if we want to discuss more, or you can bring up a discussion on the Discord server.
 
-When contributing, please follow our (code style)[CODESTYLE.md]. If you have any issues with the code style feel free to discuss on the issues board or our Discord server.
+When contributing, please follow our [code style](CODESTYLE.md). If you have any issues with the code style feel free to discuss on the issues board or our Discord server.
 
 ## License
-Pulsarc uses multiple submodules which are subject to their own individual licensing. Please see each submodule to view their license(s).
+Pulsarc uses multiple submodules and third-party dependencies which are subject to their own individual licensing. To see the dependencies and their licenses, visit [DEPENDENCIES](DEPENDENCIES).
 
 The code in this repository is released and licensed under the [Mozilla Public License 2.0](LICENSE). Please see the [LICENSE](LICENSE) file for more information. In short, if you are making any modifications to this software, you **must** disclose the source code of the modified version of the file(s), and include the original copyright notice.

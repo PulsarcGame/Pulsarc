@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pulsarc.Utils.Update;
+using System;
 
 namespace Pulsarc
 {
@@ -13,8 +14,15 @@ namespace Pulsarc
         [STAThread]
         static void Main()
         {
+            // Checks for updates and applies them if found, otherwises launches the game.
+#if !DEBUG
+            Updater.CheckForUpdates();
+#endif
+
             using (var game = new Pulsarc())
+            {
                 game.Run();
+            }
         }
     }
 }

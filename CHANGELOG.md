@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A skinnable bar during gameplay to represent the time left in the map.
+- Hitsounds and misssounds. Control effect volume by changing `EffectVolume` in config.ini.
+- MissSoundThreshold to config.ini. This setting determines how many notes will pass before the misssound will play again.
+- Option to disable hitsounds for specific judgements in skin/audio.ini
+- Auto-updater before game launch.
+
+### Changed
+- Scrolling in the song select or settings menu is no longer infinite.
+
+### Removed
+- The `AllMessages` setting in config.ini.
+
+### Fixed
+- Major framerate stutter issues for some users.
+- A game crash when pressing backspace when there's no text in the box.
+- Lag issues when both Vsync and FPSLimit are utilized
+- Inconsistent typing in the searchbar of the Song Select.
+- Process not quitting when clicking the X button or Alt+F4'ing
+- Screenshot tool not working and/or crashing the game (hopefully)
+
 ## [1.3.2-alpha] - 2020-01-27
 
 ### Changed

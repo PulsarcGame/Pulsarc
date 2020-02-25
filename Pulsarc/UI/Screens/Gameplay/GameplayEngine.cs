@@ -11,6 +11,7 @@ using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
 using System.Linq;
 using Pulsarc.Utils.SQLite;
+using Pulsarc.Utils.Audio;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -35,7 +36,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Used for delaying the gameplay's end
         private bool ending => endTime != -1;
         private double endTime = -1;
-        private const int endDelay = 2000;
+        private const int END_DELAY = 2000;
+        public double MapEndTime { get; private set; }
 
         // Beatmap Elements
         // The current beatmap being played.
@@ -110,13 +112,14 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Time distance (in ms) from which hitobjects are neither updated not drawn
         public int IgnoreTime { get; private set; } = 500;
 
+        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
+        private int notesSinceLastMiss;
+        public bool MissSoundThresholdCrossed => notesSinceLastMiss >= hitSoundComboThreshold;
+
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
         /// </summary>
-        public GameplayEngine()
-        {
-            View = new GameplayEngineView(this);
-        }
+        public GameplayEngine() => View = new GameplayEngineView(this);
 
         /// <summary>
         /// Initializes the current GameplayView with the provided beatmap.
@@ -125,7 +128,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void Init(Beatmap beatmap)
         {
             if (!beatmap.FullyLoaded)
+            {
                 beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+            }
 
             // Reset in case it wasn't properly handled outside
             Reset();
@@ -140,10 +145,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             InitializeGameplay(beatmap);
 
             // Create columns and their hitobjects
-            CreateColumns(beatmap);
+            CreateColumns();
 
             // Sort the hitobjects according to their first appearance for optimizing update/draw
             SortHitObjects();
+
+            if (AutoPlay)
+            {
+                LoadAutoPlay();
+            }
 
             // Once everything is loaded, initialize the view
             GetGameplayView().Init();
@@ -166,9 +176,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="folder">Beatmap folder name.</param>
         /// <param name="diff">Difficulty name for the beatmap.</param>
         public void Init(string folder, string diff)
-        {
-            Init(BeatmapHelper.Load("Songs/" + folder, diff + ".psc"));
-        }
+            => Init(BeatmapHelper.Load("Songs/" + folder, diff + ".psc"));
 
         #region Initializiation Methods
         /// <summary>
@@ -200,6 +208,8 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // If there are events, make nextEvent the first event, otherwise make it null
             NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
+
+            notesSinceLastMiss = hitSoundComboThreshold;
         }
 
         /// <summary>
@@ -232,24 +242,34 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Create columns from the beatmap
         /// </summary>
         /// <param name="beatmap"></param>
-        private void CreateColumns(Beatmap beatmap)
+        private void CreateColumns()
         {
+            // Create one column for each key being used
             for (int i = 1; i <= KeyCount; i++)
+            {
                 Columns[i - 1] = new Column(i);
+            }
 
             int objectCount = 0;
-
             // Add arcs to the columns
             foreach (Arc arc in CurrentBeatmap.Arcs)
+            {
                 for (int i = 0; i < KeyCount; i++)
+                {
                     if (BeatmapHelper.IsColumn(arc, i))
                     {
-                        Columns[i].AddHitObject(new HitObject(arc.Time, (int)(i / (float)KeyCount * 360), KeyCount, CurrentArcsSpeed, Hidden),
-                                                CurrentArcsSpeed * CurrentSpeedMultiplier,
-                                                Crosshair.GetZLocation());
+                        Columns[i].AddHitObject
+                        (
+                            new HitObject(arc.Time, (int)(i / (float)KeyCount * 360),
+                                KeyCount, CurrentArcsSpeed, Hidden),
+                            CurrentArcsSpeed * CurrentSpeedMultiplier,
+                            Crosshair.GetZLocation()
+                        );
 
                         objectCount++;
                     }
+                }
+            }
 
             // Compute the beatmap's highest possible score,
             // for displaying the current display_score later on
@@ -262,40 +282,67 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void SortHitObjects()
         {
             foreach (Column col in Columns)
+            {
                 col.SortUpdateHitObjects();
+
+                if (col.HitObjects.Last().Time > MapEndTime)
+                {
+                    MapEndTime = col.HitObjects.Last().Time;
+                }
+            }
+
+            MapEndTime += END_DELAY;
 
             // Load user bindings
             bindings.Add(Config.Bindings["Left"], 2);
             bindings.Add(Config.Bindings["Up"], 3);
             bindings.Add(Config.Bindings["Down"], 1);
             bindings.Add(Config.Bindings["Right"], 0);
+        }
 
-            // Load autoplay by filling the input queue with desired inputs
-            if (AutoPlay)
+        // An array containing the valid keys used for gameplay.
+        private Keys[] validGameplayKeys =
+        {
+            Config.Bindings["Right"],
+            Config.Bindings["Down"],
+            Config.Bindings["Left"],
+            Config.Bindings["Up"],
+        };
+
+        /// <summary>
+        /// Loads all the desired inputs for this play so AutoPlay can work
+        /// </summary>
+        private void LoadAutoPlay()
+        {
+            List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
+
+            for (int i = 0; i < KeyCount; i++)
             {
-                Keys[] presses =
+                foreach (HitObject arc in Columns[i].HitObjects)
                 {
-                    Config.Bindings["Right"],
-                    Config.Bindings["Down"],
-                    Config.Bindings["Left"],
-                    Config.Bindings["Up"],
-                };
+                    if (autoPlayAddRandomness)
+                    {
+                        // If enabled, add some randomness to the autoplay inputs. Legacy.
+                        inputs.Add(
+                            new KeyValuePair<double, Keys>(
+                                arc.Time + (Math.Pow(new Random().Next(80) - 40, 3) / 1300),
+                                validGameplayKeys[i]));
+                    }
+                    else
+                    {
+                        // Otherwise autoplay will hit each arc perfectly.
+                        inputs.Add(new KeyValuePair<double, Keys>(arc.Time, validGameplayKeys[i]));
+                    }
+                }
+            }
 
-                List<KeyValuePair<double, Keys>> inputs = new List<KeyValuePair<double, Keys>>();
+            // Sort the inputs by time
+            inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
 
-                for (int i = 0; i < KeyCount; i++)
-                    foreach (HitObject arc in Columns[i].HitObjects)
-                        if (autoPlayAddRandomness)
-                            // If enabled, add some randomness to the autoplay inputs. Legacy.
-                            inputs.Add(new KeyValuePair<double, Keys>(arc.Time + (Math.Pow(new Random().Next(80) - 40, 3) / 1300), presses[i]));
-                        else
-                            // Otherwise autoplay will hit each arc perfectly.
-                            inputs.Add(new KeyValuePair<double, Keys>(arc.Time, presses[i]));
-
-                inputs.Sort((x, y) => x.Key.CompareTo(y.Key));
-
-                foreach (KeyValuePair<double, Keys> input in inputs)
-                    InputManager.KeyboardPresses.Enqueue(input);
+            // And put them into the InputManager
+            foreach (KeyValuePair<double, Keys> input in inputs)
+            {
+                InputManager.PressActions.Enqueue(input);
             }
         }
         #endregion
@@ -319,25 +366,23 @@ namespace Pulsarc.UI.Screens.Gameplay
         public override void Update(GameTime gameTime)
         {
             // If not active, don't update.
-            if (!Active)
-                return;
+            if (!Active) { return; }
 
             // Engine stuff (pause, continue, end, restart)
             HandleEngineInputs();
 
             // If paused, don't handle anything else
-            if (AudioManager.paused)
-                return;
+            if (AudioManager.paused) { return; }
 
             // Quit gameplay when nothing is left to play, or if the audio finished playing
-            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + endDelay))
+            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + END_DELAY))
             {                
                 EndGameplay(true);
                 return;
             }
 
             // Handle user input in priority
-            HandleInputs(gameTime);
+            HandleInputs();
             
             // Event Handling
             HandleEvents();
@@ -356,95 +401,134 @@ namespace Pulsarc.UI.Screens.Gameplay
         }
 
         #region Update Methods
+        // Each key that is used for engine inputs (end, pause, retry, etc.)
+        private readonly Keys[] validEngineInputKeys =
+        {
+            Keys.Escape,
+            Config.Bindings["Pause"],
+            Config.Bindings["Continue"],
+            Config.Bindings["Retry"],
+        };
+
         /// <summary>
         /// Handle inputs that pause, continue, leave, or restart gameplay
         /// </summary>
         private void HandleEngineInputs()
         {
-            // End the gameplay with the "escape" key TODO: make this key bindable.
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Keys[] keyPresses = Keyboard.GetState().GetPressedKeys();
+
+            // If no keys were pressed, return
+            if (keyPresses.Length <= 0) { return; }
+
+            // Remove all invalid keys from keyPresses
+            // From my research, ToArray() may not be very well optimized, but with a small amount
+            // of data (max size is: validEngineInputsKeys.Length) this may be alright. -FRUP
+            keyPresses = keyPresses.Where(validEngineInputKeys.Contains).ToArray();
+
+            for (int i = 0; i < keyPresses.Length; i++)
             {
-                EndGameplay();
-                return;
+                // End the gameplay with the "escape" key TODO: make this key bindable.
+                if (keyPresses[i] == Keys.Escape)
+                {
+                    EndGameplay();
+                }
+                // Restart gameplay using bindable "Retry" key.
+                else if (keyPresses[i] == Config.Bindings["Retry"])
+                {
+                    Retry();
+                }
+                // Pause Gameplay with bindable "Pause" key.
+                else if (keyPresses[i] == Config.Bindings["Pause"])
+                {
+                    Pause();
+                }
+                // Resume Gameplay with bindable "Continue" key.
+                else if (keyPresses[i] == Config.Bindings["Continue"])
+                {
+                    Resume();
+                }
             }
-
-            // Pause Gameplay with bindable "Pause" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Pause"]))
-                Pause();
-
-            // Resume Gameplay with bindable "Continue" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Continue"]))
-                Resume();
-
-            // Restart gameplay using bindable "Retry" key.
-            if (Keyboard.GetState().IsKeyDown(Config.Bindings["Retry"]))
-                Retry();
         }
 
         /// <summary>
         /// Handle the currently queued Inputs that may affect the gameplay
         /// </summary>
-        private void HandleInputs(GameTime gameTime)
+        private void HandleInputs()
         {
             // Prevents future input from being handled. Useful for auto. Remove for quick auto result testing
-            while (InputManager.KeyboardPresses.Count > 0
-                && InputManager.KeyboardPresses.Peek().Key <= AudioManager.GetTime())
+            while (InputManager.PressActions.Count > 0
+                && InputManager.PressActions.Peek().Key <= AudioManager.GetTime())
             {
-                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
-                // Process a hit if the pressed key corresponds to a bound key
-                if(bindings.ContainsKey(press.Value))
+                // If the key pressed isn't a bound key, ignore it
+                if (!bindings.ContainsKey(press.Value)) { continue; }
+
+                int column = bindings[press.Value];
+                rawInputs.Add(new KeyValuePair<double, int>(press.Key, column));
+
+                // If there is no hittable hit object available, ignore this press
+                // TODO: instead of checking to see if there's anything left in the in Column,
+                // How about seeing if there's any nearby arc times are within the
+                // judge range of the press.
+                if (!Columns[column].HitObjects.Exists(x => x.Hittable)) { continue; }
+
+                HitObject pressed = Columns[column].HitObjects.Find(hO => hO.Hittable);
+
+                int error = (int)((pressed.Time - press.Key) / Rate);
+
+                // Get the judge for the timing error
+                JudgementValue judge = Judgement.GetJudgementValueByError(Math.Abs(error));
+
+                // If no judge is obtained, it is a ghost hit and is ignored score-wise
+                if (judge == null) { continue; }
+
+                SampleManager.PlayHitSound(judge);
+                notesSinceLastMiss++;
+
+                ProcessHit(press, column, ref pressed, error, judge);
+            }
+        }
+
+        private void ProcessHit(in KeyValuePair<double, Keys> press, in int column,
+            ref HitObject pressed, in int error, in JudgementValue judge)
+        {
+            // Handle the hit according to the judge
+            GetGameplayView().AddHit(press.Key, error, judge.Score);
+
+            // Add a Fading HitObject, and mark the pressed HitObject for removal.
+            if (arcFadeTime > 0 && !pressed.Hidden)
+            {
+                Columns[column].AddHitObject(
+                    new HitObjectFade(pressed, arcFadeTime, KeyCount),
+                    CurrentArcsSpeed * CurrentSpeedMultiplier,
+                    Crosshair.GetZLocation());
+            }
+
+            pressed.ToErase = true;
+
+            Columns[column].HitObjects.Remove(pressed);
+
+            // Take care of judgement of the hit.
+            errors.Add(new KeyValuePair<double, int>(press.Key, error));
+            Judgements.Add(judge);
+
+            KeyValuePair<long, int> hitResult = Scoring.ProcessHitResults(judge, score, comboMultiplier);
+            score = hitResult.Key;
+            comboMultiplier = hitResult.Value;
+
+            if (judge.Score > 0)
+            {
+                Combo++;
+
+                if (Combo > maxCombo)
                 {
-                    HitObject pressed = null;
-                    int column = bindings[press.Value];
-                    rawInputs.Add(new KeyValuePair<double, int>(press.Key, column));
-
-                    // Check the first hitobject of the corresponding column if there is >= one
-                    if (Columns[column].HitObjects.Count > 0 && Columns[column].HitObjects.Exists(x => x.Hittable))
-                    {
-                        pressed = Columns[column].HitObjects.Find(hO => hO.Hittable);
-
-                        int error = (int)((pressed.Time - press.Key) / Rate);
-
-                        // Get the judge for the timing error
-                        JudgementValue judge = Judgement.GetJudgementValueByError(Math.Abs(error));
-
-                        // If no judge is obtained, it is a ghost hit and is ignored
-                        if (judge != null)
-                        {
-                            // Otherwise, handle the hit according to the judge
-                            GetGameplayView().AddHit(press.Key, error, judge.Score);
-
-                            // Add a Fading HitObject, and mark the pressed HitObject for removal.
-                            if (!pressed.Hidden)
-                                Columns[column].AddHitObject(   new HitObjectFade(pressed, arcFadeTime, KeyCount),
-                                                                CurrentArcsSpeed * CurrentSpeedMultiplier,
-                                                                Crosshair.GetZLocation());
-
-                            pressed.ToErase = true;
-
-                            Columns[column].HitObjects.Remove(pressed);
-
-                            // Take care of judgement of the hit.
-                            errors.Add(new KeyValuePair<double, int>(press.Key, error));
-                            Judgements.Add(judge);
-
-                            KeyValuePair<long, int> hitResult = Scoring.ProcessHitResults(judge, score, comboMultiplier);
-                            score = hitResult.Key;
-                            comboMultiplier = hitResult.Value;
-
-                            if (judge.Score > 0)
-                            {
-                                Combo++;
-
-                                if(Combo > maxCombo)
-                                    maxCombo = Combo;
-                            }
-                            else
-                                Combo = 0;
-                        }
-                    }
+                    maxCombo = Combo;
                 }
+            }
+            else
+            {
+                Combo = 0;
             }
         }
 
@@ -453,8 +537,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void UpdateGameplay()
         {
-            if (CurrentBeatmap == null)
-                return;
+            // If there's no beatmap loaded, ignore this method, we aren't ready for you yet.
+            if (CurrentBeatmap == null) { return; }
 
             AtLeastOneLeft = false;
 
@@ -462,14 +546,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             {
                 bool updatedAll = false;
 
-                // For readability
                 ref Column currentColumn = ref Columns[i];
 
                 for (int k = 0; k < currentColumn.UpdateHitObjects.Count && !updatedAll; k++)
                 {
-                    // For readability
-                    // can't ref properties, but this doesn't hurt performance
-                    // when compared to the old: "Columns[i].UpdateHitObjects[k].Value"
                     HitObject currentHitObject = currentColumn.UpdateHitObjects[k].Value;
 
                     // Remove the hitobject if it is marked for removal
@@ -480,14 +560,17 @@ namespace Pulsarc.UI.Screens.Gameplay
                     }
 
                     // Process the new position of this object
-                    currentHitObject.RecalcPos((int)Time, CurrentSpeedMultiplier, Crosshair.GetZLocation());
+                    currentHitObject.RecalcPos((int)Time, CurrentSpeedMultiplier,
+                        Crosshair.GetZLocation());
                     AtLeastOneLeft = true;
 
                     // Ignore the following objects if we have reached the ignored distance
                     if (currentColumn.UpdateHitObjects[k].Key - IgnoreTime > Time)
+                    {
                         updatedAll = true;
+                    }
 
-                    // Determine whether or not this note has been missed by the user, and take action if so
+                    // Determine whether or not this note has been missed, and take action if so
                     if (currentHitObject.Time + (Judgement.GetMiss().Judge * Rate) < Time
                         && currentHitObject.Hittable)
                     {
@@ -505,6 +588,14 @@ namespace Pulsarc.UI.Screens.Gameplay
                         comboMultiplier = hitResult.Value;
                         GetGameplayView().AddJudge(Time, miss.Score);
                         Judgements.Add(miss);
+
+                        notesSinceLastMiss++;
+
+                        if (MissSoundThresholdCrossed)
+                        {
+                            notesSinceLastMiss = 0;
+                            SampleManager.PlayMissSound();
+                        }
                     }
                 }
             }
@@ -514,17 +605,14 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Update score_display according to the maximum displayed score.
         /// </summary>
         private void UpdateScoreDisplay()
-        {
-            scoreDisplay = (int)(score / (float)maxScore * Scoring.MaxScore);
-        }
+            => scoreDisplay = (int)(score / (float)maxScore * Scoring.MaxScore);
 
         /// <summary>
         /// Handles all Beatmap events.
         /// </summary>
         private void HandleEvents()
         {
-            if (CurrentBeatmap == null)
-                return;
+            if (CurrentBeatmap == null) { return; }
 
             // Events
             ActivateNextEvent();
@@ -545,19 +633,27 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 // Get ready for the next event, if it exists
                 if (CurrentBeatmap.Events.Count > eventIndex)
+                {
                     NextEvent = CurrentBeatmap.Events[eventIndex];
+                }
             }
         }
 
         private void HandleActiveEvents()
         {
             for(int i = 0; i < ActiveEvents.Count; i++)
+            {
                 // If the event is active, handle it
                 if (ActiveEvents[i].Active)
+                {
                     ActiveEvents[i].Handle(this);
+                }
                 // Otherwise, add remove it
                 else
+                {
                     ActiveEvents.RemoveAt(i--);
+                }
+            }
         }
 
         /// <summary>
@@ -566,34 +662,28 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void DelayEndGameplay()
         {
             if (endTime == -1 && !AtLeastOneLeft)
+            {
                 endTime = Time;
+            }
         }
         #endregion
 
+        #region Control Methods
         /// <summary>
         /// Move the gameplay backwards or forward in time.
         /// </summary>
         /// <param name="delta">How much time to move.</param>
-        public void MoveTime(long delta)
-        {
-            AudioManager.DeltaTime(delta);
-        }
+        public void MoveTime(long delta) => AudioManager.DeltaTime(delta);
 
         /// <summary>
         /// Pause the gameplay.
         /// </summary>
-        public void Pause()
-        {
-            AudioManager.Pause();
-        }
+        public void Pause() => AudioManager.Pause();
 
         /// <summary>
         /// Resume gameplay.
         /// </summary>
-        public void Resume()
-        {
-            AudioManager.Resume();
-        }
+        public void Resume() => AudioManager.Resume();
 
         /// <summary>
         /// Restart gameplay
@@ -615,7 +705,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Active = false;
 
             // Clear Input and Audio
-            InputManager.KeyboardPresses.Clear();
+            InputManager.PressActions.Clear();
             AudioManager.Stop();
 
             // Unset attributes to avoid potential conflict with next gameplays
@@ -639,14 +729,22 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Stop audio
             if (AudioManager.running)
+            {
                 AudioManager.Stop();
+            }
 
             // Save rplay data if this is a valid play
-            if(!AutoPlay && save)
-                DataManager.ScoreDB.AddReplay(new ReplayData(CurrentBeatmap.GetHash(), string.Join(",", rawInputs)));
+            if (!AutoPlay && save)
+            {
+                DataManager.ScoreDB.AddReplay(
+                    new ReplayData(CurrentBeatmap.GetHash(), string.Join(",", rawInputs)));
+            }
 
             // Create the result screen before exiting gameplay
-            ResultScreen next = new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, Rate, 0, CurrentBeatmap, Background, !AutoPlay && save);
+            ResultScreen next =
+                new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, Rate, 0,
+                    CurrentBeatmap, Background, !AutoPlay && save);
+
             Pulsarc.DisplayCursor = true;
             Reset();
 
@@ -657,10 +755,9 @@ namespace Pulsarc.UI.Screens.Gameplay
             // TODO: restart GC when out of gameplay
             GC.Collect();
         }
+        #endregion
 
         public override void UpdateDiscord()
-        {
-            PulsarcDiscord.SetStatus("Playing Singleplayer", CurrentBeatmap.Title);
-        }
+            => PulsarcDiscord.SetStatus("Playing Singleplayer", CurrentBeatmap.Title);
     }
 }

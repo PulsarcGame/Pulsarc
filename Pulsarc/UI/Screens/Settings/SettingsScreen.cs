@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Pulsarc.Utils;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Settings
@@ -8,8 +9,24 @@ namespace Pulsarc.UI.Screens.Settings
     {
         public override ScreenView View { get; protected set; }
 
-        public float SelectedFocus { get; private set; } = 0;
+        private float selectedFocus = 0;
+        public float SelectedFocus
+        {
+            get => selectedFocus;
+            private set
+            {
+                // Don't set this higher or lower than the min/max focus
+                selectedFocus =
+                    value > MAX_FOCUS ? MAX_FOCUS : value < MIN_FOCUS ? MIN_FOCUS : value;
+
+                // Can uncomment this to help find the new max.
+                //PulsarcLogger.Debug(SelectedFocus.ToString());
+            }
+        }
         private int lastScrollValue = 0;
+
+        private const float MAX_FOCUS = 11;
+        private const float MIN_FOCUS = 0;
 
         public override void Init()
         {

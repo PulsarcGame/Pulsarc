@@ -381,9 +381,9 @@ namespace Pulsarc.UI.Screens.Result
         public override void Update(GameTime gameTime)
         {
             // If "escape" or "delete" was pressed, go back to the Song select
-            while (InputManager.KeyboardPresses.Count > 0)
+            while (InputManager.PressActions.Count > 0)
             {
-                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
                 if (press.Value == Keys.Escape || press.Value == Keys.Delete)
                     ScreenManager.RemoveScreen(true);

@@ -27,7 +27,19 @@ namespace Pulsarc.UI.Screens.SongSelect
         private int lastScrollValue = 0;
         private bool leftClicking = false;
         private MouseState leftClickedState;
-        public float SelectedFocus = 0;
+
+        private float selectedFocus = 0;
+        public float SelectedFocus
+        {
+            get => selectedFocus;
+            // Don't set this higher or lower than the min/max focus
+            set => selectedFocus =
+                value > maxFocus ? maxFocus : value < MIN_FOCUS ? MIN_FOCUS : value;
+        }
+
+        private const float MIN_FOCUS = -3;
+        private float maxFocus => Cards.Count - 4;
+
         public BeatmapCard FocusedCard { get; set; }
 
         // The time when the last key was pressed
@@ -127,15 +139,25 @@ namespace Pulsarc.UI.Screens.SongSelect
             switch(sort)
             {
                 case "difficulty":
-                    return ascending ? beatmaps.OrderBy(i => i.Difficulty).ToList() : beatmaps.OrderByDescending(i => i.Difficulty).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Difficulty).ToList()
+                        : beatmaps.OrderByDescending(i => i.Difficulty).ToList();
                 case "artist":
-                    return ascending ? beatmaps.OrderBy(i => i.Artist).ToList() : beatmaps.OrderByDescending(i => i.Artist).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Artist).ToList()
+                        : beatmaps.OrderByDescending(i => i.Artist).ToList();
                 case "title":
-                    return ascending ? beatmaps.OrderBy(i => i.Title).ToList() : beatmaps.OrderByDescending(i => i.Title).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Title).ToList()
+                        : beatmaps.OrderByDescending(i => i.Title).ToList();
                 case "mapper":
-                    return ascending ? beatmaps.OrderBy(i => i.Mapper).ToList() : beatmaps.OrderByDescending(i => i.Mapper).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Mapper).ToList()
+                        : beatmaps.OrderByDescending(i => i.Mapper).ToList();
                 case "version":
-                    return ascending ? beatmaps.OrderBy(i => i.Version).ToList() : beatmaps.OrderByDescending(i => i.Version).ToList();
+                    return ascending
+                        ? beatmaps.OrderBy(i => i.Version).ToList()
+                        : beatmaps.OrderByDescending(i => i.Version).ToList();
                 default:
                     return beatmaps;
             }
@@ -168,9 +190,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         private void HandleKeyboardPresses()
         {
-            while (InputManager.KeyboardPresses.Count > 0)
+            while (InputManager.PressActions.Count > 0)
             {
-                KeyValuePair<double, Keys> press = InputManager.KeyboardPresses.Dequeue();
+                KeyValuePair<double, Keys> press = InputManager.PressActions.Dequeue();
 
                 switch (press.Value)
                 {
@@ -195,16 +217,22 @@ namespace Pulsarc.UI.Screens.SongSelect
                     // If Delete is pressed, clear the search bar
                     case Keys.Delete:
                         // If there's nothing in the box, don't refresh.
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0) { break; }
+
+                        GetSongSelectionView().SearchBox.Clear();
+                        RefreshBeatmaps();
+
+                        // Stop the timer to prevent a second refresh
+                        RestartKeyPressTimer = false;
+                        break;
+                    // If the backspace is pressed, delete the last character
+                    case Keys.Back:
+                        // If there's nothing in the box, don't do anything
                         if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
                         {
                             break;
                         }
 
-                        GetSongSelectionView().SearchBox.Clear();
-                        RefreshBeatmaps();
-                        break;
-                    // If the backspace is pressed, delete the last character
-                    case Keys.Back:
                         // Reset the timer
                         RestartKeyPressTimer = true;
 
@@ -213,13 +241,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                     // If none of the above, type into the search bar
                     // TODO? Ignore keypresses unless clicked on
                     default:
-                        // If the press is not an acceptable typing character, or the key hasn't been
-                        // released yet, break.
-                        if (!XnaKeyHelper.IsTypingCharacter(press.Value)
-                            || !KeyboardManager.IsUniqueKeyPress(press.Value))
-                        {
-                            break;
-                        }
+                        // If the press is not an acceptable typing character, break
+                        if (!XnaKeyHelper.IsTypingCharacter(press.Value)) { break; }
 
                         // Reset the timer
                         RestartKeyPressTimer = true;
