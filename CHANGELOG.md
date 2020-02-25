@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0-alpha] - 2020-02-24
+
 ### Added
 - A skinnable bar during gameplay to represent the time left in the map.
 - Hitsounds and misssounds. Control effect volume by changing `EffectVolume` in config.ini.
@@ -121,7 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.0-alpha...HEAD
+[1.4.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...v1.4.0-alpha
 [1.3.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.1-alpha...v1.3.2-alpha
 [1.3.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.0-alpha...v1.3.1-alpha
 [1.3.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.2.0-alpha...v1.3.0-alpha
