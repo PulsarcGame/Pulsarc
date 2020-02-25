@@ -66,20 +66,29 @@ namespace Pulsarc.Utils.Update
                 XmlDocument doc = new XmlDocument();
                 doc.Load(location.AbsoluteUri);
 
-                XmlNode node = doc.SelectSingleNode($"//update[@appId='Pulsarc']");
+                // TODO: Change the .xml template to be more readable and update Installer
+                // To use it.
+                XmlNode node = doc.SelectSingleNode($"//install[@appId='Pulsarc']");
 
                 if (node == null)
+                {
                     return null;
+                }
 
                 // Get all the data from the root node
-                previousVersion = Version.Parse(node["previousVersion"].InnerText);
-                downloadURL = node["download"].InnerText;
-                md5 = node["md5"].InnerText;
+                previousVersion = Version.Parse(node["patch"]["previousVersion"].InnerText);
+                downloadURL = node["patch"]["download"].InnerText;
+                md5 = node["patch"]["md5"].InnerText;
 
                 // Use that data to make and return a new UpdateXML
                 return new UpdateXML(previousVersion, new Uri(downloadURL), md5);
             }
-            catch { return null; }
+            catch //(Exception e)
+            {
+                //Console.WriteLine(e);
+
+                return null;
+            }
         }
     }
 }
