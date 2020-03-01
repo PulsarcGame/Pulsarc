@@ -34,56 +34,64 @@ namespace Pulsarc.Utils.BeatmapConversion
             string backgroundImage = Config.Get["Converting"]["BGImage"];
 
             // See if the provided path exists
-            if (Directory.Exists(folder_path))
+            if (!Directory.Exists(folder_path)) { return null; }
+
+            string configPath = $"{folder_path}/config.txt";
+
+            // See if the a "config.txt" file exists
+            if (!File.Exists(configPath)) { return null; }
+
+            // Convert the config file to an IntrlaismBeatmap
+            IntralismBeatmap beatmap = JsonConvert.DeserializeObject<IntralismBeatmap>(File.ReadAllText(configPath, Encoding.UTF8));
+
+            // If there are no arc events (either from v3 or bad mapping), stop converting.
+            if (beatmap.Events.Where(x => x.Data[0].Equals("SpawnObj")).Count() <= 0)
+                { return null; }
+
+            string name = "";
+
+            // If the user specified an image path to use, use that path.
+            if (backgroundImage != null && !backgroundImage.Equals(""))
             {
-                string configPath = $"{folder_path}/config.txt";
+                name = backgroundImage;
+            }
 
-                // See if the a "config.txt" file exists
-                if (File.Exists(configPath))
+            // If there's an average of 1 image per 10 seconds of map time or less
+            // and the user-defined path doesn't exist, grab the first image path in 
+            // the beatmap.
+            if (!File.Exists($"{folder_path}/{name}") && beatmap.LevelResources.Count > 0 && beatmap.LevelResources.Count < Math.Ceiling(beatmap.MusicTime / 10))
+            {
+                beatmap.LevelResources[0].TryGetValue("path", out name);
+            }
+
+            result.Background = name;
+
+            // Fill in the missing metadata
+            result.FormatVersion = "1";
+            result.Mapper = "Intralism";
+            result.Artist = "Unknown";
+            result.Title = beatmap.Name;
+            result.Version = "Converted";
+            result.Audio = beatmap.MusicFile;
+            result.TimingPoints.Add(new TimingPoint(0, 120));
+            result.PreviewTime = 0;
+
+            // Go through each Intralism Event
+            foreach (Event evt in beatmap.Events)
+            {
+                // If the current event is an Arc, convert it to a Pulsarc Arc.
+                switch (evt.Data[0])
                 {
-                    // Convert the config file to an IntrlaismBeatmap
-                    IntralismBeatmap beatmap = JsonConvert.DeserializeObject<IntralismBeatmap>(File.ReadAllText(configPath, Encoding.UTF8));
-
-                    string name = "";
-
-                    // If the user specified an image path to use, use that path.
-                    if (backgroundImage != null && !backgroundImage.Equals(""))
-                        name = backgroundImage;
-
-                    // If there's an average of 1 image per 10 seconds of map time or less
-                    // and the user-defined path doesn't exist, grab the first image path in 
-                    // the beatmap.
-                    if (!File.Exists($"{folder_path}/{name}") && beatmap.LevelResources.Count > 0 && beatmap.LevelResources.Count < Math.Ceiling(beatmap.MusicTime / 10))
-                        beatmap.LevelResources[0].TryGetValue("path", out name);
-
-                    result.Background = name;
-
-                    // Fill in the missing metadata
-                    result.FormatVersion = "1";
-                    result.Mapper = "Intralism";
-                    result.Artist = "Unknown";
-                    result.Title = beatmap.Name;
-                    result.Version = "Converted";
-                    result.Audio = beatmap.MusicFile;
-                    result.TimingPoints.Add(new TimingPoint(0, 120));
-                    result.PreviewTime = 0;
-
-                    // Go through each Intralism Event
-                    foreach (Event evt in beatmap.Events)
-                        // If the current event is an Arc, convert it to a Pulsarc Arc.
-                        switch (evt.Data[0])
-                        {
-                            case "SpawnObj":
-                                // Add the converted arc to the Beatmap
-                                result.Arcs.Add(HandleSpawnObj(evt));
-                                break;
-                            case "SetPlayerDistance":
-                                // Add the converted zoom to the Beatmap
-                                result.Events.Add(HandleSetPlayerDistance(evt));
-                                break;
-                            default:
-                                break;
-                        }
+                    case "SpawnObj":
+                        // Add the converted arc to the Beatmap
+                        result.Arcs.Add(HandleSpawnObj(evt));
+                        break;
+                    case "SetPlayerDistance":
+                        // Add the converted zoom to the Beatmap
+                        result.Events.Add(HandleSetPlayerDistance(evt));
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -151,45 +159,52 @@ namespace Pulsarc.Utils.BeatmapConversion
         {
             Beatmap map = Convert(folder_path).First();
 
-            if (map.Audio != null)
+            // If the map is null, or audio is null, stop saving.
+            if (map == null || map.Audio == null) { return; }
+
+            string audioPath = $"{folder_path}/{map.Audio}";
+
+            // If the path doesn't exist, stop saving.
+            if (!File.Exists(audioPath)) { return; }
+
+            int id = 0;
+            // The folder name will look like "0 - Unknown - MapTitle - (Mapper)"
+            string folderName = string.Join("_", ($"{id} - {map.Artist} - {map.Title} ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
+            string dirName = $"Songs/{folderName}";
+
+            if (!Directory.Exists(dirName))
             {
-                string audioPath = $"{folder_path}/{map.Audio}";
+                Directory.CreateDirectory(dirName);
+            }
 
-                if (File.Exists(audioPath))
+            // Copy Audio File
+            File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
+
+            // Copy Background Image
+            string backgroundPath = $"{folder_path}/{map.Background}";
+
+            // Find if the background exists and copy it.
+            if (File.Exists(backgroundPath))
+            {
+                try
                 {
-                    int id = 0;
-                    // The folder name will look like "0 - Unknown - MapTitle - (Mapper)"
-                    string folderName = string.Join("_", ($"{id} - {map.Artist} - {map.Title} ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
-                    string dirName = $"Songs/{folderName}";
-
-                    if (!Directory.Exists(dirName))
-                        Directory.CreateDirectory(dirName);
-
-                    // Copy Audio File
-                    File.Copy(audioPath, $"{dirName}/{map.Audio}", true);
-
-                    // Copy Background Image
-                    string backgroundPath = $"{folder_path}/{map.Background}";
-
-                    if (File.Exists(backgroundPath))
-                        try
-                        {
-                            File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
-                        }
-                        catch
-                        {
-                            PulsarcLogger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
-                        }
-                    else
-                        map.Background = "";
-
-
-                    // The file name will look like "Unknown - MapTitle [Converted] (Mapper).psc"
-                    string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
-
-                    BeatmapHelper.Save(map, $"{dirName}/{difficultyFileName}.psc");
+                    File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                }
+                catch
+                {
+                    PulsarcLogger.Debug("Converting the background failed! Converting wtihout background.", LogType.Runtime);
                 }
             }
+            else
+            {
+                map.Background = "";
+            }
+
+
+            // The file name will look like "Unknown - MapTitle [Converted] (Mapper).psc"
+            string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));
+
+            BeatmapHelper.Save(map, $"{dirName}/{difficultyFileName}.psc");
         }
     }
 }
