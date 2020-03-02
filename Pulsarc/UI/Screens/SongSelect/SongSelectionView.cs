@@ -181,15 +181,12 @@ namespace Pulsarc.UI.Screens.SongSelect
                 CurrentBackground.ChangeBackground(newBackground);
                 CurrentBackground.Opacity = 0;
             }
-            else
+            else if (CurrentBackground.Texture != DefaultBackground.Texture)
             {
-                if (CurrentBackground.Texture != DefaultBackground.Texture)
-                {
-                    ChangingBackground = true;
-                    OldBackground = CurrentBackground;
-                    CurrentBackground = DefaultBackground;
-                    CurrentBackground.Opacity = 0;
-                }
+                ChangingBackground = true;
+                OldBackground = CurrentBackground;
+                CurrentBackground = DefaultBackground;
+                CurrentBackground.Opacity = 0;
             }
         }
 

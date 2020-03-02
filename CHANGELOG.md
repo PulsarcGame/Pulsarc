@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- A gamecrash when attemtping to refresh the song select when there are no maps in the song directory.
+
 ## [1.4.1-alpha] - 2020-03-01
 
 ### Fixed

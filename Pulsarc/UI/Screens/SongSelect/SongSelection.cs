@@ -111,7 +111,13 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             DataManager.BeatmapDB.ClearBeatmaps();
 
-            string[] directories = Directory.GetDirectories("Songs/");
+            string[] directories = Array.Empty<string>();
+
+            try
+            {
+                directories = Directory.GetDirectories("Songs/");
+            }
+            catch { }
 
             for (int i = 0; i < directories.Length; i++)
             {
@@ -183,10 +189,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             GetSongSelectionView().RefocusCurrentCard();
         }
 
-        public override void UpdateDiscord()
-        {
-            PulsarcDiscord.SetStatus("", "Browsing Maps");
-        }
+        public override void UpdateDiscord() => PulsarcDiscord.SetStatus("", "Browsing Maps");
 
         private void HandleKeyboardPresses()
         {
