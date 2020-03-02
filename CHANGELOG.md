@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - The handling of Intralism maps with config v3, encrypted data, and/or Unlock Conditions.
+- A game crash when converting invalid maps.
 
 ## [1.4.0-alpha] - 2020-02-24
 
