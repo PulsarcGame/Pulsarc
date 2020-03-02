@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- The ability to delete maps from within game. Press and hold delete for 3 seconds and the currently selected map will be deleted.
+
 ### Fixed
 - A gamecrash when attemtping to refresh the song select when there are no maps in the song directory.
 

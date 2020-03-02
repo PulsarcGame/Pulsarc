@@ -1,16 +1,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Beatmaps;
-using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Audio;
 using Pulsarc.Utils.Input;
 using Pulsarc.Utils.SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Wobble.Input;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect
@@ -43,27 +42,38 @@ namespace Pulsarc.UI.Screens.SongSelect
         public BeatmapCard FocusedCard { get; set; }
 
         // The time when the last key was pressed
-        private double lastKeyPressTime;
-
-        // Returns true once a second has passed since the last RestartKeyPressTimer = true call
-        private bool OneSecondSinceLastKeyPress
-            => PulsarcTime.CurrentElapsedTime >= (lastKeyPressTime + 1000);
+        private double lastSearchBoxKeyPressTime;
+        private const int SEARCHBOX_REFRESH_TIME = 1000;
 
         // When this is set to true, the timer resets.
-        private bool restartKeyPressTimer;
-        private bool RestartKeyPressTimer
+        private bool restartSearchBoxKeyPressTimer;
+        private bool RestartSearchBoxKeyPressTimer
         {
-            get => restartKeyPressTimer;
+            get => restartSearchBoxKeyPressTimer;
             set
             {
                 if (value)
                 {
-                    lastKeyPressTime = PulsarcTime.CurrentElapsedTime;
+                    lastSearchBoxKeyPressTime = PulsarcTime.CurrentElapsedTime;
                 }
 
-                restartKeyPressTimer = value;
+                restartSearchBoxKeyPressTimer = value;
             }
         }
+
+        // Returns true once a second has passed since the last RestartKeyPressTimer = true call
+        private bool OneSecondSinceLastSearchBoxKeyPress
+            => PulsarcTime.CurrentElapsedTime >= (lastSearchBoxKeyPressTime + SEARCHBOX_REFRESH_TIME);
+
+        // The last time "Delete" was pressed
+        private double lastDeleteKeyPress;
+        private const int DELETE_MAP_HOLD_TIME = 3000;
+
+        private bool IsTimeUpSinceLastDeleteKeyPress
+            => PulsarcTime.CurrentElapsedTime >= (lastDeleteKeyPress + DELETE_MAP_HOLD_TIME);
+
+        // Whether or not the user has already deleted the map with the current delete hold
+        private bool alreadyDeletedMap = false;
 
         public SongSelection()
         { }
@@ -169,6 +179,24 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
         }
 
+        public void DeleteMap(in BeatmapCard card)
+        {
+            AudioManager.Stop();
+
+            string folder = new DirectoryInfo(card.Beatmap.Path).FullName;
+            try
+            {
+                Directory.Delete(folder, true);
+            }
+            catch (Exception e)
+            {
+                PulsarcLogger.Warning($"Couldn't delete all files in {folder}!" +
+                    $"\n\nError:\n\n{e}");
+            }
+
+            RescanBeatmaps();
+        }
+
         public override void Update(GameTime gameTime)
         {
             HandleKeyboardPresses();
@@ -219,6 +247,8 @@ namespace Pulsarc.UI.Screens.SongSelect
                         goto case Keys.Delete;
                     // If Delete is pressed, clear the search bar
                     case Keys.Delete:
+                        lastDeleteKeyPress = PulsarcTime.CurrentElapsedTime;
+
                         // If there's nothing in the box, don't refresh.
                         if (GetSongSelectionView().SearchBox.GetText().Length <= 0) { break; }
 
@@ -226,7 +256,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                         RefreshBeatmaps();
 
                         // Stop the timer to prevent a second refresh
-                        RestartKeyPressTimer = false;
+                        RestartSearchBoxKeyPressTimer = false;
                         break;
                     // If the backspace is pressed, delete the last character
                     case Keys.Back:
@@ -237,7 +267,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                         }
 
                         // Reset the timer
-                        RestartKeyPressTimer = true;
+                        RestartSearchBoxKeyPressTimer = true;
 
                         GetSongSelectionView().SearchBox.DeleteLastCharacter();
                         break;
@@ -248,7 +278,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                         if (!XnaKeyHelper.IsTypingCharacter(press.Value)) { break; }
 
                         // Reset the timer
-                        RestartKeyPressTimer = true;
+                        RestartSearchBoxKeyPressTimer = true;
 
                         string key = XnaKeyHelper.GetStringFromKey(press.Value);
 
@@ -264,12 +294,26 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
 
             // If one second has passed since the last search box key press, refresh the maps.
-            if (RestartKeyPressTimer && OneSecondSinceLastKeyPress)
+            if (RestartSearchBoxKeyPressTimer && OneSecondSinceLastSearchBoxKeyPress)
             {
                 // Don't call this block every frame
-                RestartKeyPressTimer = false;
+                RestartSearchBoxKeyPressTimer = false;
 
                 RefreshBeatmaps(GetSongSelectionView().SearchBox.GetText());
+            }
+            // If the user has been holding on to Delete for more than a second,
+            // delete the currently focused map
+            else if (InputManager.PressedKeys.Contains(Keys.Delete))
+            {
+                if (IsTimeUpSinceLastDeleteKeyPress && !alreadyDeletedMap)
+                {
+                    DeleteMap(FocusedCard);
+                    alreadyDeletedMap = true;
+                }
+            }
+            else if (alreadyDeletedMap)
+            {
+                alreadyDeletedMap = false;
             }
         }
 
