@@ -6,6 +6,7 @@ using Pulsarc.UI.Common;
 using Pulsarc.UI.Screens.Editor.UI;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
+using Pulsarc.Utils.Audio;
 using Pulsarc.Utils.Graphics;
 using System;
 using System.Collections.Generic;
@@ -470,5 +471,7 @@ namespace Pulsarc.UI.Screens.Editor
         public abstract bool HasCrosshair();
         public abstract Crosshair GetCrosshair();
         #endregion
+
+        public override void UpdateDiscord() => PulsarcDiscord.SetStatus("", "Editing maps.");
     }
 }

@@ -41,11 +41,19 @@ namespace Pulsarc.UI.Screens.Editor
             MouseState ms = Mouse.GetState();
 
             if (ms.ScrollWheelValue < lastScrollValue)
+            {
                 foreach (BeatCircle circle in circles)
+                {
                     circle.Resize(circle.currentSize.X - 10);
+                }
+            }
             else if (ms.ScrollWheelValue > lastScrollValue)
+            {
                 foreach (BeatCircle circle in circles)
+                {
                     circle.Resize(circle.currentSize.X + 10);
+                }
+            }
 
             lastScrollValue = ms.ScrollWheelValue;
         }
@@ -55,7 +63,9 @@ namespace Pulsarc.UI.Screens.Editor
             base.Draw(gameTime);
 
             foreach (BeatCircle circle in circles)
+            {
                 circle.Draw();
+            }
         }
 
         public override void AddEvent(Event evnt)
@@ -68,12 +78,12 @@ namespace Pulsarc.UI.Screens.Editor
             throw new System.NotImplementedException();
         }
 
-        public override void AddHitObject(IEditorHitObject hitObject)
+        public void AddHitObject(IEditorHitObject hitObject)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void AddHitObject(int time)
+        public void AddHitObject(int time)
         {
             throw new System.NotImplementedException();
         }
@@ -111,6 +121,26 @@ namespace Pulsarc.UI.Screens.Editor
         public override Crosshair GetCrosshair()
         {
             return Crosshair;
+        }
+
+        public override int FindTime(Point mousePosition)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override int FindClosestColumn(Point mousePos)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void AddHitObject(int time, int columnIndex)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override bool ClickedAnObject(Point mousePos, out Drawable clicked)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

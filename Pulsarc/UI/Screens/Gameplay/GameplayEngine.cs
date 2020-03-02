@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using Wobble.Screens;
 using Pulsarc.Utils.Graphics;
 using Pulsarc.Utils.SQLite;
-using Pulsarc.Utils.Audio;
-
+using Pulsarc.Utils.Audio;using System.Linq;
+
 namespace Pulsarc.UI.Screens.Gameplay
 {
     public class GameplayEngine : PulsarcScreen, IEventHandleable

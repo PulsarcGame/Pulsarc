@@ -1,3 +1,4 @@
+using Pulsarc.UI.Screens.Editor;
 using Pulsarc.UI.Screens.Gameplay;
 using System;
 using System.Diagnostics;
@@ -19,6 +20,21 @@ namespace Pulsarc.Utils.Audio
         public static double offset = 35;
         public static double startDelayMs = 1000;
         public static float audioRate = 1;
+
+        // The current speed that the audio is playing at.
+        private static float _audioRate;
+        public static float AudioRate
+        {
+            // If song hasn't been initialized yet, default to 1
+            // Otherwise get the song's rate.
+            get => song == null ? _audioRate : song.Rate;
+            // When we change AudioRate we'll use the SetRate method.
+            set
+            {
+                _audioRate = value;
+                UpdateRate();
+            }
+        }
 
         private static Thread audioThread;
         private static AudioTrack song;
@@ -51,6 +67,52 @@ namespace Pulsarc.Utils.Audio
 
             song.Play();
             active = true;
+        }
+
+        public static void StartEditorPlayer()
+        {
+            audioThread = new Thread(new ThreadStart(EditorAudioPlayer));
+            audioThread.Start();
+        }
+
+        public static void EditorAudioPlayer()
+        {
+            // Initialize variables
+            threadLimiterWatch = new Stopwatch();
+            threadLimiterWatch.Start();
+            activeThreadLimiterWatch = true;
+
+            if (songPath == "")
+                return;
+
+            running = true;
+            var threadTime = new Stopwatch();
+
+            // Initialize the song
+            song = new AudioTrack(songPath, false)
+            {
+                Rate = 1f,
+                Volume = Config.GetInt("Audio", "MusicVolume"),
+            };
+
+            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+
+            threadLimiterWatch.Start();
+
+            // Add a delay
+            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - offset)
+            { }
+
+            // Start playing if the Editor engine is active
+            if (EditorEngine.Active)
+            {
+                threadLimiterWatch.Restart();
+
+                song.Play();
+                threadTime.Start();
+
+                active = true;
+            }
         }
 
         /// <summary>
