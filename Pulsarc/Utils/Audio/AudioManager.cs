@@ -31,8 +31,7 @@ namespace Pulsarc.Utils.Audio
         {
             Stop();
 
-            if (songPath == "")
-                return;
+            if (songPath == "") { return; }
 
             // Initialize the song
             try
@@ -45,7 +44,7 @@ namespace Pulsarc.Utils.Audio
             }
             catch (AudioEngineException)
             {
-                PulsarcLogger.Debug(ManagedBass.Bass.LastError.ToString(), LogType.Runtime);
+                PulsarcLogger.Error(ManagedBass.Bass.LastError.ToString(), LogType.Runtime);
             }
 
             song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
@@ -80,7 +79,7 @@ namespace Pulsarc.Utils.Audio
             var threadTime = new Stopwatch();
 
             // Initialize the song
-            song = new AudioTrack(songPath, false)
+            song = new AudioTrack(songPath, true)
             {
                 Rate = audioRate,
                 Volume = Config.GetInt("Audio", "MusicVolume"),
@@ -183,9 +182,13 @@ namespace Pulsarc.Utils.Audio
                 Pause();
 
                 if (song.IsPlaying)
+                {
                     song.Stop();
+                }
 
+                song.Dispose();
                 song = null;
+                
                 Reset();
             }
         }
