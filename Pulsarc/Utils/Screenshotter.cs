@@ -31,6 +31,7 @@ namespace Pulsarc.Utils
 
                 pressedAlready = true;
             }
+            // Won't get called until screenshot key is released.
             else if (pressedAlready)
             {
                 pressedAlready = false;

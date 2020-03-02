@@ -70,10 +70,7 @@ namespace Pulsarc.Utils.SQLite
         /// Format is "Artist - Title [Version] (Mapper)"
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{artist} - {title} [{version}] ({mapper})";
-        }
+        public override string ToString() => $"{artist} - {title} [{version}] ({mapper})";
 
         /// <summary>
         /// Find if this beatmap matches the search query.

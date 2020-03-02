@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.2-alpha] - 2020-03-02
+
+### Added
+- The ability to delete maps from within game. Press and hold delete for 3 seconds and the currently selected map will be deleted.
+
+### Fixed
+- A gamecrash when attemtping to refresh the song select when there are no maps in the song directory.
+
 ## [1.4.1-alpha] - 2020-03-01
 
 ### Fixed
@@ -129,7 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.1-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.2-alpha...HEAD
+[1.4.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.1-alpha...v1.4.2-alpha
 [1.4.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.0-alpha...v1.4.1-alpha
 [1.4.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...v1.4.0-alpha
 [1.3.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.1-alpha...v1.3.2-alpha
