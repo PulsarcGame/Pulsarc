@@ -72,14 +72,13 @@ namespace Pulsarc.Utils.Audio
             threadLimiterWatch.Start();
             activeThreadLimiterWatch = true;
 
-            if (songPath == "")
-                return;
+            if (songPath == "") { return; }
 
             running = true;
             var threadTime = new Stopwatch();
 
             // Initialize the song
-            song = new AudioTrack(songPath, true)
+            song = new AudioTrack(songPath)
             {
                 Rate = audioRate,
                 Volume = Config.GetInt("Audio", "MusicVolume"),
