@@ -6,7 +6,7 @@ namespace Pulsarc.Utils.Audio
 {
     public static class SampleManager
     {
-        private static double SampleVolume = Config.GetInt("Audio", "EffectVolume");
+        private static double SampleVolume = Config.EffectVolume.Value;
 
         private static bool MAXHitsound;
         private static bool PerfectHitsound;

@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// from true to false or false to true.
         /// </summary>
         /// <param name="mousePosition"></param>
-        public override void OnClick(Point mousePosition) => Value = !(bool)Value;
+        public override void OnClick(Vector2 mousePosition) => Value = !(bool)Value;
 
         public override void Move(Vector2 delta, bool? heightScaled = null)
         {

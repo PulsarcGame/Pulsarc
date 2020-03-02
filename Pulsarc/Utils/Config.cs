@@ -1,4 +1,4 @@
-﻿using IniFileParser.Model;
+using IniFileParser.Model;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -47,6 +47,8 @@ namespace Pulsarc.Utils
         /// </summary>
         internal static Bindable<int> FPSLimit { get; private set; }
 
+        // [Bindings]
+
         /// <summary>
         /// Gameplay keybinds
         /// </summary>
@@ -62,11 +64,19 @@ namespace Pulsarc.Utils
         internal static Bindable<Keys> Continue { get; private set; }
         internal static Bindable<Keys> Retry { get; private set; }
         internal static Bindable<Keys> Convert { get; private set; }
+        internal static Bindable<Keys> Screenshot { get; private set; }
+
+        // [Audio]
 
         /// <summary>
         /// Audio Main volume
         /// </summary>
         internal static Bindable<int> MusicVolume { get; private set; }
+
+        /// <summary>
+        /// Effect volume (Hitsounds)
+        /// </summary>
+        internal static Bindable<int> EffectVolume { get; private set; }
 
         /// <summary>
         /// Global audio offset 
@@ -89,6 +99,13 @@ namespace Pulsarc.Utils
         internal static Bindable<double> ApproachSpeed { get; private set; }
 
         /// <summary>
+        /// How many notes that must have passed before hearing another Miss Sound
+        /// </summary>
+        internal static Bindable<int> MissSoundThreshold { get; private set; }
+
+        // [Gameplay]
+
+        /// <summary>
         /// Dimming of the map's background
         /// </summary>
         internal static Bindable<int> BackgroundDim { get; private set; }
@@ -104,24 +121,18 @@ namespace Pulsarc.Utils
         internal static Bindable<bool> Hidden { get; private set; }
 
         /// <summary>
-        /// Crosshair offset when using Hidden
-        /// </summary>
-        internal static Bindable<int> HiddenCrosshairOffset { get; private set; }
-
-        /// <summary>
         /// Whether autoplay is active
         /// </summary>
         internal static Bindable<bool> Autoplay { get; private set; }
 
-        /// <summary>
-        /// Whether to display all messages in logger
-        /// </summary>
-        internal static Bindable<bool> AllMessages { get; private set; }
+        // [Profile]
 
         /// <summary>
         /// Player name
         /// </summary>
         internal static Bindable<string> Username { get; private set; }
+
+        // [Converting]
 
         /// <summary>
         /// The game from which the convertion takes place
@@ -157,14 +168,18 @@ namespace Pulsarc.Utils
 
             foreach (KeyData element in ConfigData["Config"])
             {
-                PulsarcLogger.RunLog("CONFIG - "+ element.KeyName + ":" + element.Value, LogLevel.Debug);
+                PulsarcLogger.Debug("CONFIG - " + element.KeyName + ":" + element.Value);
             }
+
+            // [Graphics]
 
             ResolutionWidth = ReadValue(@"ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
             ResolutionHeight = ReadValue(@"ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
             FullScreen = ReadValue(@"FullScreen", 0);
             VSync = ReadValue(@"VSync", false);
             FPSLimit = ReadValue(@"FPSLimit", 1000);
+
+            // [Bindings]
 
             Left = ReadValue(@"Left", Keys.D);
             Up = ReadValue(@"Up", Keys.F);
@@ -174,23 +189,32 @@ namespace Pulsarc.Utils
             Pause = ReadValue(@"Pause", Keys.P);
             Continue = ReadValue(@"Continue", Keys.O);
             Retry = ReadValue(@"Retry", Keys.OemTilde);
-            Convert = ReadValue(@"Convert", Keys.C);
+            Convert = ReadValue(@"Convert", Keys.F1);
+            Screenshot = ReadValue(@"Screenshot", Keys.F11);
+
+            // [Audio]
 
             MusicVolume = ReadValue(@"MusicVolume", 50);
+            EffectVolume = ReadValue(@"EffectVolume", 50);
             GlobalOffset = ReadValue(@"GlobalOffset", 0);
             RatePitch = ReadValue(@"RatePitch", true);
+
+            MissSoundThreshold = ReadValue(@"MissSoundThreshold", 10);
+
+            // [Gameplay]
 
             SongRate = ReadValue(@"SongRate", 1f);
             ApproachSpeed = ReadValue(@"ApproachSpeed", 25d);
             BackgroundDim = ReadValue(@"BackgroundDim", 70);
             FadeTime = ReadValue(@"FadeTime", 200);
             Hidden = ReadValue(@"Hidden", false);
-            HiddenCrosshairOffset = ReadValue(@"HiddenCrosshairOffset", 0);
             Autoplay = ReadValue(@"Autoplay", false);
 
-            AllMessages = ReadValue(@"AllMessages", true);
+            // [Profile]
 
             Username = ReadValue(@"Username", "Player");
+
+            // [Converting]
 
             Game = ReadValue(@"Game", "Intralism");
             Path = ReadValue(@"Path", "D:\\SteamLibrary\\steamapps\\common\\Intralism\\Editor\\TristamOnceAgain");
@@ -213,11 +237,11 @@ namespace Pulsarc.Utils
                 binded.Value = (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, ConfigData["Config"][name]);
                 binded.ValueChanged += AutoSaveConfiguration;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 binded.Value = defaultVal;
                 binded.ValueChanged += AutoSaveConfiguration;
-                //PulsarcLogger.Log(e.ToString(), LogLevel.Error, LogType.Runtime);
+                PulsarcLogger.Error(e.ToString());
             }
 
             return binded;
@@ -280,7 +304,37 @@ namespace Pulsarc.Utils
                     case "BGImage":
                         sb.AppendLine("; Pulsarc will automatically grab the first image of a non-animated Intralism map.");
                         sb.AppendLine("; To override this, type in the image name (with extension) below");
-                        sb.AppendLine(";i.e. \"background2.png\"");
+                        sb.AppendLine("; i.e. \"background2.png\"");
+                        break;
+                    case "SongRate":
+                        sb.AppendLine("; How fast gameplay is. 1 = 100% speed, 1.5 = 150% speed, etc.");
+                        break;
+                    case "ApproachSpeed":
+                        sb.AppendLine("; How fast the arcs approach the crosshair. (Does not influence judgement accuracy)");
+                        break;
+                    case "FadeTime":
+                        sb.AppendLine("; The time (in ms) it takes for a hit arc to fade away. 0 means the arc will dissapear when hit.");
+                        break;
+                    case "GlobalOffset":
+                        sb.AppendLine("; Offset (in ms). Positive values mean arcs appear later, negative mean arcs appear sooner.");
+                        break;
+                    case "RatePitch":
+                        sb.AppendLine("; Set to true to let Song Rate influence the pitch (slow rates lower the pitch, fast rates raise the pitch");
+                        break;
+                    case "MissSoundThreshold":
+                        sb.AppendLine("; How many notes should pass before you hear another \"miss\" sound. Set to 0 to hear a sound for every miss.");
+                        break;
+                    case "Pause":
+                        sb.AppendLine("; The keys to pause and resume gameplay");
+                        break;
+                    case "Retry":
+                        sb.AppendLine("; Instantly restarts the current map. OemTilde = `");
+                        break;
+                    case "Convert":
+                        sb.AppendLine("; Converst the map specified in the \"Convert\" section at the top of this file");
+                        break;
+                    case "Screenshot":
+                        sb.AppendLine("; Take a screenshot of the game and saves it to the Screenshots folder");
                         break;
                 }
 
@@ -290,7 +344,7 @@ namespace Pulsarc.Utils
                 }
                 catch (Exception e)
                 {
-                    PulsarcLogger.RunLog(e.ToString(), LogLevel.Debug);
+                    PulsarcLogger.Error(e.ToString());
                     sb.AppendLine(prop.Name + " = ");
                 }
             }

@@ -126,7 +126,7 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         {
             JudgementValue judgement = Judgement.GetJudgementValueByError(Math.Abs(error));
 
-            int baseX = (int)(truePosition.X + Size.X / 2);
+            int baseX = (int)(TruePosition.X + Size.X / 2);
             int sectionLength = GetJudgePixelLength();
             int sectionX = Judgement.Judgements.IndexOf(judgement) * sectionLength;
             int timeSize = judgement.Judge - Judgement.GetPreviousJudgementValue(judgement).Judge;

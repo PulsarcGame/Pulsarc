@@ -113,10 +113,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
         public int IgnoreTime { get; private set; } = 500;
-
-        private readonly int hitSoundComboThreshold = Config.GetInt("Audio", "MissSoundThreshold");
+        private readonly int missSoundComboThreshold = Config.MissSoundThreshold.Value;
         private int notesSinceLastMiss;
-        public bool MissSoundThresholdCrossed => notesSinceLastMiss >= hitSoundComboThreshold;
+        public bool MissSoundThresholdCrossed => notesSinceLastMiss >= missSoundComboThreshold;
 
         /// <summary>
         /// The engine that handles the gameplay of Pulsarc.
@@ -211,7 +210,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // If there are events, make nextEvent the first event, otherwise make it null
             NextEvent = beatmap.Events.Count > 0 ? beatmap.Events[eventIndex] : null;
 
-            notesSinceLastMiss = hitSoundComboThreshold;
+            notesSinceLastMiss = missSoundComboThreshold;
         }
 
         /// <summary>
@@ -285,7 +284,6 @@ namespace Pulsarc.UI.Screens.Gameplay
             foreach (Column col in Columns)
             {
                 col.SortUpdateHitObjects();
-            }
 
                 if (col.HitObjects.Last().Time > MapEndTime)
                 {
@@ -300,14 +298,15 @@ namespace Pulsarc.UI.Screens.Gameplay
             bindings.Add(Config.Up.Value, 3);
             bindings.Add(Config.Down.Value, 1);
             bindings.Add(Config.Right.Value, 0);
+        }
 
         // An array containing the valid keys used for gameplay.
         private Keys[] validGameplayKeys =
         {
-            Config.Bindings["Right"],
-            Config.Bindings["Down"],
-            Config.Bindings["Left"],
-            Config.Bindings["Up"],
+            Config.Right.Value,
+            Config.Down.Value,
+            Config.Left.Value,
+            Config.Up.Value,
         };
 
         /// <summary>
@@ -376,7 +375,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (AudioManager.paused) { return; }
 
             // Quit gameplay when nothing is left to play, or if the audio finished playing
-            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (ending && Time >= endTime + END_DELAY))
+            if ((AudioManager.active && AudioManager.FinishedPlaying())
+                || (Ending && Time >= endTime + END_DELAY))
             {                
                 EndGameplay(true);
                 return;
@@ -406,9 +406,9 @@ namespace Pulsarc.UI.Screens.Gameplay
         private readonly Keys[] validEngineInputKeys =
         {
             Keys.Escape,
-            Config.Bindings["Pause"],
-            Config.Bindings["Continue"],
-            Config.Bindings["Retry"],
+            Config.Pause.Value,
+            Config.Continue.Value,
+            Config.Retry.Value,
         };
 
         /// <summary>
@@ -433,22 +433,22 @@ namespace Pulsarc.UI.Screens.Gameplay
                 {
                     EndGameplay();
                 }
-                // Restart gameplay using bindable "Retry" key.
-                {
-                    Retry();
-                }
                 // Pause Gameplay with bindable "Pause" key.
-                else if (keyPresses[i] == Config.Bindings["Pause"])
+                else if (keyPresses[i] == Config.Pause.Value)
                 {
                     Pause();
                 }
                 // Resume Gameplay with bindable "Continue" key.
-                else if (keyPresses[i] == Config.Bindings["Continue"])
+                else if (keyPresses[i] == Config.Continue.Value)
                 {
                     Resume();
                 }
+                // Restart gameplay using bindable "Retry" key.
+                else if (keyPresses[i] == Config.Retry.Value)
+                {
+                    Retry();
+                }
             }
-                else if (keyPresses[i] == Config.Bindings["Retry"])
         }
 
         /// <summary>
@@ -498,10 +498,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             GetGameplayView().AddHit(press.Key, error, judge.Score);
 
             // Add a Fading HitObject, and mark the pressed HitObject for removal.
-            if (arcFadeTime > 0 && !pressed.Hidden)
+            if (ArcFadeTime > 0 && !pressed.Hidden)
             {
                 Columns[column].AddHitObject(
-                    new HitObjectFade(pressed, arcFadeTime, KeyCount),
+                    new HitObjectFade(pressed, ArcFadeTime, KeyCount),
                     CurrentArcsSpeed * CurrentSpeedMultiplier,
                     Crosshair.GetZLocation());
             }
@@ -606,7 +606,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Update score_display according to the maximum displayed score.
         /// </summary>
         private void UpdateScoreDisplay()
-            => scoreDisplay = (int)(score / (float)maxScore * Scoring.MaxScore);
+            => ScoreDisplay = (int)(score / (float)maxScore * Scoring.MaxScore);
 
         /// <summary>
         /// Handles all Beatmap events.
@@ -743,7 +743,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Create the result screen before exiting gameplay
             ResultScreen next =
-                new ResultScreen(Judgements, errors, scoreDisplay, maxCombo, Rate, 0,
+                new ResultScreen(Judgements, errors, ScoreDisplay, maxCombo, Rate, 0,
                     CurrentBeatmap, Background, !AutoPlay && save);
 
             Pulsarc.DisplayCursor = true;

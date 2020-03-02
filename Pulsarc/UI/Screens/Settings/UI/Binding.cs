@@ -58,7 +58,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// to record or exit the key binding state.
         /// </summary>
         /// <param name="mousePosition"></param>
-        public override void OnClick(Point mousePosition) => KeyListen = !KeyListen;
+        public override void OnClick(Vector2 mousePosition) => KeyListen = !KeyListen;
 
         public override void Draw()
         {

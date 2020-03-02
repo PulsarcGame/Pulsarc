@@ -54,7 +54,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// Get the next position for a setting to use.
         /// </summary>
         /// <returns></returns>
-        public Vector2 GetNextPosition() => new Vector2(truePosition.X, truePosition.Y + drawnPart.Height);
+        public Vector2 GetNextPosition() => new Vector2(TruePosition.X, TruePosition.Y + drawnPart.Height);
 
         public override void Draw()
         {

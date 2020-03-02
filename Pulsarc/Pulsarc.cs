@@ -76,40 +76,31 @@ namespace Pulsarc
 
             // Load user config
             Config.Initialize();
-
-            // Set default resolution if not set, and fullscreen when at least one isn't set.
-            if (Config.GetInt("Graphics", "ResolutionWidth") <= 0)
-            {
-                Config.SetInt("Graphics", "ResolutionWidth", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
-                Config.SetInt("Graphics", "FullScreen", 2);
-            }
-
-            if (Config.GetInt("Graphics", "ResolutionHeight") <= 0)
-            {
-                Config.SetInt("Graphics", "ResolutionHeight", GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
-                Config.SetInt("Graphics", "FullScreen", 2);
-            }
-
+                       
             // Set Graphics preferences according to config.ini
-            Graphics.PreferredBackBufferWidth = Config.ResolutionWidth.Value;
-            Graphics.PreferredBackBufferHeight = Config.ResolutionHeight.Value;
+            // If Width or Height is set to 0, it will use the monitor's resolution
+            Graphics.PreferredBackBufferWidth = Config.ResolutionWidth.Value <= 0 ?
+                GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width : Config.ResolutionWidth.Value;
+            Graphics.PreferredBackBufferHeight = Config.ResolutionHeight.Value <= 0 ?
+                GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height : Config.ResolutionHeight.Value;
 
-                IsFullScreen = Config.FullScreen.Value >= 1
-            };
+            Graphics.IsFullScreen = Config.FullScreen.Value >= 1;
+
             Window.IsBorderless = Config.FullScreen.Value >= 2;
 
             Graphics.SynchronizeWithVerticalRetrace = Config.VSync.Value == true;
 
             // Don't use FPSLimit if Vsync is on
-            if (!Graphics.SynchronizeWithVerticalRetrace)
+            if (!Config.VSync.Value)
             {
                 // Force the game to update at fixed time intervals
-                IsFixedTimeStep = Config.GetInt("Graphics", "FPSLimit") != 0;
+                IsFixedTimeStep = Config.FPSLimit.Value != 0;
 
-            // Set the time interval to match the FPSLimit
-            if (IsFixedTimeStep)
-            {
-                TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.FPSLimit.Value);
+                // Set the time interval to match the FPSLimit
+                if (IsFixedTimeStep)
+                {
+                    TargetElapsedTime = TimeSpan.FromSeconds(1 / (float)Config.FPSLimit.Value);
+                }
             }
 
             Content.RootDirectory = "Content";
@@ -283,7 +274,7 @@ namespace Pulsarc
                 
                 ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
             }
-            else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
+            else if (converting && Keyboard.GetState().IsKeyUp(Config.Convert.Value))
             {
                 converting = false;
             }

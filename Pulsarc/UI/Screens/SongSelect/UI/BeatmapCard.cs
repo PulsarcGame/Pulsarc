@@ -7,7 +7,6 @@ using Pulsarc.Utils;
 using Pulsarc.Utils.Audio;
 using Pulsarc.Utils.Maths;
 using System;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
@@ -223,16 +222,13 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 if (AudioManager.songPath == Beatmap.GetFullAudioPath()) { return; }
 
                 AudioManager.songPath = Beatmap.GetFullAudioPath();
-                AudioManager.audioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
+                AudioManager.audioRate = Utils.Config.SongRate.Value;
                 AudioManager.StartLazyPlayer();
 
                 if (Beatmap.PreviewTime != 0)
                 {
                     AudioManager.DeltaTime(Beatmap.PreviewTime);
                 }
-                    AudioManager.songPath = Beatmap.GetFullAudioPath();
-                    AudioManager.audioRate = Utils.Config.SongRate.Value;
-                    AudioManager.StartLazyPlayer();
 
                 //PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}");
             }

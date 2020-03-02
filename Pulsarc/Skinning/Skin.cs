@@ -179,9 +179,9 @@ namespace Pulsarc.Skinning
             foreach (JudgementValue judge in Judgement.Judgements)
             {
                 Judges.Add(judge.Score, LoadTexture($"{skinFolder}Judgements/", judge.Name));
+            }
         }
-
-        private static void LoadSounds(string skinFolder)
+        private static void LoadSounds(string skinFolder)
         {
             LoadSample($"{skinFolder}Audio/", "hit");
             LoadSample($"{skinFolder}Audio/", "miss");

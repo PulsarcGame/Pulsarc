@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.Utils;
@@ -11,7 +11,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
 {
     public abstract class Setting : Drawable
     {
-        // Current value of this setting
+        // Currendt value of this setting
         public dynamic Value { get; set; }
 
         // Type of setting and the text for the setting

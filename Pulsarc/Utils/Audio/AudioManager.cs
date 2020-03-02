@@ -39,7 +39,7 @@ namespace Pulsarc.Utils.Audio
                 song = new AudioTrack(songPath)
                 {
                     Rate = audioRate,
-                    Volume = Config.GetInt("Audio", "MusicVolume"),
+                    Volume = Config.MusicVolume.Value,
                 };
             }
             catch (AudioEngineException)
@@ -47,7 +47,7 @@ namespace Pulsarc.Utils.Audio
                 PulsarcLogger.Error(ManagedBass.Bass.LastError.ToString(), LogType.Runtime);
             }
 
-            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+            song.ApplyRate(Config.RatePitch.Value);
 
             song.Play();
             active = true;
@@ -81,10 +81,10 @@ namespace Pulsarc.Utils.Audio
             song = new AudioTrack(songPath)
             {
                 Rate = audioRate,
-                Volume = Config.GetInt("Audio", "MusicVolume"),
+                Volume = Config.MusicVolume.Value,
             };
 
-            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
+            song.ApplyRate(Config.RatePitch.Value);
 
             threadLimiterWatch.Start();
 
@@ -220,7 +220,7 @@ namespace Pulsarc.Utils.Audio
 
                 // Find the audio rate.
                 songPath = audio;
-                audioRate = Config.GetFloat("Gameplay", "SongRate");
+                audioRate = Config.SongRate.Value;
                 StartLazyPlayer();
 
                 // Play the rate-changed song at the time saved earlier.

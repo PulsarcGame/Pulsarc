@@ -120,6 +120,6 @@ namespace Pulsarc.Utils
             return false;
         }
 
-        static public void Reset() => KeyboardPresses.Clear();
+        static public void Reset() => PressActions.Clear();
     }
 }

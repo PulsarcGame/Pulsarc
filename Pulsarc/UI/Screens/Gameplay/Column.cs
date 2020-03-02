@@ -50,6 +50,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Organizes the hitobjects to avoid updating yet unseen hitobjects.
         /// </summary>
-        public void SortUpdateHitObjects() => UpdateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
+        public void SortUpdateHitObjects()
+            => UpdateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
     }
 }

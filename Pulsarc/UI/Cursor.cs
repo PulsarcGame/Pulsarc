@@ -12,6 +12,7 @@ namespace Pulsarc.UI
 
         public void SetPos(Point position) => SetPos(new Vector2(position.X, position.Y));
 
-        public void SetPos(Vector2 position) => truePosition = position;
+        public void SetPos(Vector2 position)
+            => TruePosition = position * Wobble.Window.WindowManager.ScreenScale;
     }
 }

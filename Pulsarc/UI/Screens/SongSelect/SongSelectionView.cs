@@ -8,6 +8,8 @@ using Pulsarc.UI.Screens.SongSelect.UI;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Maths;
 using Pulsarc.Utils.SQLite;
+using System;
+using System.Collections.Generic;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect

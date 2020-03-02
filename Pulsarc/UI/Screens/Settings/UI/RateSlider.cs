@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
             base(title, more, position, type, startingValue, minValue, maxValue, step, displayDivider, displayPrecision, edgeOffset)
         { }
 
-        public override void OnClick(Point mousePosition) => base.OnClick(mousePosition);
+        public override void OnClick(Vector2 mousePosition) => base.OnClick(mousePosition);
 
         public override void Save(string category, string key)
         {

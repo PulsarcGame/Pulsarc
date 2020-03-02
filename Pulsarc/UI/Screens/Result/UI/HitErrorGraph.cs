@@ -110,7 +110,7 @@ namespace Pulsarc.UI.Screens.Result.UI
                 Judgement.GetJudgementValueByError(Math.Abs(hit.Value)).Color);
         }
 
-        public override void Draw() => Pulsarc.SpriteBatch.Draw(Texture, position: truePosition, rotation: Rotation, origin: origin, color: Color.White);/*
+        public override void Draw() => Pulsarc.SpriteBatch.Draw(Texture, position: TruePosition, rotation: Rotation, origin: origin, color: Color.White);/*
             foreach (KeyValuePair<long, Double> hit error in hits)
             {
                 KeyValuePair<JudgementValue, Texture2D> judgeBar = getJudge(Judgement.getErrorJudgementValue(Math.Abs(error.Value)));

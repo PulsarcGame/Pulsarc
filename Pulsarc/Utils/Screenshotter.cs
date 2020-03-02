@@ -8,7 +8,7 @@ namespace Pulsarc.Utils
 {
     public static class Screenshotter
     {
-        private static Keys screenshotKey = Config.Bindings["Screenshot"];
+        private static Keys screenshotKey = Config.Screenshot.Value;
 
         private static bool pressedAlready = false;
 
