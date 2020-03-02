@@ -259,14 +259,27 @@ namespace Pulsarc
                 {
                     for (int i = 0; i < directories.Length; i++)
                     {
-                        converter.Save(directories[i]);
+                        try
+                        {
+                            converter.Save(directories[i]);
+                        }
+                        catch
+                        {
+                            PulsarcLogger.Warning($"Couldn't convert {directories[i]}");
+                        }
                     }
                 }
-
                 // Otherwise convert one map
                 else
                 {
-                    converter.Save(toConvert);
+                    try
+                    {
+                        converter.Save(toConvert);
+                    }
+                    catch
+                    {
+                        PulsarcLogger.Warning($"Couldn't convert {toConvert}");
+                    }
                 }
                 
                 ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();

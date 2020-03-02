@@ -224,14 +224,18 @@ namespace Pulsarc.Beatmaps
                 file.WriteLine("Events:");
 
                 foreach (Event evt in beatmap.Events)
+                {
                     file.WriteLine(evt.ToString());
+                }
 
                 // Write Timing Points
                 file.WriteLine("");
                 file.WriteLine("TimingPoints:");
 
                 foreach (TimingPoint timingPoint in beatmap.TimingPoints)
+                {
                     file.WriteLine(timingPoint.ToString());
+                }
 
                 // Write Speed Variations
                 file.WriteLine("");
@@ -242,7 +246,9 @@ namespace Pulsarc.Beatmaps
                 file.WriteLine("Arcs:");
 
                 foreach (Arc arc in beatmap.Arcs)
+                {
                     file.WriteLine(arc.ToString());
+                }
             }
         }
 
@@ -271,10 +277,7 @@ namespace Pulsarc.Beatmaps
         /// <param name="arc">The arc to check</param>
         /// <param name="column">The column to check in (in binary format)</param>
         /// <returns></returns>
-        static public bool IsColumn(Arc arc, int column)
-        {
-            return ((arc.Type >> column) & 1) != 0;
-        }
+        static public bool IsColumn(Arc arc, int column) => ((arc.Type >> column) & 1) != 0;
 
         /// <summary>
         /// Makes a new Event based on the data found in line

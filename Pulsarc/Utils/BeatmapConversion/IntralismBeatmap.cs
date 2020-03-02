@@ -47,7 +47,7 @@ namespace Pulsarc.Utils.BeatmapConversion
 
         // ¯\_(ツ)_/¯
         // Seemed to be used to "unlock" maps in an earlier version of Intralism
-        public List<Dictionary<string, string>> UnlockConditions { get; set; }
+        public List<string> UnlockConditions { get; set; }
         // Probably related to above
         public bool Hidden { get; set; }
 
@@ -56,6 +56,9 @@ namespace Pulsarc.Utils.BeatmapConversion
 
         // A list of all the Events in the map
         public List<Event> Events { get; set; }
+
+        // The encryted data of a map
+        public string e { get; set; }
     }
 
     /// <summary>
