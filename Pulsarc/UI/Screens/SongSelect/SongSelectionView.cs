@@ -64,7 +64,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             // Set up beatmap cards
             for (int i = 0; i < beatmaps.Count; i++)
             {
-                cards.Add(new BeatmapCard(beatmaps[i], i));
+                cards.Add(CreateCard(beatmaps[i], i));
             }
 
             // Select a random map by default in the song selection.
@@ -88,6 +88,9 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
         }
+
+        protected virtual BeatmapCard CreateCard(Beatmap beatmap, int index)
+            => new PlayCard(beatmap, index);
 
         #region GetSkinnable Methods
         /// <summary>

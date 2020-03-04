@@ -55,7 +55,8 @@ namespace Pulsarc
         private Camera gameCamera;
 
         // Static song selection screen for playing and managing user audio everywhere
-        public static SongSelection SongScreen;
+        // TODO: Handle user audio elsewhere.
+        public static SongSelection PlaySongSelect;
 
         // FPS
         private FPS fpsDisplay;
@@ -151,8 +152,8 @@ namespace Pulsarc
             };
 
             // Start the song selection in the background to have music when entering the game
-            SongScreen = new SongSelection();
-            SongScreen.Init();
+            PlaySongSelect = new SongSelection();
+            PlaySongSelect.Init();
 
             // Create and display the default game screen
             // (Currently Main menu. In the future can implement an intro)

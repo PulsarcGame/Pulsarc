@@ -2,21 +2,18 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
-using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 using Pulsarc.Utils.Audio;
 using Pulsarc.Utils.Maths;
 using System;
-using Wobble.Logging;
-using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.SongSelect.UI
 {
-    public class BeatmapCard : Card
+    public abstract class BeatmapCard : Card
     {
         public Beatmap Beatmap { get; set; }
-        
-        public static Texture2D DefaultTexture => Skin.Assets["beatmap_card"];
+
+        public static Texture2D DefaultTexture = Skin.Assets["beatmap_card"];
 
         // Stats
         public static readonly Anchor DefaultAnchor = Skin.GetConfigAnchor("song_select", "Properties", "BeatmapCardAnchor");
@@ -46,7 +43,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
         private BeatmapCardDifficulty diffBar;
         private Vector2 diffBarOffset;
         private Anchor diffBarStartAnchor;
-        
+
         // Bools that help with moving when selected
         private bool SelectedAndMoving => IsSelected
             && Math.Round(currentSelectDistance, 3) < Math.Round(selectedDistance, 3);
@@ -55,6 +52,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         private bool IncorrectPosition => currentSelectDistance > selectedDistance
             || currentSelectDistance < 0;
+
 
         /// <summary>
         /// A card displayed on the Song Select Screen. When clicked it loads the beatmap associated with this card.
@@ -214,11 +212,9 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // If already selected, start a game.
             if (IsSelected)
             {
-                GameplayEngine gameplay = new GameplayEngine();
-                ScreenManager.AddScreen(gameplay);
-                gameplay.Init(Beatmap);
+                TransitionToNewScreen();
             }
-            // If newly selected, play the song.
+            // If newly selected, preview the song.
             else
             {
                 if (AudioManager.songPath == Beatmap.GetFullAudioPath()) { return; }
@@ -231,8 +227,6 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
                 {
                     AudioManager.DeltaTime(Beatmap.PreviewTime);
                 }
-
-                //PulsarcLogger.Important($"Now Playing: {AudioManager.songPath}");
             }
         }
 
@@ -250,5 +244,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             diffBar?.ChangePosition(AnchorUtil.FindDrawablePosition(diffBarStartAnchor, this) + diffBarOffset);
         }
+
+        protected abstract void TransitionToNewScreen();
     }
 }

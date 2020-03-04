@@ -109,8 +109,11 @@ namespace Pulsarc.UI.Screens.SongSelect
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
 
-            View = new SongSelectionView(this, beatmaps, keyword);
+            View = CreateView(this, beatmaps, keyword);
         }
+
+        protected virtual ScreenView CreateView(Screen screen, List<Beatmap> beatmaps, string keyword)
+            => new SongSelectionView(this, beatmaps, keyword);
 
         /// <summary>
         /// Rescan the Beatmap data

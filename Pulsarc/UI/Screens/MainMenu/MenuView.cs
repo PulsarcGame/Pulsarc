@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Pulsarc.Beatmaps;
 using Pulsarc.Skinning;
 using Pulsarc.UI.Buttons;
 using Pulsarc.UI.Common;
@@ -7,6 +8,7 @@ using Pulsarc.UI.Screens.Editor;
 using Pulsarc.UI.Screens.MainMenu.UI;
 using Pulsarc.UI.Screens.Quit;
 using Pulsarc.UI.Screens.Settings;
+using Pulsarc.UI.Screens.SongSelect;
 using Pulsarc.Utils;
 using Wobble.Screens;
 
@@ -55,10 +57,9 @@ namespace Pulsarc.UI.Screens.MainMenu
         private void SetUpNavigationButtons()
         {
             navButtons = new List<NavigationButton>();
-            AddNavButton(Pulsarc.SongScreen, "Play");
+            AddNavButton(Pulsarc.PlaySongSelect, "Play");
             AddNavButton(new InProgressScreen(), "Multi");
-            AddNavButton(new DebugEditor(null), "Editor");
-            //AddNavButton(new InProgressScreen(), "Editor");
+            AddNavButton(new EditorSongSelect(), "Editor");
             AddNavButton(new SettingsScreen(), "Settings");
             AddNavButton(new QuitScreen(), "Quit");
         }
