@@ -1,4 +1,4 @@
-﻿# Code Style
+# Code Style
 
 The following is a general guide of how to structure your code. When contributing to Pulsarc it is preferrable that your code follows these guidelines.
 
@@ -19,54 +19,22 @@ This guide is heavily inspired by [Quaver's Code Style Guide](https://github.com
 ### Braces
 **DO** place open and closed braces on a new line.
 
-**DO** ignore braces on single-statement blocks, unless it is to remove confusion in reading and to keep code-execution safe. 
+**DO NOT** ignore braces on single-statement blocks.
 
-**Good Example**
+**DO NOT** use one-liners, exception for Guard Clauses.
+
+**DO NOT** put braces on the same line as a expression, exception for Guard Clauses.
+
+### Guard Clauses
+**DO** use guard clauses over nested condtionals. More info [Here](https://www.refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html)
+
+**Example**
 ```cs
-// Braces on separate lines
-if (someExpression)
-{
-    DoSomething();
-    DoAnotherThing();
-}
-// Braces to separate the inner else-statement from the outer else-statement
-else if (anotherExpression)
-{
-    // No braces for single-statements that are easy to read.
-    if (yetAnotherExpression)
-        DoSomethingElse();
-    else
-        DoSomethingElseEntirely();
-}
-// No braces for single-statements
-else
-    DoSomethingIGuess();
-```
+if (!condition) { return; }
 
-**DO NOT** use one-liners.
+...
 
-**DO NOT** put braces on the same line as a expression.
-
-**DO NOT** be inconsistent with your brace usage.
-
-**Bad Example:**
-```cs
-// Opening Brace on same line as expression
-if (someExpression) {
-    DoSomething();
-    DoAnotherThing();
-}
-// Inconsistent use of braces within this block
-// No braces causes confusion between the inner else-statement and the outer else-statement
-else if (anotherExpression)
-    // Doesn't need braces a single-statement instead.
-    if (yetAnotherExpression) {
-        DoSomethingElse();
-    // Closing brace on same line as expresssion
-    } else
-        DoSomethingElseEntirely();
-// One liner
-else { DoSomethingIGuess(); }
+if (!secondCondtion) { return; }
 ```
 
 ### Switches
@@ -86,44 +54,8 @@ switch (someExpression)
 }
 ```
 
-### Single Statements
-**DO** ignore braces for single statement blocks following ``for``, ``foreach``, ``if``, ``do``, etc.
-
-**DO** put the single statement on a new line and indent by four spaces.
-
-**Good Example:**
-```cs
-for (int i = 0; i < 100; ++i)
-    DoSomething(i);
-
-foreach (Item item in list)
-   UseItem(item);
-```
-
-**DO NOT** ignore braces for single statement blocks that may be confusing to understand otherwise.
-
-If you find yourself in a position where you don't know whether to include braces or not, use them anyway.
-
-**Bad Example:**
-```cs
-// This chain could be easier to read with clarifying braces.
-for (int i = 0; i < 100; i++)
-    for (int j = 0; j < 200; j++)
-        if (someExpression)
-            if (anotherExpression)
-                foreach (Item item in list)
-                    DoSomethingWeird(item, i * j);
-            else
-            {
-                DoSomething(j);
-                DoSomethingElse(i);
-            }
-        else if (yetAnotherExpression)
-            DoSomethingPlease(j / i);
-```
-
 ### Single line Property Statements
-Single line property statements can have braces that begin and end on the same line. This should only be used for simple property statements. Add a single space before and after the braces.
+Single line property statements can have braces that begin and end on the same line. Add a single space before and after the braces.
 
 **Example:**
 ```cs
@@ -242,21 +174,25 @@ for (int i=0 ; i<100 ; ++i)     // Wrong
 ```
 
 ## `var` vs Type
-**DO** use the variable type.
+**DO** use the variable type in most cases.
 
-**DO NOT** use `var`
+**DO NOT** use `var`, unless the type of the var is explicitly labeled on the right side during assignment.
 
 ## Naming
 camelCasing - First word all lowercase, following words initial uppercase.
 
 PascalCasing - All words initial uppercase.
 
-Follow all [.NET Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/) for both internal and external members. Highlights of these include:
+ALL\_CAPS - All letters are uppercase, underscore (_) between words
+
 * **DO NOT** use the Hungarian notation (including the type of the variable in the name)
-* **DO** use camelCasing for private member variables. Underscore prefixing (e.g. ``_foo``) is allowed, but not required
-* **DO** use camelCasing for other member variables
+* **DO** use camelCasing for private member variables.
 * **DO** use camelCasing for parameters.
 * **DO** use camelCasing for local variables
 * **DO** use PascalCasing for method, property, event, and class names.
+* **DO** use PascalCasing for protected member variables.
+* **DO** Use ALL_CAPS for static variables.
 * **DO** prefix interface names with ``I``
 * **DO NOT** prefix enums, classes, or delegates with any letter.
+
+Follow the [.NET Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/) for anything not covered.
