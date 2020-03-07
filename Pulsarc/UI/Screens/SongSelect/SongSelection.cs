@@ -83,6 +83,8 @@ namespace Pulsarc.UI.Screens.SongSelect
             base.Init();
 
             RefreshBeatmaps();
+
+            SelectRandomCard();
         }
 
         /// <summary>
@@ -179,6 +181,20 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
         }
 
+        public void SelectRandomCard()
+        {
+            if (Cards.Count <= 0) { return; }
+
+            Random rd = new Random();
+
+            FocusedCard?.SetClicked(false);
+
+            FocusedCard = Cards[rd.Next(0, Cards.Count)];
+            FocusedCard.OnClick();
+
+            GetSongSelectionView().FocusCard(FocusedCard);
+        }
+
         public void DeleteMap(in BeatmapCard card)
         {
             AudioManager.Stop();
@@ -261,15 +277,16 @@ namespace Pulsarc.UI.Screens.SongSelect
                     // If the backspace is pressed, delete the last character
                     case Keys.Back:
                         // If there's nothing in the box, don't do anything
-                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
-                        {
-                            break;
-                        }
+                        if (GetSongSelectionView().SearchBox.GetText().Length <= 0) { break; }
 
                         // Reset the timer
                         RestartSearchBoxKeyPressTimer = true;
 
                         GetSongSelectionView().SearchBox.DeleteLastCharacter();
+                        break;
+                    // If the random key is pressed, choose a random song
+                    case Keys.F2:
+                        SelectRandomCard();
                         break;
                     // If none of the above, type into the search bar
                     // TODO? Ignore keypresses unless clicked on
