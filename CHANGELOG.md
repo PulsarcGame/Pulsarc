@@ -142,7 +142,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.2-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.3-alpha...HEAD
+[1.4.3-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.2-alpha...v1.4.3-alpha
 [1.4.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.1-alpha...v1.4.2-alpha
 [1.4.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.0-alpha...v1.4.1-alpha
 [1.4.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...v1.4.0-alpha
