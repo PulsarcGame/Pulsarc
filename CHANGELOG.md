@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.3-alpha] - 2020-03-07
+
+### Added
+- Random song selection. Press F2 in the song select to choose a random song.
+
 ## [1.4.2-alpha] - 2020-03-02
 
 ### Added

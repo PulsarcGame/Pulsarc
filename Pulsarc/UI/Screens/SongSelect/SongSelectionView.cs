@@ -67,16 +67,6 @@ namespace Pulsarc.UI.Screens.SongSelect
                 cards.Add(new BeatmapCard(beatmaps[i], i));
             }
 
-            // Select a random map by default in the song selection.
-            if (cards.Count > 0)
-            {
-                Random rd = new Random();
-
-                songSelectScreen.FocusedCard = cards[rd.Next(0, cards.Count)];
-                songSelectScreen.FocusedCard.OnClick();
-                FocusCard(songSelectScreen.FocusedCard);
-            }
-
             Anchor searchBoxAnchor = GetSkinnablePropertyAnchor("SearchBarAnchor");
             Vector2 searchBarStartPosition = Skin.GetConfigStartPosition("song_select", "Properties", "SearchBarStartPos");
 
@@ -252,13 +242,16 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (Math.Round(currentFocus, 2) != Math.Round(songSelectScreen.SelectedFocus, 2))
             {
                 currentFocus = PulsarcMath.Lerp(
-                    currentFocus, songSelectScreen.SelectedFocus, (float)PulsarcTime.DeltaTime / 100f);
+                    currentFocus, songSelectScreen.SelectedFocus,
+                    (float)PulsarcTime.DeltaTime / 100f);
                 
                 float diff = lastFocus - currentFocus;
                 lastFocus = currentFocus;
-                
+
                 for (int i = 0; i < cards.Count; i++)
+                {
                     cards[i].Move(new Vector2(0, BeatmapCard.TotalHeight * diff));
+                }
             }
 
             // Go back if the back button was clicked.
