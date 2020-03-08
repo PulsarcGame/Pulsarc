@@ -17,16 +17,16 @@ namespace Pulsarc.UI.Screens.Gameplay.UI
         /// <param name="startingTime">The current time (in ms) of the map.
         /// Change this if starting at a point in the map that isn't the start. Default is 0.</param>
         public MapTimer(double totalTime, FillBarDirection fillDirection, double startingTime = 0)
-        : base
-        (
-            DefaultTexture,
-            AnchorUtil.FindScreenPosition(Anchor.TopRight),
-            0,
-            (float)totalTime,
-            (float)startingTime,
-            anchor: Anchor.TopRight,
-            fillDirection: fillDirection
-        )
-            => Resize(new Vector2(DefaultTexture.Width, Pulsarc.CurrentHeight));
+            : base
+            (
+                DefaultTexture,
+                AnchorUtil.FindScreenPosition(Anchor.TopRight),
+                0,
+                (float)totalTime,
+                (float)startingTime,
+                anchor: Anchor.TopRight,
+                fillDirection: fillDirection
+            )
+        => Resize(new Vector2(DefaultTexture.Width, Pulsarc.CurrentHeight));
     }
 }

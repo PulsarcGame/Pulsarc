@@ -11,7 +11,7 @@ using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Editor
 {
-    public class DebugEditor : EditorEngine
+    public class DebugEditor : EditorEngineOld
     {
         int lastScrollValue = 0;
 
@@ -31,9 +31,11 @@ namespace Pulsarc.UI.Screens.Editor
             //new BeatCircle(Beat.Sixteenth, 1, 1),
         };
 
-        public DebugEditor(Beatmap beatmap) : base(beatmap)
+        public DebugEditor() => Background = new Background("menu_background");
+
+        protected override EditorEngineViewOld CreateEditorView()
         {
-            Background = new Background("menu_background");
+            return null;//new DebugEditorView(this);
         }
 
         public override void Update(GameTime gameTime)

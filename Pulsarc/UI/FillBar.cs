@@ -52,15 +52,15 @@ namespace Pulsarc.UI
             bool heightScaled = true,
             FillBarDirection fillDirection = FillBarDirection.LeftToRight
         )
-        : base
-        (
-            texture,
-            position,
-            // If size wasn't provided, use the texture's size
-            size ?? new Vector2(texture.Width, texture.Height),
-            anchor: anchor,
-            heightScaled: heightScaled
-        )
+            : base
+            (
+                texture,
+                position,
+                // If size wasn't provided, use the texture's size
+                size ?? new Vector2(texture.Width, texture.Height),
+                anchor: anchor,
+                heightScaled: heightScaled
+            )
         {
             FillDirection = fillDirection;
 

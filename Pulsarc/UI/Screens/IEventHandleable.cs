@@ -20,9 +20,10 @@ namespace Pulsarc.UI.Screens
         bool HasCrosshair();
 
         /// <summary>
-        /// Get the crosshair of this EventHandleable.
+        /// Get the crosshair of this EventHandleable, if it has one.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The crosshair object being used by this EventHandleable, or null if
+        /// there is no crosshair.</returns>
         Crosshair GetCrosshair();
 
         /// <summary>

@@ -1,28 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
-using Pulsarc.UI.Common;
+using Pulsarc.UI.Screens.BaseEngine;
 using Pulsarc.UI.Screens.Gameplay.UI;
+using Pulsarc.Utils;
 using System;
 using System.Collections.Generic;
-using Wobble.Logging;
 using Wobble.Screens;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
-    public class GameplayEngineView : ScreenView
+    public class GameplayEngineView : ArcCrosshairEngineView
     {
         // UI Elements
         private List<TextDisplayElementFixedSize> uiElements = new List<TextDisplayElementFixedSize>();
         private JudgeBox judgeBox;
         private AccuracyMeter accMeter;
-        private Crosshair crosshair;
-
-        private Background background;
 
         private MapTimer mapTimer;
-        private double Time => GetGameplayEngine().Time;
 
-        private GameplayEngine GetGameplayEngine() { return (GameplayEngine)Screen; }
+        private GameplayEngine GetGameplayEngine() => (GameplayEngine)Screen;
 
         /// <summary>
         /// Create the GameplayEngineView, in otherwords the UI/HUD elements during Gameplay.
@@ -31,12 +27,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         public GameplayEngineView(Screen screen) : base(screen) { }
 
         /// <summary>
-        /// Initialize this GameplayEngineView with new UI elements.
+        /// Initialize this GameplayEngineView with UI elements.
         /// </summary>
-        public void Init()
+        public override void Init()
         {
-            // Initialize UI depending on skin config
-            crosshair = GetGameplayEngine().Crosshair;
+            if (AlreadyInitialized()) { return; }
 
             AddTextDisplayElement("Score");
             AddTextDisplayElement("Acc");
@@ -46,10 +41,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             SetUpAccMeter();
 
-            background = GetGameplayEngine().Background;
-
-            // Todo make fill direction skinnable
-            mapTimer = new MapTimer(GetGameplayEngine().MapEndTime, FillBarDirection.UpToDown);
+            base.Init();
         }
 
         /// <summary>
@@ -87,6 +79,13 @@ namespace Pulsarc.UI.Screens.Gameplay
             int offsetY = GetSkinnablePropertyInt("AccMeterY");
 
             accMeter.Move(offsetX, offsetY);
+        }
+
+        internal void SetUpMapTimer()
+        {
+            // TODO: make fill direction skinnable
+            mapTimer = new MapTimer(GetGameplayEngine().MapEndTime, FillBarDirection.UpToDown);
+            PulsarcLogger.Debug($"{GetGameplayEngine().MapEndTime}");
         }
 
         /// <summary>
@@ -173,24 +172,19 @@ namespace Pulsarc.UI.Screens.Gameplay
         public void AddHit(double time, int error, int judge)
         {
             accMeter.AddError(time, error);
-            AddJudge(time, judge);
+            judgeBox.Add(time, judge);
         }
 
-        /// <summary>
-        /// Add a judgement.
-        /// </summary>
-        /// <param name="time">The time of the judgement.</param>
-        /// <param name="judge">The base score of the judgement.</param>
-        public void AddJudge(double time, int judge)
+        public void AddMiss(double time)
         {
-            judgeBox.Add(time, judge);
+            judgeBox.Add(time, 0);
         }
 
         // TODO: Cleanup
         public override void Update(GameTime gameTime)
         {
             // Score
-            uiElements[0].Update(GetGameplayEngine().scoreDisplay);
+            uiElements[0].Update(GetGameplayEngine().ScoreDisplay);
 
             // Acc
             double accuracyTotal = 0;
@@ -226,6 +220,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             // Combo
             uiElements[2].Update(GetGameplayEngine().Combo);
 
+            // Update everything
             judgeBox.Update(Time);
             accMeter.Update(Time);
             mapTimer.CurrentValue = (float)Time;
@@ -239,15 +234,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             if (!GameplayEngine.Active) { return; }
 
-            // Don't bother drawing the background if dim is 100%
-            if (background.Dimmed && background.DimTexture.Opacity != 1f || !background.Dimmed)
-            {
-                background.Draw();
-            }
+            // Draw crosshair/background/arcs
+            base.Draw(gameTime);
 
-            crosshair.Draw();
-            DrawArcs();
-
+            // Draw UI
             for (int i = 0; i < uiElements.Count; i++)
             {
                 uiElements[i].Draw();
@@ -258,34 +248,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             mapTimer.Draw();
         }
 
-        private void DrawArcs()
-        {
-            // Go through each key
-            for (int i = 0; i < GetGameplayEngine().KeyCount; i++)
-            {
-                // Go through the arcs in each column
-                for (int k = 0; k < GetGameplayEngine().Columns[i].UpdateHitObjects.Count; k++)
-                {
-                    // If the arc is on screen, draw it.
-                    if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.IsSeen())
-                        GetGameplayEngine().Columns[i].UpdateHitObjects[k].Value.Draw();
+        public bool IsActive() => GameplayEngine.Active;
 
-                    // If the arc is inside the "IgnoreTime" window, stop bothering to
-                    // look at the rest of the arcs in this column.
-                    if (GetGameplayEngine().Columns[i].UpdateHitObjects[k].Key - GetGameplayEngine().IgnoreTime > GetGameplayEngine().Time)
-                        break;
-                }
-            }
-        }
-
-        public bool IsActive()
-        {
-            return GameplayEngine.Active;
-        }
-
-        public override void Destroy()
-        {
-            GetGameplayEngine().Reset();
-        }
+        public override void Destroy() => GetGameplayEngine().Reset();
     }
 }

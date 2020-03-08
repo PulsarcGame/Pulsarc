@@ -110,7 +110,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Calculate and set the current z-axis position for this object.
         /// </summary>
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
-        /// <param name="speedModifier">The current speed modifier.</param>
+        /// <param name="speed">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
         protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc)
         {
@@ -121,16 +121,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Calculate the current z-axis position for this object.
         /// </summary>
         /// <param name="currentTime">The current time (in ms) since the start of the audio.</param>
-        /// <param name="speedModifier">The current speed modifier.</param>
+        /// <param name="speed">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
         protected virtual double CalcZLocation(int currentTime, double speed, double crosshairZLoc)
-        {
-            int deltaTime = currentTime - Time;
-
-            double zLocation = deltaTime * speed + speed + crosshairZLoc;
-
-            return zLocation;
-        }
+            => ((currentTime - Time) * speed) + speed + crosshairZLoc;
 
         /// <summary>
         /// Set the current transparency of the HitObject if Hidden is activated.
@@ -147,12 +141,16 @@ namespace Pulsarc.UI.Screens.Gameplay
                 float newOpacity = (float)(fullFadeLocation - ZLocation) / (float)(fullFadeLocation);
 
                 if (ZLocation > fullFadeLocation)
+                {
                     newOpacity = 0f;
+                }
                 // This is for playing with Hidden. Zooms can make 
                 // the arcs more opaque with the current implementation
                 // of hidden. This makes sure that arcs don't gain opacity.
                 else if (newOpacity > Opacity)
+                {
                     newOpacity = Opacity;
+                }
 
                 Opacity = newOpacity;
             }
@@ -162,12 +160,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Find this object's current arc radius using its current z-axis position.
         /// </summary>
         public float FindArcRadius()
-        {
-            float radius = (float)(960 / ZLocation * (Pulsarc.CurrentHeight / 2));
+            => (float)(Texture.Width / 2d / ZLocation * (Pulsarc.CurrentWidth / 2d));
 
-            return radius;
-        }
-        
         /// <summary>
         /// Return the time (in ms) since the start of the audio
         /// when this HitObject should first be drawn.
@@ -177,16 +171,11 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// the HitObject's time.</param>
         /// <param name="crosshairZLoc">The z-axis position of the crosshair.</param>
         public virtual int IsSeenAt(double speed, double crosshairZLoc)
-        {
-            return (int)(Time - (crosshairZLoc / speed));
-        }
+            => (int)(Time - (crosshairZLoc / speed));
 
         /// <summary>
         /// Returns whether this HitObject can be drawn.
         /// </summary>
-        public virtual bool IsSeen()
-        {
-            return ZLocation > 0;
-        }
+        public virtual bool IsSeen() => ZLocation > 0;
     }
 }

@@ -104,7 +104,7 @@ namespace Pulsarc.Utils.Audio
             { }
 
             // Start playing if the Editor engine is active
-            if (EditorEngine.Active)
+            if (EditorEngineOld.Active)
             {
                 threadLimiterWatch.Restart();
 
