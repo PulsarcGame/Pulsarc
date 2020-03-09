@@ -75,8 +75,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         // Whether or not the user has already deleted the map with the current delete hold
         private bool alreadyDeletedMap = false;
 
-        public SongSelection()
-        { }
+        public SongSelection() { }
 
         public override void Init()
         {
@@ -198,6 +197,8 @@ namespace Pulsarc.UI.Screens.SongSelect
             }
 
             RescanBeatmaps();
+
+            Pulsarc.FocusedCardIndex = FocusedCard.Index();
         }
 
         public override void Update(GameTime gameTime)
@@ -215,9 +216,18 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             UpdateDiscord();
 
-            // Since this UpdateDiscord() is called every time
-            // We re-enter the song select screen, reload leaderboards just in case.
-            GetSongSelectionView().RefocusCurrentCard();
+            if (Pulsarc.FocusedCardIndex >= 0 && Pulsarc.FocusedCardIndex != FocusedCard.Index)
+            {
+                FocusedCard = Cards[Pulsarc.FocusedCardIndex];
+                FocusedCard.OnClick();
+                GetSongSelectionView().FocusCard(FocusedCard);
+            }
+            else
+            {
+                // Since this UpdateDiscord() is called every time
+                // We re-enter the song select screen, reload leaderboards just in case.
+                GetSongSelectionView().RefocusCurrentCard();
+            }
         }
 
         public override void UpdateDiscord() => PulsarcDiscord.SetStatus("", "Browsing Maps");
@@ -242,7 +252,7 @@ namespace Pulsarc.UI.Screens.SongSelect
                     case Keys.Escape:
                         if (GetSongSelectionView().SearchBox.GetText().Length <= 0)
                         {
-                            ScreenManager.RemoveScreen(true);
+                            LeaveScreen();
                             break;
                         }
                         // If there was text in the searchbox, fall through to Keys.Delete, which
@@ -318,6 +328,12 @@ namespace Pulsarc.UI.Screens.SongSelect
             {
                 alreadyDeletedMap = false;
             }
+        }
+
+        public void LeaveScreen()
+        {
+            Pulsarc.FocusedCardIndex = FocusedCard.Index;
+            ScreenManager.RemoveScreen(true);
         }
 
         private void HandleMouseInput()

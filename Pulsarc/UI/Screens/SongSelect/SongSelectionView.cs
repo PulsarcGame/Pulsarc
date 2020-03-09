@@ -67,14 +67,18 @@ namespace Pulsarc.UI.Screens.SongSelect
                 cards.Add(CreateCard(beatmaps[i], i));
             }
 
-            // Select a random map by default in the song selection.
             if (cards.Count > 0)
             {
-                Random rd = new Random();
-
-                songSelectScreen.FocusedCard = cards[rd.Next(0, cards.Count)];
-                songSelectScreen.FocusedCard.OnClick();
-                FocusCard(songSelectScreen.FocusedCard);
+                // Select a random map by default in the song selection.
+                if (Pulsarc.FocusedCardIndex < 0)
+                {
+                    SelectCard(new Random().Next(0, cards.Count));
+                }
+                // Otherwise focus on the last selected card from any song select
+                else if (songSelectScreen.FocusedCard != cards[Pulsarc.FocusedCardIndex])
+                {
+                    SelectCard(Pulsarc.FocusedCardIndex);
+                }
             }
 
             Anchor searchBoxAnchor = GetSkinnablePropertyAnchor("SearchBarAnchor");
@@ -87,6 +91,13 @@ namespace Pulsarc.UI.Screens.SongSelect
             SearchBox.Move(searchBarX, searchBarY);
 
             button_back = new ReturnButton("select_button_back", AnchorUtil.FindScreenPosition(Anchor.BottomLeft));
+        }
+
+        private void SelectCard(int index)
+        {
+            songSelectScreen.FocusedCard = cards[index];
+            songSelectScreen.FocusedCard.OnClick();
+            FocusCard(songSelectScreen.FocusedCard);
         }
 
         protected virtual BeatmapCard CreateCard(Beatmap beatmap, int index)
@@ -268,7 +279,7 @@ namespace Pulsarc.UI.Screens.SongSelect
             if (InputManager.IsLeftClick()
                 && button_back.Hovered(InputManager.LastMouseClick.Key.Position))
             {
-                button_back.OnClick();
+                GetSongSelection().LeaveScreen();
             }
         }
     }

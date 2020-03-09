@@ -68,6 +68,9 @@ namespace Pulsarc
 
         protected override bool IsReadyToUpdate { get; set; }
 
+        // Current card index of both SongSelects
+        public static int FocusedCardIndex { get; set; } = -1;
+
         public Pulsarc()
         {
             pulsarc = this;
