@@ -198,7 +198,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             RescanBeatmaps();
 
-            Pulsarc.FocusedCardIndex = FocusedCard.Index();
+            Pulsarc.FocusedCardIndex = FocusedCard.Index;
         }
 
         public override void Update(GameTime gameTime)
@@ -218,6 +218,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             if (Pulsarc.FocusedCardIndex >= 0 && Pulsarc.FocusedCardIndex != FocusedCard.Index)
             {
+                FocusedCard.SetClicked(false);
                 FocusedCard = Cards[Pulsarc.FocusedCardIndex];
                 FocusedCard.OnClick();
                 GetSongSelectionView().FocusCard(FocusedCard);

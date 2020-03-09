@@ -97,6 +97,7 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             songSelectScreen.FocusedCard = cards[index];
             songSelectScreen.FocusedCard.OnClick();
+            Pulsarc.FocusedCardIndex = songSelectScreen.FocusedCard.Index;
             FocusCard(songSelectScreen.FocusedCard);
         }
 
