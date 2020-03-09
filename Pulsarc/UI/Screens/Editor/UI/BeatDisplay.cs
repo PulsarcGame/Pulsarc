@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 using System;
 using Wobble.Logging;
 
@@ -36,13 +37,13 @@ namespace Pulsarc.UI.Screens.Editor.UI
         public int Time { get; protected set; }
         
         // The Scale of the editor (determines spacing between notes)
-        public float Scale { get; protected set; }
+        public float SpaceScale { get; protected set; }
 
         public BeatDisplay(Beat beat, int time, float scale)
         {
             Beat = beat;
             Time = time;
-            Scale = scale;
+            SpaceScale = scale;
             AspectRatio = -1;
 
             SetBeatTexture();
@@ -68,11 +69,37 @@ namespace Pulsarc.UI.Screens.Editor.UI
             }
             catch
             {
-                Logger.Debug("Something went wrong with setting beat colors!\n" +
+                PulsarcLogger.Warning("Something went wrong with setting beat colors!\n" +
                     $"Please make that \"{name}\"is accounted for and is spelled correctly in editor.ini!\n" +
-                    "Setting color to Black.", LogType.Runtime);
+                    $"Returning {GetDefaultBeatColor(beat)} instead.");
 
-                return Color.Black;
+                return GetDefaultBeatColor(beat);
+            }
+        }
+        
+        public static Color GetDefaultBeatColor(Beat beat)
+        {
+            switch (beat)
+            {
+                case Beat.Whole:
+                    return Color.White;
+                case Beat.Half:
+                    return Color.WhiteSmoke;
+                case Beat.Third:
+                    return Color.HotPink;
+                case Beat.Fourth:
+                    return Color.Crimson;
+                case Beat.Sixth:
+                    return Color.DarkRed;
+                case Beat.Eighth:
+                    return Color.MediumBlue;
+                case Beat.Twelveth:
+                    return Color.LightSkyBlue;
+                case Beat.Sixteenth:
+                    return Color.Gold;
+                default:
+                    PulsarcLogger.Warning("Invalid beat type, returning Black.");
+                    return Color.Black;
             }
         }
     }

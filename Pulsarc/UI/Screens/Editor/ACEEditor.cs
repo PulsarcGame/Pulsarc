@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Wobble.Screens;
 using System;
 using Pulsarc.Utils.Audio;
+using Microsoft.Xna.Framework;
 
 namespace Pulsarc.UI.Screens.Editor
 {
@@ -23,14 +24,27 @@ namespace Pulsarc.UI.Screens.Editor
 
         public ACEEditor() { }
 
-        public override void Init()
+        public override void Init(Beatmap beatmap)
         {
-            base.Init();
+            AudioManager.Pause();
+
+            base.Init(beatmap);
+
+            Init();
         }
 
         protected override void InitializeVariables(in Beatmap beatmap)
         {
-            throw new NotImplementedException();
+            Rate = 1;
+
+            CurrentSpeedMultiplier = UserSpeed;
+            // TODO: Relative with scale???
+            CurrentArcsSpeed = 1;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
 
         //These methods may not be needed

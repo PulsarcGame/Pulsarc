@@ -77,8 +77,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
 
         public void RecalcPos(int currentTime, float scale, double crosshairZLoc)
         {
-            if (SameAsLastFrame(currentTime, scale, crosshairZLoc))
-                return;
+            if (SameAsLastFrame(currentTime, scale, crosshairZLoc)) { return; }
 
             SetZLocation(currentTime, scale, crosshairZLoc);
 
@@ -104,22 +103,11 @@ namespace Pulsarc.UI.Screens.Editor.UI
         }
 
         public void SetZLocation(int currentTime, float scale, double crosshairZLoc)
-        {
-            int deltaTime = currentTime - Time;
+            => ZLocation = (currentTime - Time) * scale + scale + crosshairZLoc;
 
-            ZLocation = deltaTime * scale + scale + crosshairZLoc;
-        }
-
-        public float FindRadius()
-        {
-            float radius = (float)(960 / ZLocation * (Pulsarc.CurrentHeight / 2));
-
-            return radius;
-        }
+        public float FindRadius() => (float)(960 / ZLocation * (Pulsarc.CurrentHeight / 2));
 
         public bool IsSeen(double crosshairZLoc)
-        {
-            return ZLocation > 0 && ZLocation < crosshairZLoc + (crosshairZLoc / 3);
-        }
+            => ZLocation > 0 && ZLocation < crosshairZLoc + (crosshairZLoc / 3);
     }
 }

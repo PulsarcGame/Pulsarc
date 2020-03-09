@@ -21,11 +21,11 @@ namespace Pulsarc.UI.Screens.Editor
             get => AudioManager.Paused;
             set
             {
-                if (AudioManager.Paused && value == false)
+                if (!value)
                 {
                     AudioManager.Resume();
                 }
-                else if (!AudioManager.Paused && value == true)
+                else
                 {
                     AudioManager.Pause();
                 }
