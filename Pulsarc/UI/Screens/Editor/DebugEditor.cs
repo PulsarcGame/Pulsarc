@@ -11,7 +11,7 @@ using Wobble.Logging;
 
 namespace Pulsarc.UI.Screens.Editor
 {
-    public class DebugEditor : EditorEngineOld
+    public class DebugEditor : ACEEditor
     {
         int lastScrollValue = 0;
 
@@ -33,7 +33,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         public DebugEditor() => Background = new Background("menu_background");
 
-        protected override EditorEngineViewOld CreateEditorView()
+        protected ACEEditorView CreateEditorView()
         {
             return null;//new DebugEditorView(this);
         }
@@ -68,81 +68,6 @@ namespace Pulsarc.UI.Screens.Editor
             {
                 circle.Draw();
             }
-        }
-
-        public override void AddEvent(Event evnt)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddEvent(int time, EventType eventType)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddHitObject(IEditorHitObject hitObject)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddHitObject(int time)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddTimingPoint(TimingPoint timingPoint)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddTimingPoint(int time, double bpm)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddZoomEvent(ZoomEvent zoomEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddZoomEvent(int time, ZoomType zoomType, float zoomLevel, int endTime)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void CreateColumns()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override bool HasCrosshair()
-        {
-            return true;
-        }
-
-        public override Crosshair GetCrosshair()
-        {
-            return Crosshair;
-        }
-
-        public override int FindTime(Point mousePosition)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override int FindClosestColumn(Point mousePos)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void AddHitObject(int time, int columnIndex)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override bool ClickedAnObject(Point mousePos, out Drawable clicked)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

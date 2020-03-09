@@ -265,10 +265,10 @@ namespace Pulsarc.UI.Screens.Gameplay
             HandleEngineInputs();
 
             // If paused, don't handle anything else
-            if (AudioManager.paused) { return; }
+            if (AudioManager.Paused) { return; }
 
             // Quit gameplay when nothing is left to play, or if the audio finished playing
-            if ((AudioManager.active && AudioManager.FinishedPlaying()) || (Ending && Time >= endTime + END_DELAY))
+            if ((AudioManager.Active && AudioManager.FinishedPlaying()) || (Ending && Time >= endTime + END_DELAY))
             {                
                 EndGameplay(true);
                 return;
@@ -618,7 +618,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             Background.Dimmed = false;
 
             // Stop audio
-            if (AudioManager.running)
+            if (AudioManager.Running)
             {
                 AudioManager.Stop();
             }

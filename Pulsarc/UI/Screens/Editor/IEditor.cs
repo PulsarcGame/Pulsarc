@@ -1,5 +1,6 @@
 ﻿using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.BaseEngine;
 using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Editor
@@ -57,5 +58,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         //void DragSelected();
         #endregion
+
+        EditorStyle GetEditorStyle();
     }
 }

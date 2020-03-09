@@ -63,7 +63,9 @@ namespace Pulsarc.Beatmaps.Events
         {
             // Check if the type for this event is "zoom"
             if (Type != EventType.Zoom)
+            {
                 ThrowWrongEventTypeException(this, EventType.Zoom);
+            }
 
             // Find the remaining values using the List<string> Parameters
             // that was created in the base constructor.

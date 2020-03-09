@@ -217,10 +217,10 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
             // If newly selected, preview the song.
             else
             {
-                if (AudioManager.songPath == Beatmap.GetFullAudioPath()) { return; }
+                if (AudioManager.SongPath == Beatmap.GetFullAudioPath()) { return; }
 
-                AudioManager.songPath = Beatmap.GetFullAudioPath();
-                AudioManager.audioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
+                AudioManager.SongPath = Beatmap.GetFullAudioPath();
+                AudioManager.AudioRate = Utils.Config.GetFloat("Gameplay", "SongRate");
                 AudioManager.StartLazyPlayer();
 
                 if (Beatmap.PreviewTime != 0)

@@ -3,7 +3,7 @@ using Pulsarc.Skinning;
 using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils;
 
-namespace Pulsarc.UI.Screens.Editor
+namespace Pulsarc.UI.Screens.Editor.UI
 {
     public class EditorArc : HitObject, IEditorHitObject
     {
@@ -32,8 +32,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         public override void RecalcPos(int currentTime, double currentScale, double crosshairZLoc)
         {
-            if (SameAsLastFrame(currentTime, currentScale, crosshairZLoc))
-                return;
+            if (SameAsLastFrame(currentTime, currentScale, crosshairZLoc)) { return; }
 
             SetZLocation(currentTime, currentScale, crosshairZLoc);
 

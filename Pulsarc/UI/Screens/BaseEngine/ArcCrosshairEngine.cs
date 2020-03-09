@@ -43,7 +43,11 @@ namespace Pulsarc.UI.Screens.BaseEngine
 
         // The current time of the song, which the engine
         // uses to determine arc positioning and event handling.
-        protected double Time => AudioManager.GetTime();
+        protected double Time
+        {
+            get => AudioManager.GetTime();
+            set => AudioManager.Seek(value);
+        }
 
         //Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
@@ -92,7 +96,7 @@ namespace Pulsarc.UI.Screens.BaseEngine
         protected virtual void LoadConfig()
         {
             // Set the offset for each play before starting audio
-            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
+            AudioManager.Offset = Config.GetInt("Audio", "GlobalOffset");
 
             KeyCount = 4;
 
@@ -118,7 +122,7 @@ namespace Pulsarc.UI.Screens.BaseEngine
             Background.ChangeBackground(
                 GraphicsUtils.LoadFileTexture(beatmap.Path + "/" + beatmap.Background));
 
-            AudioManager.songPath = beatmap.GetFullAudioPath();
+            AudioManager.SongPath = beatmap.GetFullAudioPath();
 
             CurrentBeatmap = beatmap;
         }
