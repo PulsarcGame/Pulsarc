@@ -1,6 +1,5 @@
 ﻿using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
-using Pulsarc.UI.Screens.BaseEngine;
 using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Editor
@@ -60,5 +59,8 @@ namespace Pulsarc.UI.Screens.Editor
         #endregion
 
         EditorStyle GetEditorStyle();
+
+        // TODO: Upgrade to C# 8 and make this a default method
+        //void ActivateEditor(); // => Editor.Active = true;
     }
 }

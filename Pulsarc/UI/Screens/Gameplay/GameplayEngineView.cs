@@ -85,7 +85,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             // TODO: make fill direction skinnable
             mapTimer = new MapTimer(GetGameplayEngine().MapEndTime, FillBarDirection.UpToDown);
-            PulsarcLogger.Debug($"{GetGameplayEngine().MapEndTime}");
         }
 
         /// <summary>

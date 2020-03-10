@@ -86,6 +86,28 @@ namespace Pulsarc.UI.Screens.Editor
         internal static bool CanAddHitObjects = true;
 
         internal static int LastScrollValue = 0;
+
+        internal static bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
+        {
+            // The conditionals we're looking at
+            bool timeSame = time == lastFrameTime;
+            bool scaleSame = scale == lastFrameScale;
+            bool crosshairZLocSame = crosshairZLoc == lastFrameCrosshairZLoc;
+
+            // If any of the current values are different,
+            // change the lastFrame values to the current value.
+            lastFrameTime = !timeSame ? time : lastFrameTime;
+            lastFrameScale = !scaleSame ? scale : lastFrameScale;
+            lastFrameCrosshairZLoc = !crosshairZLocSame ? crosshairZLoc : lastFrameCrosshairZLoc;
+
+            // If all our conditionals were true, then this frame is the same.
+            // If at least one of our conditionals were false, this frame is different.
+            return timeSame && scaleSame && crosshairZLocSame;
+        }
+
+        private static int lastFrameTime = 0;
+        private static double lastFrameScale = 0;
+        private static double lastFrameCrosshairZLoc = 0;
     }
 
     public enum EditorStyle

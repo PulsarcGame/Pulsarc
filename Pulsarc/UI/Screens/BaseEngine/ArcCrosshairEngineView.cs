@@ -57,18 +57,20 @@ namespace Pulsarc.UI.Screens.BaseEngine
                 // Go through the arcs in the column
                 for (int k = 0; k < GetEngine().Columns[i].UpdateHitObjects.Count; k++)
                 {
-                    KeyValuePair<long, HitObject> hitObject
-                        = GetEngine().Columns[i].UpdateHitObjects[k];
+                    HitObject hitObject = GetEngine().Columns[i].UpdateHitObjects[k];
 
                     // If the arc is on screen, draw it.
-                    if (hitObject.Value.IsSeen())
+                    if (hitObject.IsSeen())
                     {
-                        hitObject.Value.Draw();
+                        hitObject.Draw();
                     }
 
                     // If the arc is inside the "IgnoreTime" window, stop bothering to
                     // look at the rest of the arcs in this column, we are offscreen at this point.
-                    if (hitObject.Key - GetEngine().IgnoreTime > GetEngine().GetCurrentTime())
+                    double speed = GetEngine().CurrentSpeedMultiplier;
+                    float zLocation = GetEngine().GetCrosshair().GetZLocation();
+                    if (hitObject.IsSeenAt(speed, zLocation) - GetEngine().IgnoreTime
+                        > GetEngine().GetCurrentTime())
                     {
                         break;
                     }

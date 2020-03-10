@@ -5,7 +5,9 @@ namespace Pulsarc.UI.Screens.Editor
     public class EditorAction
     {
         // The states of the items affected during this change before and after.
+        // If the original state is empty, that means the action was adding items.
         public List<Drawable> OriginalStates { get; private set; } = new List<Drawable>();
+        // If the changed state is empty, that means the action was removing items.
         public List<Drawable> ChangedStates { get; private set; } = new List<Drawable>();
 
         public EditorAction(List<Drawable> added, List<Drawable> removed)
@@ -16,12 +18,16 @@ namespace Pulsarc.UI.Screens.Editor
 
         public EditorAction(List<Drawable> items, bool added)
         {
-            // OriginalStates is a blank list, meaning these items were added.
+            // OriginalStates is a empty list, meaning these items were added.
             if (added)
+            {
                 ChangedStates = items;
-            // ChangedStates is a blank list, meaning these items were removed.
+            }
+            // ChangedStates is a empty list, meaning these items were removed.
             else
+            {
                 OriginalStates = items;
+            }
         }
 
         /// <summary>
@@ -29,19 +35,13 @@ namespace Pulsarc.UI.Screens.Editor
         /// Before this EditorAction. These are stored in OriginalStates
         /// </summary>
         /// <returns></returns>
-        public List<Drawable> Undo()
-        {
-            return OriginalStates;
-        }
+        public List<Drawable> Undo() => OriginalStates;
 
         /// <summary>
         /// When we redo, we reapply the states of items determined by this
         /// EditorAction. These are stored in ChangedStates.
         /// </summary>
         /// <returns></returns>
-        public List<Drawable> Redo()
-        {
-            return ChangedStates;
-        }
+        public List<Drawable> Redo() => ChangedStates;
     }
 }

@@ -12,7 +12,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         // Whether or not this HitObject should fade before reaching the crosshair
         public bool Hidden { get; protected set; } = false;
 
-        // The time (in ms) from the start of the audio to a Perfect hit
+        // The time (in ms) from the start of the audio to a Perfect hit on this object
         public int Time { get; protected set; }
 
         // The direction this HitObject is "falling" from.
@@ -113,9 +113,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="speed">The current speed modifier.</param>
         /// <param name="crosshairZLoc">The current z-axis poisition of the crosshair.</param>
         protected virtual void SetZLocation(int currentTime, double speed, double crosshairZLoc)
-        {
-            ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
-        }
+            => ZLocation = CalcZLocation(currentTime, speed, crosshairZLoc);
 
         /// <summary>
         /// Calculate the current z-axis position for this object.

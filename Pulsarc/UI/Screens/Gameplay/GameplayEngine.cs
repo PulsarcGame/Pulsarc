@@ -413,10 +413,8 @@ namespace Pulsarc.UI.Screens.Gameplay
             {
                 Combo++;
 
-                if (Combo > maxCombo)
-                {
-                    maxCombo = Combo;
-                }
+                // If new combo is greater than max combo, assign combo to max combo
+                maxCombo = Combo > maxCombo ? Combo : maxCombo;
             }
             else
             {
@@ -442,7 +440,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
                 for (int k = 0; k < currentColumn.UpdateHitObjects.Count && !updatedAll; k++)
                 {
-                    HitObject currentHitObject = currentColumn.UpdateHitObjects[k].Value;
+                    HitObject currentHitObject = currentColumn.UpdateHitObjects[k];
 
                     // Remove the hitobject if it is marked for removal
                     if (currentHitObject.ToErase)
@@ -457,7 +455,9 @@ namespace Pulsarc.UI.Screens.Gameplay
                     AtLeastOneLeft = true;
 
                     // Ignore the following objects if we have reached the ignored distance
-                    if (currentColumn.UpdateHitObjects[k].Key - IgnoreTime > Time)
+                    if (currentColumn.UpdateHitObjects[k]
+                        .IsSeenAt(CurrentSpeedMultiplier, Crosshair.GetZLocation())
+                        - IgnoreTime > Time)
                     {
                         updatedAll = true;
                     }

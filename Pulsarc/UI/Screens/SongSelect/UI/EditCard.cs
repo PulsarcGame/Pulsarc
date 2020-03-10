@@ -10,7 +10,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
         protected override void TransitionToNewScreen()
         {
-            DebugEditor editor = new DebugEditor();
+            ACEEditor editor = new ACEEditor();
             ScreenManager.AddScreen(editor);
             editor.Init(Beatmap);
         }

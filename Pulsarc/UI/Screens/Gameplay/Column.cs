@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pulsarc.UI.Screens.Gameplay
 {
@@ -11,8 +12,8 @@ namespace Pulsarc.UI.Screens.Gameplay
         // All HitObjects for this column.
         public List<HitObject> HitObjects { get; private set; }
 
-        //
-        public List<KeyValuePair<long,HitObject>> UpdateHitObjects { get; private set; }
+        // All the hitobjects to be updated
+        public List<HitObject> UpdateHitObjects { get; private set; }
 
         /// <summary>
         /// A Column is a "track" where all arcs from a specific direction are kept track of.
@@ -22,7 +23,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         {
             this.side = side;
             HitObjects = new List<HitObject>();
-            UpdateHitObjects = new List<KeyValuePair<long, HitObject>>();
+            UpdateHitObjects = new List<HitObject>();
         }
 
         /// <summary>
@@ -37,13 +38,13 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (hitObject.Hittable)
             {
                 HitObjects.Add(hitObject);
-                UpdateHitObjects.Add(new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
+                UpdateHitObjects.Add(hitObject);
             }
             // If this HitObject is not hittable (Fading Out Effect Arcs), add it to the front of the list.
             else
             {
                 HitObjects.Insert(0, hitObject);
-                UpdateHitObjects.Insert(0, new KeyValuePair<long, HitObject>(hitObject.IsSeenAt(speed, crosshairZLoc), hitObject));
+                UpdateHitObjects.Insert(0, hitObject);
             }
         }
 
@@ -52,7 +53,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         public void SortUpdateHitObjects()
         {
-            UpdateHitObjects.Sort((x, y) => x.Key.CompareTo(y.Key));
+            UpdateHitObjects.Sort((x, y) => x.Time.CompareTo(y.Time));
         }
     }
 }
