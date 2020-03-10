@@ -108,6 +108,9 @@ namespace Pulsarc.UI.Screens.SongSelect
             // TODO: Allow user to choose sorting method.
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
 
+            // Reset global index
+            Pulsarc.FocusedCardIndex = -1;
+
             View = CreateView(this, beatmaps, keyword);
         }
 
