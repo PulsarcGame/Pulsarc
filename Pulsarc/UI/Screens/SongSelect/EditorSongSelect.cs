@@ -8,5 +8,7 @@ namespace Pulsarc.UI.Screens.SongSelect
     {
         protected override ScreenView CreateView(Screen screen, List<Beatmap> beatmaps, string keyword)
             => new EditorSongSelectView(screen, beatmaps, keyword);
+
+        protected override bool ResetCardIndex { get; set; } = false;
     }
 }

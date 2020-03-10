@@ -109,10 +109,15 @@ namespace Pulsarc.UI.Screens.SongSelect
             beatmaps = SortBeatmaps(beatmaps, "difficulty");
 
             // Reset global index
-            Pulsarc.FocusedCardIndex = -1;
+            Pulsarc.FocusedCardIndex = ResetCardIndex ? -1 : Pulsarc.FocusedCardIndex;
+            // Reset every time we refresh now
+            ResetCardIndex = true;
 
+            // TODO: Don't create a new view every time!!!! Fucks with the Card's personal Indexes
             View = CreateView(this, beatmaps, keyword);
         }
+
+        protected virtual bool ResetCardIndex { get; set; } = true;
 
         protected virtual ScreenView CreateView(Screen screen, List<Beatmap> beatmaps, string keyword)
             => new SongSelectionView(this, beatmaps, keyword);

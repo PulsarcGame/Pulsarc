@@ -69,7 +69,7 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             Index = index;
 
-            personalStartPosOffset = new Vector2(0, TotalHeight * Pulsarc.HeightScale * Index);
+            ResetPersonalStartLocationToDefault();
 
             // set beatmap
             Beatmap = beatmap;
@@ -82,6 +82,11 @@ namespace Pulsarc.UI.Screens.SongSelect.UI
 
             ChangePosition(PersonalStartPosition);
         }
+
+        private void UpdatePersonalStartLocation(int index)
+            => personalStartPosOffset = new Vector2(0, TotalHeight * Pulsarc.HeightScale * index);
+
+        private void ResetPersonalStartLocationToDefault() => UpdatePersonalStartLocation(Index);
 
         private void SetDiffBar()
         {
