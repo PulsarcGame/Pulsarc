@@ -341,7 +341,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void HandleEngineInputs()
         {
-            Keys[] keyPresses = Keyboard.GetState().GetPressedKeys();
+            Keys[] keyPresses = InputManager.KeyboardState.GetPressedKeys();
 
             // If no keys were pressed, return
             if (keyPresses.Length <= 0) { return; }

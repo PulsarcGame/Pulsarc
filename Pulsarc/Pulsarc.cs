@@ -229,7 +229,7 @@ namespace Pulsarc
             // Temporary measure for converting intralism or osu!mania beatmaps
             // TODO Make a Converter UI
             if (!converting && !GameplayEngine.Active
-                && Keyboard.GetState().IsKeyDown(Config.Bindings["Convert"])
+                && InputManager.KeyboardState.IsKeyDown(Config.Bindings["Convert"])
                 && ScreenManager.Screens.Peek().GetType().Name == "SongSelection")
             {
                 converting = true;
@@ -288,7 +288,7 @@ namespace Pulsarc
                 
                 ((SongSelection)ScreenManager.Screens.Peek()).RescanBeatmaps();
             }
-            else if (converting && Keyboard.GetState().IsKeyUp(Config.Bindings["Convert"]))
+            else if (converting && InputManager.KeyboardState.IsKeyUp(Config.Bindings["Convert"]))
             {
                 converting = false;
             }

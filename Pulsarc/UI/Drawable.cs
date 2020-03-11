@@ -590,7 +590,7 @@ namespace Pulsarc.UI
             Pulsarc.SpriteBatch.Draw(Texture, TruePosition, drawnPart, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
 
             // If this item is hovered by the mouse, display the hover drawable.
-            if (Hover != null && Hovered(Mouse.GetState()))
+            if (Hover != null && Hovered(InputManager.MouseState))
             {
                 Hover.Draw();
             }

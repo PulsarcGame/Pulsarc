@@ -13,6 +13,7 @@ namespace Pulsarc.Utils
         public static Queue<KeyValuePair<double, Keys>> PressActions { get; private set; }
         public static Queue<KeyValuePair<double, Keys>> ReleaseActions { get; private set; }
         public static List<Keys> PressedKeys { get; private set; }
+        public static KeyboardState LastKeyBoardState { get; private set; }
         public static KeyboardState KeyboardState { get; private set; }
         public static MouseState MouseState { get; private set; }
         public static KeyVal<MouseState, int> LastMouseClick { get; private set; }
@@ -41,16 +42,21 @@ namespace Pulsarc.Utils
             while (running)
             {
                 Thread.Yield();
+
+                // Max difference of 1ms between loops. Ideally InputManager should be running at
+                // a constant 1000 loops per second
                 if (threadLimiterWatch.ElapsedMilliseconds >= 1)
                 {
                     threadLimiterWatch.Restart();
 
                     try
                     {
+                        LastKeyBoardState = KeyboardState;
                         KeyboardState = Keyboard.GetState();
                         MouseState = Mouse.GetState();
 
                         if (KeyboardState.GetPressedKeys().Count() > 0)
+                        {
                             foreach (Keys key in KeyboardState.GetPressedKeys())
                             {
                                 if (!PressedKeys.Contains(key))
@@ -65,9 +71,12 @@ namespace Pulsarc.Utils
                                     }
 
                                     if (key == Keys.LeftShift || key == Keys.RightShift)
+                                    {
                                         Caps = !CapsLock;
+                                    }
                                 }
                             }
+                        }
 
                         for (int i = 0; i < PressedKeys.Count; i++)
                         {
@@ -76,13 +85,15 @@ namespace Pulsarc.Utils
                             if (!KeyboardState.IsKeyDown(key))
                             {
                                 // Used if LN handling
-                                //keyboardReleases.Enqueue(new KeyValuePair<double, Keys>(time, key));
+                                //ReleaseActions.Enqueue(new KeyValuePair<double, Keys>(AudioManager.GetTime(), key));
                                 PressedKeys.RemoveAt(i);
                                 i--;
 
 
                                 if (key == Keys.LeftShift || key == Keys.RightShift)
+                                {
                                     Caps = CapsLock;
+                                }
                             }
                         }
 
@@ -101,6 +112,22 @@ namespace Pulsarc.Utils
                 }
             }
         }
+
+        /// <summary>
+        /// Whether the key was released this InputLoop
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool KeyReleased(Keys key)
+            => KeyboardState.IsKeyUp(key) && !LastKeyBoardState.IsKeyUp(key);
+
+        /// <summary>
+        /// Whether the key was pressed this InputLoop
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool KeyPressed(Keys key)
+            => KeyboardState.IsKeyDown(key) && !LastKeyBoardState.IsKeyDown(key);
 
         static public bool IsLeftClick()
         {

@@ -347,7 +347,7 @@ namespace Pulsarc.UI.Screens.SongSelect
 
         private void HandleMouseInput()
         {
-            MouseState ms = Mouse.GetState();
+            MouseState ms = InputManager.MouseState;
 
             ChangeFocus(ms);
             HandleClicks(ms);
