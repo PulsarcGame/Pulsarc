@@ -10,6 +10,7 @@ using Pulsarc.Utils.Audio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pulsarc.UI.Screens.Editor.UI;
+using System.Diagnostics;
 
 namespace Pulsarc.UI.Screens.Editor
 {
@@ -17,6 +18,21 @@ namespace Pulsarc.UI.Screens.Editor
     {
         private ACEEditorView GetEditorView() => (ACEEditorView)View;
         protected override ScreenView SetView() => new ACEEditorView(this);
+
+        private Stopwatch LastKeyPressTimer = new Stopwatch();
+
+        // Adds a buffer of 5ms between keypresses to reduce irresponsive presses.
+        private bool ReadyForNewInput
+        {
+            get => LastKeyPressTimer.ElapsedMilliseconds >= 5;
+            set
+            {
+                if (!value)
+                {
+                    LastKeyPressTimer.Restart();
+                }
+            }
+        }
 
         public new float Rate
         {
@@ -47,7 +63,8 @@ namespace Pulsarc.UI.Screens.Editor
             CurrentSpeedMultiplier = Config.GetInt("Gameplay", "ApproachSpeed") / 5f / Rate;
             // TODO: Relative with scale???
             CurrentArcsSpeed = 1;
-            
+
+            LastKeyPressTimer.Start();
         }
 
         private bool pausedAtStartYet = false;
@@ -91,16 +108,20 @@ namespace Pulsarc.UI.Screens.Editor
 
         private void HandleOtherPresses()
         {
-            Keys[] keyPresses = Keyboard.GetState().GetPressedKeys();
+            if (!ReadyForNewInput) { return; }
 
-            if (keyPresses.Length <= 0) { return; }
-
-            for (int i = 0; i < keyPresses.Length; i++)
+            if (InputManager.KeyPressed(Keys.Space))
             {
-                if (keyPresses[i] == Keys.Space)
+                if (AudioManager.Paused)
                 {
                     Resume();
                 }
+                else
+                {
+                    Pause();
+                }
+
+                ReadyForNewInput = false;
             }
         }
 
@@ -108,7 +129,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         private void HandleMouseInput()
         {
-            MouseState ms = Mouse.GetState();
+            MouseState ms = InputManager.MouseState;
 
             if (ms.ScrollWheelValue < lastScrollValue)
             {
