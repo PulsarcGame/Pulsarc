@@ -185,13 +185,10 @@ namespace Pulsarc.UI.Screens.SongSelect
         {
             if (Cards.Count <= 0) { return; }
 
-            Random rd = new Random();
-
             FocusedCard?.SetClicked(false);
 
-            FocusedCard = Cards[rd.Next(0, Cards.Count)];
+            FocusedCard = Cards[new Random().Next(0, Cards.Count)];
             FocusedCard.OnClick();
-
             GetSongSelectionView().FocusCard(FocusedCard);
         }
 

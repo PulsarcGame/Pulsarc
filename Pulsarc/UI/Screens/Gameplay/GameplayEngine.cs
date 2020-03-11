@@ -127,45 +127,60 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap">The beatmap to play through</param>
         public void Init(Beatmap beatmap)
         {
-            if (!beatmap.FullyLoaded)
+            try
             {
-                beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+                if (!beatmap.FullyLoaded)
+                {
+                    beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+                }
+
+                // Reset in case it wasn't properly handled outside
+                Reset();
+
+                // Load values gained from config/user settings
+                LoadConfig();
+
+                // Initialize default variables, parse beatmap
+                InitializeVariables(beatmap);
+
+                // Initialize Gameplay variables
+                InitializeGameplay(beatmap);
+
+                // Create columns and their hitobjects
+                CreateColumns();
+
+                // Sort the hitobjects according to their first appearance for optimizing update/draw
+                SortHitObjects();
+
+                if (AutoPlay)
+                {
+                    LoadAutoPlay();
+                }
+
+                // Once everything is loaded, initialize the view
+                GetGameplayView().Init();
+
+                // Start audio and gameplay
+                StartGameplay();
+
+                // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
+                // TODO: disable GC while in gameplay
+                GC.Collect();
+
+                Init();
             }
+            catch
+            { 
+                // Force quit
+                EndGameplay();
 
-            // Reset in case it wasn't properly handled outside
-            Reset();
+                // Give warning
+                PulsarcLogger.Warning($"There was an error attempting to load {beatmap.Title}, " +
+                    $"going back to Song Select!");
 
-            // Load values gained from config/user settings
-            LoadConfig();
-
-            // Initialize default variables, parse beatmap
-            InitializeVariables(beatmap);
-
-            // Initialize Gameplay variables
-            InitializeGameplay(beatmap);
-
-            // Create columns and their hitobjects
-            CreateColumns();
-
-            // Sort the hitobjects according to their first appearance for optimizing update/draw
-            SortHitObjects();
-
-            if (AutoPlay)
-            {
-                LoadAutoPlay();
+                // Remove Result Screen
+                ScreenManager.RemoveScreen();
             }
-
-            // Once everything is loaded, initialize the view
-            GetGameplayView().Init();
-
-            // Start audio and gameplay
-            StartGameplay();
-
-            // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
-            // TODO: disable GC while in gameplay
-            GC.Collect();
-
-            Init();
         }
 
         /// <summary>
