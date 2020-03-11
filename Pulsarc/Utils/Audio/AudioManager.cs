@@ -118,8 +118,11 @@ namespace Pulsarc.Utils.Audio
         /// <summary>
         /// Start playing gameplay audio on a new thread
         /// </summary>
-        public static void StartGamePlayer()
+        public static void StartAudioPlayer(double withDelay = 100)
         {
+            // Minimum delay of 100 ms
+            startDelayMs = withDelay < 100 ? 100 : withDelay;
+
             audioThread = new Thread(new ThreadStart(GameAudioPlayer));
             audioThread.Start();
         }
@@ -151,11 +154,11 @@ namespace Pulsarc.Utils.Audio
             threadLimiterWatch.Start();
 
             // Add a delay
-            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - Offset)
-            { }
+            while (threadLimiterWatch.ElapsedMilliseconds * AudioRate
+                < startDelayMs - Offset) { }
 
-            // Start playing if the gameplay engine is active
-            if (GameplayEngine.Active)
+            // Start playing if an engine is active
+            if (GameplayEngine.Active || Editor.Active)
             {
                 threadLimiterWatch.Restart();
 
@@ -163,6 +166,14 @@ namespace Pulsarc.Utils.Audio
                 threadTime.Start();
 
                 Active = true;
+            }
+            else
+            {
+                PulsarcLogger.Warning("Holy shit, your computer is slow, " +
+                    "how the fuck did you not load this fast enough?" +
+                    "Your computer has at least a whole tenth of a fuckin' second to load the audio " +
+                    "but it couldn't even do that. You should really consider upgrading your " +
+                    "PC if you see this message...");
             }
         }
 
@@ -174,7 +185,9 @@ namespace Pulsarc.Utils.Audio
         {
             return (Active && song.StreamLoaded)
                 ? song.Position - Offset
-                : -startDelayMs + (activeThreadLimiterWatch ? threadLimiterWatch.ElapsedMilliseconds : 0);
+                : -startDelayMs
+                    + (activeThreadLimiterWatch 
+                    ? threadLimiterWatch.ElapsedMilliseconds * AudioRate : 0);
         }
 
         /// <summary>
