@@ -97,30 +97,42 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap">The beatmap to play through</param>
         public override void Init(Beatmap beatmap)
         {
-            // Reset in case it wasn't properly handled outside
-            Reset();
-
-            base.Init(beatmap);
-
-            // Once everything is loaded, initialize the view
-            //GetGameplayView().Init();
-
-            FindtMaxScoreAndEndTime();
-
-            if (AutoPlay)
+            try
             {
-                LoadAutoPlay();
+                // Reset in case it wasn't properly handled outside
+                Reset();
+
+                base.Init(beatmap);
+
+                FindtMaxScoreAndEndTime();
+
+                if (AutoPlay)
+                {
+                    LoadAutoPlay();
+                }
+
+                // Start audio and gameplay
+                StartGameplay();
+
+                // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
+                // TODO: disable GC while in gameplay
+                GC.Collect();
+
+                // Finalize initialization
+                Init();
             }
+            catch
+            {
+                // Force quit 
+                EndGameplay();
 
-            // Start audio and gameplay
-            StartGameplay();
+                // Give warning 
+                PulsarcLogger.Warning($"There was an error attempting to load {beatmap.Title}, " +
+                    $"going back to Song Select.");
 
-            // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
-            // TODO: disable GC while in gameplay
-            GC.Collect();
-
-            // Finalize initialization
-            Init();
+                // Remove Result Screen 
+                ScreenManager.RemoveScreen();
+            }
         }
 
         /// <summary>
@@ -141,10 +153,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         protected override void InitializeVariables(in Beatmap beatmap)
         {
             Rate = Config.GetFloat("Gameplay", "SongRate");
-            AudioManager.AudioRate = Rate;
-
+            
             CurrentSpeedMultiplier = UserSpeed;
             CurrentArcsSpeed = 1;
+            
 
             eventIndex = 0;
 
@@ -193,6 +205,23 @@ namespace Pulsarc.UI.Screens.Gameplay
 
             // Setup the MapTimer now that MapEndTime is assigned.
             GetGameplayView().SetUpMapTimer();
+        }
+
+        protected override void AddHitObjectToColumn(Arc arc, int colIndex)
+        {
+            Columns[colIndex].AddHitObject
+            (
+                new HitObject
+                (
+                    arc.Time,
+                    (int)(colIndex / (float)KeyCount * 360),
+                    KeyCount,
+                    CurrentArcsSpeed,
+                    Hidden
+                ),
+                CurrentArcsSpeed * CurrentSpeedMultiplier,
+                Crosshair.GetZLocation()
+            );
         }
 
         // An array containing the valid keys used for gameplay.
@@ -247,8 +276,12 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// </summary>
         private void StartGameplay()
         {
-            AudioManager.StartGamePlayer();
             GameplayEngine.Active = true;
+
+            // Add up to 1 second of delay if the first arc is within the first second.
+            double startDelay = (1000 * Rate) - (CurrentBeatmap.Arcs.First().Time * Rate);
+            AudioManager.StartAudioPlayer(Math.Max(startDelay, 100));
+
             Pulsarc.DisplayCursor = false;
         }
 

@@ -102,6 +102,9 @@ namespace Pulsarc.UI.Screens.BaseEngine
 
             // TODO: Allow maps to start at different crosshair radii
             Crosshair = new Crosshair(300, Hidden);
+
+            //CurrentSpeedMultiplier = UserSpeed;
+            //CurrentArcsSpeed = 1;
         }
 
         /// <summary>
@@ -146,13 +149,7 @@ namespace Pulsarc.UI.Screens.BaseEngine
                 {
                     if (BeatmapHelper.IsColumn(arc, i))
                     {
-                        Columns[i].AddHitObject
-                        (
-                            new HitObject(arc.Time, (int)(i / (float)KeyCount * 360),
-                                KeyCount, CurrentArcsSpeed, Hidden),
-                            CurrentArcsSpeed * CurrentSpeedMultiplier,
-                            Crosshair.GetZLocation()
-                        );
+                        AddHitObjectToColumn(arc, i);
                     }
                 }
             }
@@ -163,6 +160,8 @@ namespace Pulsarc.UI.Screens.BaseEngine
                 col.SortUpdateHitObjects();
             }
         }
+
+        protected abstract void AddHitObjectToColumn(Arc arc, int colIndex);
         #endregion
 
         #region IEventHandleable Methods

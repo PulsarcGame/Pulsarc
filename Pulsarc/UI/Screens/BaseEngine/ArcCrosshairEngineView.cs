@@ -30,8 +30,8 @@ namespace Pulsarc.UI.Screens.BaseEngine
         {
             if (Initialized)
             {
-                PulsarcLogger.Warning("This ArcCrosshairEngineView was already Initialized, " +
-                    "yet Init() was called a second time!");
+                PulsarcLogger.Warning("This engine was already initialized, " +
+                    "yet initialization was attmepted a second time!");
             }
 
             return Initialized;
@@ -66,9 +66,11 @@ namespace Pulsarc.UI.Screens.BaseEngine
                     }
 
                     // If the arc is inside the "IgnoreTime" window, stop bothering to
-                    // look at the rest of the arcs in this column, we are offscreen at this point.
+                    // look at the rest of the arcs in this column, we are looking at offscreen
+                    // HitObjects at this point.
                     double speed = GetEngine().CurrentSpeedMultiplier;
                     float zLocation = GetEngine().GetCrosshair().GetZLocation();
+
                     if (hitObject.IsSeenAt(speed, zLocation) - GetEngine().IgnoreTime
                         > GetEngine().GetCurrentTime())
                     {

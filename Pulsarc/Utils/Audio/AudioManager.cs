@@ -71,50 +71,6 @@ namespace Pulsarc.Utils.Audio
             Active = true;
         }
 
-        public static void StartEditorPlayer()
-        {
-            audioThread = new Thread(new ThreadStart(EditorAudioPlayer));
-            audioThread.Start();
-        }
-
-        public static void EditorAudioPlayer()
-        {
-            // Initialize variables
-            threadLimiterWatch = new Stopwatch();
-            threadLimiterWatch.Start();
-            activeThreadLimiterWatch = true;
-
-            if (SongPath == "") { return; }
-
-            Running = true;
-            var threadTime = new Stopwatch();
-
-            // Initialize the song
-            song = new AudioTrack(SongPath, false)
-            {
-                Rate = 1f,
-                Volume = Config.GetInt("Audio", "MusicVolume"),
-            };
-
-            song.ApplyRate(Config.GetBool("Audio", "RatePitch"));
-
-            threadLimiterWatch.Start();
-
-            // Add a delay
-            while (threadLimiterWatch.ElapsedMilliseconds < startDelayMs - Offset)
-            { }
-
-            // Start if the Editor engine is active
-            if (Editor.Active)
-            {
-                threadLimiterWatch.Restart();
-
-                threadTime.Start();
-
-                Active = true;
-            }
-        }
-
         /// <summary>
         /// Start playing gameplay audio on a new thread
         /// </summary>

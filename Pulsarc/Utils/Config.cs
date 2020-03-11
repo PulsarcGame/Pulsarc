@@ -6,7 +6,7 @@ using Wobble.Logging;
 
 namespace Pulsarc.Utils
 {
-    static class Config
+    public static class Config
     {
         public static IniFileParser.IniFileParser Parser { get; private set; }
         public static IniData Get { get; private set; }

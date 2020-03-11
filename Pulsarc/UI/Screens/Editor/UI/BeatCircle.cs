@@ -18,15 +18,11 @@ namespace Pulsarc.UI.Screens.Editor.UI
         private static readonly Texture2D twelvethBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, TwelvethBeatColor, TintAmount);
         private static readonly Texture2D sixteenthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, SixteenthBeatColor, TintAmount);
 
-        private int lastFrameTime = 0;
-        private double lastFrameScale = 0;
-        private double lastFrameCrosshairZLoc = 0;
-
         // The theoretical z-axis position of this BeatCircle.
         // Used to imitate a falling effect from the screen to the crosshair.
         public double ZLocation { get; protected set; }
 
-        public BeatCircle(Beat beat, int time, float scale) : base(beat, time, scale)
+        public BeatCircle(Beat beat) : base(beat)
         {
             // Find the origin (center) of this BeatCircle
             int width = Pulsarc.CurrentWidth;
@@ -84,6 +80,15 @@ namespace Pulsarc.UI.Screens.Editor.UI
             Resize(FindRadius());
         }
 
+        public void SetZLocation(int currentTime, float scale, double crosshairZLoc)
+            => ZLocation = (currentTime - Time) * scale + scale + crosshairZLoc;
+
+        public float FindRadius()
+            => (float)(Texture.Width / 2d / ZLocation * (Pulsarc.CurrentWidth / 2));
+
+        public bool IsSeen()
+            => ZLocation > 0 && ZLocation < 8000;
+
         private bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
         {
             // The conditionals we're looking at
@@ -102,12 +107,8 @@ namespace Pulsarc.UI.Screens.Editor.UI
             return timeSame && scaleSame && crosshairZLocSame;
         }
 
-        public void SetZLocation(int currentTime, float scale, double crosshairZLoc)
-            => ZLocation = (currentTime - Time) * scale + scale + crosshairZLoc;
-
-        public float FindRadius() => (float)(960 / ZLocation * (Pulsarc.CurrentHeight / 2));
-
-        public bool IsSeen(double crosshairZLoc)
-            => ZLocation > 0 && ZLocation < crosshairZLoc + (crosshairZLoc / 3);
+        private int lastFrameTime = 0;
+        private double lastFrameScale = 0;
+        private double lastFrameCrosshairZLoc = 0;
     }
 }
