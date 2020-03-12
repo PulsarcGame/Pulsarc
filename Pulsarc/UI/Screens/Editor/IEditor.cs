@@ -1,5 +1,6 @@
 ﻿using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.Editor.UI;
 using System.Collections.Generic;
 
 namespace Pulsarc.UI.Screens.Editor
@@ -13,6 +14,15 @@ namespace Pulsarc.UI.Screens.Editor
         #region Time Navigation Methods
         void SetTime(double time);
         void ScrollTime(double delta);
+
+        void ScrollToNextBeatDisplay();
+        void ScrollToLastBeatDisplay();
+        void ScrollToTheNextWholeBeat();
+        void ScrollToTheLastWholeBeat();
+        void ScrollToNextOccurenceOf(Beat beat);
+        void ScrollToLastOccurenceOf(Beat beat);
+        void ScrollToFirstBeat();
+        void ScrollToLastBeat();
 
         void Resume();
         void Pause();
@@ -57,6 +67,8 @@ namespace Pulsarc.UI.Screens.Editor
 
         //void DragSelected();
         #endregion
+
+        void ChangeBeatInterval(Beat beat);
 
         EditorStyle GetEditorStyle();
 

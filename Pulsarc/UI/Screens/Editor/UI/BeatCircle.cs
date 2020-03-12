@@ -17,6 +17,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
         private static readonly Texture2D eighthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, EighthBeatColor, TintAmount);
         private static readonly Texture2D twelvethBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, TwelvethBeatColor, TintAmount);
         private static readonly Texture2D sixteenthBeatTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, SixteenthBeatColor, TintAmount);
+        private static readonly Texture2D timingPointTexture = PulsarcDrawing.CreateTintedTexture(DefaultTexture, TimingPointColor, TintAmount);
 
         // The theoretical z-axis position of this BeatCircle.
         // Used to imitate a falling effect from the screen to the crosshair.
@@ -65,6 +66,9 @@ namespace Pulsarc.UI.Screens.Editor.UI
                 case Beat.Sixteenth:
                     Texture = sixteenthBeatTexture;
                     break;
+                case Beat.TimingPoint:
+                    Texture = timingPointTexture;
+                    break;
                 default:
                     Texture = DefaultTexture;
                     break;
@@ -87,7 +91,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
             => (float)(Texture.Width / 2d / ZLocation * (Pulsarc.CurrentWidth / 2d));
 
         public bool IsSeen()
-            => ZLocation > 0 && ZLocation < 8000;
+            => ZLocation > 0 && ZLocation < 8000 && IsActive();
 
         public virtual int IsSeenAt(double speed, double crosshairZLoc)
             => (int)(Time - (crosshairZLoc / speed));
@@ -113,5 +117,33 @@ namespace Pulsarc.UI.Screens.Editor.UI
         private int lastFrameTime = 0;
         private double lastFrameScale = 0;
         private double lastFrameCrosshairZLoc = 0;
+
+        public bool IsActive()
+        {
+            switch (Editor.BeatSnapInterval)
+            {
+                case Beat.Whole:
+                    return Beat == Beat.Whole || Beat == Beat.TimingPoint;
+
+                case Beat.Half:
+                    return Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+                case Beat.Fourth:
+                    return Beat == Beat.Fourth || Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+                case Beat.Eighth:
+                    return Beat == Beat.Eighth || Beat == Beat.Fourth || Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+                case Beat.Sixteenth:
+                    return Beat == Beat.Sixteenth || Beat == Beat.Eighth || Beat == Beat.Fourth || Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+
+                case Beat.Third:
+                    return Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+                case Beat.Sixth:
+                    return Beat == Beat.Sixth || Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+                case Beat.Twelveth:
+                    return Beat == Beat.Twelveth || Beat == Beat.Sixth || Beat == Beat.Half || Beat == Beat.Whole || Beat == Beat.TimingPoint;
+
+                default:
+                    return false;
+            }
+        }
     }
 }

@@ -17,6 +17,10 @@ namespace Pulsarc.Beatmaps
             Bpm = bpm;
         }
 
+        /// <summary>
+        /// The format of TimingPoitns in .psc beatmap files.
+        /// </summary>
+        /// <returns>"{time},{bpm}"</returns>
         public override string ToString() => $"{Time},{Bpm}";
     }
 }

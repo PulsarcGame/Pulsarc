@@ -8,6 +8,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
 {
     public enum Beat
     {
+        TimingPoint = 0,
         Whole = 1,
         Half = 2,
         Third = 3,
@@ -15,7 +16,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
         Sixth = 6,
         Eighth = 8,
         Twelveth = 12,
-        Sixteenth = 16
+        Sixteenth = 16,
     }
 
     public abstract class BeatDisplay : Drawable
@@ -29,12 +30,13 @@ namespace Pulsarc.UI.Screens.Editor.UI
         protected static readonly Color EighthBeatColor = GetColor(Beat.Eighth);
         protected static readonly Color TwelvethBeatColor = GetColor(Beat.Twelveth);
         protected static readonly Color SixteenthBeatColor = GetColor(Beat.Sixteenth);
+        protected static readonly Color TimingPointColor = GetColor(Beat.TimingPoint);
 
         // The Beat this object represents
         public Beat Beat { get; protected set; }
 
         // The time that this beat corresponds to in the audio
-        public int Time { get; protected set; }
+        public virtual int Time { get; protected set; }
         
         // The Scale of the editor (determines spacing between notes)
         public double SpaceScale { get; protected set; }
@@ -97,6 +99,8 @@ namespace Pulsarc.UI.Screens.Editor.UI
                     return Color.LightSkyBlue;
                 case Beat.Sixteenth:
                     return Color.Gold;
+                case Beat.TimingPoint:
+                    return Color.Green;
                 default:
                     PulsarcLogger.Warning("Invalid beat type, returning Black.");
                     return Color.Black;

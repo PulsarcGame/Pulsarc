@@ -21,9 +21,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         private Stopwatch LastKeyPressTimer = new Stopwatch();
 
-        private List<BeatCircle> allBeatCircles = new List<BeatCircle>();
-
-        public List<BeatCircle> BeatCircles { get; private set; } = new List<BeatCircle>();
+        internal List<BeatCircle> BeatCircles { get; private set; } = new List<BeatCircle>();
 
         // Adds a buffer of 5ms between keypresses to reduce irresponsive presses.
         private bool ReadyForNewInput
@@ -64,7 +62,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             // Load the beat circles
             LoadBeatCircles(beatmap);
-            GetBeatCirclesFor(Beat.Sixteenth);
+            Editor.BeatSnapInterval = Beat.Eighth;
 
             GC.Collect();
 
@@ -94,10 +92,20 @@ namespace Pulsarc.UI.Screens.Editor
                     ? beatmap.TimingPoints[i].Time
                     : AudioManager.GetSongDuration();
 
+                bool timingPointMade = false;
+
                 while (currentTime < endTime)
                 {
-                    allBeatCircles.Add(new BeatCircle(
-                        Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
+                    if (timingPointMade)
+                    {
+                        BeatCircles.Add(new BeatCircle(
+                            Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
+                    }
+                    else
+                    {
+                        BeatCircles.Add(new TimingPointCircle(beatmap.TimingPoints[i], CurrentSpeedMultiplier));
+                        timingPointMade = true;
+                    }
 
                     double wholeStep = bpm / 60d * 1000d;
 
@@ -109,7 +117,7 @@ namespace Pulsarc.UI.Screens.Editor
                 }
             }
 
-            allBeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
+            BeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
         }
 
         private void MakeHalfBeats(in double currentTime, in double wholeStep, in double endTime)
@@ -118,7 +126,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + halfStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Half, (int)(currentTime + halfStep), CurrentSpeedMultiplier));
             }
 
@@ -132,7 +140,7 @@ namespace Pulsarc.UI.Screens.Editor
             
             if (currentTime + halfStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Fourth, (int)(currentTime + fourthStep), CurrentSpeedMultiplier));
             }
 
@@ -146,7 +154,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + eighthStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Eighth, (int)(currentTime + eighthStep), CurrentSpeedMultiplier));
             }
 
@@ -160,7 +168,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + sixteenthStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Sixteenth, (int)(currentTime + sixteenthStep), CurrentSpeedMultiplier));
             }
         }
@@ -171,7 +179,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + thirdStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Third, (int)(currentTime + thirdStep), CurrentSpeedMultiplier));
             }
 
@@ -186,7 +194,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + sixthStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Sixth, (int)(currentTime + sixthStep), CurrentSpeedMultiplier));
             }
 
@@ -200,54 +208,11 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (currentTime + twelvethStep < endTime)
             {
-                allBeatCircles.Add(new BeatCircle(
+                BeatCircles.Add(new BeatCircle(
                     Beat.Twelveth, (int)(currentTime + twelvethStep), CurrentSpeedMultiplier));
             }
         }
         #endregion
-
-        private List<BeatCircle> GetBeatCirclesFor(Beat beat)
-        {
-            BeatCircles = new List<BeatCircle>();
-
-            switch (beat)
-            {
-                // 1/1
-                case Beat.Whole:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Whole));
-                    BeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
-                    return BeatCircles;
-
-                // 1/2, 1/4, 1/8, 1/16
-                case Beat.Half:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Half));
-                    goto case Beat.Whole;
-                case Beat.Fourth:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Fourth));
-                    goto case Beat.Half;
-                case Beat.Eighth:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Eighth));
-                    goto case Beat.Fourth;
-                case Beat.Sixteenth:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Sixteenth));
-                    goto case Beat.Eighth;
-
-                // 1/3, 1/6, 1/12
-                case Beat.Third:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Third));
-                    goto case Beat.Whole;
-                case Beat.Sixth:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Sixth));
-                    goto case Beat.Third;
-                case Beat.Twelveth:
-                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Twelveth));
-                    goto case Beat.Sixth;
-
-                // Oh shit oh god it's all of them
-                default:
-                    return allBeatCircles;
-            }
-        }
 
         public override void Update(GameTime gameTime)
         {
@@ -305,11 +270,11 @@ namespace Pulsarc.UI.Screens.Editor
 
             if (ms.ScrollWheelValue < lastScrollValue)
             {
-                ScrollTime(100);
+                ScrollToLastBeatDisplay();
             }
             else if (ms.ScrollWheelValue > lastScrollValue)
             {
-                ScrollTime(-100);
+                ScrollToNextBeatDisplay();
             }
             lastScrollValue = ms.ScrollWheelValue;
         }
@@ -413,6 +378,26 @@ namespace Pulsarc.UI.Screens.Editor
         public void Resume() => Editor.Paused = false;
 
         public void Pause() => Editor.Paused = true;
+
+        public void ScrollToNextBeatDisplay()
+            => Time = BeatCircles.Find(x => x.IsActive() && x.Time > Time)?.Time ?? Time;
+
+        public void ScrollToLastBeatDisplay()
+            => Time = BeatCircles.FindLast(x => x.IsActive() && x.Time < Time)?.Time ?? Time;
+
+        public void ScrollToTheNextWholeBeat() => ScrollToNextOccurenceOf(Beat.Whole);
+
+        public void ScrollToTheLastWholeBeat() => ScrollToLastOccurenceOf(Beat.Whole);
+
+        public void ScrollToNextOccurenceOf(Beat beat)
+            => Time = BeatCircles.Find(x => x.Time > Time && x.Beat == beat).Time;
+
+        public void ScrollToLastOccurenceOf(Beat beat)
+            => Time = BeatCircles.FindLast(x => x.Time > Time && x.Beat == beat).Time;
+
+        public void ScrollToFirstBeat() => Time = BeatCircles.Find(x => x.IsActive()).Time;
+
+        public void ScrollToLastBeat() => Time = BeatCircles.FindLast(x => x.IsActive()).Time;
         #endregion
 
         #region Add Item Methods
@@ -535,5 +520,7 @@ namespace Pulsarc.UI.Screens.Editor
 
         public override void UpdateDiscord()
             => PulsarcDiscord.SetStatus("Editing Map: ", CurrentBeatmap.Title);
+
+        public void ChangeBeatInterval(Beat beat) => Editor.BeatSnapInterval = beat;
     }
 }

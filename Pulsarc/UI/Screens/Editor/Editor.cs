@@ -9,7 +9,7 @@ namespace Pulsarc.UI.Screens.Editor
     /// <summary>
     /// Singleton class for Editor of differing styles to utilize.
     /// </summary>
-    public static class Editor
+    public static class Editor //: IEditor
     {
         public static bool Active { get; internal set; } = false;
 
