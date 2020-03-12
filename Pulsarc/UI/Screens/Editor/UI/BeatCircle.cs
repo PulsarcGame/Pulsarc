@@ -79,7 +79,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
         {
             if (SameAsLastFrame(currentTime, scale, crosshairZLoc)) { return; }
 
-            SetZLocation(currentTime, scale, crosshairZLoc);
+            SetZLocation(currentTime, scale * SpaceScale, crosshairZLoc);
 
             Resize(FindRadius());
         }

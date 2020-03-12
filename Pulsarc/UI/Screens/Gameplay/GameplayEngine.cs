@@ -218,9 +218,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                     KeyCount,
                     CurrentArcsSpeed,
                     Hidden
-                ),
-                CurrentArcsSpeed * CurrentSpeedMultiplier,
-                Crosshair.GetZLocation()
+                )
             );
         }
 
@@ -425,9 +423,7 @@ namespace Pulsarc.UI.Screens.Gameplay
             if (ArcFadeTime > 0 && !pressed.Hidden)
             {
                 Columns[column].AddHitObject(
-                    new HitObjectFade(pressed, ArcFadeTime, KeyCount),
-                    CurrentArcsSpeed * CurrentSpeedMultiplier,
-                    Crosshair.GetZLocation());
+                    new HitObjectFade(pressed, ArcFadeTime, KeyCount));
             }
 
             pressed.ToErase = true;

@@ -34,9 +34,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
         {
             if (SameAsLastFrame(currentTime, currentScale, crosshairZLoc)) { return; }
 
-            SetZLocation(currentTime, currentScale * BaseSpeed, crosshairZLoc);
-
-            Resize(FindArcRadius());
+            base.RecalcPos(currentTime, currentScale, crosshairZLoc);
         }
 
         public override bool IsSeen() => base.IsSeen() && ZLocation < MAX_Z_LOCATION;

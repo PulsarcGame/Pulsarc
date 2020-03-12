@@ -30,9 +30,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// Adds the provided HitObject to this Column
         /// </summary>
         /// <param name="hitObject">The HitObject to add</param>
-        /// <param name="speed">Current game speed</param>
-        /// <param name="crosshairZLoc">The z-axis position of the Crosshair</param>
-        public void AddHitObject(HitObject hitObject, double speed, float crosshairZLoc)
+        public void AddHitObject(HitObject hitObject)
         {
             // If this HitObject is hittable, add it to the end of the list.
             if (hitObject.Hittable)

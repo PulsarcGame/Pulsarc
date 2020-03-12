@@ -62,7 +62,7 @@ namespace Pulsarc.UI.Screens.Editor
 
             // Load the beat circles
             LoadBeatCircles(beatmap);
-            Editor.BeatSnapInterval = Beat.Eighth;
+            Editor.BeatSnapInterval = Beat.Fourth;
 
             GC.Collect();
 
@@ -97,7 +97,7 @@ namespace Pulsarc.UI.Screens.Editor
                     MakeWholeBeat(currentTime, endTime, makeTimingPoint, beatmap.TimingPoints[i]);
                     makeTimingPoint = false;
 
-                    currentTime += beatmap.TimingPoints[i].Bpm / 60d * 1000d;
+                    currentTime += beatmap.TimingPoints[i].Bpm / 60d / 4d * 1000d;
                 }
             }
 
@@ -108,14 +108,14 @@ namespace Pulsarc.UI.Screens.Editor
         {
             if (!makeTimingPoint)
             {
-                BeatCircles.Add(new BeatCircle(Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
+                BeatCircles.Add(new BeatCircle(Beat.Whole, (int)Math.Floor(currentTime), CurrentArcsSpeed));
             }
             else
             {
-                BeatCircles.Add(new TimingPointCircle(timingPoint, CurrentSpeedMultiplier));
+                BeatCircles.Add(new TimingPointCircle(timingPoint, CurrentArcsSpeed));
             }
 
-            double wholeStep = timingPoint.Bpm / 60d * 1000d;
+            double wholeStep = timingPoint.Bpm / 60d / 4d * 1000d;
 
             MakeHalfBeats(currentTime, wholeStep, endTime);
 
@@ -129,7 +129,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + halfStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Half, (int)(currentTime + halfStep), CurrentSpeedMultiplier));
+                    Beat.Half, (int)Math.Floor(currentTime + halfStep), CurrentArcsSpeed));
             }
 
             MakeAFourthBeat(currentTime, halfStep, endTime);
@@ -143,7 +143,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + halfStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Fourth, (int)(currentTime + fourthStep), CurrentSpeedMultiplier));
+                    Beat.Fourth, (int)Math.Floor(currentTime + fourthStep), CurrentArcsSpeed));
             }
 
             MakeAnEighthBeat(currentTime, fourthStep, endTime);
@@ -157,7 +157,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + eighthStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Eighth, (int)(currentTime + eighthStep), CurrentSpeedMultiplier));
+                    Beat.Eighth, (int)Math.Floor(currentTime + eighthStep), CurrentArcsSpeed));
             }
 
             MakeASixteenthBeat(currentTime, eighthStep, endTime);
@@ -171,7 +171,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + sixteenthStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Sixteenth, (int)(currentTime + sixteenthStep), CurrentSpeedMultiplier));
+                    Beat.Sixteenth, (int)Math.Floor(currentTime + sixteenthStep), CurrentArcsSpeed));
             }
         }
 
@@ -182,7 +182,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + thirdStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Third, (int)(currentTime + thirdStep), CurrentSpeedMultiplier));
+                    Beat.Third, (int)Math.Floor(currentTime + thirdStep), CurrentArcsSpeed));
             }
 
             MakeASixthBeat(currentTime, thirdStep, endTime);
@@ -197,7 +197,7 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + sixthStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Sixth, (int)(currentTime + sixthStep), CurrentSpeedMultiplier));
+                    Beat.Sixth, (int)Math.Floor(currentTime + sixthStep), CurrentArcsSpeed));
             }
 
             MakeATwelvethBeat(currentTime, sixthStep, endTime);
@@ -211,8 +211,22 @@ namespace Pulsarc.UI.Screens.Editor
             if (currentTime + twelvethStep < endTime)
             {
                 BeatCircles.Add(new BeatCircle(
-                    Beat.Twelveth, (int)(currentTime + twelvethStep), CurrentSpeedMultiplier));
+                    Beat.Twelveth, (int)Math.Floor(currentTime + twelvethStep), CurrentArcsSpeed));
             }
+        }
+
+        protected override void AddHitObjectToColumn(Arc arc, int colIndex)
+        {
+            Columns[colIndex].AddHitObject
+            (
+                new EditorArcHitObject
+                (
+                    arc.Time,
+                    (int)(colIndex / (float)KeyCount * 360),
+                    KeyCount,
+                    CurrentArcsSpeed
+                )
+            );
         }
         #endregion
 
@@ -290,6 +304,7 @@ namespace Pulsarc.UI.Screens.Editor
             UpdateBeatCircles();
         }
 
+        bool readyToWrite = true;
         private void UpdateArcs()
         {
             for (int i = 0; i < KeyCount; i++)
@@ -299,7 +314,13 @@ namespace Pulsarc.UI.Screens.Editor
                 ref Column currentColumn = ref Columns[i];
 
                 int startIndex = Math.Max(currentColumn.UpdateHitObjects.FindIndex(x => x.ZLocation < 8000), 0);
+                if (readyToWrite && startIndex > 0)
+                {
+                    PulsarcLogger.Debug($"Time of dissapearance: {Time}\n" +
+                        $"My time is {currentColumn.UpdateHitObjects[startIndex - 1].Time}, and my Z is {currentColumn.UpdateHitObjects[startIndex - 1].ZLocation}");
 
+                    readyToWrite = false;
+                }
                 for (int k = startIndex;
                     k < currentColumn.UpdateHitObjects.Count && !updatedAll;
                     k++)
@@ -343,22 +364,6 @@ namespace Pulsarc.UI.Screens.Editor
                     updatedAll = true;
                 }
             }
-        }
-
-        protected override void AddHitObjectToColumn(Arc arc, int colIndex)
-        {
-            Columns[colIndex].AddHitObject
-            (
-                new EditorArcHitObject
-                (
-                    arc.Time,
-                    (int)(colIndex / (float)KeyCount * 360),
-                    KeyCount,
-                    CurrentArcsSpeed
-                ),
-                CurrentArcsSpeed * CurrentSpeedMultiplier,
-                Crosshair.GetZLocation()
-            );
         }
 
         //These methods may not be needed
