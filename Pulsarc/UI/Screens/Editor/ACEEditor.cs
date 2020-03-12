@@ -55,17 +55,23 @@ namespace Pulsarc.UI.Screens.Editor
             Editor.Active = true;
             AudioManager.StartAudioPlayer();
 
-            GC.Collect();
-
-            // Wait for AudioManager to finish loading.
+            // Wait for AudioManager to finish loading, we're dependent on GetSongDuration()
             while (!AudioManager.Active) { }
 
+            // Don't run the music while loading
+            AudioManager.Pause();
+            AudioManager.Seek(0);
+
+            // Load the beat circles
             LoadBeatCircles(beatmap);
             GetBeatCirclesFor(Beat.Sixteenth);
+
+            GC.Collect();
 
             Init();
         }
 
+        #region Init Methods
         protected override void InitializeVariables(in Beatmap beatmap)
         {
             AudioManager.AudioRate = 1;
@@ -90,18 +96,16 @@ namespace Pulsarc.UI.Screens.Editor
 
                 while (currentTime < endTime)
                 {
-                    AudioManager.Pause();
-
                     allBeatCircles.Add(new BeatCircle(
                         Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
 
-                    double wholeStep = bpm / 60d;
+                    double wholeStep = bpm / 60d * 1000d;
 
                     MakeHalfBeats(currentTime, wholeStep, endTime);
 
                     MakeThirdBeats(currentTime, wholeStep, endTime);
 
-                    currentTime += bpm / 60d;
+                    currentTime += bpm / 60d * 1000d;
                 }
             }
 
@@ -200,6 +204,7 @@ namespace Pulsarc.UI.Screens.Editor
                     Beat.Twelveth, (int)(currentTime + twelvethStep), CurrentSpeedMultiplier));
             }
         }
+        #endregion
 
         private List<BeatCircle> GetBeatCirclesFor(Beat beat)
         {
