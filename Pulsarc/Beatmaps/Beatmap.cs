@@ -109,9 +109,7 @@ namespace Pulsarc.Beatmaps
         /// </summary>
         /// <returns></returns>
         public string GetFullAudioPath()
-        {
-            return
-                // Get the full path to "/Songs"
+            =>  // Get the full path to "/Songs"
                 (Directory.GetParent(Path)
                 // Get rid of "\Songs", Path has an extra "/Songs" in it.
                 .FullName.Replace("\\Songs", "") +
@@ -119,16 +117,12 @@ namespace Pulsarc.Beatmaps
                 $"/{Path}/{Audio}")
                 // Replace "\" with "/" for cross platform support
                 .Replace("\\", "/");
-        }
 
         /// <summary>
         /// This Beatmap as a string.
         /// Format is "Artist - Title [Version] (Mapper)"
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{Artist} - {Title} [{Version}] ({Mapper})";
-        }
+        public override string ToString() => $"{Artist} - {Title} [{Version}] ({Mapper})";
     }
 }

@@ -22,7 +22,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
         // Used to imitate a falling effect from the screen to the crosshair.
         public double ZLocation { get; protected set; }
 
-        public BeatCircle(Beat beat) : base(beat)
+        public BeatCircle(Beat beat, int time, double scale) : base(beat, time, scale)
         {
             // Find the origin (center) of this BeatCircle
             int width = Pulsarc.CurrentWidth;
@@ -71,7 +71,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
             }
         }
 
-        public void RecalcPos(int currentTime, float scale, double crosshairZLoc)
+        public void RecalcPos(int currentTime, double scale, double crosshairZLoc)
         {
             if (SameAsLastFrame(currentTime, scale, crosshairZLoc)) { return; }
 
@@ -80,14 +80,17 @@ namespace Pulsarc.UI.Screens.Editor.UI
             Resize(FindRadius());
         }
 
-        public void SetZLocation(int currentTime, float scale, double crosshairZLoc)
-            => ZLocation = (currentTime - Time) * scale + scale + crosshairZLoc;
+        public void SetZLocation(int currentTime, double scale, double crosshairZLoc)
+            => ZLocation = ((currentTime - Time) * scale) + scale + crosshairZLoc;
 
         public float FindRadius()
-            => (float)(Texture.Width / 2d / ZLocation * (Pulsarc.CurrentWidth / 2));
+            => (float)(Texture.Width / 2d / ZLocation * (Pulsarc.CurrentWidth / 2d));
 
         public bool IsSeen()
             => ZLocation > 0 && ZLocation < 8000;
+
+        public virtual int IsSeenAt(double speed, double crosshairZLoc)
+            => (int)(Time - (crosshairZLoc / speed));
 
         private bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
         {

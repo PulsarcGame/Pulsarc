@@ -37,20 +37,16 @@ namespace Pulsarc.UI.Screens.Editor.UI
         public int Time { get; protected set; }
         
         // The Scale of the editor (determines spacing between notes)
-        public float SpaceScale { get; protected set; }
+        public double SpaceScale { get; protected set; }
 
-        public BeatDisplay(Beat beat)
+        public BeatDisplay(Beat beat, int time, double scale)
         {
             Beat = beat;
             AspectRatio = -1;
-
-            SetBeatTexture();
-        }
-
-        public void Update(int time, float scale)
-        {
             Time = time;
             SpaceScale = scale;
+
+            SetBeatTexture();
         }
 
         /// <summary>

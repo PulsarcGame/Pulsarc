@@ -21,6 +21,10 @@ namespace Pulsarc.UI.Screens.Editor
 
         private Stopwatch LastKeyPressTimer = new Stopwatch();
 
+        private List<BeatCircle> allBeatCircles = new List<BeatCircle>();
+
+        public List<BeatCircle> BeatCircles { get; private set; } = new List<BeatCircle>();
+
         // Adds a buffer of 5ms between keypresses to reduce irresponsive presses.
         private bool ReadyForNewInput
         {
@@ -53,6 +57,12 @@ namespace Pulsarc.UI.Screens.Editor
 
             GC.Collect();
 
+            // Wait for AudioManager to finish loading.
+            while (!AudioManager.Active) { }
+
+            LoadBeatCircles(beatmap);
+            GetBeatCirclesFor(Beat.Sixteenth);
+
             Init();
         }
 
@@ -67,20 +77,177 @@ namespace Pulsarc.UI.Screens.Editor
             LastKeyPressTimer.Start();
         }
 
-        private bool pausedAtStartYet = false;
+        private void LoadBeatCircles(in Beatmap beatmap)
+        {
+            for (int i = 0; i < beatmap.TimingPoints.Count; i++)
+            {
+                double bpm = beatmap.TimingPoints[i].Bpm;
+                double currentTime = beatmap.TimingPoints[i].Time;
+
+                double endTime = beatmap.TimingPoints.Count > i + 1 
+                    ? beatmap.TimingPoints[i].Time
+                    : AudioManager.GetSongDuration();
+
+                while (currentTime < endTime)
+                {
+                    AudioManager.Pause();
+
+                    allBeatCircles.Add(new BeatCircle(
+                        Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
+
+                    double wholeStep = bpm / 60d;
+
+                    MakeHalfBeats(currentTime, wholeStep, endTime);
+
+                    MakeThirdBeats(currentTime, wholeStep, endTime);
+
+                    currentTime += bpm / 60d;
+                }
+            }
+
+            allBeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
+        }
+
+        private void MakeHalfBeats(in double currentTime, in double wholeStep, in double endTime)
+        {
+            double halfStep = wholeStep / 2d;
+
+            if (currentTime + halfStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Half, (int)(currentTime + halfStep), CurrentSpeedMultiplier));
+            }
+
+            MakeAFourthBeat(currentTime, halfStep, endTime);
+            MakeAFourthBeat(currentTime + halfStep, halfStep, endTime);
+        }
+
+        private void MakeAFourthBeat(in double currentTime, in double halfStep, in double endTime)
+        {
+            double fourthStep = halfStep / 2d;
+            
+            if (currentTime + halfStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Fourth, (int)(currentTime + fourthStep), CurrentSpeedMultiplier));
+            }
+
+            MakeAnEighthBeat(currentTime, fourthStep, endTime);
+            MakeAnEighthBeat(currentTime + fourthStep, fourthStep, endTime);
+        }
+
+        private void MakeAnEighthBeat(in double currentTime, in double fourthStep, in double endTime)
+        {
+            double eighthStep = fourthStep / 2d;
+
+            if (currentTime + eighthStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Eighth, (int)(currentTime + eighthStep), CurrentSpeedMultiplier));
+            }
+
+            MakeASixteenthBeat(currentTime, eighthStep, endTime);
+            MakeASixteenthBeat(currentTime + eighthStep, eighthStep, endTime);
+        }
+
+        private void MakeASixteenthBeat(in double currentTime, in double eighthStep, in double endTime)
+        {
+            double sixteenthStep = eighthStep / 2d;
+
+            if (currentTime + sixteenthStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Sixteenth, (int)(currentTime + sixteenthStep), CurrentSpeedMultiplier));
+            }
+        }
+
+        private void MakeThirdBeats(in double currentTime, in double wholeStep, in double endTime)
+        {
+            double thirdStep = wholeStep / 3d;
+
+            if (currentTime + thirdStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Third, (int)(currentTime + thirdStep), CurrentSpeedMultiplier));
+            }
+
+            MakeASixthBeat(currentTime, thirdStep, endTime);
+            MakeASixthBeat(currentTime + thirdStep, thirdStep, endTime);
+            MakeASixthBeat(currentTime + (thirdStep * 2d), thirdStep, endTime);
+        }
+
+        private void MakeASixthBeat(in double currentTime, in double thirdStep, in double endTime)
+        {
+            double sixthStep = thirdStep / 2d;
+
+            if (currentTime + sixthStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Sixth, (int)(currentTime + sixthStep), CurrentSpeedMultiplier));
+            }
+
+            MakeATwelvethBeat(currentTime, sixthStep, endTime);
+            MakeATwelvethBeat(currentTime, sixthStep, endTime);
+        }
+
+        private void MakeATwelvethBeat(in double currentTime, in double sixthStep, in double endTime)
+        {
+            double twelvethStep = sixthStep / 2d;
+
+            if (currentTime + twelvethStep < endTime)
+            {
+                allBeatCircles.Add(new BeatCircle(
+                    Beat.Twelveth, (int)(currentTime + twelvethStep), CurrentSpeedMultiplier));
+            }
+        }
+
+        private List<BeatCircle> GetBeatCirclesFor(Beat beat)
+        {
+            BeatCircles = new List<BeatCircle>();
+
+            switch (beat)
+            {
+                // 1/1
+                case Beat.Whole:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Whole));
+                    BeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
+                    return BeatCircles;
+
+                // 1/2, 1/4, 1/8, 1/16
+                case Beat.Half:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Half));
+                    goto case Beat.Whole;
+                case Beat.Fourth:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Fourth));
+                    goto case Beat.Half;
+                case Beat.Eighth:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Eighth));
+                    goto case Beat.Fourth;
+                case Beat.Sixteenth:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Sixteenth));
+                    goto case Beat.Eighth;
+
+                // 1/3, 1/6, 1/12
+                case Beat.Third:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Third));
+                    goto case Beat.Whole;
+                case Beat.Sixth:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Sixth));
+                    goto case Beat.Third;
+                case Beat.Twelveth:
+                    BeatCircles.AddRange(allBeatCircles.FindAll(x => x.Beat == Beat.Twelveth));
+                    goto case Beat.Sixth;
+
+                // Oh shit oh god it's all of them
+                default:
+                    return allBeatCircles;
+            }
+        }
 
         public override void Update(GameTime gameTime)
         {
             // If not active, don't update
             if (!Editor.Active) { return; }
-
-            // Pause the audio and set time to 0 on the first active update frame.
-            if (!pausedAtStartYet && AudioManager.Active)
-            {
-                AudioManager.Pause();
-                Time = 0;
-                pausedAtStartYet = true;
-            }
 
             HandleKeyPresses();
 
@@ -148,15 +315,13 @@ namespace Pulsarc.UI.Screens.Editor
 
             UpdateArcs();
 
-            //UpdateBeatCircles();
+            UpdateBeatCircles();
         }
 
         private void UpdateArcs()
         {
             for (int i = 0; i < KeyCount; i++)
             {
-                //PulsarcLogger.Debug($"\nColumn: {i}");
-
                 bool updatedAll = false;
 
                 ref Column currentColumn = ref Columns[i];
@@ -167,8 +332,6 @@ namespace Pulsarc.UI.Screens.Editor
                     k < currentColumn.UpdateHitObjects.Count && !updatedAll;
                     k++)
                 {
-                    //PulsarcLogger.Debug($"{CurrentSpeedMultiplier}");
-
                     HitObject currentHitObject = currentColumn.UpdateHitObjects[k];
 
                     // Process new position of this object
@@ -177,12 +340,35 @@ namespace Pulsarc.UI.Screens.Editor
 
                     // Ignore following objects if we have reached the ignore distance.
                     if (currentHitObject
-                        .IsSeenAt(CurrentSpeedMultiplier, Crosshair.GetZLocation()) 
-                        - IgnoreTime > Time)
+                        .IsSeenAt(CurrentSpeedMultiplier, Crosshair.GetZLocation()) - IgnoreTime
+                            > Time)
                     {
-                        //PulsarcLogger.Debug("AllDone!");
                         updatedAll = true;
                     }
+                }
+            }
+        }
+
+        private void UpdateBeatCircles()
+        {
+            int startIndex = Math.Max(BeatCircles.FindIndex(x => x.ZLocation < 8000), 0);
+
+            bool updatedAll = false;
+
+            for (int i = startIndex; i < BeatCircles.Count && !updatedAll; i++)
+            {
+                BeatCircle currentBeatCircle = BeatCircles[i];
+
+                // process new position of this object
+                currentBeatCircle.RecalcPos((int)Time, CurrentSpeedMultiplier,
+                    Crosshair.GetZLocation());
+
+                // Ignore following objects if we have reached the ignore distance.
+                if (currentBeatCircle.
+                    IsSeenAt(CurrentSpeedMultiplier, Crosshair.GetZLocation()) - IgnoreTime
+                        > Time)
+                {
+                    updatedAll = true;
                 }
             }
         }

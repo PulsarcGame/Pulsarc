@@ -279,5 +279,7 @@ namespace Pulsarc.Utils.Audio
         {
             return !Paused && !song.IsPlaying && song.IsStopped;
         }
+
+        public static double GetSongDuration() => song.Length;
     }
 }
