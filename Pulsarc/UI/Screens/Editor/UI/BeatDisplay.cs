@@ -63,7 +63,9 @@ namespace Pulsarc.UI.Screens.Editor.UI
         /// <returns></returns>
         private static Color GetColor(Beat beat)
         {
-            string name = Enum.GetName(typeof(Beat), beat) + "BeatColor";
+            string name = Enum.GetName(typeof(Beat), beat)
+                // Add "BeatColor" if it's a beat, add "Color" if it's a TimingPoint
+                + (beat == Beat.TimingPoint ? "" : "Beat") + "Color";
 
             try
             {

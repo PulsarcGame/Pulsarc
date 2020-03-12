@@ -85,39 +85,41 @@ namespace Pulsarc.UI.Screens.Editor
         {
             for (int i = 0; i < beatmap.TimingPoints.Count; i++)
             {
-                double bpm = beatmap.TimingPoints[i].Bpm;
                 double currentTime = beatmap.TimingPoints[i].Time;
 
                 double endTime = beatmap.TimingPoints.Count > i + 1 
                     ? beatmap.TimingPoints[i].Time
                     : AudioManager.GetSongDuration();
 
-                bool timingPointMade = false;
-
+                bool makeTimingPoint = true;
                 while (currentTime < endTime)
                 {
-                    if (timingPointMade)
-                    {
-                        BeatCircles.Add(new BeatCircle(
-                            Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
-                    }
-                    else
-                    {
-                        BeatCircles.Add(new TimingPointCircle(beatmap.TimingPoints[i], CurrentSpeedMultiplier));
-                        timingPointMade = true;
-                    }
+                    MakeWholeBeat(currentTime, endTime, makeTimingPoint, beatmap.TimingPoints[i]);
+                    makeTimingPoint = false;
 
-                    double wholeStep = bpm / 60d * 1000d;
-
-                    MakeHalfBeats(currentTime, wholeStep, endTime);
-
-                    MakeThirdBeats(currentTime, wholeStep, endTime);
-
-                    currentTime += bpm / 60d * 1000d;
+                    currentTime += beatmap.TimingPoints[i].Bpm / 60d * 1000d;
                 }
             }
 
             BeatCircles.Sort((x, y) => x.Time.CompareTo(y.Time));
+        }
+
+        private void MakeWholeBeat(in double currentTime, in double endTime, bool makeTimingPoint, in TimingPoint timingPoint)
+        {
+            if (!makeTimingPoint)
+            {
+                BeatCircles.Add(new BeatCircle(Beat.Whole, (int)currentTime, CurrentSpeedMultiplier));
+            }
+            else
+            {
+                BeatCircles.Add(new TimingPointCircle(timingPoint, CurrentSpeedMultiplier));
+            }
+
+            double wholeStep = timingPoint.Bpm / 60d * 1000d;
+
+            MakeHalfBeats(currentTime, wholeStep, endTime);
+
+            MakeThirdBeats(currentTime, wholeStep, endTime);
         }
 
         private void MakeHalfBeats(in double currentTime, in double wholeStep, in double endTime)
