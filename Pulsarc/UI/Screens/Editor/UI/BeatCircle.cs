@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 using Pulsarc.Skinning;
 using Pulsarc.Utils;
 
@@ -73,7 +73,7 @@ namespace Pulsarc.UI.Screens.Editor.UI
 
         public void RecalcPos(int currentTime, float scale, double crosshairZLoc)
         {
-            if (SameAsLastFrame(currentTime, scale, crosshairZLoc)) { return; }
+            if (Editor.SameAsLastFrame(currentTime, scale, crosshairZLoc)) { return; }
 
             SetZLocation(currentTime, scale, crosshairZLoc);
 
@@ -88,27 +88,5 @@ namespace Pulsarc.UI.Screens.Editor.UI
 
         public bool IsSeen()
             => ZLocation > 0 && ZLocation < 8000;
-
-        private bool SameAsLastFrame(int time, double scale, double crosshairZLoc)
-        {
-            // The conditionals we're looking at
-            bool timeSame = time == lastFrameTime;
-            bool scaleSame = scale == lastFrameScale;
-            bool crosshairZLocSame = crosshairZLoc == lastFrameCrosshairZLoc;
-
-            // If any of the current values are different,
-            // change the lastFrame values to the current value.
-            lastFrameTime = !timeSame ? time : lastFrameTime;
-            lastFrameScale = !scaleSame ? scale : lastFrameScale;
-            lastFrameCrosshairZLoc = !crosshairZLocSame ? crosshairZLoc : lastFrameCrosshairZLoc;
-
-            // If all our conditionals were true, then this frame is the same.
-            // If at least one of our conditionals were false, this frame is different.
-            return timeSame && scaleSame && crosshairZLocSame;
-        }
-
-        private int lastFrameTime = 0;
-        private double lastFrameScale = 0;
-        private double lastFrameCrosshairZLoc = 0;
     }
 }

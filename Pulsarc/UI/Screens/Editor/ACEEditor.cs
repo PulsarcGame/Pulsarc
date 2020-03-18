@@ -1,4 +1,4 @@
-﻿using Pulsarc.Beatmaps;
+using Pulsarc.Beatmaps;
 using Pulsarc.Beatmaps.Events;
 using Pulsarc.UI.Screens.BaseEngine;
 using Pulsarc.UI.Screens.Gameplay;
@@ -47,6 +47,8 @@ namespace Pulsarc.UI.Screens.Editor
             AudioManager.Stop();
 
             base.Init(beatmap);
+            Editor.Init(beatmap);
+            Editor.Crosshair = Crosshair;
 
             Editor.Active = true;
             AudioManager.StartAudioPlayer();
@@ -90,6 +92,8 @@ namespace Pulsarc.UI.Screens.Editor
 
             // Handle visuals
             View.Update(gameTime);
+
+            Editor.Update();
         }
 
         private void HandleKeyPresses()

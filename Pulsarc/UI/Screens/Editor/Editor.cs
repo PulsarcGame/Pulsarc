@@ -1,4 +1,7 @@
-﻿using Pulsarc.UI.Screens.Editor.UI;
+using Pulsarc.Beatmaps;
+using Pulsarc.Beatmaps.Events;
+using Pulsarc.UI.Screens.Editor.UI;
+using Pulsarc.UI.Screens.Gameplay;
 using Pulsarc.Utils.Audio;
 using System;
 using System.Collections.Generic;
@@ -38,6 +41,14 @@ namespace Pulsarc.UI.Screens.Editor
             get => AudioManager.AudioRate;
             set => AudioManager.AudioRate = value;
         }
+
+        // The current time
+        public static double Time => AudioManager.GetTime();
+
+        // The current beatmap we are editing
+        internal static Beatmap WorkingBeatmap;
+
+        internal static Crosshair Crosshair;
 
         // A list of objects that were copy or cut onto the clipboard
         // TODO: Make it copy to the System Clipboard too. Could use the ToString() of
@@ -86,6 +97,44 @@ namespace Pulsarc.UI.Screens.Editor
         internal static bool CanAddHitObjects = true;
 
         internal static int LastScrollValue = 0;
+
+        internal static void Init(Beatmap beatmap)
+        {
+            WorkingBeatmap = beatmap;
+        }
+
+        internal static void Close()
+        {
+            // Make everything null
+            WorkingBeatmap = null;
+        }
+        internal static void Update()
+        {
+            CalculateLastFrameData();
+        }
+
+        internal static bool SameAsLastFrame(double time, double scale, double crosshairZLoc)
+        {
+            // The conditionals we're looking at
+            bool timeSame = time == lastFrameTime;
+            bool scaleSame = scale == lastFrameScale;
+            bool crosshairZLocSame = crosshairZLoc == lastFrameCrosshairZLoc;
+
+            // If all our conditionals were true, then this frame is the same.
+            // If at least one of our conditionals were false, this frame is different.
+            return timeSame && scaleSame && crosshairZLocSame;
+        }
+
+        private static void CalculateLastFrameData()
+        {
+            lastFrameTime = Time;
+            lastFrameScale = Scale;
+            lastFrameCrosshairZLoc = Crosshair.GetZLocation();
+        }
+
+        private static double lastFrameTime = 0;
+        private static double lastFrameScale = 0;
+        private static double lastFrameCrosshairZLoc = 0;
     }
 
     public enum EditorStyle
