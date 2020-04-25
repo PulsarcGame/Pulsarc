@@ -285,6 +285,10 @@ namespace Pulsarc.UI.Screens.SongSelect
                     case Keys.F2:
                         SelectRandomCard();
                         break;
+                    // Archive the map as .psm
+                    case Keys.Z:
+                        BeatmapHelper.SaveAsZip(FocusedCard.Beatmap);
+                        break;
                     // If none of the above, type into the search bar
                     // TODO? Ignore keypresses unless clicked on
                     default:
