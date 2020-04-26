@@ -54,7 +54,7 @@ namespace Pulsarc.Beatmaps
                             case "MapOffset":
                                 try
                                 {
-                                    parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, int.Parse(rightPart));
                                 }
                                 catch
                                 {
