@@ -50,7 +50,17 @@ namespace Pulsarc.Beatmaps
                             case "Title":
                             case "Artist":
                             case "Mapper":
-                            case "Version":
+                            case "Version": 
+                            case "MapOffset":
+                                try
+                                {
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
+                                }
+                                catch
+                                {
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                }
+                                break;
                             case "Audio":
                                 try
                                 {

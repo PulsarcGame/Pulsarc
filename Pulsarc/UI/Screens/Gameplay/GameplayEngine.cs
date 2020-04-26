@@ -66,10 +66,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         public List<Event> ActiveEvents { get; private set; } = new List<Event>();
 
         // Gameplay Elements
-        // The offset for this map determined by the player
-        // TODO: add local beatmap offset that can be set by the player
-        public double MapOffset => 0;
-
         public Crosshair Crosshair { get; private set; }
 
         // User-defined base speed
@@ -106,7 +102,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // The current time of the song, which the gameplay engine
         // uses to determine arc positioning and event handling.
-        public double Time => AudioManager.GetTime() + MapOffset;
+        public double Time => AudioManager.GetTime();
 
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
@@ -138,7 +134,7 @@ namespace Pulsarc.UI.Screens.Gameplay
                 Reset();
 
                 // Load values gained from config/user settings
-                LoadConfig();
+                LoadConfig(beatmap);
 
                 // Initialize default variables, parse beatmap
                 InitializeVariables(beatmap);
@@ -197,10 +193,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Load all the stats found in the config
         /// </summary>
-        private void LoadConfig()
+        private void LoadConfig(Beatmap map)
         {
             // Set the offset for each play before starting audio
-            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
+            AudioManager.offset = map.MapOffset;
 
             KeyCount = 4;
 
