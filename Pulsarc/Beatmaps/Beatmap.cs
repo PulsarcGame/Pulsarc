@@ -45,7 +45,8 @@ namespace Pulsarc.Beatmaps
         public int KeyCount { get; set; } = 4;
 
         // How the audio will offset (in ms).
-        public int MapOffset { get; set; } = 0;
+        // Why a string? Because SQL doesn't like negative's for some reason, no clue why.
+        public string MapOffset { get; set; } = "0";
         
         // The calculated difficulty of this Beatmap.
         public double Difficulty { get; set; } = 0;

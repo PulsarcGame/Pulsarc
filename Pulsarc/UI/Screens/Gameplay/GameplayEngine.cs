@@ -196,7 +196,7 @@ namespace Pulsarc.UI.Screens.Gameplay
         private void LoadConfig(Beatmap map)
         {
             // Set the offset for each play before starting audio
-            AudioManager.offset = map.MapOffset;
+            AudioManager.offset = int.Parse(map.MapOffset);
 
             KeyCount = 4;
 

@@ -54,7 +54,7 @@ namespace Pulsarc.Beatmaps
                             case "MapOffset":
                                 try
                                 {
-                                    parsed.GetType().GetProperty(type).SetValue(parsed, int.Parse(rightPart));
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
                                 }
                                 catch
                                 {
@@ -111,7 +111,8 @@ namespace Pulsarc.Beatmaps
                                 state = type;
                                 break;
                             default:
-                                PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                // Should probably ingore this really, like why would we need to know that?
+                                //PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 break;
                         }
                     }
