@@ -32,6 +32,7 @@ namespace Pulsarc.Utils.BeatmapConversion
             Beatmap result = new Beatmap();
 
             string backgroundImage = Config.Get["Converting"]["BGImage"];
+            string mapOffset = Config.Get["Converting"]["MapOffset"];
 
             // See if the provided path exists
             if (!Directory.Exists(folder_path)) { return null; }
@@ -65,6 +66,12 @@ namespace Pulsarc.Utils.BeatmapConversion
             }
 
             result.Background = name;
+
+            // If the MapOffset value is empty, null, or not an int, set map offset to 0.
+            // Otherwise set it to the provided value.
+            result.MapOffset =
+                string.IsNullOrEmpty(mapOffset) || !int.TryParse(mapOffset, out int a)
+                ? "0" : mapOffset;
 
             // Fill in the missing metadata
             result.FormatVersion = "1";

@@ -233,6 +233,9 @@ namespace Pulsarc.Beatmaps
                 WriteProperty(file, beatmap, "KeyCount");
                 WriteProperty(file, beatmap, "Difficulty");
 
+                file.WriteLine("");
+                WriteProperty(file, beatmap, "MapOffset");
+
                 // Write Events
                 file.WriteLine("");
                 file.WriteLine("Events:");
