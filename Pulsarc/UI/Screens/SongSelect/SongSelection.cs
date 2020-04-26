@@ -84,6 +84,12 @@ namespace Pulsarc.UI.Screens.SongSelect
 
             RefreshBeatmaps();
 
+            // If there seems to be no maps, force a rescan to double check.
+            if (Cards.Count <= 0)
+            {
+                RescanBeatmaps();
+            }
+
             SelectRandomCard();
         }
 
