@@ -6,6 +6,9 @@ using Pulsarc.Beatmaps.Events;
 using Pulsarc.Utils.SQLite;
 using Wobble.Logging;
 using Pulsarc.Utils;
+using ICSharpCode.SharpZipLib;
+using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Core;
 
 namespace Pulsarc.Beatmaps
 {
@@ -47,7 +50,17 @@ namespace Pulsarc.Beatmaps
                             case "Title":
                             case "Artist":
                             case "Mapper":
-                            case "Version":
+                            case "Version": 
+                            case "MapOffset":
+                                try
+                                {
+                                    parsed.GetType().GetProperty(type).SetValue(parsed, rightPart);
+                                }
+                                catch
+                                {
+                                    PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                }
+                                break;
                             case "Audio":
                                 try
                                 {
@@ -98,7 +111,8 @@ namespace Pulsarc.Beatmaps
                                 state = type;
                                 break;
                             default:
-                                PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
+                                // Should probably ingore this really, like why would we need to know that?
+                                //PulsarcLogger.Error($"Unknown beatmap field : {type}", LogType.Runtime);
                                 break;
                         }
                     }
@@ -219,6 +233,9 @@ namespace Pulsarc.Beatmaps
                 WriteProperty(file, beatmap, "KeyCount");
                 WriteProperty(file, beatmap, "Difficulty");
 
+                file.WriteLine("");
+                WriteProperty(file, beatmap, "MapOffset");
+
                 // Write Events
                 file.WriteLine("");
                 file.WriteLine("Events:");
@@ -248,6 +265,57 @@ namespace Pulsarc.Beatmaps
                 foreach (Arc arc in beatmap.Arcs)
                 {
                     file.WriteLine(arc.ToString());
+                }
+            }
+        }
+
+        public static void SaveAsZip(Beatmap beatmap)
+        {
+            using (FileStream output = File.Create($"Songs/{beatmap}.psm"))
+            using (ZipOutputStream zipStream = new ZipOutputStream(output))
+            {
+                zipStream.SetLevel(3);
+
+                int folderOffset = beatmap.Path.Length
+                    + ((beatmap.Path.EndsWith("/") || beatmap.Path.EndsWith("\\")) ? 0 : 1);
+
+                // Compress the folder
+                CompressFolder(beatmap.Path, zipStream, folderOffset);
+            }
+
+            void CompressFolder(string path, ZipOutputStream zipStream, int folderOffset)
+            {
+                string[] fileNames = Directory.GetFiles(beatmap.Path);
+
+                foreach (string fileName in fileNames)
+                {
+                    FileInfo info = new FileInfo(fileName);
+
+                    string entryName = fileName.Substring(folderOffset);
+                    entryName = ZipEntry.CleanName(entryName);
+
+                    ZipEntry entry = new ZipEntry(entryName)
+                    {
+                        DateTime = info.LastWriteTime,
+                        Size = info.Length,
+                    };
+
+                    zipStream.PutNextEntry(entry);
+
+                    byte[] buffer = new byte[4096];
+                    using (FileStream input = File.OpenRead(fileName))
+                    {
+                        StreamUtils.Copy(input, zipStream, buffer);
+                    }
+
+                    zipStream.CloseEntry();
+                }
+
+                // Compress subfolders
+                string[] folders = Directory.GetDirectories(beatmap.Path);
+                foreach (string folder in folders)
+                {
+                    CompressFolder(folder, zipStream, folderOffset);
                 }
             }
         }

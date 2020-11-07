@@ -44,6 +44,10 @@ namespace Pulsarc.Beatmaps
         // How many keys this Beatmap uses.
         public int KeyCount { get; set; } = 4;
 
+        // How the audio will offset (in ms).
+        // Why a string? Because SQL doesn't like negative's for some reason, no clue why.
+        public string MapOffset { get; set; } = "0";
+        
         // The calculated difficulty of this Beatmap.
         public double Difficulty { get; set; } = 0;
 
@@ -78,11 +82,15 @@ namespace Pulsarc.Beatmaps
             // The hash is modified for any metadata or arc/sv change
             int arcCount = 0;
             foreach (Arc arc in Arcs)
+            {
                 arcCount += arc.Time + arc.Type;
+            }
 
             int eventCount = 0;
             foreach (Event evnt in Events)
+            {
                 eventCount += evnt.Time + evnt.Time + (int)evnt.Type;
+            }
 
             string uniqueMapDescriptor = Artist + Title + Mapper + Version + arcCount + ',' + eventCount;
             return BitConverter.ToString(
@@ -99,10 +107,7 @@ namespace Pulsarc.Beatmaps
         /// Get the locally saved scores for this beatmap.
         /// </summary>
         /// <returns></returns>
-        public List<ScoreData> GetLocalScores()
-        {
-            return DataManager.ScoreDB.GetScores(GetHash());
-        }
+        public List<ScoreData> GetLocalScores() => DataManager.ScoreDB.GetScores(GetHash());
 
         /// <summary>
         /// Get the audio path to this beatmap's audio file.
@@ -126,9 +131,6 @@ namespace Pulsarc.Beatmaps
         /// Format is "Artist - Title [Version] (Mapper)"
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{Artist} - {Title} [{Version}] ({Mapper})";
-        }
+        public override string ToString() => $"{Artist} - {Title} [{Version}] ({Mapper})";
     }
 }

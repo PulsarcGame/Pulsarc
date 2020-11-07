@@ -25,7 +25,7 @@ namespace Pulsarc.UI.Screens.Settings
         }
         private int lastScrollValue = 0;
 
-        private const float MAX_FOCUS = 11;
+        private const float MAX_FOCUS = 30; // i put too much cause people were complaining they can't go far enough in the settings
         private const float MIN_FOCUS = 0;
 
         public override void Init()

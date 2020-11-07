@@ -34,6 +34,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return Value;
         }
 
+        public override void SetSaveValue(dynamic value)
+        {
+            Value = value;
+        }
+
         public override void HandleKeyEvent(Keys pressed) 
         {
             if (KeyListen)

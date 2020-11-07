@@ -66,10 +66,6 @@ namespace Pulsarc.UI.Screens.Gameplay
         public List<Event> ActiveEvents { get; private set; } = new List<Event>();
 
         // Gameplay Elements
-        // The offset for this map determined by the player
-        // TODO: add local beatmap offset that can be set by the player
-        public double MapOffset => 0;
-
         public Crosshair Crosshair { get; private set; }
 
         // User-defined base speed
@@ -106,7 +102,7 @@ namespace Pulsarc.UI.Screens.Gameplay
 
         // The current time of the song, which the gameplay engine
         // uses to determine arc positioning and event handling.
-        public double Time => AudioManager.GetTime() + MapOffset;
+        public double Time => AudioManager.GetTime();
 
         // Performance
         // Time distance (in ms) from which hitobjects are neither updated not drawn
@@ -127,45 +123,60 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <param name="beatmap">The beatmap to play through</param>
         public void Init(Beatmap beatmap)
         {
-            if (!beatmap.FullyLoaded)
+            try
             {
-                beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+                if (!beatmap.FullyLoaded)
+                {
+                    beatmap = BeatmapHelper.Load(beatmap.Path, beatmap.FileName);
+                }
+
+                // Reset in case it wasn't properly handled outside
+                Reset();
+
+                // Load values gained from config/user settings
+                LoadConfig(beatmap);
+
+                // Initialize default variables, parse beatmap
+                InitializeVariables(beatmap);
+
+                // Initialize Gameplay variables
+                InitializeGameplay(beatmap);
+
+                // Create columns and their hitobjects
+                CreateColumns();
+
+                // Sort the hitobjects according to their first appearance for optimizing update/draw
+                SortHitObjects();
+
+                if (AutoPlay)
+                {
+                    LoadAutoPlay();
+                }
+
+                // Once everything is loaded, initialize the view
+                GetGameplayView().Init();
+
+                // Start audio and gameplay
+                StartGameplay();
+
+                // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
+                // TODO: disable GC while in gameplay
+                GC.Collect();
+
+                Init();
             }
+            catch
+            { 
+                // Force quit
+                EndGameplay();
 
-            // Reset in case it wasn't properly handled outside
-            Reset();
+                // Give warning
+                PulsarcLogger.Warning($"There was an error attempting to load {beatmap.Title}, " +
+                    $"going back to Song Select!");
 
-            // Load values gained from config/user settings
-            LoadConfig();
-
-            // Initialize default variables, parse beatmap
-            InitializeVariables(beatmap);
-
-            // Initialize Gameplay variables
-            InitializeGameplay(beatmap);
-
-            // Create columns and their hitobjects
-            CreateColumns();
-
-            // Sort the hitobjects according to their first appearance for optimizing update/draw
-            SortHitObjects();
-
-            if (AutoPlay)
-            {
-                LoadAutoPlay();
+                // Remove Result Screen
+                ScreenManager.RemoveScreen();
             }
-
-            // Once everything is loaded, initialize the view
-            GetGameplayView().Init();
-
-            // Start audio and gameplay
-            StartGameplay();
-
-            // Collect any excess memory to prevent GC from starting soon, avoiding freezes.
-            // TODO: disable GC while in gameplay
-            GC.Collect();
-
-            Init();
         }
 
         /// <summary>
@@ -182,10 +193,10 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// <summary>
         /// Load all the stats found in the config
         /// </summary>
-        private void LoadConfig()
+        private void LoadConfig(Beatmap map)
         {
             // Set the offset for each play before starting audio
-            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset");
+            AudioManager.offset = Config.GetInt("Audio", "GlobalOffset") + int.Parse(map.MapOffset);
 
             KeyCount = 4;
 

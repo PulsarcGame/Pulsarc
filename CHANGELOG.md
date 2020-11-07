@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.4-alpha] - 2020-11-07
+
+### Added
+- Archive maps. While in the song select, press F8 (default) to archive the currently playing map as a .psm file. You can find the .psm in your Songs folder.
+- Individual Map Offset. Useful for converts, this is a value inside a map .psc file that changes the offset of the map (not user friendly). This offset stacks on top of the global offset value (if you have a global offset of -7ms and a map offset of 5ms the total offset for the map would be -2ms)
+- Added 'MapOffset" value to config. Lets you choose the map offset before converting.
+- Custom Judgement values. You can change judgements in game with a slider, or in the config file under the `[Judgements]` section
+
+### Changed
+- Check the songs database on launch, if there are no found songs, refresh the database. This should fix some issues where the songs would dissapear and require a manual refresh to bring back.
+
 ## [1.4.3-alpha] - 2020-03-07
 
 ### Added
@@ -142,7 +153,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaderboard for past scores
 
 
-[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.2-alpha...HEAD
+[unreleased]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.4-alpha...HEAD
+[1.4.4-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.3-alpha...v1.4.4-alpha
+[1.4.3-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.2-alpha...v1.4.3-alpha
 [1.4.2-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.1-alpha...v1.4.2-alpha
 [1.4.1-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.4.0-alpha...v1.4.1-alpha
 [1.4.0-alpha]: https://github.com/PulsarcGame/Pulsarc/compare/v1.3.2-alpha...v1.4.0-alpha

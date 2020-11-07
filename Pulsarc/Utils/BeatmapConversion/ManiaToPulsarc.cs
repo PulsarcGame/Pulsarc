@@ -28,6 +28,14 @@ namespace Pulsarc.Utils.BeatmapConversion
                     Beatmap result = new Beatmap();
                     ManiaBeatmap maniaBeatmap = new ManiaBeatmap(file);
 
+                    string mapOffset = Config.Get["Converting"]["MapOffset"];
+
+                    // If the MapOffset value is empty, null, or not an int, set map offset to 0.
+                    // Otherwise set it to the provided value.
+                    result.MapOffset =
+                        string.IsNullOrEmpty(mapOffset) || !int.TryParse(mapOffset, out int a)
+                        ? "0" : mapOffset;
+
                     // Fill in metadata
                     result.FormatVersion = "1";
                     result.Mapper = maniaBeatmap.Creator;
@@ -44,7 +52,9 @@ namespace Pulsarc.Utils.BeatmapConversion
                         string[] charsToRemove = new string[] { ",", "\"", "0" };
 
                         foreach (string c in charsToRemove)
+                        {
                             backgroundName = backgroundName.Replace(c, "");
+                        }
 
                         result.Background = backgroundName;
                     }
@@ -110,9 +120,13 @@ namespace Pulsarc.Utils.BeatmapConversion
                         string backgroundPath = $"{folder_path}/{map.Background}";
                         
                         if (File.Exists(backgroundPath))
+                        {
                             File.Copy(backgroundPath, $"{dirName}/{map.Background}", true);
+                        }
                         else
+                        {
                             map.Background = "";
+                        }
 
                         // The file name will look like "Artist - SongTitle [Converted] (Mapper).psc"
                         string difficultyFileName = string.Join("_", ($"{map.Artist} - {map.Title} [{map.Version}] ({map.Mapper})").Split(Path.GetInvalidFileNameChars()));

@@ -27,6 +27,11 @@ namespace Pulsarc.UI.Screens.Settings.UI
             return Value;
         }
 
+        public override void SetSaveValue(dynamic value)
+        {
+            Value = value;
+        }
+
         /// <summary>
         /// When this is click reverse the state of the value,
         /// from true to false or false to true.

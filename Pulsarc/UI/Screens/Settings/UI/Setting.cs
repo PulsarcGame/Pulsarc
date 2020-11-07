@@ -108,5 +108,10 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// </summary>
         /// <returns>This setting's current value.</returns>
         public abstract dynamic GetSaveValue();
+
+        /// <summary>
+        /// Force change the value
+        /// </summary>
+        public abstract void SetSaveValue(dynamic value);
     }
 }
