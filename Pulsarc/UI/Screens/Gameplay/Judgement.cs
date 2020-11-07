@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Pulsarc.Skinning;
+using Pulsarc.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,16 +12,24 @@ namespace Pulsarc.UI.Screens.Gameplay
         /// The different judgements that can be obtained during gameplay.
         /// Can be easily edited to change how Judgement works.
         /// </summary>
-        public static readonly List<JudgementValue> Judgements = new List<JudgementValue>()
+        public static List<JudgementValue> Judgements;
+
+        /// <summary>
+        /// Refresh the judgements from Config
+        /// </summary>
+        static public void Refresh()
         {
-            //////////////// Judge equal to Stepmania J4 /////////////
-            new JudgementValue("max",       1,      22,    320,     2),
-            new JudgementValue("perfect",   1,      45,    300,     1),
-            new JudgementValue("great",  2/3d,      90,    200,    -8),
-            new JudgementValue("good",   1/3d,     135,    100,   -15),
-            new JudgementValue("bad",    1/6d,     180,     50,   -45),
-            new JudgementValue("miss",      0,     200,      0,  -100),
-        };
+            Judgements = new List<JudgementValue>()
+            {
+                //////////////// Judge equal to Stepmania J4 /////////////
+                new JudgementValue("max",       1,  Config.GetInt("Judgements",     "Max"),    320,     2),
+                new JudgementValue("perfect",   1,  Config.GetInt("Judgements", "Perfect"),    300,     1),
+                new JudgementValue("great",  2/3d,  Config.GetInt("Judgements",   "Great"),    200,    -8),
+                new JudgementValue("good",   1/3d,  Config.GetInt("Judgements",    "Good"),    100,   -15),
+                new JudgementValue("bad",    1/6d,  Config.GetInt("Judgements",     "Bad"),     50,   -45),
+                new JudgementValue("miss",      0,  Config.GetInt("Judgements",    "Miss"),      0,  -100),
+            };
+        }
 
         /// <summary>
         /// Returns the JudgementValue for a miss.
