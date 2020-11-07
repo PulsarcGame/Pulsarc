@@ -45,6 +45,8 @@ namespace Pulsarc.Utils
             AddBinding("Retry");
             AddBinding("Convert");
             AddBinding("Screenshot");
+
+            AddBinding("ArchiveMap");
         }
                
         public static void AddBinding(string key)
