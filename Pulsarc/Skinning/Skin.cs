@@ -153,6 +153,7 @@ namespace Pulsarc.Skinning
             LoadSkinTexture($"{skinFolder}UI/Settings/", "settings_icon_gameplay");
             LoadSkinTexture($"{skinFolder}UI/Settings/", "settings_icon_audio");
             LoadSkinTexture($"{skinFolder}UI/Settings/", "settings_icon_bindings");
+            LoadSkinTexture($"{skinFolder}UI/Settings/", "settings_icon_judgements");
 
             // Settings elements
             LoadSkinTexture($"{skinFolder}UI/Settings/", "slider_select");
@@ -172,6 +173,7 @@ namespace Pulsarc.Skinning
 
         private static void LoadJudges(string skinFolder)
         {
+            Judgement.Refresh();
             foreach (JudgementValue judge in Judgement.Judgements)
                 Judges.Add(judge.Score, LoadTexture($"{skinFolder}Judgements/", judge.Name));
         }

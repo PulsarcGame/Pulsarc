@@ -14,10 +14,12 @@ namespace Pulsarc
         [STAThread]
         static void Main()
         {
-            // Checks for updates and applies them if found, otherwises launches the game.
+            /* //Checks for updates and applies them if found, otherwises launches the game.
 #if !DEBUG
             Updater.CheckForUpdates();
 #endif
+            Commented out as CheckForUpdates with release 1.4.4-alpha as it serves little purpose in
+            Pulsarc's current state and may cause issues when the server goes down.*/
 
             using (var game = new Pulsarc())
             {

@@ -14,6 +14,8 @@ namespace Pulsarc.UI.Screens.Settings.UI
         // Min/Max Slider values
         public int MinValue { get; protected set; }
         public int MaxValue { get; protected set; }
+        // Minimum value but blocking the slider instead of changing the represented percentage
+        public int HiddenMin { get; protected set; }
         
         // How much each pixel of selector movement changes the value.
         public int Step { get; protected set; }
@@ -31,7 +33,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
         /// <param name="startingValue"></param>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
-        public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15)
+        public Slider(string title, string more, Vector2 position, string type, int startingValue = 50, int minValue = 0, int maxValue = 100, int step = 1, int displayDivider = 1, int displayPrecision = 2, int edgeOffset = 15, int hiddenmin = 0)
             : base(title, more, position, Skin.Assets["slider"], Anchor.CenterLeft, startingValue, type)
         {
             Selector.Resize(50);
@@ -42,6 +44,7 @@ namespace Pulsarc.UI.Screens.Settings.UI
             DisplayPrecision = displayPrecision;
             MinValue = minValue;
             MaxValue = maxValue;
+            HiddenMin = hiddenmin;
             EdgeOffset = edgeOffset;
 
             Hold = true;
@@ -125,7 +128,12 @@ namespace Pulsarc.UI.Screens.Settings.UI
 
         public override dynamic GetSaveValue()
         {
-            return Value / (float) DisplayDivider;
+            return Value / (float)DisplayDivider;
+        }
+
+        public override void SetSaveValue(dynamic value)
+        {
+            Value = value * DisplayDivider;
         }
 
         public override void Move(Vector2 delta, bool? heightScaled = null)

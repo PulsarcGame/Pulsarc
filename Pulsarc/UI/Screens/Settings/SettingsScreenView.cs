@@ -37,6 +37,7 @@ namespace Pulsarc.UI.Screens.Settings
             Groups.Add(new GameplaySettings(new Vector2(400, GetNextGroupPos())));
             Groups.Add(new AudioSettings(new Vector2(400, GetNextGroupPos())));
             Groups.Add(new BindingsSettings(new Vector2(400, GetNextGroupPos())));
+            Groups.Add(new JudgementsSettings(new Vector2(400, GetNextGroupPos())));
         }
 
         public override void Destroy()
