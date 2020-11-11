@@ -12,7 +12,9 @@ This layout allows for interesting gimmicks to be introduced to the gameplay. Fo
 
 The goal with Pulsarc is to take the unique gameplay of Intralism and bring it to the next level. A better editor with more control over the gameplay of maps, better competitive features, and good developer-community relationships to foster further growth.
 
-Pulsarc is currently in active development. Pulsarc is still a young project, and is in an early Alpha state. The core gameplay is here, but many features haven't been realized yet, and there are currently many bugs.
+Pulsarc development is currently inactive. Check our discord for more information.
+
+Pulsarc is in an early Alpha state. The core gameplay is here, but most features haven't been realized yet, and there are many bugs.
 
 ## How to Play
 Head over to our [Releases Page](https://github.com/PulsarcGame/Pulsarc/releases) and download the most recent version. Find and launch Pulsarc.exe to get started. If you want to play the current development build, check out the [Contributing](README.md#contributing) section below.
